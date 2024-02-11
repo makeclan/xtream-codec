@@ -23,7 +23,9 @@ public class NestedBeanPropertyMetadata extends BasicBeanPropertyMetadata {
         final Object instance = BeanUtils.createNewInstance(nestedBeanMetadata.getConstructor());
         final int length = delegate.fieldLengthExtractor().extractFieldLength(context, context.evaluationContext());
 
-        final ByteBuf slice = length > 0 ? input.readSlice(length) : input;
+        final ByteBuf slice = length < 0
+                ? input
+                : input.readSlice(length);
 
         final DefaultDeserializeContext deserializeContext = new DefaultDeserializeContext(instance);
         for (final BeanPropertyMetadata pm : this.nestedBeanMetadata.getPropertyMetadataList()) {

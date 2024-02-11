@@ -53,8 +53,9 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
 
     protected FieldLengthExtractor detectFieldLengthExtractor(XtreamField xtreamField) {
         if (xtreamField.length() > 0) {
-            return new FieldLengthExtractor.ConstantFieldLengthExtractor(xtreamField);
+            return new FieldLengthExtractor.ConstantFieldLengthExtractor(xtreamField.length());
         }
+
         if (XtreamUtils.hasElement(xtreamField.lengthExpression())) {
             return new FieldLengthExtractor.ExpressionFieldLengthExtractor(xtreamField);
         }
@@ -63,8 +64,8 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
                 .map(FieldLengthExtractor.ConstantFieldLengthExtractor::new)
                 .map(FieldLengthExtractor.class::cast)
                 .orElseGet(() -> {
-                    final FiledDataType filedDataType = XtreamTypes.detectFieldDataType(this.type);
-                    if (filedDataType == FiledDataType.nested) {
+                    final FiledDataType filedDataType = XtreamTypes.detectFieldDataType(this.rawClass());
+                    if (filedDataType == FiledDataType.sequence || filedDataType == FiledDataType.nested) {
                         return new FieldLengthExtractor.ConstantFieldLengthExtractor(-2);
                     }
                     return new FieldLengthExtractor.PlaceholderFieldLengthExtractor("Did you forget to specify length() / lengthExpression() for Field: [ " + this.field + " ]");

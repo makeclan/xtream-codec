@@ -1,7 +1,6 @@
 package io.github.hylexus.xtream.codec.core.impl;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
-import io.github.hylexus.xtream.codec.core.utils.BeanUtils;
 import io.github.hylexus.xtream.codec.common.utils.XtreamTypes;
 import io.github.hylexus.xtream.codec.common.utils.XtreamUtils;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
@@ -9,6 +8,7 @@ import io.github.hylexus.xtream.codec.core.FieldCodecRegistry;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
 import io.github.hylexus.xtream.codec.core.impl.codec.*;
 import io.github.hylexus.xtream.codec.core.type.XtreamDataType;
+import io.github.hylexus.xtream.codec.core.utils.BeanUtils;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;

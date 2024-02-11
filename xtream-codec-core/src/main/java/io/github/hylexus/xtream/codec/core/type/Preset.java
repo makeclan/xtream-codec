@@ -294,6 +294,7 @@ public @interface Preset {
             @AliasFor(annotation = XtreamField.class, attribute = "lengthExpression")
             String lengthExpression() default "";
 
+            @AliasFor(annotation = XtreamField.class, attribute = "charset")
             String charset() default "GBK";
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")

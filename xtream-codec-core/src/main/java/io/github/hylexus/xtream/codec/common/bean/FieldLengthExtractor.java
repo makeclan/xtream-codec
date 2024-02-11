@@ -19,10 +19,6 @@ public interface FieldLengthExtractor {
             this.length = length;
         }
 
-        public ConstantFieldLengthExtractor(XtreamField xtreamField) {
-            this(xtreamField.length());
-        }
-
         @Override
         public int extractFieldLength(FieldCodec.DeserializeContext context, EvaluationContext evaluationContext) {
             return this.length;

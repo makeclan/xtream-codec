@@ -29,7 +29,10 @@ public class SequenceBeanPropertyMetadata extends BasicBeanPropertyMetadata {
     @Override
     public Object decodePropertyValue(FieldCodec.DeserializeContext context, ByteBuf input) {
         final int length = delegate.fieldLengthExtractor().extractFieldLength(context, context.evaluationContext());
-        final ByteBuf slice = input.readSlice(length);
+
+        final ByteBuf slice = length < 0
+                ? input // all remaining
+                : input.readSlice(length);
 
         final List<Object> list = new ArrayList<>();
         while (slice.isReadable()) {

@@ -55,4 +55,5 @@ public class XtreamTypes {
                     return BeanPropertyMetadata.FiledDataType.nested;
                 });
     }
+
 }
