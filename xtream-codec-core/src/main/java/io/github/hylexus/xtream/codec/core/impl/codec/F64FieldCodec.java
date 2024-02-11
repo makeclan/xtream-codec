@@ -13,7 +13,7 @@ public class F64FieldCodec extends AbstractFieldCodec<Double> {
 
 
     @Override
-    protected void doSerialize(FieldSerializeContext context, ByteBuf output, Double value) {
+    protected void doSerialize(SerializeContext context, ByteBuf output, Double value) {
         output.writeDouble(value);
     }
 }

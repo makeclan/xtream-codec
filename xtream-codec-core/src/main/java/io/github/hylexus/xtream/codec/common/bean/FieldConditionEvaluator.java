@@ -5,32 +5,32 @@ import lombok.ToString;
 import org.springframework.expression.Expression;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 
-public interface FieldConditionalEvaluator {
+public interface FieldConditionEvaluator {
 
-    boolean evaluateConditionalProperty(FieldCodec.FieldSerializeContext context);
+    boolean evaluate(FieldCodec.SerializeContext context);
 
-    class AlwaysTrueFieldConditionalEvaluator implements FieldConditionalEvaluator {
+    class AlwaysTrueFieldConditionEvaluator implements FieldConditionEvaluator {
 
-        public static AlwaysTrueFieldConditionalEvaluator INSTANCE = new AlwaysTrueFieldConditionalEvaluator();
+        public static AlwaysTrueFieldConditionEvaluator INSTANCE = new AlwaysTrueFieldConditionEvaluator();
 
         @Override
-        public boolean evaluateConditionalProperty(FieldCodec.FieldSerializeContext context) {
+        public boolean evaluate(FieldCodec.SerializeContext context) {
             return true;
         }
     }
 
     @ToString(exclude = "expression")
-    class ExpressionFieldConditionalEvaluator implements FieldConditionalEvaluator {
+    class ExpressionFieldConditionEvaluator implements FieldConditionEvaluator {
         private final Expression expression;
         private final String expressionString;
 
-        public ExpressionFieldConditionalEvaluator(String expressionString) {
+        public ExpressionFieldConditionEvaluator(String expressionString) {
             this.expressionString = expressionString;
             this.expression = new SpelExpressionParser().parseExpression(expressionString);
         }
 
         @Override
-        public boolean evaluateConditionalProperty(FieldCodec.FieldSerializeContext context) {
+        public boolean evaluate(FieldCodec.SerializeContext context) {
             final Boolean value = expression.getValue(context.evaluationContext(), Boolean.class);
             return value != null && value;
         }

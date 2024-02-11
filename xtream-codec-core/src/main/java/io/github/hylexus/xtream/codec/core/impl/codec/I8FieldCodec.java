@@ -12,7 +12,7 @@ public class I8FieldCodec extends AbstractFieldCodec<Byte> {
     }
 
     @Override
-    protected void doSerialize(FieldSerializeContext context, ByteBuf output, Byte value) {
+    protected void doSerialize(SerializeContext context, ByteBuf output, Byte value) {
         output.writeByte(value);
     }
 }

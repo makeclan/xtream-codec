@@ -1,6 +1,6 @@
 package io.github.hylexus.xtream.codec.core;
 
-import io.github.hylexus.xtream.codec.common.utils.SimpleBeanMetadataRegistry;
+import io.github.hylexus.xtream.codec.core.impl.SimpleBeanMetadataRegistry;
 import io.netty.buffer.ByteBuf;
 
 public class EntityCodec {

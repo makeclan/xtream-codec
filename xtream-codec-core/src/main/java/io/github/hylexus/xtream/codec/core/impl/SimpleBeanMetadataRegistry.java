@@ -1,10 +1,11 @@
-package io.github.hylexus.xtream.codec.common.utils;
+package io.github.hylexus.xtream.codec.core.impl;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanMetadata;
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.bean.impl.BasicBeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.bean.impl.NestedBeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.bean.impl.SequenceBeanPropertyMetadata;
+import io.github.hylexus.xtream.codec.core.utils.BeanUtils;
 import io.github.hylexus.xtream.codec.core.BeanMetadataRegistry;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.github.hylexus.xtream.codec.core.FieldCodecRegistry;
@@ -27,15 +28,7 @@ public class SimpleBeanMetadataRegistry implements BeanMetadataRegistry {
     private final FieldCodecRegistry fieldCodecRegistry;
 
     public SimpleBeanMetadataRegistry() {
-        fieldCodecRegistry = new FieldCodecRegistry();
-    }
-
-    private static int getLength(XtreamField xtreamField, Class<?> rawClassType) {
-        if (xtreamField.length() > 0) {
-            return xtreamField.length();
-        }
-
-        return XtreamTypes.getDefaultSizeInBytes(rawClassType).orElseGet(xtreamField::length);
+        this.fieldCodecRegistry = new DefaultFieldCodecRegistry();
     }
 
     @Override
@@ -118,27 +111,12 @@ public class SimpleBeanMetadataRegistry implements BeanMetadataRegistry {
     }
 
     public FieldCodec<?> detectFieldCodec(BasicBeanPropertyMetadata metadata) {
-
-        final XtreamField xtreamField = metadata.findAnnotation(XtreamField.class)
-                .orElseThrow();
-
-        if (xtreamField.fieldCodec() != FieldCodec.Placeholder.class) {
-            @SuppressWarnings({"rawtypes"}) final Class<? extends FieldCodec> aClass = xtreamField.fieldCodec();
-            // return createNewInstance(aClass, (Object) null);
-            return BeanUtils.createNewInstance(aClass);
-        }
-
-        final Class<?> rawClassType = metadata.rawClass();
-        final int length = getLength(xtreamField, rawClassType);
-
-        final Optional<FieldCodec<?>> fieldCodec = fieldCodecRegistry.getFieldCodec(rawClassType, length, xtreamField.charset(), xtreamField.littleEndian());
-        if (fieldCodec.isPresent()) {
-            return fieldCodec.get();
-        }
-
-        return switch (metadata.dataType()) {
-            case nested, sequence -> null;
-            default -> throw new IllegalStateException("Cannot determine FieldCodec for " + rawClassType);
-        };
+        return this.fieldCodecRegistry.getFieldCodec(metadata).orElseGet(() -> {
+            // ...
+            return switch (metadata.dataType()) {
+                case nested, sequence -> null;
+                default -> throw new IllegalStateException("Cannot determine FieldCodec for " + metadata.rawClass());
+            };
+        });
     }
 }

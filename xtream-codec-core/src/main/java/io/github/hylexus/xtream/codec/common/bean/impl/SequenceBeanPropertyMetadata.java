@@ -19,8 +19,8 @@ public class SequenceBeanPropertyMetadata extends BasicBeanPropertyMetadata {
     }
 
     @Override
-    public void encodePropertyValue(FieldCodec.FieldSerializeContext context, ByteBuf output, Object value) {
-        final Collection<Object> collection = (Collection<Object>) value;
+    public void encodePropertyValue(FieldCodec.SerializeContext context, ByteBuf output, Object value) {
+        @SuppressWarnings("unchecked") final Collection<Object> collection = (Collection<Object>) value;
         for (final Object object : collection) {
             nestedBeanPropertyMetadata.encodePropertyValue(context, output, object);
         }

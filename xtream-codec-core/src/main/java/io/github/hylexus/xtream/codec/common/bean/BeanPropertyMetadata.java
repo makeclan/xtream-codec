@@ -23,8 +23,6 @@ public interface BeanPropertyMetadata {
 
     Field field();
 
-    // PropertyDescriptor descriptor();
-
     PropertyGetter propertyGetter();
 
     PropertySetter propertySetter();
@@ -33,7 +31,7 @@ public interface BeanPropertyMetadata {
 
     FieldLengthExtractor fieldLengthExtractor();
 
-    FieldConditionalEvaluator conditionEvaluator();
+    FieldConditionEvaluator conditionEvaluator();
 
     <A extends Annotation> Optional<A> findAnnotation(Class<A> annotationClass);
 
@@ -41,7 +39,7 @@ public interface BeanPropertyMetadata {
 
     Object decodePropertyValue(FieldCodec.DeserializeContext context, ByteBuf input);
 
-    void encodePropertyValue(FieldCodec.FieldSerializeContext context, ByteBuf output, Object value);
+    void encodePropertyValue(FieldCodec.SerializeContext context, ByteBuf output, Object value);
 
     default void setProperty(Object instance, Object value) {
         this.propertySetter().setProperty(this, instance, value);

@@ -12,7 +12,7 @@ public class I16FieldCodec extends AbstractFieldCodec<Short> {
     }
 
     @Override
-    protected void doSerialize(FieldSerializeContext context, ByteBuf output, Short value) {
+    protected void doSerialize(SerializeContext context, ByteBuf output, Short value) {
         output.writeShort(value);
     }
 }

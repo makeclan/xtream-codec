@@ -1,5 +1,8 @@
 package io.github.hylexus.xtream.codec.common.utils;
 
+import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
+import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
+
 import java.util.*;
 
 public class XtreamTypes {
@@ -36,5 +39,20 @@ public class XtreamTypes {
 
     public static Optional<Integer> getDefaultSizeInBytes(Class<?> cls) {
         return Optional.ofNullable(DEFAULT_SIZE_MAPPING.get(cls));
+    }
+
+    public static BeanPropertyMetadata.FiledDataType detectFieldDataType(Class<?> type) {
+        return BeanPropertyMetadata.findAnnotation(XtreamField.class, type)
+                .map(XtreamField::dataType)
+                .filter(it -> it != BeanPropertyMetadata.FiledDataType.unknown)
+                .orElseGet(() -> {
+                    if (XtreamTypes.isBasicType(type)) {
+                        return BeanPropertyMetadata.FiledDataType.basic;
+                    }
+                    if (Collection.class.isAssignableFrom(type)) {
+                        return BeanPropertyMetadata.FiledDataType.sequence;
+                    }
+                    return BeanPropertyMetadata.FiledDataType.nested;
+                });
     }
 }

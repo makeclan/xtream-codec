@@ -1,6 +1,6 @@
 package io.github.hylexus.xtream.codec.common.bean;
 
-import io.github.hylexus.xtream.codec.common.utils.BeanUtils;
+import io.github.hylexus.xtream.codec.core.utils.BeanUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

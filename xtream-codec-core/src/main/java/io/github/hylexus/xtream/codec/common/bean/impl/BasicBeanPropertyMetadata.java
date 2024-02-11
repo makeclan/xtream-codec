@@ -1,7 +1,7 @@
 package io.github.hylexus.xtream.codec.common.bean.impl;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
-import io.github.hylexus.xtream.codec.common.bean.FieldConditionalEvaluator;
+import io.github.hylexus.xtream.codec.common.bean.FieldConditionEvaluator;
 import io.github.hylexus.xtream.codec.common.bean.FieldLengthExtractor;
 import io.github.hylexus.xtream.codec.common.utils.XtreamTypes;
 import io.github.hylexus.xtream.codec.common.utils.XtreamUtils;
@@ -13,7 +13,6 @@ import org.springframework.core.annotation.AnnotatedElementUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.Collection;
 import java.util.Optional;
 
 public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
@@ -27,7 +26,7 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
     private final PropertySetter propertySetter;
     private final int order;
     private final FieldLengthExtractor fieldLengthExtractor;
-    private final FieldConditionalEvaluator fieldConditionalEvaluator;
+    private final FieldConditionEvaluator fieldConditionEvaluator;
     private final XtreamField xtreamField;
     @Setter
     private FieldCodec<?> fieldCodec;
@@ -36,21 +35,20 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
         this.name = name;
         this.type = type;
         this.field = field;
-        // this.propertyDescriptor = propertyDescriptor;
         this.propertyGetter = getter;
         this.propertySetter = setter;
         this.order = initOrder();
-        this.filedValueType = detectValueType(type);
+        this.filedValueType = XtreamTypes.detectFieldDataType(type);
         this.xtreamField = findAnnotation(XtreamField.class).orElseThrow();
         this.fieldLengthExtractor = detectFieldLengthExtractor(this.xtreamField);
-        this.fieldConditionalEvaluator = detectFieldConditionalEvaluator(this.xtreamField);
+        this.fieldConditionEvaluator = detectFieldConditionalEvaluator(this.xtreamField);
     }
 
-    private FieldConditionalEvaluator detectFieldConditionalEvaluator(XtreamField xtreamField) {
+    private FieldConditionEvaluator detectFieldConditionalEvaluator(XtreamField xtreamField) {
         if (XtreamUtils.hasElement(xtreamField.condition())) {
-            return new FieldConditionalEvaluator.ExpressionFieldConditionalEvaluator(xtreamField.condition());
+            return new FieldConditionEvaluator.ExpressionFieldConditionEvaluator(xtreamField.condition());
         }
-        return FieldConditionalEvaluator.AlwaysTrueFieldConditionalEvaluator.INSTANCE;
+        return FieldConditionEvaluator.AlwaysTrueFieldConditionEvaluator.INSTANCE;
     }
 
     protected FieldLengthExtractor detectFieldLengthExtractor(XtreamField xtreamField) {
@@ -64,21 +62,12 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
         return XtreamTypes.getDefaultSizeInBytes(this.rawClass())
                 .map(FieldLengthExtractor.ConstantFieldLengthExtractor::new)
                 .map(FieldLengthExtractor.class::cast)
-                .orElseGet(() -> new FieldLengthExtractor.PlaceholderFieldLengthExtractor("Did you forget to specify length() / lengthExpression() for Field: [ " + this.field + " ]"));
-    }
-
-    protected FiledDataType detectValueType(Class<?> type) {
-        return this.findAnnotation(XtreamField.class)
-                .map(XtreamField::dataType)
-                .filter(it -> it != FiledDataType.unknown)
                 .orElseGet(() -> {
-                    if (XtreamTypes.isBasicType(type)) {
-                        return FiledDataType.basic;
+                    final FiledDataType filedDataType = XtreamTypes.detectFieldDataType(this.type);
+                    if (filedDataType == FiledDataType.nested) {
+                        return new FieldLengthExtractor.ConstantFieldLengthExtractor(-2);
                     }
-                    if (Collection.class.isAssignableFrom(type)) {
-                        return FiledDataType.sequence;
-                    }
-                    return FiledDataType.nested;
+                    return new FieldLengthExtractor.PlaceholderFieldLengthExtractor("Did you forget to specify length() / lengthExpression() for Field: [ " + this.field + " ]");
                 });
     }
 
@@ -106,11 +95,6 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
         return this.field;
     }
 
-    // @Override
-    // public PropertyDescriptor descriptor() {
-    //     return this.propertyDescriptor;
-    // }
-
     @Override
     public PropertyGetter propertyGetter() {
         return this.propertyGetter;
@@ -132,8 +116,8 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
     }
 
     @Override
-    public FieldConditionalEvaluator conditionEvaluator() {
-        return this.fieldConditionalEvaluator;
+    public FieldConditionEvaluator conditionEvaluator() {
+        return this.fieldConditionEvaluator;
     }
 
     @Override
@@ -154,8 +138,8 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
     }
 
     @Override
-    public void encodePropertyValue(FieldCodec.FieldSerializeContext context, ByteBuf output, Object value) {
-        FieldCodec<Object> codec = (FieldCodec<Object>) fieldCodec();
+    public void encodePropertyValue(FieldCodec.SerializeContext context, ByteBuf output, Object value) {
+        @SuppressWarnings("unchecked") final FieldCodec<Object> codec = (FieldCodec<Object>) fieldCodec();
         codec.serialize(context, output, value);
     }
 

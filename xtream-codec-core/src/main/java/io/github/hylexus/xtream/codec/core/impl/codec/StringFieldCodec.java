@@ -22,7 +22,7 @@ public class StringFieldCodec implements FieldCodec<String> {
     }
 
     @Override
-    public void serialize(FieldSerializeContext context, ByteBuf output, String value) {
+    public void serialize(SerializeContext context, ByteBuf output, String value) {
         delegate.serialize(context, output, value);
     }
 
@@ -48,7 +48,7 @@ public class StringFieldCodec implements FieldCodec<String> {
         }
 
         @Override
-        protected void doSerialize(FieldSerializeContext context, ByteBuf output, String value) {
+        protected void doSerialize(SerializeContext context, ByteBuf output, String value) {
             output.writeCharSequence(value, charset);
         }
     }
@@ -66,7 +66,7 @@ public class StringFieldCodec implements FieldCodec<String> {
         }
 
         @Override
-        protected void doSerialize(FieldSerializeContext context, ByteBuf output, String value) {
+        protected void doSerialize(SerializeContext context, ByteBuf output, String value) {
             final byte[] bytes = BcdOps.decodeBcd8421(value);
             output.writeBytes(bytes);
         }

@@ -13,7 +13,7 @@ public class U16FieldCodecLittleEndian extends AbstractFieldCodec<Integer> {
 
 
     @Override
-    protected void doSerialize(FieldSerializeContext context, ByteBuf output, Integer value) {
+    protected void doSerialize(SerializeContext context, ByteBuf output, Integer value) {
         output.writeShortLE(value);
     }
 }

@@ -7,7 +7,7 @@ public interface FieldCodec<T> {
 
     T deserialize(DeserializeContext context, ByteBuf input, int length);
 
-    void serialize(FieldSerializeContext context, ByteBuf output, T value);
+    void serialize(SerializeContext context, ByteBuf output, T value);
 
     interface DeserializeContext {
 
@@ -16,7 +16,7 @@ public interface FieldCodec<T> {
         EvaluationContext evaluationContext();
     }
 
-    interface FieldSerializeContext {
+    interface SerializeContext {
         Object containerInstance();
 
         EvaluationContext evaluationContext();
@@ -32,7 +32,7 @@ public interface FieldCodec<T> {
         }
 
         @Override
-        public void serialize(FieldSerializeContext context, ByteBuf output, Object value) {
+        public void serialize(SerializeContext context, ByteBuf output, Object value) {
             throw new UnsupportedOperationException();
         }
     }

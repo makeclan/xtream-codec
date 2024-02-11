@@ -1,4 +1,4 @@
-package io.github.hylexus.xtream.codec.common.utils;
+package io.github.hylexus.xtream.codec.core.utils;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.bean.impl.FieldPropertySetter;
@@ -6,6 +6,7 @@ import io.github.hylexus.xtream.codec.common.bean.impl.FiledPropertyGetter;
 import io.github.hylexus.xtream.codec.common.bean.impl.MethodPropertyGetter;
 import io.github.hylexus.xtream.codec.common.bean.impl.MethodPropertySetter;
 import io.github.hylexus.xtream.codec.common.exception.BeanIntrospectionException;
+import lombok.Getter;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -14,7 +15,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Predicate;
 
 public class BeanUtils {
@@ -99,12 +102,8 @@ public class BeanUtils {
             if (pd != null) {
                 if (setter) {
                     Method writeMethod = pd.getWriteMethod();
-                    // todo 简化
                     if (writeMethod == null || writeMethod.getParameterTypes()[0].isAssignableFrom(method.getParameterTypes()[0])) {
                         pd.setWriteMethod(method);
-                        method.setAccessible(true);
-                    } else {
-                        pd.addWriteMethod(method);
                         method.setAccessible(true);
                     }
                 } else {
@@ -122,21 +121,21 @@ public class BeanUtils {
         return pdMap.values().toArray(EMPTY_ARRAY);
     }
 
-    static BeanPropertyMetadata.PropertySetter createSetter(BeanUtils.BasicPropertyDescriptor pd) {
+    public static BeanPropertyMetadata.PropertySetter createSetter(BeanUtils.BasicPropertyDescriptor pd) {
         if (pd.getWriteMethod() != null) {
             return new MethodPropertySetter(pd.getWriteMethod());
         }
         return new FieldPropertySetter(pd.getField());
     }
 
-    static BeanPropertyMetadata.PropertyGetter createGetter(BeanUtils.BasicPropertyDescriptor pd) {
+    public static BeanPropertyMetadata.PropertyGetter createGetter(BeanUtils.BasicPropertyDescriptor pd) {
         if (pd.getReadMethod() != null) {
             return new MethodPropertyGetter(pd.getReadMethod());
         }
         return new FiledPropertyGetter(pd.getField());
     }
 
-    static Constructor<?> getConstructor(BeanDescriptor beanDescriptor) {
+    public static Constructor<?> getConstructor(BeanDescriptor beanDescriptor) {
         try {
             return beanDescriptor.getBeanClass().getConstructor();
         } catch (NoSuchMethodException e) {
@@ -157,19 +156,15 @@ public class BeanUtils {
         constructor.setAccessible(true);
         try {
             return constructor.newInstance(args);
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }
 
     public static class BasicPropertyDescriptor extends PropertyDescriptor {
 
+        @Getter
         private final Field field;
-        private final List<Method> alternativeWriteMethods = new ArrayList<>();
         private Method readMethod;
 
         private Method writeMethod;
@@ -198,38 +193,14 @@ public class BeanUtils {
             this.readMethod = readMethod;
         }
 
-        public void addWriteMethod(Method writeMethod) {
-            if (this.writeMethod != null) {
-                this.alternativeWriteMethods.add(this.writeMethod);
-                this.writeMethod = null;
-            }
-            this.alternativeWriteMethods.add(writeMethod);
-        }
-
         @Override
         public Method getWriteMethod() {
-            if (this.writeMethod == null && !this.alternativeWriteMethods.isEmpty()) {
-                if (this.readMethod == null) {
-                    return this.alternativeWriteMethods.getFirst();
-                } else {
-                    for (Method method : this.alternativeWriteMethods) {
-                        if (this.readMethod.getReturnType().isAssignableFrom(method.getParameterTypes()[0])) {
-                            this.writeMethod = method;
-                            break;
-                        }
-                    }
-                }
-            }
             return this.writeMethod;
         }
 
         @Override
         public void setWriteMethod(Method writeMethod) {
             this.writeMethod = writeMethod;
-        }
-
-        public Field getField() {
-            return field;
         }
 
         @Override

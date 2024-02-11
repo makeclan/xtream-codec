@@ -12,7 +12,7 @@ public class U32FieldCodec extends AbstractFieldCodec<Long> {
     }
 
     @Override
-    protected void doSerialize(FieldSerializeContext context, ByteBuf output, Long value) {
+    protected void doSerialize(SerializeContext context, ByteBuf output, Long value) {
         output.writeInt(value.intValue());
     }
 }

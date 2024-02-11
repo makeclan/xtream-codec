@@ -13,7 +13,7 @@ public class F32FieldCodec extends AbstractFieldCodec<Float> {
 
 
     @Override
-    protected void doSerialize(FieldSerializeContext context, ByteBuf output, Float value) {
+    protected void doSerialize(SerializeContext context, ByteBuf output, Float value) {
         output.writeFloat(value);
     }
 }

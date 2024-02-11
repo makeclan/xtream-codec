@@ -6,11 +6,11 @@ import io.netty.buffer.ByteBuf;
 public abstract class AbstractFieldCodec<T> implements FieldCodec<T> {
 
     @Override
-    public void serialize(FieldSerializeContext context, ByteBuf output, T value) {
+    public void serialize(SerializeContext context, ByteBuf output, T value) {
         if (value != null) {
             this.doSerialize(context, output, value);
         }
     }
 
-    protected abstract void doSerialize(FieldSerializeContext context, ByteBuf output, T value);
+    protected abstract void doSerialize(SerializeContext context, ByteBuf output, T value);
 }

@@ -8,7 +8,7 @@ public class ByteBoxArrayFieldCodec extends AbstractFieldCodec<Byte[]> {
     }
 
     @Override
-    protected void doSerialize(FieldSerializeContext context, ByteBuf output, Byte[] value) {
+    protected void doSerialize(SerializeContext context, ByteBuf output, Byte[] value) {
         for (final Byte b : value) {
             output.writeByte(b);
         }

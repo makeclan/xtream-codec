@@ -5,13 +5,13 @@ import io.github.hylexus.xtream.codec.core.FieldCodec;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
-public class DefaultFieldSerializeContext implements FieldCodec.FieldSerializeContext {
+public class DefaultSerializeContext implements FieldCodec.SerializeContext {
 
     private final EntityEncoder entityEncoder;
     private final Object containerInstance;
     private final EvaluationContext evaluationContext;
 
-    public DefaultFieldSerializeContext(EntityEncoder entityEncoder, Object containerInstance) {
+    public DefaultSerializeContext(EntityEncoder entityEncoder, Object containerInstance) {
         this.entityEncoder = entityEncoder;
         this.containerInstance = containerInstance;
         this.evaluationContext = new StandardEvaluationContext(containerInstance);
