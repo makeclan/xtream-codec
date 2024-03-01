@@ -62,13 +62,12 @@ public class StringFieldCodec implements FieldCodec<String> {
 
         @Override
         public String deserialize(DeserializeContext context, ByteBuf input, int length) {
-            return BcdOps.encodeBcd8421(input, length);
+            return BcdOps.decodeBcd8421AsString(input, length);
         }
 
         @Override
         protected void doSerialize(SerializeContext context, ByteBuf output, String value) {
-            final byte[] bytes = BcdOps.decodeBcd8421(value);
-            output.writeBytes(bytes);
+            BcdOps.encodeBcd8421StringIntoByteBuf(value, output);
         }
 
     }

@@ -7,16 +7,17 @@ import io.netty.buffer.ByteBuf;
  */
 public abstract class BcdOps {
 
-    public static String encodeBcd8421(ByteBuf source, final int length) {
+    public static String decodeBcd8421AsString(ByteBuf source, final int length) {
         final StringBuilder builder = new StringBuilder(length << 2);
         for (int i = 0; i < length; i++) {
-            builder.append((source.readByte() & 0xf0) >>> 4);
-            builder.append(source.readByte() & 0x0f);
+            final byte value = source.readByte();
+            builder.append((value & 0xf0) >>> 4);
+            builder.append(value & 0x0f);
         }
         return builder.toString();
     }
 
-    public static String encodeBcd8421(final byte[] source, final int start, final int end) {
+    public static String decodeBcd8421AsString(final byte[] source, final int start, final int end) {
         assert start < end : "start < end";
 
         final int length = end - start;
@@ -28,7 +29,27 @@ public abstract class BcdOps {
         return builder.toString();
     }
 
-    public static byte[] decodeBcd8421(final String str) {
+    public static void encodeBcd8421StringIntoByteBuf(final String str, ByteBuf target) {
+        // odd -> 0 + str
+        final String source = (str.length() & 1) == 1
+                ? "0" + str
+                : str;
+
+        final int length = source.length() >> 1;
+
+        final byte[] sourceBytes = source.getBytes();
+        for (int i = 0; i < length; i++) {
+
+            byte high = asciiToBcd(sourceBytes[i << 1]);
+            byte low = asciiToBcd(sourceBytes[(i << 1) + 1]);
+
+            byte value = (byte) ((high << 4) | low);
+
+            target.writeByte(value);
+        }
+    }
+
+    public static byte[] encodeBcd8421AsBytes(final String str) {
         // odd -> 0 + str
         final String source = (str.length() & 1) == 1
                 ? "0" + str

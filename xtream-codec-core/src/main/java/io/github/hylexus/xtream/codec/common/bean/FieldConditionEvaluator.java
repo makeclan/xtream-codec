@@ -7,14 +7,14 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 
 public interface FieldConditionEvaluator {
 
-    boolean evaluate(FieldCodec.SerializeContext context);
+    boolean evaluate(FieldCodec.CodecContext context);
 
     class AlwaysTrueFieldConditionEvaluator implements FieldConditionEvaluator {
 
         public static AlwaysTrueFieldConditionEvaluator INSTANCE = new AlwaysTrueFieldConditionEvaluator();
 
         @Override
-        public boolean evaluate(FieldCodec.SerializeContext context) {
+        public boolean evaluate(FieldCodec.CodecContext context) {
             return true;
         }
     }
@@ -30,7 +30,7 @@ public interface FieldConditionEvaluator {
         }
 
         @Override
-        public boolean evaluate(FieldCodec.SerializeContext context) {
+        public boolean evaluate(FieldCodec.CodecContext context) {
             final Boolean value = expression.getValue(context.evaluationContext(), Boolean.class);
             return value != null && value;
         }

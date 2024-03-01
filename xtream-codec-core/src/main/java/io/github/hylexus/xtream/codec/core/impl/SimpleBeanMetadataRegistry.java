@@ -2,6 +2,7 @@ package io.github.hylexus.xtream.codec.core.impl;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanMetadata;
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
+import io.github.hylexus.xtream.codec.common.bean.FieldLengthExtractor;
 import io.github.hylexus.xtream.codec.common.bean.impl.BasicBeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.bean.impl.NestedBeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.bean.impl.SequenceBeanPropertyMetadata;
@@ -78,12 +79,12 @@ public class SimpleBeanMetadataRegistry implements BeanMetadataRegistry {
                 pdList.add(basicPropertyMetadata);
             } else if (basicPropertyMetadata.dataType() == BeanPropertyMetadata.FiledDataType.nested) {
                 final BeanMetadata nestedMetadata = doGetMetadata(pd.getPropertyType(), creator);
-                final NestedBeanPropertyMetadata metadata = new NestedBeanPropertyMetadata(nestedMetadata, basicPropertyMetadata);
+                final NestedBeanPropertyMetadata metadata = new NestedBeanPropertyMetadata(nestedMetadata, basicPropertyMetadata, null);
                 pdList.add(metadata);
             } else if (basicPropertyMetadata.dataType() == BeanPropertyMetadata.FiledDataType.sequence) {
                 final List<Class<?>> genericClass = getGenericClass(basicPropertyMetadata.field());
                 final BeanMetadata valueMetadata = doGetMetadata(genericClass.getFirst(), creator);
-                final NestedBeanPropertyMetadata metadata = new NestedBeanPropertyMetadata(valueMetadata, basicPropertyMetadata);
+                final NestedBeanPropertyMetadata metadata = new NestedBeanPropertyMetadata(valueMetadata, basicPropertyMetadata, new FieldLengthExtractor.ConstantFieldLengthExtractor(-2));
                 final SequenceBeanPropertyMetadata seqMetadata = new SequenceBeanPropertyMetadata(basicPropertyMetadata, metadata);
                 pdList.add(seqMetadata);
             } else {
@@ -115,7 +116,7 @@ public class SimpleBeanMetadataRegistry implements BeanMetadataRegistry {
             // ...
             return switch (metadata.dataType()) {
                 case nested, sequence -> null;
-                default -> throw new IllegalStateException("Cannot determine FieldCodec for " + metadata.rawClass());
+                default -> throw new IllegalStateException("Cannot determine FieldCodec for Field [" + metadata.field() + "]");
             };
         });
     }

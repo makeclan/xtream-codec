@@ -108,8 +108,8 @@ public class BeanUtils {
                     }
                 } else {
                     Method readMethod = pd.getReadMethod();
-                    if (readMethod == null ||
-                            (readMethod.getReturnType() == method.getReturnType() && method.getName().startsWith("is"))) {
+                    if (readMethod == null
+                            || (readMethod.getReturnType() == method.getReturnType() && method.getName().startsWith("is"))) {
                         pd.setReadMethod(method);
                         method.setAccessible(true);
                     }
@@ -143,9 +143,9 @@ public class BeanUtils {
         }
     }
 
-    public static <T> T createNewInstance(Class<T> tClass, Object... args) {
+    public static <T> T createNewInstance(Class<T> cls, Object... args) {
         try {
-            final Constructor<T> constructor = tClass.getConstructor();
+            final Constructor<T> constructor = cls.getConstructor();
             return createNewInstance(constructor, args);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);

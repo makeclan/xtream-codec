@@ -2,6 +2,7 @@ package io.github.hylexus.xtream.codec.common.bean.impl;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanMetadata;
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
+import io.github.hylexus.xtream.codec.common.bean.FieldLengthExtractor;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.github.hylexus.xtream.codec.core.impl.DefaultDeserializeContext;
 import io.github.hylexus.xtream.codec.core.impl.DefaultSerializeContext;
@@ -11,17 +12,21 @@ import io.netty.buffer.ByteBuf;
 public class NestedBeanPropertyMetadata extends BasicBeanPropertyMetadata {
     final BeanPropertyMetadata delegate;
     final BeanMetadata nestedBeanMetadata;
+    private final FieldLengthExtractor fieldLengthExtractor;
 
-    public NestedBeanPropertyMetadata(BeanMetadata nestedBeanMetadata, BeanPropertyMetadata pm) {
+    public NestedBeanPropertyMetadata(BeanMetadata nestedBeanMetadata, BeanPropertyMetadata pm, FieldLengthExtractor fieldLengthExtractor) {
         super(pm.name(), pm.rawClass(), pm.field(), pm.propertyGetter(), pm.propertySetter());
         this.nestedBeanMetadata = nestedBeanMetadata;
         this.delegate = pm;
+        this.fieldLengthExtractor = fieldLengthExtractor == null
+                ? delegate.fieldLengthExtractor()
+                : fieldLengthExtractor;
     }
 
     @Override
     public Object decodePropertyValue(FieldCodec.DeserializeContext context, ByteBuf input) {
         final Object instance = BeanUtils.createNewInstance(nestedBeanMetadata.getConstructor());
-        final int length = delegate.fieldLengthExtractor().extractFieldLength(context, context.evaluationContext());
+        final int length = this.fieldLengthExtractor().extractFieldLength(context, context.evaluationContext());
 
         final ByteBuf slice = length < 0
                 ? input
@@ -42,5 +47,10 @@ public class NestedBeanPropertyMetadata extends BasicBeanPropertyMetadata {
             final Object nestedValue = pm.getProperty(value);
             pm.encodePropertyValue(serializeContext, output, nestedValue);
         }
+    }
+
+    @Override
+    public FieldLengthExtractor fieldLengthExtractor() {
+        return this.fieldLengthExtractor;
     }
 }

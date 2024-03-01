@@ -6,7 +6,7 @@ import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
 import java.util.*;
 
 public class XtreamTypes {
-    final static Map<Class<?>, Integer> DEFAULT_SIZE_MAPPING = new HashMap<>();
+    static final Map<Class<?>, Integer> DEFAULT_SIZE_MAPPING = new HashMap<>();
     static final Set<Class<?>> BASIC_TYPES = Collections.unmodifiableSet(DEFAULT_SIZE_MAPPING.keySet());
 
     static {

@@ -15,6 +15,8 @@ public interface BeanPropertyMetadata {
         return Optional.ofNullable(mergedAnnotation);
     }
 
+    <A extends Annotation> Optional<A> findAnnotation(Class<A> annotationClass);
+
     String name();
 
     Class<?> rawClass();
@@ -32,8 +34,6 @@ public interface BeanPropertyMetadata {
     FieldLengthExtractor fieldLengthExtractor();
 
     FieldConditionEvaluator conditionEvaluator();
-
-    <A extends Annotation> Optional<A> findAnnotation(Class<A> annotationClass);
 
     int order();
 

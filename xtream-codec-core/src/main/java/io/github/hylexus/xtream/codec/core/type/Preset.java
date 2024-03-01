@@ -8,6 +8,8 @@ import java.lang.annotation.*;
 
 public @interface Preset {
     @interface RustStyle {
+
+        @SuppressWarnings("checkstyle:TypeName")
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
@@ -21,6 +23,7 @@ public @interface Preset {
             String condition() default "";
         }
 
+        @SuppressWarnings("checkstyle:TypeName")
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
@@ -34,6 +37,7 @@ public @interface Preset {
             String condition() default "";
         }
 
+        @SuppressWarnings("checkstyle:TypeName")
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
@@ -47,6 +51,7 @@ public @interface Preset {
             String condition() default "";
         }
 
+        @SuppressWarnings("checkstyle:TypeName")
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
@@ -60,6 +65,7 @@ public @interface Preset {
             String condition() default "";
         }
 
+        @SuppressWarnings("checkstyle:TypeName")
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
@@ -73,6 +79,7 @@ public @interface Preset {
             String condition() default "";
         }
 
+        @SuppressWarnings("checkstyle:TypeName")
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
@@ -86,6 +93,7 @@ public @interface Preset {
             String condition() default "";
         }
 
+        @SuppressWarnings("checkstyle:TypeName")
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
@@ -99,6 +107,7 @@ public @interface Preset {
             String condition() default "";
         }
 
+        @SuppressWarnings("checkstyle:TypeName")
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
@@ -112,6 +121,7 @@ public @interface Preset {
             String condition() default "";
         }
 
+        @SuppressWarnings("checkstyle:TypeName")
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
@@ -125,6 +135,7 @@ public @interface Preset {
             String condition() default "";
         }
 
+        @SuppressWarnings("checkstyle:TypeName")
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
@@ -138,11 +149,12 @@ public @interface Preset {
             String condition() default "";
         }
 
+        @SuppressWarnings("checkstyle:TypeName")
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, charset = "utf-8")
-        @interface string {
+        @interface str {
 
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
@@ -160,6 +172,7 @@ public @interface Preset {
             String condition() default "";
         }
 
+        @SuppressWarnings("checkstyle:TypeName")
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
@@ -179,6 +192,7 @@ public @interface Preset {
             String condition() default "";
         }
 
+        @SuppressWarnings("checkstyle:TypeName")
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
@@ -223,7 +237,7 @@ public @interface Preset {
         @interface Dword {
 
             @AliasFor(annotation = XtreamField.class, attribute = "order")
-            int order();
+            int order() default -1;
 
             @AliasFor(annotation = XtreamField.class, attribute = "littleEndian")
             boolean littleEndian() default false;
@@ -232,13 +246,14 @@ public @interface Preset {
             String condition() default "";
         }
 
+        @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, charset = "bcd_8421")
         @interface BCD {
             @AliasFor(annotation = XtreamField.class, attribute = "order")
-            int order();
+            int order() default -1;
 
             @AliasFor(annotation = XtreamField.class, attribute = "length")
             int length() default -1;
@@ -280,11 +295,12 @@ public @interface Preset {
             String condition() default "";
         }
 
+        @SuppressWarnings("checkstyle:TypeName")
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, charset = "GBK")
-        @interface STRING {
+        @interface Str {
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
 

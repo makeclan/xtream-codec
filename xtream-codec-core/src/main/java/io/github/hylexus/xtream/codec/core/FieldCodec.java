@@ -9,19 +9,21 @@ public interface FieldCodec<T> {
 
     void serialize(SerializeContext context, ByteBuf output, T value);
 
-    interface DeserializeContext {
+    interface CodecContext {
 
         Object containerInstance();
 
         EvaluationContext evaluationContext();
+
     }
 
-    interface SerializeContext {
-        Object containerInstance();
+    interface DeserializeContext extends CodecContext {
+    }
 
-        EvaluationContext evaluationContext();
+    interface SerializeContext extends CodecContext {
 
         EntityEncoder entityEncoder();
+
     }
 
     class Placeholder implements FieldCodec<Object> {
