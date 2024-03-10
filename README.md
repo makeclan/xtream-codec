@@ -15,9 +15,15 @@
     </a>
 </p>
 
+## Docs
+
+- Github: https://hylexus.github.io/xtream-codec/
+- Gitee: https://hylexus.gitee.io/xtream-codec/
+
 ## License
 
-`xtream-codec` 使用 **木兰宽松许可证，第2版**。 详情见 [LICENSE](LICENSE) 文件。
+`xtream-codec` 使用 **木兰宽松许可证，第2版**(**MulanPSL2**)。 详情见 [LICENSE](LICENSE) 文件。
 
-完全兼容 "Apache License, Version 2.0" 协议。兼容性见 [ASF 3RD PARTY LICENSE POLICY](https://www.apache.org/legal/resolved.html#category-a)
+- **MulanPSL2** 完全兼容 **Apache License, Version 2.0** 协议。兼容性见 [ASF 3RD PARTY LICENSE POLICY](https://www.apache.org/legal/resolved.html#category-a)
+- **MulanPSL2** 比 **Apache License, Version 2.0** 协议 更加宽松
 
