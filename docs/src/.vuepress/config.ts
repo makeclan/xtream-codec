@@ -1,9 +1,9 @@
 import {defineUserConfig} from "vuepress";
 import theme from "./theme.js";
-import { getDirname, path } from "vuepress/utils"
+import {path} from "vuepress/utils"
 
 export default defineUserConfig({
-    base: "/",
+    base: "/xtream-codec/",
     port: 8090,
     locales: {
         "/": {

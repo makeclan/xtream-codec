@@ -23,6 +23,12 @@ export const zhNavbar = navbar([
         children: [
             {text: 'Netty', link: 'https://github.com/netty/netty', icon: 'leaf'},
             {text: 'Spring', icon: 'leaf', link: 'https://github.com/spring-projects'},
+            {
+                text: 'Vue', children: [
+                    {text: 'VuePress', icon: 'vue', link: 'https://www.vuepress.cn/'},
+                    {text: 'vuepress-theme-hope', icon: 'vue', link: 'https://theme-hope.vuejs.press/zh/'},
+                ],
+            },
         ]
     },
     {
