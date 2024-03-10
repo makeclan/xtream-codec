@@ -205,6 +205,14 @@ configure(subprojects) {
                             }
                         }
 
+                        developers {
+                            developer {
+                                id.set(getConfigAsString("projectDeveloperId"))
+                                name.set(getConfigAsString("projectDeveloperName"))
+                                email.set(getConfigAsString("projectDeveloperEmail"))
+                            }
+                        }
+
                         versionMapping {
                             usage("java-api") {
                                 fromResolutionOf("runtimeClasspath")
