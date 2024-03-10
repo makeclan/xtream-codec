@@ -9,7 +9,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     // common end
 
-    implementation("org.springframework:spring-expression")
-    implementation("io.netty:netty-buffer")
+    api("org.springframework:spring-expression")
+    api("io.netty:netty-buffer")
 
 }

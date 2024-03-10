@@ -1,5 +1,7 @@
 rootProject.name = "xtream-codec"
 include("xtream-codec-core")
+include("samples")
+include("samples:xtream-codec-core-debug")
 
 setBuildFileName(rootProject)
 
