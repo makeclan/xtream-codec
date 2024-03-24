@@ -2,16 +2,19 @@
 
 <p align="center">
     <a href="https://github.com/hylexus/xtream-codec">
-        <img alt="OceanBase Logo" src="docs/src/.vuepress/public/logo.png" width="50%" />
+        <img alt="xtream-codec logo" src="docs/src/.vuepress/public/logo.png" width="50%" />
     </a>
 </p>
 
 <p align="center">
-    <a href="https://github.com/hylexus/xtream-codec/blob/master/LICENSE">
+    <a href="http://license.coscl.org.cn/MulanPSL2">
         <img alt="license" src="https://img.shields.io/badge/license-MulanPSL2-blue" />
     </a>
-    <a href="https://github.com/hylexus/xtream-codec/blob/master/LICENSE">
+    <a href="https://openjdk.org/projects/jdk/21">
         <img alt="JDK" src="https://img.shields.io/badge/jdk-21-red" />
+    </a>
+    <a href="https://search.maven.org/search?q=g:%22io.github.hylexus.xtream%22%20AND%20a:%22xtream-codec-core%22">
+            <img alt="Maven%20Central" src="https://img.shields.io/maven-central/v/io.github.hylexus.xtream/xtream-codec-core.svg?label=Maven%20Central&color=green" />
     </a>
 </p>
 
@@ -19,6 +22,15 @@
 
 - Github: https://hylexus.github.io/xtream-codec/
 - Gitee: https://hylexus.gitee.io/xtream-codec/
+
+## QuickStart
+
+- **自定义** 协议示例
+    - Github: https://hylexus.github.io/xtream-codec/core/samples/custom-protocol-sample-01/
+    - Gitee: https://hylexus.gitee.io/xtream-codec/core/samples/custom-protocol-sample-01/
+- **JT/T 808** 协议示例
+    - Github: https://hylexus.github.io/xtream-codec/core/samples/custom-protocol-sample-02/
+    - Gitee: https://hylexus.gitee.io/xtream-codec/core/samples/custom-protocol-sample-02/
 
 ## License
 

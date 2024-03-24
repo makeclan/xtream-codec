@@ -13,7 +13,7 @@
 package io.github.hylexus.xtream.debug.codec.core.demo01;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
-import io.github.hylexus.xtream.debug.codec.core.utilsforunittest.DebugEntity01Nested;
+import io.github.hylexus.xtream.debug.codec.core.utilsforunittest.DebugEntity01NestedForJunitPurpose;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,7 +39,7 @@ public class JtStyleDebugEntity01ForEncodeNested {
     // 下面是 Header 和 Body 实体类的声明
     @Data
     // 实现 DebugEntity01NestedHeader 仅仅是为了方便单元测试，没其他特殊意义
-    public static class Header implements DebugEntity01Nested.DebugEntity01NestedHeader {
+    public static class Header implements DebugEntity01NestedForJunitPurpose.DebugEntity01NestedHeader {
         // 固定为 0x80901234
         @Preset.JtStyle.Dword
         private int magicNumber = 0x80901234;
@@ -60,7 +60,7 @@ public class JtStyleDebugEntity01ForEncodeNested {
 
     @Data
     // 实现 DebugEntity01NestedBody 仅仅是为了方便单元测试，没其他特殊意义
-    public static class Body implements DebugEntity01Nested.DebugEntity01NestedBody {
+    public static class Body implements DebugEntity01NestedForJunitPurpose.DebugEntity01NestedBody {
         // 下一个字段长度 无符号数 2字节
         @Preset.JtStyle.Word
         private int usernameLength;

@@ -18,6 +18,9 @@ import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.*;
 
+/**
+ * @author hylexus
+ */
 public @interface Preset {
     @interface RustStyle {
 
@@ -210,6 +213,26 @@ public @interface Preset {
         @Documented
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.sequence)
         @interface list {
+
+            @AliasFor(annotation = XtreamField.class, attribute = "order")
+            int order() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "length")
+            int length() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "lengthExpression")
+            String lengthExpression() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "condition")
+            String condition() default "";
+        }
+
+        @SuppressWarnings("checkstyle:TypeName")
+        @Target({ElementType.FIELD})
+        @Retention(RetentionPolicy.RUNTIME)
+        @Documented
+        @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic)
+        @interface byte_array {
 
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;

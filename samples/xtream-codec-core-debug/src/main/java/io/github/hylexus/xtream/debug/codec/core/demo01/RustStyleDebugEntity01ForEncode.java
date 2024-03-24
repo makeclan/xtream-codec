@@ -13,7 +13,7 @@
 package io.github.hylexus.xtream.debug.codec.core.demo01;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
-import io.github.hylexus.xtream.debug.codec.core.utilsforunittest.DebugEntity01;
+import io.github.hylexus.xtream.debug.codec.core.utilsforunittest.DebugEntity01ForJunitPurpose;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -22,7 +22,7 @@ import lombok.ToString;
 @Getter
 @ToString
 // 实现 DebugEntity01 仅仅是为了方便做单元测试，没其他特殊意义
-public class RustStyleDebugEntity01ForEncode implements DebugEntity01 {
+public class RustStyleDebugEntity01ForEncode implements DebugEntity01ForJunitPurpose {
     //////////////////////// header
     // 固定为 0x80901234
     @Preset.RustStyle.i32

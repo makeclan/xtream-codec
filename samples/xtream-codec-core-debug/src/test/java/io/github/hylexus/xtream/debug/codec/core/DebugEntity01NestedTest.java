@@ -12,14 +12,11 @@
 
 package io.github.hylexus.xtream.debug.codec.core;
 
-import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.core.EntityCodec;
 import io.github.hylexus.xtream.debug.codec.core.demo01.*;
-import io.github.hylexus.xtream.debug.codec.core.utilsforunittest.DebugEntity01;
-import io.github.hylexus.xtream.debug.codec.core.utilsforunittest.DebugEntity01Nested;
-import io.netty.buffer.ByteBuf;
+import io.github.hylexus.xtream.debug.codec.core.utilsforunittest.DebugEntity01ForJunitPurpose;
+import io.github.hylexus.xtream.debug.codec.core.utilsforunittest.DebugEntity01NestedForJunitPurpose;
 import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.ByteBufUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,10 +25,8 @@ import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class DebugEntity01NestedTest {
+class DebugEntity01NestedTest extends BaseEntityCodecTest {
 
-    EntityCodec entityCodec;
-    ByteBufAllocator byteBufAllocator;
     RustStyleDebugEntity01ForEncodeNested rustStyleSourceEntityNested = new RustStyleDebugEntity01ForEncodeNested();
     RawStyleDebugEntity01ForEncodeNested rawStyleSourceEntityNested = new RawStyleDebugEntity01ForEncodeNested();
     JtStyleDebugEntity01ForEncodeNested jtStyleSourceEntityNested = new JtStyleDebugEntity01ForEncodeNested();
@@ -67,7 +62,7 @@ class DebugEntity01NestedTest {
     void testEncode() {
         final String hexString1 = this.encodeAsHexString(this.rustStyleSourceEntityNested);
         final String hexString2 = this.encodeAsHexString(this.rawStyleSourceEntityNested);
-        final String hexString3 = this.encodeAsHexString(this.rawStyleSourceEntityNested);
+        final String hexString3 = this.encodeAsHexString(this.jtStyleSourceEntityNested);
         assertEquals("809012340203000700420016e5bca0e4b889e4b8b0205554462d3820e7bc96e7a081001670617373776f72642dc3dcc2eb2d42474b20b1e0c2eb3230323430323130013900001111270fff9c", hexString1);
         assertEquals(hexString1, hexString2);
         assertEquals(hexString1, hexString3);
@@ -93,34 +88,14 @@ class DebugEntity01NestedTest {
         assertEquals(this.jtStyleSourceEntityNested.getMsgBodyLength(), decodedEntity3.getMsgBodyLength());
     }
 
-    String encodeAsHexString(Object entity) {
-        final ByteBuf buffer = this.byteBufAllocator.buffer();
-        try {
-            this.entityCodec.encode(entity, buffer);
-            return ByteBufUtil.hexDump(buffer);
-        } finally {
-            buffer.release();
-        }
-    }
-
-    <T> T doDecode(Class<T> cls, String hexString) {
-        final ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer().writeBytes(XtreamBytes.decodeHex(hexString));
-        try {
-            return entityCodec.decode(cls, buffer);
-        } finally {
-            buffer.release();
-            assertEquals(0, buffer.refCnt());
-        }
-    }
-
-    void resetHeader(DebugEntity01Nested.DebugEntity01NestedHeader header) {
+    void resetHeader(DebugEntity01NestedForJunitPurpose.DebugEntity01NestedHeader header) {
         header.setMagicNumber(0x80901234);
         header.setMajorVersion((short) 2);
         header.setMinorVersion((short) 3);
         header.setMsgType(0x0007);
     }
 
-    int resetBody(DebugEntity01Nested.DebugEntity01NestedBody body) {
+    int resetBody(DebugEntity01NestedForJunitPurpose.DebugEntity01NestedBody body) {
         int msgBodyLength = 0;
 
         final String username = "张三丰 UTF-8 编码";
@@ -148,14 +123,14 @@ class DebugEntity01NestedTest {
         return msgBodyLength;
     }
 
-    void doCompareHeader(DebugEntity01Nested.DebugEntity01NestedHeader header1, DebugEntity01Nested.DebugEntity01NestedHeader header2) {
+    void doCompareHeader(DebugEntity01NestedForJunitPurpose.DebugEntity01NestedHeader header1, DebugEntity01NestedForJunitPurpose.DebugEntity01NestedHeader header2) {
         assertEquals(header1.getMagicNumber(), header2.getMagicNumber());
         assertEquals(header1.getMajorVersion(), header2.getMajorVersion());
         assertEquals(header1.getMinorVersion(), header2.getMinorVersion());
         assertEquals(header1.getMsgType(), header2.getMsgType());
     }
 
-    void doCompareBody(DebugEntity01Nested.DebugEntity01NestedBody entity1, DebugEntity01Nested.DebugEntity01NestedBody entity2) {
+    void doCompareBody(DebugEntity01NestedForJunitPurpose.DebugEntity01NestedBody entity1, DebugEntity01NestedForJunitPurpose.DebugEntity01NestedBody entity2) {
         assertEquals(entity1.getUsernameLength(), entity2.getUsernameLength());
         assertEquals(entity1.getUsername(), entity2.getUsername());
         assertEquals(entity1.getPasswordLength(), entity2.getPasswordLength());
@@ -167,7 +142,7 @@ class DebugEntity01NestedTest {
     }
 
     // 返回一个填充了属性的 DebugEntity01ForEncode 对象
-    void resetEntityProperties(DebugEntity01 entity) {
+    void resetEntityProperties(DebugEntity01ForJunitPurpose entity) {
 
         // region header
         entity.setMagicNumber(0x80901234);

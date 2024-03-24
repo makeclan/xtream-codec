@@ -10,6 +10,7 @@ plugins {
     id("checkstyle")
     id("com.github.joschi.licenser") version "0.6.0"
     id("com.github.jk1.dependency-license-report") version "2.5"
+    id("com.namics.oss.gradle.license-enforce-plugin") version "1.7.0"
 }
 
 repositories {
@@ -110,7 +111,14 @@ configure(subprojects) {
 
         // This is for the allowed-licenses-file in checkLicense Task
         // Accepts File, URL or String path to local or remote file
-        // allowedLicensesFile = File("$projectDir/config/allowed-licenses.json")
+        ////// ??? https://github.com/jk1/Gradle-License-Report/issues/252
+        allowedLicensesFile = rootProject.file("build-script/license/allowed-licenses.json")
+    }
+
+    apply(plugin = "com.namics.oss.gradle.license-enforce-plugin")
+    tasks.enforceLicenses {
+        allowedCategories = listOf("Apache", "MIT")
+        allowedLicenses = listOf("Mulan Permissive Software License, Version 2")
     }
 }
 // endregion Java
@@ -236,7 +244,7 @@ configure(subprojects) {
 
                     repositories {
                         // 1. 发布到你自己的私有仓库
-                        // 1.1 在 ~/.gradle/repo-credentials.properties 中配置 privateRepo-release.url, privateRepo-release.username, privateRepo-release.password
+                        // 1.1 将 build-script/maven/repo-credentials.debug-template.properties 另存到 ~/.gradle/repo-credentials.properties 然后修改用户名和密码等属性
                         // 1.2 在 ~/.gradle/gradle.properties 中配置 signing.keyId, signing.password, signing.secretKeyRingFile
                         maven {
                             name = "privateRepo"
@@ -267,6 +275,7 @@ configure(subprojects) {
                 sign(publishing.publications["mavenPublication"])
             }
             ////// 在 ~/.gradle/gradle.properties 文件中配置:
+            // 具体请参考模板文件: build-script/gradle/debug-template.gradle.properties
             // signing.keyId = ABCDEFGH
             // signing.password = you-password
             // signing.secretKeyRingFile = /path/to/secret.gpg
@@ -310,16 +319,9 @@ fun getMavenRepoConfig(): Properties {
         logger.quiet("The maven repository credentials file <<${fileName}>> will be load from: ${repoCredentialFile.absolutePath}")
         properties.load(repoCredentialFile.inputStream())
     } else {
-        logger.quiet("The maven repository credentials file <<${fileName} -> {}>> not found , use `PLACEHOLDER` for debugging.", repoCredentialFile.absolutePath)
+        logger.quiet("The maven repository credentials file <<${fileName} -> {}>> not found , use `debug-template.repo-credentials.properties` for debugging.", repoCredentialFile.absolutePath)
+        properties.load(rootProject.file("build-script/maven/debug-template.repo-credentials.properties").inputStream())
     }
-    // populate with default values for debug purpose
-    properties.putIfAbsent("privateRepo-release.url", "http:my-repo/repository/maven-release")
-    properties.putIfAbsent("privateRepo-release.username", "iDoNotKnow1")
-    properties.putIfAbsent("privateRepo-release.password", "iDoNotKnow2")
-
-    properties.putIfAbsent("sonatype-staging.url", "https://oss.sonatype.org/service/local/staging/deploy/maven2")
-    properties.putIfAbsent("sonatype-staging.username", "iDoNotKnow3")
-    properties.putIfAbsent("sonatype-staging.password", "iDoNotKnow4")
     return properties
 }
 

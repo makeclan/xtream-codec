@@ -12,13 +12,9 @@
 
 package io.github.hylexus.xtream.debug.codec.core;
 
-import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.core.EntityCodec;
 import io.github.hylexus.xtream.debug.codec.core.demo01.*;
-import io.github.hylexus.xtream.debug.codec.core.utilsforunittest.DebugEntity01;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.ByteBufUtil;
+import io.github.hylexus.xtream.debug.codec.core.utilsforunittest.DebugEntity01ForJunitPurpose;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,10 +23,7 @@ import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class DebugEntity01Test {
-
-    EntityCodec entityCodec;
-    ByteBufAllocator byteBufAllocator;
+class DebugEntity01Test extends BaseEntityCodecTest {
 
     RustStyleDebugEntity01ForEncode rustStyleSourceEntity = new RustStyleDebugEntity01ForEncode();
     JtStyleDebugEntity01ForEncode jtStyleSourceEntity = new JtStyleDebugEntity01ForEncode();
@@ -39,7 +32,6 @@ class DebugEntity01Test {
     @BeforeEach
     void setUp() {
         this.entityCodec = new EntityCodec();
-        this.byteBufAllocator = ByteBufAllocator.DEFAULT;
         this.resetEntityProperties(this.rustStyleSourceEntity);
         this.resetEntityProperties(this.jtStyleSourceEntity);
         this.resetEntityProperties(this.rawStyleSourceEntity);
@@ -93,25 +85,6 @@ class DebugEntity01Test {
         assertEquals(hexString1, hexString3);
     }
 
-    String encodeAsHexString(Object entity) {
-        final ByteBuf buffer = this.byteBufAllocator.buffer();
-        try {
-            this.entityCodec.encode(entity, buffer);
-            return ByteBufUtil.hexDump(buffer);
-        } finally {
-            buffer.release();
-        }
-    }
-
-    <T> T doDecode(Class<T> cls, String hexString) {
-        final ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer().writeBytes(XtreamBytes.decodeHex(hexString));
-        try {
-            return entityCodec.decode(cls, buffer);
-        } finally {
-            buffer.release();
-            assertEquals(0, buffer.refCnt());
-        }
-    }
 
     @Test
     void testDecode() {
@@ -128,7 +101,7 @@ class DebugEntity01Test {
         this.doCompare(decodedEntity1, decodedEntity3);
     }
 
-    void doCompare(DebugEntity01 entity1, DebugEntity01 entity2) {
+    void doCompare(DebugEntity01ForJunitPurpose entity1, DebugEntity01ForJunitPurpose entity2) {
         assertEquals(entity1.getMagicNumber(), entity2.getMagicNumber());
         assertEquals(entity1.getMajorVersion(), entity2.getMajorVersion());
         assertEquals(entity1.getMinorVersion(), entity2.getMinorVersion());
@@ -145,7 +118,7 @@ class DebugEntity01Test {
     }
 
     // 返回一个填充了属性的 DebugEntity01ForEncode 对象
-    void resetEntityProperties(DebugEntity01 entity) {
+    void resetEntityProperties(DebugEntity01ForJunitPurpose entity) {
 
         // region header
         entity.setMagicNumber(0x80901234);

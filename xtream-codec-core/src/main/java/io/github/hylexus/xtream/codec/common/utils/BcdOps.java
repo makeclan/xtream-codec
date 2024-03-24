@@ -15,6 +15,8 @@ package io.github.hylexus.xtream.codec.common.utils;
 import io.netty.buffer.ByteBuf;
 
 /**
+ * Copied from jt-framework.
+ *
  * @author hylexus
  */
 public abstract class BcdOps {

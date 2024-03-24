@@ -44,8 +44,11 @@ public class NestedBeanPropertyMetadata extends BasicBeanPropertyMetadata {
                 ? input
                 : input.readSlice(length);
 
-        final DefaultDeserializeContext deserializeContext = new DefaultDeserializeContext(instance);
+        final FieldCodec.DeserializeContext deserializeContext = new DefaultDeserializeContext(instance);
         for (final BeanPropertyMetadata pm : this.nestedBeanMetadata.getPropertyMetadataList()) {
+            if (!pm.conditionEvaluator().evaluate(deserializeContext)) {
+                continue;
+            }
             Object value = pm.decodePropertyValue(deserializeContext, slice);
             pm.setProperty(instance, value);
         }

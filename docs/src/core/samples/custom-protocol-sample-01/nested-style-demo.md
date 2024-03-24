@@ -18,6 +18,49 @@ tag:
 
 :::
 
+## 解码
+
+### 实体类定义
+
+::: tabs#demo1
+
+@tab:active Rust 命名风格#rust-style
+
+@[code](@src/core/entity-codec/RustStyleDebugEntity01ForDecodeNested.java)
+
+@tab 原始命名风格#raw-style
+
+@[code](@src/core/entity-codec/RawStyleDebugEntity01ForDecodeNested.java)
+
+@tab JT/T 808 命名风格#jt-style
+
+@[code](@src/core/entity-codec/JtStyleDebugEntity01ForDecodeNested.java)
+
+:::
+
+### 反序列化
+
+```java {12,15}
+public class EntityDecodeTest {
+
+    @Test
+    void testDecode() {
+        final EntityCodec entityCodec = new EntityCodec();
+
+        // buffer 中存储的是要反序列化的数据(这里写死用来演示)
+        final String hexString = "8090123401020001003d001678747265616d2d636f6465632ee794a8e688b7e5908d001178747265616d2d636f6465632ec3dcc2eb3230323130323033013911112222270fff9c";
+        final ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer().writeBytes(XtreamBytes.decodeHex(hexString));
+
+        try {
+            final RustStyleDebugEntity01ForDecodeNested entity = entityCodec.decode(RustStyleDebugEntity01ForDecodeNested.class, buffer);
+            System.out.println(entity);
+        } finally {
+            buffer.release();
+        }
+    }
+}
+```
+
 ## 编码
 
 ### 实体类定义
@@ -59,49 +102,6 @@ public class EntityEncodeTest {
             entityCodec.encode(instance, buffer);
             // 使用 buffer
             System.out.println(ByteBufUtil.hexDump(buffer));
-        } finally {
-            buffer.release();
-        }
-    }
-}
-```
-
-## 解码
-
-### 实体类定义
-
-::: tabs#demo1
-
-@tab:active Rust 命名风格#rust-style
-
-@[code](@src/core/entity-codec/RustStyleDebugEntity01ForDecodeNested.java)
-
-@tab 原始命名风格#raw-style
-
-@[code](@src/core/entity-codec/RawStyleDebugEntity01ForDecodeNested.java)
-
-@tab JT/T 808 命名风格#jt-style
-
-@[code](@src/core/entity-codec/JtStyleDebugEntity01ForDecodeNested.java)
-
-:::
-
-### 反序列化
-
-```java {12,15}
-public class EntityDecodeTest {
-
-    @Test
-    void testDecode() {
-        final EntityCodec entityCodec = new EntityCodec();
-
-        // buffer 中存储的是要反序列化的数据(这里写死用来演示)
-        final String hexString = "8090123401020001003d001678747265616d2d636f6465632ee794a8e688b7e5908d001178747265616d2d636f6465632ec3dcc2eb3230323130323033013911112222270fff9c";
-        final ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer().writeBytes(XtreamBytes.decodeHex(hexString));
-
-        try {
-            final RustStyleDebugEntity01ForDecodeNested entity = entityCodec.decode(RustStyleDebugEntity01ForDecodeNested.class, buffer);
-            System.out.println(entity);
         } finally {
             buffer.release();
         }

@@ -12,69 +12,66 @@
 
 package io.github.hylexus.xtream.debug.codec.core.utilsforunittest;
 
-public interface DebugEntity01Nested {
-    // DebugEntity01NestedHeader getHeader();
-    //
-    // void setHeader(DebugEntity01NestedHeader header);
-    //
-    // int getMsgBodyLength();
-    //
-    // void setMsgBodyLength(int msgBodyLength);
-    //
-    // DebugEntity01NestedBody getBody();
-    //
-    // void setBody(DebugEntity01NestedBody body);
+/**
+ * 这个接口仅仅是为了 Junit 中赋值、取值方便（没有其他任何目的）
+ */
+public interface DebugEntity01NestedForJunitPurpose {
 
+    /**
+     * 这个接口仅仅是为了 Junit 中赋值、取值方便（没有其他任何目的）
+     */
     interface DebugEntity01NestedHeader {
         int getMagicNumber();
 
-        short getMajorVersion();
-
-        short getMinorVersion();
-
-        int getMsgType();
-
         void setMagicNumber(int magicNumber);
+
+        short getMajorVersion();
 
         void setMajorVersion(short majorVersion);
 
+        short getMinorVersion();
+
         void setMinorVersion(short minorVersion);
+
+        int getMsgType();
 
         void setMsgType(int msgType);
     }
 
 
+    /**
+     * 这个接口仅仅是为了 Junit 中赋值、取值方便（没有其他任何目的）
+     */
     interface DebugEntity01NestedBody {
         int getUsernameLength();
 
-        String getUsername();
-
-        int getPasswordLength();
-
-        String getPassword();
-
-        String getBirthday();
-
-        String getPhoneNumber();
-
-        int getAge();
-
-        short getStatus();
-
-
         void setUsernameLength(int usernameLength);
+
+        String getUsername();
 
         void setUsername(String username);
 
+        int getPasswordLength();
+
         void setPasswordLength(int passwordLength);
+
+        String getPassword();
 
         void setPassword(String password);
 
+        String getBirthday();
+
         void setBirthday(String birthday);
+
+        String getPhoneNumber();
 
         void setPhoneNumber(String phoneNumber);
 
+        int getAge();
+
         void setAge(int age);
+
+        short getStatus();
 
         void setStatus(short status);
     }
