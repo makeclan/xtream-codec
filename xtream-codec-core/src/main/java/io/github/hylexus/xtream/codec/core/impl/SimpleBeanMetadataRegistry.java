@@ -16,6 +16,7 @@ import io.github.hylexus.xtream.codec.common.bean.BeanMetadata;
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.bean.FieldLengthExtractor;
 import io.github.hylexus.xtream.codec.common.bean.impl.BasicBeanPropertyMetadata;
+import io.github.hylexus.xtream.codec.common.bean.impl.MapBeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.bean.impl.NestedBeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.bean.impl.SequenceBeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.core.BeanMetadataRegistry;
@@ -99,6 +100,9 @@ public class SimpleBeanMetadataRegistry implements BeanMetadataRegistry {
                 final NestedBeanPropertyMetadata metadata = new NestedBeanPropertyMetadata(valueMetadata, basicPropertyMetadata, new FieldLengthExtractor.ConstantFieldLengthExtractor(-2));
                 final SequenceBeanPropertyMetadata seqMetadata = new SequenceBeanPropertyMetadata(basicPropertyMetadata, metadata);
                 pdList.add(seqMetadata);
+            } else if (basicPropertyMetadata.dataType() == BeanPropertyMetadata.FiledDataType.map) {
+                final MapBeanPropertyMetadata mapMedata = new MapBeanPropertyMetadata(basicPropertyMetadata, fieldCodecRegistry, this);
+                pdList.add(mapMedata);
             } else {
                 throw new IllegalStateException("Cannot determine dataType for " + basicPropertyMetadata.field());
             }
@@ -127,7 +131,7 @@ public class SimpleBeanMetadataRegistry implements BeanMetadataRegistry {
         return this.fieldCodecRegistry.getFieldCodec(metadata).orElseGet(() -> {
             // ...
             return switch (metadata.dataType()) {
-                case nested, sequence -> null;
+                case nested, sequence, map -> null;
                 default -> throw new IllegalStateException("Cannot determine FieldCodec for Field [" + metadata.field() + "]");
             };
         });

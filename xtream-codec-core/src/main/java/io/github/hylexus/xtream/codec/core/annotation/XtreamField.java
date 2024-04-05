@@ -14,6 +14,7 @@ package io.github.hylexus.xtream.codec.core.annotation;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.utils.XtreamTypes;
+import io.github.hylexus.xtream.codec.core.ContainerInstanceFactory;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 
 import java.lang.annotation.*;
@@ -91,4 +92,7 @@ public @interface XtreamField {
      * @see FieldCodec
      */
     Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
+
+    Class<? extends ContainerInstanceFactory> containerInstanceFactoryClass() default ContainerInstanceFactory.PlaceholderContainerInstanceFactory.class;
+
 }

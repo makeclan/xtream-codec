@@ -39,7 +39,7 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
     private final int order;
     private final FieldLengthExtractor fieldLengthExtractor;
     private final FieldConditionEvaluator fieldConditionEvaluator;
-    private final XtreamField xtreamField;
+    protected final XtreamField xtreamField;
     @Setter
     private FieldCodec<?> fieldCodec;
 

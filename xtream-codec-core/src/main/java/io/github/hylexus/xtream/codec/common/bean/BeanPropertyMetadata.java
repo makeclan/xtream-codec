@@ -12,6 +12,7 @@
 
 package io.github.hylexus.xtream.codec.common.bean;
 
+import io.github.hylexus.xtream.codec.core.ContainerInstanceFactory;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.netty.buffer.ByteBuf;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -37,6 +38,10 @@ public interface BeanPropertyMetadata {
     FiledDataType dataType();
 
     Field field();
+
+    default ContainerInstanceFactory containerInstanceFactory() {
+        return ContainerInstanceFactory.PLACEHOLDER;
+    }
 
     PropertyGetter propertyGetter();
 
@@ -66,6 +71,7 @@ public interface BeanPropertyMetadata {
         basic,
         nested,
         sequence,
+        map,
         unknown
     }
 

@@ -13,7 +13,9 @@
 package io.github.hylexus.xtream.codec.common.bean.impl;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
+import io.github.hylexus.xtream.codec.core.ContainerInstanceFactory;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
+import io.github.hylexus.xtream.codec.core.utils.BeanUtils;
 import io.netty.buffer.ByteBuf;
 
 import java.util.ArrayList;
@@ -23,11 +25,20 @@ import java.util.List;
 public class SequenceBeanPropertyMetadata extends BasicBeanPropertyMetadata {
     private final NestedBeanPropertyMetadata nestedBeanPropertyMetadata;
     private final BeanPropertyMetadata delegate;
+    private final ContainerInstanceFactory containerInstanceFactory;
 
     public SequenceBeanPropertyMetadata(BeanPropertyMetadata delegate, NestedBeanPropertyMetadata metadata) {
         super(delegate.name(), delegate.rawClass(), delegate.field(), delegate.propertyGetter(), delegate.propertySetter());
         this.nestedBeanPropertyMetadata = metadata;
         this.delegate = delegate;
+        this.containerInstanceFactory = this.xtreamField.containerInstanceFactoryClass() == ContainerInstanceFactory.PlaceholderContainerInstanceFactory.class
+                ? BeanUtils.createNewInstance(ContainerInstanceFactory.ArrayListContainerInstanceFactory.class, (Object[]) null)
+                : BeanUtils.createNewInstance(this.xtreamField.containerInstanceFactoryClass(), (Object[]) null);
+    }
+
+    @Override
+    public ContainerInstanceFactory containerInstanceFactory() {
+        return this.containerInstanceFactory;
     }
 
     @Override

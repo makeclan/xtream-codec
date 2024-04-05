@@ -68,6 +68,9 @@ public class XtreamTypes {
                     if (Collection.class.isAssignableFrom(type)) {
                         return BeanPropertyMetadata.FiledDataType.sequence;
                     }
+                    if (Map.class.isAssignableFrom(type)) {
+                        return BeanPropertyMetadata.FiledDataType.map;
+                    }
                     return BeanPropertyMetadata.FiledDataType.nested;
                 });
     }
@@ -82,6 +85,9 @@ public class XtreamTypes {
                     }
                     if (Collection.class.isAssignableFrom(field.getType())) {
                         return BeanPropertyMetadata.FiledDataType.sequence;
+                    }
+                    if (Map.class.isAssignableFrom(field.getType())) {
+                        return BeanPropertyMetadata.FiledDataType.map;
                     }
                     return BeanPropertyMetadata.FiledDataType.nested;
                 });
