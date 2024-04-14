@@ -28,4 +28,9 @@ public class U16FieldCodec extends AbstractFieldCodec<Integer> {
     protected void doSerialize(SerializeContext context, ByteBuf output, Integer value) {
         output.writeShort(value);
     }
+
+    @Override
+    public Class<?> underlyingJavaType() {
+        return Integer.class;
+    }
 }

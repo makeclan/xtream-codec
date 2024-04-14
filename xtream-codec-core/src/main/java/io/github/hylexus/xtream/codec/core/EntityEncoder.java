@@ -35,6 +35,13 @@ public class EntityEncoder {
             return;
         }
         final BeanMetadata beanMetadata = beanMetadataRegistry.getBeanMetadata(instance.getClass());
+        this.encode(beanMetadata, instance, target);
+    }
+
+    public void encode(BeanMetadata beanMetadata, Object instance, ByteBuf target) {
+        if (instance == null) {
+            return;
+        }
         final FieldCodec.SerializeContext context = new DefaultSerializeContext(this, instance);
         for (final BeanPropertyMetadata propertyMetadata : beanMetadata.getPropertyMetadataList()) {
             final Object value = propertyMetadata.getProperty(instance);

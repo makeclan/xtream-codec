@@ -16,7 +16,17 @@ import io.github.hylexus.xtream.codec.common.bean.BeanMetadata;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.netty.buffer.ByteBuf;
 
-// todo 实现嵌套类型的编解码
+/**
+ * 将编解码逻辑委托给上下文中的 {@link io.github.hylexus.xtream.codec.core.EntityDecoder EntityDecoder} 和 {@link io.github.hylexus.xtream.codec.core.EntityDecoder EntityDecoder}
+ * <p>
+ * 实际上是递归调用 {@link io.github.hylexus.xtream.codec.core.EntityDecoder EntityDecoder} 和 {@link io.github.hylexus.xtream.codec.core.EntityDecoder EntityDecoder}
+ *
+ * @author hylexus
+ * @see io.github.hylexus.xtream.codec.core.EntityDecoder
+ * @see io.github.hylexus.xtream.codec.core.EntityEncoder
+ * @see io.github.hylexus.xtream.codec.common.bean.impl.MapBeanPropertyMetadata
+ * @since 0.0.1
+ */
 public class DelegateBeanMetadataFieldCodec implements FieldCodec<Object> {
     private final BeanMetadata beanMetadata;
 
@@ -26,11 +36,11 @@ public class DelegateBeanMetadataFieldCodec implements FieldCodec<Object> {
 
     @Override
     public Object deserialize(DeserializeContext context, ByteBuf input, int length) {
-        return null;
+        return context.entityDecoder().decode(beanMetadata, input);
     }
 
     @Override
-    public void serialize(SerializeContext context, ByteBuf output, Object value) {
-
+    public void serialize(SerializeContext context, ByteBuf output, Object instance) {
+        context.entityEncoder().encode(this.beanMetadata, instance, output);
     }
 }

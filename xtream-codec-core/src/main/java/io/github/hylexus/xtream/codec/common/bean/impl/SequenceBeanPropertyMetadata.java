@@ -18,9 +18,7 @@ import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.github.hylexus.xtream.codec.core.utils.BeanUtils;
 import io.netty.buffer.ByteBuf;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class SequenceBeanPropertyMetadata extends BasicBeanPropertyMetadata {
     private final NestedBeanPropertyMetadata nestedBeanPropertyMetadata;
@@ -31,9 +29,9 @@ public class SequenceBeanPropertyMetadata extends BasicBeanPropertyMetadata {
         super(delegate.name(), delegate.rawClass(), delegate.field(), delegate.propertyGetter(), delegate.propertySetter());
         this.nestedBeanPropertyMetadata = metadata;
         this.delegate = delegate;
-        this.containerInstanceFactory = this.xtreamField.containerInstanceFactoryClass() == ContainerInstanceFactory.PlaceholderContainerInstanceFactory.class
+        this.containerInstanceFactory = this.xtreamField.containerInstanceFactory() == ContainerInstanceFactory.PlaceholderContainerInstanceFactory.class
                 ? BeanUtils.createNewInstance(ContainerInstanceFactory.ArrayListContainerInstanceFactory.class, (Object[]) null)
-                : BeanUtils.createNewInstance(this.xtreamField.containerInstanceFactoryClass(), (Object[]) null);
+                : BeanUtils.createNewInstance(this.xtreamField.containerInstanceFactory(), (Object[]) null);
     }
 
     @Override
@@ -57,7 +55,7 @@ public class SequenceBeanPropertyMetadata extends BasicBeanPropertyMetadata {
                 ? input // all remaining
                 : input.readSlice(length);
 
-        final List<Object> list = new ArrayList<>();
+        @SuppressWarnings("unchecked") final Collection<Object> list = (Collection<Object>) this.containerInstanceFactory().create();
         while (slice.isReadable()) {
             final Object value = nestedBeanPropertyMetadata.decodePropertyValue(context, slice);
             list.add(value);

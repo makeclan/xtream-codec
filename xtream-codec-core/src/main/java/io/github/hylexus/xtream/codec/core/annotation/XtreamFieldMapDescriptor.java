@@ -34,9 +34,65 @@ public @interface XtreamFieldMapDescriptor {
 
     KeyDescriptor keyDescriptor();
 
-    DefaultValueDescriptor defaultValueDescriptor();
+    ValueLengthFieldDescriptor valueLengthFieldDescriptor();
 
-    ValueDescriptor[] valueDescriptors() default {};
+    ValueDecoderDescriptors valueDecoderDescriptors() default @ValueDecoderDescriptors(
+            defaultValueDecoderDescriptor = @ValueDecoderDescriptor(javaType = byte[].class, config = @XtreamField()),
+            valueDecoderDescriptors = {}
+    );
+
+    ValueEncoderDescriptors valueEncoderDescriptors() default @ValueEncoderDescriptors(
+            defaultValueEncoderDescriptor = @ValueEncoderDescriptor(config = @XtreamField()),
+            valueEncoderDescriptors = {}
+    );
+
+    // ==========================
+    @interface ValueDecoderDescriptors {
+        ValueDecoderDescriptor defaultValueDecoderDescriptor();
+
+        ValueCodecConfig[] valueDecoderDescriptors() default {};
+    }
+
+    @interface ValueEncoderDescriptors {
+        ValueEncoderDescriptor defaultValueEncoderDescriptor();
+
+        ValueCodecConfig[] valueEncoderDescriptors() default {};
+    }
+
+    @interface ValueDecoderDescriptor {
+        Class<?> javaType();
+
+        XtreamField config() default @XtreamField();
+    }
+
+    @interface ValueEncoderDescriptor {
+
+        XtreamField config() default @XtreamField();
+    }
+
+    @interface ValueCodecConfig {
+        int valueLengthFieldSize() default -1;
+
+        boolean valueLengthFieldSizeIsLittleEndian() default false;
+
+        byte whenKeyIsI8() default -1;
+
+        short whenKeyIsU8() default -1;
+
+        short whenKeyIsI16() default -1;
+
+        int whenKeyIsU16() default -1;
+
+        int whenKeyIsI32() default -1;
+
+        long whenKeyIsU32() default -1;
+
+        String whenKeyIsStr() default "";
+
+        Class<?> javaType();
+
+        XtreamField config() default @XtreamField();
+    }
 
     @Getter
     enum KeyType {
@@ -59,58 +115,19 @@ public @interface XtreamFieldMapDescriptor {
     }
 
     @interface KeyDescriptor {
-
         KeyType type();
 
-        boolean littleEndian() default false;
-
-        // todo delete
         int length() default -1;
 
         String charset() default "UTF-8";
+
+        boolean littleEndian() default false;
     }
 
-    @interface DefaultValueDescriptor {
+    @interface ValueLengthFieldDescriptor {
+        int length();
 
-        int defaultValueFieldLengthSize();
-
-        boolean defaultValueFieldLengthSizeIsLittleEndian() default false;
-
-        Class<?> defaultValueType() default byte[].class;
-
-        String defaultCharset() default "UTF-8";
-    }
-
-    @interface ValueDescriptor {
-        // region valueLengthField
-        int valueLengthFieldSize() default -1;
-
-        boolean valueLengthFieldSizeIsLittleEndian() default false;
-        // endregion valueLengthField
-
-        // region value
-        byte whenKeyIsI8() default -1;
-
-        short whenKeyIsU8() default -1;
-
-        short whenKeyIsI16() default -1;
-
-        int whenKeyIsU16() default -1;
-
-        int whenKeyIsI32() default -1;
-
-        long whenKeyIsU32() default -1;
-
-        String whenKeyIsStr() default "";
-
-        Class<?> valueType() default byte[].class;
-
-        int valueSize() default -1;
-
-        boolean valueIsLittleEndian() default false;
-
-        String valueCharset() default "UTF-8";
-        // endregion value
+        boolean littleEndian() default false;
     }
 
 }

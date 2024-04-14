@@ -11,5 +11,6 @@ dependencies {
 
     api("org.springframework:spring-expression")
     api("io.netty:netty-buffer")
+    api("org.slf4j:slf4j-api")
 
 }

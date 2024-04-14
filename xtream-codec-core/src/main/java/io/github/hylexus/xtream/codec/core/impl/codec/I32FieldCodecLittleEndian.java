@@ -27,4 +27,9 @@ public class I32FieldCodecLittleEndian extends AbstractFieldCodec<Integer> {
     protected void doSerialize(SerializeContext context, ByteBuf output, Integer value) {
         output.writeIntLE(value);
     }
+
+    @Override
+    public Class<?> underlyingJavaType() {
+        return Integer.class;
+    }
 }

@@ -13,56 +13,65 @@
 package io.github.hylexus.xtream.codec.common.bean.impl;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
+import io.github.hylexus.xtream.codec.common.exception.BeanIntrospectionException;
 import io.github.hylexus.xtream.codec.common.utils.XtreamTypes;
 import io.github.hylexus.xtream.codec.core.BeanMetadataRegistry;
 import io.github.hylexus.xtream.codec.core.ContainerInstanceFactory;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.github.hylexus.xtream.codec.core.FieldCodecRegistry;
+import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamFieldMapDescriptor;
 import io.github.hylexus.xtream.codec.core.impl.codec.DelegateBeanMetadataFieldCodec;
 import io.github.hylexus.xtream.codec.core.utils.BeanUtils;
 import io.netty.buffer.ByteBuf;
-import lombok.*;
+import io.netty.buffer.ByteBufAllocator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
+/**
+ * @author hylexus
+ * @see XtreamFieldMapDescriptor
+ * @see DelegateBeanMetadataFieldCodec
+ * @since 0.0.1
+ */
 public class MapBeanPropertyMetadata extends BasicBeanPropertyMetadata {
+    private static final Logger logger = LoggerFactory.getLogger(MapBeanPropertyMetadata.class);
 
     final BeanPropertyMetadata delegate;
     final XtreamFieldMapDescriptor xtreamFieldMapDescriptor;
     final FieldCodecRegistry fieldCodecRegistry;
     private final BeanMetadataRegistry beanMetadataRegistry;
 
-    final FieldCodec<?> keyFieldCodec;
-    final FieldCodec<?> defaultValueLengthSizeFieldCodec;
-    final FieldCodec<?> defaultValueFieldCodec;
-    private final Map<Object, FieldCodec<?>> specialValueFieldCodec;
-    private final Map<Object, FieldCodec<?>> valueLengthSizeFieldCodec;
-    private final ParsedMapItemMetadata parsedMapItemMetadata;
+    private final FieldCodec<Object> keyFieldCodec;
+    private final FieldCodec<Object> defaultValueLengthSizeFieldCodec;
+    private final Map<Object, FieldCodec<Object>> valueLengthSizeFieldDecoder;
+    private final Map<Object, FieldCodec<Object>> valueLengthSizeFieldEncoder;
     private final ContainerInstanceFactory containerInstanceFactory;
+    private final Map<Object, FieldCodec<Object>> valueEncoders;
+    private final Map<Object, FieldCodec<Object>> valueDecoders;
 
     public MapBeanPropertyMetadata(BeanPropertyMetadata delegate, FieldCodecRegistry fieldCodecRegistry, BeanMetadataRegistry beanMetadataRegistry) {
         super(delegate.name(), delegate.rawClass(), delegate.field(), delegate.propertyGetter(), delegate.propertySetter());
         this.delegate = delegate;
         this.fieldCodecRegistry = fieldCodecRegistry;
         this.beanMetadataRegistry = beanMetadataRegistry;
-        this.xtreamFieldMapDescriptor = this.findAnnotation(XtreamFieldMapDescriptor.class).orElseThrow();
+        this.xtreamFieldMapDescriptor = this.findAnnotation(XtreamFieldMapDescriptor.class)
+                .orElseThrow(() -> new BeanIntrospectionException("Map filed : [" + this.field() + "] should be marked by @" + XtreamFieldMapDescriptor.class.getSimpleName()));
 
-        this.parsedMapItemMetadata = this.parseMapItemMetadata(xtreamFieldMapDescriptor);
+        final ParsedMapCodecMetadata parsedMapItemMetadata = this.parseMapItemMetadata(xtreamFieldMapDescriptor);
         this.keyFieldCodec = this.detectKeyFieldCodec(xtreamFieldMapDescriptor, parsedMapItemMetadata);
-        this.specialValueFieldCodec = this.initValueFieldCodec(parsedMapItemMetadata);
-        this.valueLengthSizeFieldCodec = this.initValueLengthSizeFieldCodec(parsedMapItemMetadata);
-        this.defaultValueLengthSizeFieldCodec = this.detectDefaultValueLengthSizeFieldCodec(xtreamFieldMapDescriptor, parsedMapItemMetadata);
-        this.defaultValueFieldCodec = this.initDefaultValueFieldCodec(parsedMapItemMetadata);
-        this.containerInstanceFactory = super.xtreamField.containerInstanceFactoryClass() == ContainerInstanceFactory.PlaceholderContainerInstanceFactory.class
+        this.valueLengthSizeFieldDecoder = this.initValueLengthSizeFieldCodec(parsedMapItemMetadata.lengthFiledSizeDecodeMetadata());
+        this.valueLengthSizeFieldEncoder = this.initValueLengthSizeFieldCodec(parsedMapItemMetadata.lengthFiledSizeEncodeMetadata());
+        this.defaultValueLengthSizeFieldCodec = this.detectDefaultValueLengthSizeFieldCodec(xtreamFieldMapDescriptor);
+        this.valueEncoders = this.initValueEncoders(this.xtreamFieldMapDescriptor);
+        this.valueDecoders = this.initValueDecoders(this.xtreamFieldMapDescriptor);
+        this.containerInstanceFactory = super.xtreamField.containerInstanceFactory() == ContainerInstanceFactory.PlaceholderContainerInstanceFactory.class
                 ? BeanUtils.createNewInstance(ContainerInstanceFactory.LinkedHashMapContainerInstanceFactory.class, (Object[]) null)
-                : BeanUtils.createNewInstance(this.xtreamField.containerInstanceFactoryClass(), (Object[]) null);
-    }
-
-    @Override
-    public ContainerInstanceFactory containerInstanceFactory() {
-        return this.containerInstanceFactory;
+                : BeanUtils.createNewInstance(this.xtreamField.containerInstanceFactory(), (Object[]) null);
     }
 
     @Override
@@ -75,147 +84,274 @@ public class MapBeanPropertyMetadata extends BasicBeanPropertyMetadata {
         while (slice.isReadable()) {
             // 1. key(i8,u8,i16,u16,i32,u32,i64,string)
             final Object key = this.keyFieldCodec.deserialize(context, slice, this.xtreamFieldMapDescriptor.keyDescriptor().length());
+            if (logger.isDebugEnabled()) {
+                logger.debug("MapKeyDecoder: key={}, keyFieldCodec={}", key, keyFieldCodec);
+            }
+
             // 2. valueLength(int)
-            final FieldCodec<?> valueLengthFieldCodec = this.getValueLengthFieldCodec(key);
-            final int valueLength = ((Number) valueLengthFieldCodec.deserialize(context, slice, this.parsedMapItemMetadata.defaultValueItemMetadata().getLength())).intValue();
+            final FieldCodec<?> valueLengthFieldCodec = this.getValueLengthFieldDecoder(key);
+            final int valueLength = ((Number) valueLengthFieldCodec.deserialize(context, slice, -1)).intValue();
+            if (logger.isDebugEnabled()) {
+                logger.debug("MapValueLengthDecoder: key={}, keyFieldCodec={}, length={}", key, keyFieldCodec, valueLength);
+            }
             // 3. value(dynamic)
             final ByteBuf byteBuf = slice.readSlice(valueLength);
-            final FieldCodec<?> valueFieldCodec = this.getValueFieldCodec(key);
+            final FieldCodec<?> valueFieldCodec = this.getValueDecoder(key);
+            if (logger.isDebugEnabled()) {
+                logger.debug("MapValueDecoder: key={}, valueFieldCodec={}", key, valueFieldCodec);
+            }
             final Object value = valueFieldCodec.deserialize(context, byteBuf, valueLength);
             map.put(key, value);
         }
         return map;
     }
 
-    private FieldCodec<?> initDefaultValueFieldCodec(ParsedMapItemMetadata parsedMapItemMetadata) {
-        final MapItemMetadata metadata = parsedMapItemMetadata.defaultValueItemMetadata();
-        if (XtreamTypes.isBasicType(metadata.getJavaType())) {
-            return this.fieldCodecRegistry.getFieldCodec(metadata.getJavaType(), metadata.getLength(), metadata.getCharset(), metadata.isLittleEndian())
-                    .orElseThrow(() -> new IllegalArgumentException("Can not determine [FieldCodec] for " + metadata));
+    @Override
+    public void encodePropertyValue(FieldCodec.SerializeContext context, ByteBuf output, Object value) {
+        final ByteBuf temp = ByteBufAllocator.DEFAULT.buffer();
+        try {
+            @SuppressWarnings("unchecked") final Map<Object, Object> map = (Map<Object, Object>) value;
+            for (final Map.Entry<Object, Object> entry : map.entrySet()) {
+                // 1. key(i8,u8,i16,u16,i32,u32,i64,string)
+                final Object key = entry.getKey();
+                this.keyFieldCodec.serialize(context, output, key);
+
+                if (logger.isDebugEnabled()) {
+                    logger.debug("MapKeyEncoder: key={}, keyFieldCodec={}, key={}", key, keyFieldCodec, key);
+                }
+
+                // 3. value(dynamic)(tmp)
+                final Object data = entry.getValue();
+                final FieldCodec<Object> valueFieldCodec = this.getValueEncoder(key, data);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("MapValueEncoder: key={}, valueFieldCodec={}, data={}", key, valueFieldCodec, data);
+                }
+                valueFieldCodec.serialize(context, temp, data);
+
+                // 2. valueLength(int)
+                final int valueLength = temp.readableBytes();
+                final FieldCodec<Object> valueLengthFieldCodec = this.getValueLengthFieldEncoder(key);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("MapValueLengthEncoder: key={}, LengthFieldCodec={}, length={}", key, valueLengthFieldCodec, valueLength);
+                }
+                valueLengthFieldCodec.serialize(context, output, castType(valueLengthFieldCodec.underlyingJavaType(), valueLength));
+                // 3. value(dynamic)
+                output.writeBytes(temp);
+                temp.clear();
+            }
+        } finally {
+            temp.release();
         }
-        return new DelegateBeanMetadataFieldCodec(this.beanMetadataRegistry.getBeanMetadata(metadata.getJavaType()));
     }
 
-    private Map<Object, FieldCodec<?>> initValueLengthSizeFieldCodec(ParsedMapItemMetadata parsedMapItemMetadata) {
-        Map<Object, FieldCodec<?>> map = new HashMap<>();
-        parsedMapItemMetadata.valueLengthFieldItemMetadata().forEach((key, value) -> {
-            final FieldCodec<?> fieldCodec = this.fieldCodecRegistry.getFieldCodec(value.getJavaType(), value.getLength(), value.getCharset(), value.isLittleEndian())
+    private Object castType(Class<?> cls, int valueLength) {
+        if (cls == Short.class || cls == short.class) {
+            return (short) valueLength;
+        } else if (cls == Byte.class || cls == byte.class) {
+            return (byte) valueLength;
+        } else if (cls == Integer.class || cls == int.class) {
+            return valueLength;
+        } else if (cls == Long.class || cls == long.class) {
+            return (long) valueLength;
+        }
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ContainerInstanceFactory containerInstanceFactory() {
+        return this.containerInstanceFactory;
+    }
+
+    Class<?> getJavaTypeForFieldLengthField(int lengthFieldSize) {
+        return switch (lengthFieldSize) {
+            case 1 -> byte.class;
+            case 2 -> short.class;
+            case 4 -> int.class;
+            case 8 -> long.class;
+            default -> throw new IllegalArgumentException("Unsupported length: " + lengthFieldSize);
+        };
+    }
+
+    private Map<Object, FieldCodec<Object>> initValueLengthSizeFieldCodec(Map<Object, ValueLengthFieldConfigMetadata> metadataMap) {
+        Map<Object, FieldCodec<Object>> map = new HashMap<>();
+        metadataMap.forEach((key, value) -> {
+            final Class<?> javaType = this.getJavaTypeForFieldLengthField(value.length());
+            final FieldCodec<Object> fieldCodec = this.fieldCodecRegistry.getFieldCodecAndCastToObject(javaType, value.length, null, value.littleEndian)
                     .orElseThrow(() -> new IllegalArgumentException("Can not determine [FieldCodec] for " + value));
             map.put(key, fieldCodec);
         });
         return map;
     }
 
-    private FieldCodec<?> getValueFieldCodec(Object key) {
-        return this.specialValueFieldCodec.getOrDefault(key, this.defaultValueFieldCodec);
+    FieldCodec<Object> getValueEncoder(Object key, Object data) {
+        final FieldCodec<Object> fieldCodec = valueEncoders.get(key);
+        if (fieldCodec != null) {
+            return fieldCodec;
+        }
+
+        final Class<?> javaType = data.getClass();
+        final XtreamField defaultConfig = this.xtreamFieldMapDescriptor.valueEncoderDescriptors().defaultValueEncoderDescriptor().config();
+        if (XtreamTypes.isBasicType(javaType)) {
+            return this.fieldCodecRegistry.getFieldCodecAndCastToObject(
+                            javaType,
+                            XtreamTypes.getDefaultSizeInBytes(javaType).orElse(defaultConfig.length()),
+                            defaultConfig.charset(),
+                            defaultConfig.littleEndian()
+                    )
+                    .orElseThrow(() -> new IllegalArgumentException("Can not determine [FieldCodec] for " + javaType));
+        } else {
+            return new DelegateBeanMetadataFieldCodec(this.beanMetadataRegistry.getBeanMetadata(javaType));
+        }
     }
 
-    private FieldCodec<?> getValueLengthFieldCodec(Object key) {
-        return this.valueLengthSizeFieldCodec.getOrDefault(key, this.defaultValueLengthSizeFieldCodec);
+    FieldCodec<Object> getValueDecoder(Object key) {
+        final FieldCodec<Object> fieldCodec = this.valueDecoders.get(key);
+        if (fieldCodec != null) {
+            return fieldCodec;
+        }
+
+        final XtreamFieldMapDescriptor.ValueDecoderDescriptor defaultConfig = this.xtreamFieldMapDescriptor.valueDecoderDescriptors().defaultValueDecoderDescriptor();
+        final Class<?> javaType = defaultConfig.javaType();
+        final XtreamField config = defaultConfig.config();
+        final Integer length = Optional.of(config.length())
+                .filter(it -> it > 0)
+                .or(() -> XtreamTypes.getDefaultSizeInBytes(javaType))
+                .orElse(-1);
+        if (XtreamTypes.isBasicType(javaType)) {
+            return this.fieldCodecRegistry.getFieldCodecAndCastToObject(
+                            javaType,
+                            // XtreamTypes.getDefaultSizeInBytes(javaType).orElse(config.length()),
+                            length,
+                            config.charset(),
+                            config.littleEndian()
+                    )
+                    .orElseThrow(() -> new IllegalArgumentException("Can not determine [FieldCodec] for " + javaType));
+        } else {
+            return new DelegateBeanMetadataFieldCodec(this.beanMetadataRegistry.getBeanMetadata(javaType));
+        }
     }
 
-    private Map<Object, FieldCodec<?>> initValueFieldCodec(ParsedMapItemMetadata parsedMapItemMetadata) {
-        final Map<Object, MapItemMetadata> valueMetadata = parsedMapItemMetadata.valueMetadata();
-        final Map<Object, FieldCodec<?>> map = new HashMap<>();
-        valueMetadata.forEach((key, value) -> {
-            final FieldCodec<?> fieldCodec;
-            if (XtreamTypes.isBasicType(value.getJavaType())) {
-                fieldCodec = this.fieldCodecRegistry.getFieldCodec(value.getJavaType(), value.getLength(), value.getCharset(), value.isLittleEndian())
-                        .orElseThrow(() -> new IllegalArgumentException("Can not determine <FieldCodec> for map value [ whenKeyIs " + key + "]"));
+    private Map<Object, FieldCodec<Object>> initValueCodec(XtreamFieldMapDescriptor xtreamFieldMapDescriptor, XtreamFieldMapDescriptor.ValueCodecConfig[] valueCodecConfigs) {
+        final Map<Object, FieldCodec<Object>> map = new HashMap<>();
+        for (final XtreamFieldMapDescriptor.ValueCodecConfig valueEncoderConfig : valueCodecConfigs) {
+            final Object mapKey = this.getMapKey(xtreamFieldMapDescriptor, valueEncoderConfig);
+            final XtreamField config = valueEncoderConfig.config();
+            if (config.fieldCodec() != FieldCodec.Placeholder.class) {
+                @SuppressWarnings("unchecked") final Class<FieldCodec<Object>> cls = (Class<FieldCodec<Object>>) config.fieldCodec();
+                final FieldCodec<Object> newInstance = BeanUtils.createNewInstance(cls);
+                map.put(mapKey, newInstance);
             } else {
-                fieldCodec = new DelegateBeanMetadataFieldCodec(this.beanMetadataRegistry.getBeanMetadata(value.getJavaType()));
+                if (XtreamTypes.isBasicType(valueEncoderConfig.javaType())) {
+                    final FieldCodec<Object> fieldCodec = this.fieldCodecRegistry.getFieldCodecAndCastToObject(valueEncoderConfig.javaType(), config.length(), config.charset(), config.littleEndian())
+                            .orElseThrow(() -> new UnsupportedOperationException("Can not determine fieldCodec for Map field: " + valueEncoderConfig));
+                    map.put(mapKey, fieldCodec);
+                } else {
+                    map.put(mapKey, new DelegateBeanMetadataFieldCodec(this.beanMetadataRegistry.getBeanMetadata(valueEncoderConfig.javaType())));
+                }
             }
-            map.put(key, fieldCodec);
-        });
-
+        }
         return map;
     }
 
-    private Object getMapKey(XtreamFieldMapDescriptor xtreamFieldMapDescriptor, XtreamFieldMapDescriptor.ValueDescriptor valueDescriptor) {
+    private Map<Object, FieldCodec<Object>> initValueEncoders(XtreamFieldMapDescriptor xtreamFieldMapDescriptor) {
+        return this.initValueCodec(xtreamFieldMapDescriptor, xtreamFieldMapDescriptor.valueEncoderDescriptors().valueEncoderDescriptors());
+    }
+
+    private Map<Object, FieldCodec<Object>> initValueDecoders(XtreamFieldMapDescriptor xtreamFieldMapDescriptor) {
+        return this.initValueCodec(xtreamFieldMapDescriptor, xtreamFieldMapDescriptor.valueDecoderDescriptors().valueDecoderDescriptors());
+    }
+
+    private FieldCodec<Object> getValueLengthFieldDecoder(Object key) {
+        return this.valueLengthSizeFieldDecoder.getOrDefault(key, this.defaultValueLengthSizeFieldCodec);
+    }
+
+    private FieldCodec<Object> getValueLengthFieldEncoder(Object key) {
+        return this.valueLengthSizeFieldEncoder.getOrDefault(key, this.defaultValueLengthSizeFieldCodec);
+    }
+
+    private Object getMapKey(XtreamFieldMapDescriptor xtreamFieldMapDescriptor, XtreamFieldMapDescriptor.ValueCodecConfig config) {
         return switch (xtreamFieldMapDescriptor.keyDescriptor().type()) {
-            case i8 -> valueDescriptor.whenKeyIsI8();
-            case u8 -> valueDescriptor.whenKeyIsU8();
-            case i16 -> valueDescriptor.whenKeyIsI16();
-            case u16 -> valueDescriptor.whenKeyIsU16();
-            case i32 -> valueDescriptor.whenKeyIsI32();
-            case str -> valueDescriptor.whenKeyIsStr();
-            default -> throw new UnsupportedOperationException();
+            case i8 -> config.whenKeyIsI8();
+            case u8 -> config.whenKeyIsU8();
+            case i16 -> config.whenKeyIsI16();
+            case u16 -> config.whenKeyIsU16();
+            case i32 -> config.whenKeyIsI32();
+            case u32 -> config.whenKeyIsU32();
+            case str -> config.whenKeyIsStr();
         };
     }
 
-    FieldCodec<?> detectKeyFieldCodec(XtreamFieldMapDescriptor xtreamFieldMapDescriptor, ParsedMapItemMetadata parsedMapItemMetadata) {
+    FieldCodec<Object> detectKeyFieldCodec(XtreamFieldMapDescriptor xtreamFieldMapDescriptor, ParsedMapCodecMetadata parsedMapItemMetadata) {
         final XtreamFieldMapDescriptor.KeyDescriptor keyDescriptor = xtreamFieldMapDescriptor.keyDescriptor();
-        final MapItemMetadata keyMetadata = parsedMapItemMetadata.keyMetadata();
-        return fieldCodecRegistry.getFieldCodec(keyMetadata.getJavaType(), keyMetadata.getLength(), keyMetadata.getCharset(), keyMetadata.isLittleEndian())
+        final MapItemMetadata keyMetadata = parsedMapItemMetadata.keyCodecMetadata();
+        return fieldCodecRegistry.getFieldCodecAndCastToObject(keyMetadata.javaType(), keyMetadata.length(), keyMetadata.charset(), keyMetadata.littleEndian())
                 .orElseThrow(() -> new RuntimeException("Can not determine [FieldCodec] for Key : " + keyDescriptor));
     }
 
-    FieldCodec<?> detectDefaultValueLengthSizeFieldCodec(XtreamFieldMapDescriptor xtreamFieldMapDescriptor, ParsedMapItemMetadata parsedMapItemMetadata) {
-        final XtreamFieldMapDescriptor.DefaultValueDescriptor defaultValueDescriptor = xtreamFieldMapDescriptor.defaultValueDescriptor();
-        final Class<?> type = switch (defaultValueDescriptor.defaultValueFieldLengthSize()) {
-            case 1 -> byte.class;
-            case 2 -> short.class;
-            case 4 -> int.class;
-            default -> throw new RuntimeException("Invalid [defaultValueLengthSize] : " + xtreamFieldMapDescriptor);
-        };
-        return fieldCodecRegistry.getFieldCodec(type, defaultValueDescriptor.defaultValueFieldLengthSize(), defaultValueDescriptor.defaultCharset(), defaultValueDescriptor.defaultValueFieldLengthSizeIsLittleEndian())
+    FieldCodec<Object> detectDefaultValueLengthSizeFieldCodec(XtreamFieldMapDescriptor xtreamFieldMapDescriptor) {
+        final XtreamFieldMapDescriptor.ValueLengthFieldDescriptor config = xtreamFieldMapDescriptor.valueLengthFieldDescriptor();
+
+        final Class<?> javaType = this.getJavaTypeForFieldLengthField(config.length());
+        return fieldCodecRegistry.getFieldCodecAndCastToObject(javaType, config.length(), null, config.littleEndian())
                 .orElseThrow(() -> new RuntimeException("Can not determine [FieldCodec] for [defaultValueLengthSize] : " + xtreamFieldMapDescriptor));
     }
 
-    private ParsedMapItemMetadata parseMapItemMetadata(XtreamFieldMapDescriptor mapDescriptor) {
-        final XtreamFieldMapDescriptor.DefaultValueDescriptor defaultValueDescriptor = mapDescriptor.defaultValueDescriptor();
-        final MapItemMetadata defaultValueMetadata = new MapItemMetadata(defaultValueDescriptor.defaultValueType(), defaultValueDescriptor.defaultValueFieldLengthSize(), defaultValueDescriptor.defaultValueFieldLengthSizeIsLittleEndian(), defaultValueDescriptor.defaultCharset());
+    private ParsedMapCodecMetadata parseMapItemMetadata(XtreamFieldMapDescriptor mapDescriptor) {
+        final XtreamFieldMapDescriptor.ValueLengthFieldDescriptor valueLengthFieldDescriptor = mapDescriptor.valueLengthFieldDescriptor();
 
-        final XtreamFieldMapDescriptor.KeyDescriptor keyDescriptor = mapDescriptor.keyDescriptor();
-        final MapItemMetadata keyMetadata = new MapItemMetadata(keyDescriptor.type().getJavaType(), keyDescriptor.type().getSizeInBytes(), keyDescriptor.littleEndian(), keyDescriptor.charset());
+        final MapItemMetadata keyMetadata = this.getKeyMetadata(mapDescriptor);
 
-        final ParsedMapItemMetadata parsedMapItemMetadata = new ParsedMapItemMetadata(keyMetadata, defaultValueMetadata, new HashMap<>(), new HashMap<>());
-        for (final XtreamFieldMapDescriptor.ValueDescriptor valueDescriptor : mapDescriptor.valueDescriptors()) {
-            final Object key = getMapKey(mapDescriptor, valueDescriptor);
+        final ParsedMapCodecMetadata metadata = new ParsedMapCodecMetadata(keyMetadata, new HashMap<>(), new HashMap<>());
 
-            // value
-            final MapItemMetadata metadata = new MapItemMetadata();
-            metadata.setJavaType(valueDescriptor.valueType());
-            metadata.setLittleEndian(valueDescriptor.valueIsLittleEndian());
-            metadata.setLength(valueDescriptor.valueSize());
-            metadata.setCharset(valueDescriptor.valueCharset());
-            parsedMapItemMetadata.valueMetadata().put(key, metadata);
+        for (final XtreamFieldMapDescriptor.ValueCodecConfig valueCodecConfig : mapDescriptor.valueEncoderDescriptors().valueEncoderDescriptors()) {
+            final Object key = getMapKey(mapDescriptor, valueCodecConfig);
+            final int vls = valueCodecConfig.valueLengthFieldSize() > 0 ? valueCodecConfig.valueLengthFieldSize() : valueLengthFieldDescriptor.length();
+            final boolean vll = valueCodecConfig.valueLengthFieldSizeIsLittleEndian() || valueLengthFieldDescriptor.littleEndian();
+            // metadata.valueEncodeMetadata.put(key, new MapItemCodecMetadata(valueCodecConfig.javaType(), valueCodecConfig.config(), vls, vll));
 
-            // valueLengthField override
-            final MapItemMetadata valueLengthFieldMetadata = new MapItemMetadata();
-            int valueLengthFieldSize = valueDescriptor.valueLengthFieldSize() > 0 ? valueDescriptor.valueLengthFieldSize() : mapDescriptor.defaultValueDescriptor().defaultValueFieldLengthSize();
-            switch (valueLengthFieldSize) {
-                case 1 -> valueLengthFieldMetadata.setJavaType(Short.class);
-                case 2 -> valueLengthFieldMetadata.setJavaType(Integer.class);
-                case 4 -> valueLengthFieldMetadata.setJavaType(Long.class);
-                default -> throw new IllegalArgumentException();
+            if (vls != valueLengthFieldDescriptor.length() || vll) {
+                metadata.lengthFiledSizeEncodeMetadata.put(key, new ValueLengthFieldConfigMetadata(vls, vll));
             }
-            valueLengthFieldMetadata.setCharset(null);
-            valueLengthFieldMetadata.setLittleEndian(valueDescriptor.valueLengthFieldSizeIsLittleEndian());
-            valueLengthFieldMetadata.setLength(valueLengthFieldSize);
-            parsedMapItemMetadata.valueLengthFieldItemMetadata().put(key, valueLengthFieldMetadata);
         }
-        return parsedMapItemMetadata;
+
+        for (final XtreamFieldMapDescriptor.ValueCodecConfig valueCodecConfig : mapDescriptor.valueDecoderDescriptors().valueDecoderDescriptors()) {
+            final Object key = getMapKey(mapDescriptor, valueCodecConfig);
+            final int vls = valueCodecConfig.valueLengthFieldSize() > 0 ? valueCodecConfig.valueLengthFieldSize() : valueLengthFieldDescriptor.length();
+            final boolean vll = valueCodecConfig.valueLengthFieldSizeIsLittleEndian() || valueLengthFieldDescriptor.littleEndian();
+            // metadata.valueDecodeMetadata.put(key, new MapItemCodecMetadata(valueCodecConfig.javaType(), valueCodecConfig.config(), vls, vll));
+
+            if (vls != valueLengthFieldDescriptor.length() || vll) {
+                metadata.lengthFiledSizeDecodeMetadata.put(key, new ValueLengthFieldConfigMetadata(vls, vll));
+            }
+        }
+
+        return metadata;
     }
 
-
-    @Getter
-    @Setter
-    @ToString
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class MapItemMetadata {
-        Class<?> javaType;
-        private int length;
-        private boolean littleEndian;
-        private String charset;
+    private MapItemMetadata getKeyMetadata(XtreamFieldMapDescriptor mapDescriptor) {
+        final XtreamFieldMapDescriptor.KeyDescriptor keyDescriptor = mapDescriptor.keyDescriptor();
+        return new MapItemMetadata(
+                keyDescriptor.type().getJavaType(),
+                keyDescriptor.type().getSizeInBytes(),
+                keyDescriptor.littleEndian(),
+                keyDescriptor.charset()
+        );
     }
 
-
-    public record ParsedMapItemMetadata(
-            MapItemMetadata keyMetadata,
-            MapItemMetadata defaultValueItemMetadata,
-            Map<Object, MapItemMetadata> valueLengthFieldItemMetadata,
-            Map<Object, MapItemMetadata> valueMetadata) {
+    record ValueLengthFieldConfigMetadata(int length, boolean littleEndian) {
     }
+
+    record MapItemMetadata(
+            Class<?> javaType,
+            int length,
+            boolean littleEndian,
+            String charset) {
+    }
+
+    record ParsedMapCodecMetadata(
+            MapItemMetadata keyCodecMetadata,
+            Map<Object, ValueLengthFieldConfigMetadata> lengthFiledSizeDecodeMetadata,
+            Map<Object, ValueLengthFieldConfigMetadata> lengthFiledSizeEncodeMetadata) {
+    }
+
 }

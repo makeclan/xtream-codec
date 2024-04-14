@@ -27,4 +27,9 @@ public class U32FieldCodec extends AbstractFieldCodec<Long> {
     protected void doSerialize(SerializeContext context, ByteBuf output, Long value) {
         output.writeInt(value.intValue());
     }
+
+    @Override
+    public Class<?> underlyingJavaType() {
+        return Long.class;
+    }
 }

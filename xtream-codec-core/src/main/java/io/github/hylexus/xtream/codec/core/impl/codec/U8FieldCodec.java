@@ -27,4 +27,9 @@ public class U8FieldCodec extends AbstractFieldCodec<Short> {
     protected void doSerialize(SerializeContext context, ByteBuf output, Short value) {
         output.writeByte(value);
     }
+
+    @Override
+    public Class<?> underlyingJavaType() {
+        return Short.class;
+    }
 }

@@ -27,4 +27,9 @@ public class I64FieldCodecLittleEndian extends AbstractFieldCodec<Long> {
     protected void doSerialize(SerializeContext context, ByteBuf output, Long value) {
         output.writeLongLE(value);
     }
+
+    @Override
+    public Class<?> underlyingJavaType() {
+        return Long.class;
+    }
 }

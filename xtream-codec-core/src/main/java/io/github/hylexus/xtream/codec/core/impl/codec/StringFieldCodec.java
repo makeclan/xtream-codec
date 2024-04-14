@@ -38,6 +38,18 @@ public class StringFieldCodec implements FieldCodec<String> {
         delegate.serialize(context, output, value);
     }
 
+    @Override
+    public Class<?> underlyingJavaType() {
+        return String.class;
+    }
+
+    @Override
+    public String toString() {
+        return "StringFieldCodec{"
+                + "charset='" + charset + '\''
+                + '}';
+    }
+
     private FieldCodec<String> initDelegateCodec(String charset) {
         if (charset.equalsIgnoreCase("bcd_8421")) {
             return new InternalBcdFieldCodec(charset);

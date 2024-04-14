@@ -27,4 +27,9 @@ public class I64FieldCodec extends AbstractFieldCodec<Long> {
     protected void doSerialize(SerializeContext context, ByteBuf output, Long value) {
         output.writeLong(value);
     }
+
+    @Override
+    public Class<?> underlyingJavaType() {
+        return Long.class;
+    }
 }

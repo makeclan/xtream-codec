@@ -13,6 +13,7 @@
 package io.github.hylexus.xtream.codec.core.type;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
+import io.github.hylexus.xtream.codec.core.ContainerInstanceFactory;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
 import org.springframework.core.annotation.AliasFor;
 
@@ -211,7 +212,7 @@ public @interface Preset {
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
-        @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.sequence)
+        @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.sequence, containerInstanceFactory = ContainerInstanceFactory.ArrayListContainerInstanceFactory.class)
         @interface list {
 
             @AliasFor(annotation = XtreamField.class, attribute = "order")
@@ -225,6 +226,32 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "containerInstanceFactory")
+            Class<? extends ContainerInstanceFactory> containerInstanceFactory() default ContainerInstanceFactory.ArrayListContainerInstanceFactory.class;
+        }
+
+        @SuppressWarnings("checkstyle:TypeName")
+        @Target({ElementType.FIELD})
+        @Retention(RetentionPolicy.RUNTIME)
+        @Documented
+        @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.map, containerInstanceFactory = ContainerInstanceFactory.LinkedHashMapContainerInstanceFactory.class)
+        @interface map {
+
+            @AliasFor(annotation = XtreamField.class, attribute = "order")
+            int order() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "length")
+            int length() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "lengthExpression")
+            String lengthExpression() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "condition")
+            String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "containerInstanceFactory")
+            Class<? extends ContainerInstanceFactory> containerInstanceFactory() default ContainerInstanceFactory.LinkedHashMapContainerInstanceFactory.class;
         }
 
         @SuppressWarnings("checkstyle:TypeName")
@@ -373,7 +400,7 @@ public @interface Preset {
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
-        @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.sequence)
+        @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.sequence, containerInstanceFactory = ContainerInstanceFactory.ArrayListContainerInstanceFactory.class)
         @interface List {
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
@@ -386,6 +413,31 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "containerInstanceFactory")
+            Class<? extends ContainerInstanceFactory> containerInstanceFactory() default ContainerInstanceFactory.ArrayListContainerInstanceFactory.class;
+        }
+
+        @Target({ElementType.FIELD})
+        @Retention(RetentionPolicy.RUNTIME)
+        @Documented
+        @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.map, containerInstanceFactory = ContainerInstanceFactory.LinkedHashMapContainerInstanceFactory.class)
+        @interface Map {
+
+            @AliasFor(annotation = XtreamField.class, attribute = "order")
+            int order() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "length")
+            int length() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "lengthExpression")
+            String lengthExpression() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "condition")
+            String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "containerInstanceFactory")
+            Class<? extends ContainerInstanceFactory> containerInstanceFactory() default ContainerInstanceFactory.LinkedHashMapContainerInstanceFactory.class;
         }
     }
 }

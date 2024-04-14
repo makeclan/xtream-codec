@@ -33,6 +33,7 @@ public interface ContainerInstanceFactory {
         }
     }
 
+    // region java.util.Map
     class HashMapContainerInstanceFactory implements ContainerInstanceFactory {
 
         @Override
@@ -48,7 +49,9 @@ public interface ContainerInstanceFactory {
             return new LinkedHashMap<>();
         }
     }
+    // endregion java.util.Map
 
+    // region java.util.List
     class ArrayListContainerInstanceFactory implements ContainerInstanceFactory {
 
         @Override
@@ -64,4 +67,5 @@ public interface ContainerInstanceFactory {
             return new LinkedList<>();
         }
     }
+    // endregion java.util.List
 }

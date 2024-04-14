@@ -77,10 +77,10 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
                 .map(FieldLengthExtractor.class::cast)
                 .orElseGet(() -> {
                     final FiledDataType filedDataType = XtreamTypes.detectFieldDataType(this.rawClass());
-                    if (filedDataType == FiledDataType.sequence || filedDataType == FiledDataType.nested) {
-                        return new FieldLengthExtractor.ConstantFieldLengthExtractor(-2);
-                    }
-                    return new FieldLengthExtractor.PlaceholderFieldLengthExtractor("Did you forget to specify length() / lengthExpression() for Field: [ " + this.field + " ]");
+                    return switch (filedDataType) {
+                        case sequence, nested, map -> new FieldLengthExtractor.ConstantFieldLengthExtractor(-2);
+                        default -> new FieldLengthExtractor.PlaceholderFieldLengthExtractor("Did you forget to specify length() / lengthExpression() for Field: [ " + this.field + " ]");
+                    };
                 });
     }
 

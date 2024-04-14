@@ -22,4 +22,11 @@ public interface FieldCodecRegistry {
 
     Optional<FieldCodec<?>> getFieldCodec(Class<?> targetType, int sizeInBytes, String charset, boolean littleEndian);
 
+    default Optional<FieldCodec<Object>> getFieldCodecAndCastToObject(Class<?> targetType, int sizeInBytes, String charset, boolean littleEndian) {
+        return this.getFieldCodec(targetType, sizeInBytes, charset, littleEndian).map(it -> {
+            @SuppressWarnings("unchecked") final FieldCodec<Object> cast = (FieldCodec<Object>) it;
+            return cast;
+        });
+    }
+
 }

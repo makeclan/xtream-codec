@@ -12,6 +12,7 @@
 
 package io.github.hylexus.xtream.codec.core;
 
+import io.github.hylexus.xtream.codec.common.exception.NotYetImplementedException;
 import io.netty.buffer.ByteBuf;
 import org.springframework.expression.EvaluationContext;
 
@@ -20,6 +21,10 @@ public interface FieldCodec<T> {
     T deserialize(DeserializeContext context, ByteBuf input, int length);
 
     void serialize(SerializeContext context, ByteBuf output, T value);
+
+    default Class<?> underlyingJavaType() {
+        throw new NotYetImplementedException();
+    }
 
     interface CodecContext {
 
@@ -30,6 +35,7 @@ public interface FieldCodec<T> {
     }
 
     interface DeserializeContext extends CodecContext {
+        EntityDecoder entityDecoder();
     }
 
     interface SerializeContext extends CodecContext {

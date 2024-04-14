@@ -27,4 +27,9 @@ public class I8FieldCodec extends AbstractFieldCodec<Byte> {
     protected void doSerialize(SerializeContext context, ByteBuf output, Byte value) {
         output.writeByte(value);
     }
+
+    @Override
+    public Class<?> underlyingJavaType() {
+        return Byte.class;
+    }
 }

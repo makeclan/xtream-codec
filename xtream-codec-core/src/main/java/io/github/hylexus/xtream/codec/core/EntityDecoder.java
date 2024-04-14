@@ -31,8 +31,12 @@ public class EntityDecoder {
 
     public <T> T decode(Class<T> entityClass, ByteBuf source) {
         final BeanMetadata beanMetadata = beanMetadataRegistry.getBeanMetadata(entityClass);
+        return this.decode(beanMetadata, source);
+    }
+
+    public <T> T decode(BeanMetadata beanMetadata, ByteBuf source) {
         final Object containerInstance = beanMetadata.createNewInstance();
-        final FieldCodec.DeserializeContext context = new DefaultDeserializeContext(containerInstance);
+        final FieldCodec.DeserializeContext context = new DefaultDeserializeContext(this, containerInstance);
         for (final BeanPropertyMetadata propertyMetadata : beanMetadata.getPropertyMetadataList()) {
             if (propertyMetadata.conditionEvaluator().evaluate(context)) {
                 final Object fieldValue = propertyMetadata.decodePropertyValue(context, source);

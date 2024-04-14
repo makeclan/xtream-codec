@@ -28,4 +28,9 @@ public class F64FieldCodecLittleEndian extends AbstractFieldCodec<Double> {
     protected void doSerialize(SerializeContext context, ByteBuf output, Double value) {
         output.writeDoubleLE(value);
     }
+
+    @Override
+    public Class<?> underlyingJavaType() {
+        return Double.class;
+    }
 }

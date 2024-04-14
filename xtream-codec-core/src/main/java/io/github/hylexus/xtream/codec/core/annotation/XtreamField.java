@@ -93,6 +93,14 @@ public @interface XtreamField {
      */
     Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
 
-    Class<? extends ContainerInstanceFactory> containerInstanceFactoryClass() default ContainerInstanceFactory.PlaceholderContainerInstanceFactory.class;
+    /**
+     * 只有 {@link java.util.Map} 和 {@link java.util.List} 类型用到
+     *
+     * @see BeanPropertyMetadata.FiledDataType#sequence
+     * @see io.github.hylexus.xtream.codec.common.bean.impl.SequenceBeanPropertyMetadata
+     * @see BeanPropertyMetadata.FiledDataType#map
+     * @see io.github.hylexus.xtream.codec.common.bean.impl.MapBeanPropertyMetadata
+     */
+    Class<? extends ContainerInstanceFactory> containerInstanceFactory() default ContainerInstanceFactory.PlaceholderContainerInstanceFactory.class;
 
 }
