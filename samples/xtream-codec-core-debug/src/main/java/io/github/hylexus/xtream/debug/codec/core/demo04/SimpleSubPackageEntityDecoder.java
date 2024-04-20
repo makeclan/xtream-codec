@@ -57,7 +57,7 @@ public class SimpleSubPackageEntityDecoder extends EntityDecoder {
             return (T) this.tryMergeSubPackagesOrNull(jt808Msg, source);
         }
         // 不是 BaseJt808Msg 类型 --> 直接视为完整包
-        return (T) this.delegateDecoder.decode(instance.getClass(), source);
+        return super.decode(source, beanMetadata, instance);
     }
 
     private BaseJt808Msg tryMergeSubPackagesOrNull(BaseJt808Msg jt808Msg, ByteBuf source) {
