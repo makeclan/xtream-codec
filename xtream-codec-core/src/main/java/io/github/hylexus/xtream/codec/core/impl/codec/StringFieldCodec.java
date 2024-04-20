@@ -30,7 +30,10 @@ public class StringFieldCodec implements FieldCodec<String> {
 
     @Override
     public String deserialize(DeserializeContext context, ByteBuf input, int length) {
-        return delegate.deserialize(context, input, length);
+        final int finalLength = length < 0
+                ? input.readableBytes() // all remaining
+                : length;
+        return delegate.deserialize(context, input, finalLength);
     }
 
     @Override

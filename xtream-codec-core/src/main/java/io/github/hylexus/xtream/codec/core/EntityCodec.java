@@ -35,4 +35,8 @@ public class EntityCodec {
     public <T> T decode(Class<T> entityClass, ByteBuf source) {
         return entityDecoder.decode(entityClass, source);
     }
+
+    public <T> T decode(T instance, ByteBuf source) {
+        return entityDecoder.decode(source, instance);
+    }
 }

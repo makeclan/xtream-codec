@@ -47,7 +47,7 @@ public class NestedBeanPropertyMetadata extends BasicBeanPropertyMetadata {
         final int length = this.fieldLengthExtractor().extractFieldLength(context, context.evaluationContext());
 
         final ByteBuf slice = length < 0
-                ? input
+                ? input // all remaining
                 : input.readSlice(length);
 
         final FieldCodec.DeserializeContext deserializeContext = new DefaultDeserializeContext(context, instance);

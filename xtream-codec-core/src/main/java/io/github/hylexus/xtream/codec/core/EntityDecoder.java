@@ -19,7 +19,7 @@ import io.github.hylexus.xtream.codec.core.impl.SimpleBeanMetadataRegistry;
 import io.netty.buffer.ByteBuf;
 
 public class EntityDecoder {
-    private final BeanMetadataRegistry beanMetadataRegistry;
+    protected final BeanMetadataRegistry beanMetadataRegistry;
 
     public EntityDecoder() {
         this(new SimpleBeanMetadataRegistry());
@@ -31,11 +31,21 @@ public class EntityDecoder {
 
     public <T> T decode(Class<T> entityClass, ByteBuf source) {
         final BeanMetadata beanMetadata = beanMetadataRegistry.getBeanMetadata(entityClass);
-        return this.decode(beanMetadata, source);
+        final Object containerInstance = beanMetadata.createNewInstance();
+        return this.decode(source, beanMetadata, containerInstance);
     }
 
     public <T> T decode(BeanMetadata beanMetadata, ByteBuf source) {
         final Object containerInstance = beanMetadata.createNewInstance();
+        return decode(source, beanMetadata, containerInstance);
+    }
+
+    public <T> T decode(ByteBuf source, Object containerInstance) {
+        final BeanMetadata beanMetadata = beanMetadataRegistry.getBeanMetadata(containerInstance.getClass());
+        return decode(source, beanMetadata, containerInstance);
+    }
+
+    public <T> T decode(ByteBuf source, BeanMetadata beanMetadata, Object containerInstance) {
         final FieldCodec.DeserializeContext context = new DefaultDeserializeContext(this, containerInstance);
         for (final BeanPropertyMetadata propertyMetadata : beanMetadata.getPropertyMetadataList()) {
             if (propertyMetadata.conditionEvaluator().evaluate(context)) {

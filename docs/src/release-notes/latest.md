@@ -4,6 +4,13 @@ article: false
 
 # 发版记录
 
+## 0.0.1-beta.2(2024-04-19)
+
+### ⭐ New Features
+
+- 新增 `@XtreamFieldMapDescriptor` 注解支持 `java.util.Map` 类型的编解码
+- `@XtreamField` 新增 `containerInstanceFactory()` 属性
+
 ## 0.0.1-beta.1(2024-03-24)
 
 ### ⭐ New Features

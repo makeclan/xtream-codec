@@ -12,11 +12,35 @@
 
 package io.github.hylexus.xtream.codec.common.utils;
 
+import io.netty.util.ReferenceCounted;
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author hylexus
  */
+@Slf4j
 public class XtreamUtils {
     public static boolean hasElement(String str) {
         return str != null && !str.isEmpty();
+    }
+
+    public static void release(Object... objects) {
+        if (objects == null) {
+            return;
+        }
+        for (Object object : objects) {
+            if (object == null) {
+                continue;
+            }
+            try {
+                if (object instanceof ReferenceCounted referenceCounted) {
+                    if (referenceCounted.refCnt() > 0) {
+                        referenceCounted.release();
+                    }
+                }
+            } catch (Throwable e) {
+                log.error("", e);
+            }
+        }
     }
 }

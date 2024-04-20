@@ -19,6 +19,7 @@ import io.github.hylexus.xtream.codec.common.utils.XtreamTypes;
 import io.github.hylexus.xtream.codec.common.utils.XtreamUtils;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
+import io.github.hylexus.xtream.codec.core.impl.codec.StringFieldCodec;
 import io.netty.buffer.ByteBuf;
 import lombok.Setter;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -63,6 +64,12 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
         return FieldConditionEvaluator.AlwaysTrueFieldConditionEvaluator.INSTANCE;
     }
 
+    /**
+     * @see StringFieldCodec#deserialize(FieldCodec.DeserializeContext, ByteBuf, int) StringFieldCodec#deserialize
+     * @see SequenceBeanPropertyMetadata#decodePropertyValue(FieldCodec.DeserializeContext, ByteBuf) SequenceBeanPropertyMetadata#decodePropertyValue
+     * @see NestedBeanPropertyMetadata#decodePropertyValue(FieldCodec.DeserializeContext, ByteBuf) NestedBeanPropertyMetadata#decodePropertyValue
+     * @see MapBeanPropertyMetadata#decodePropertyValue(FieldCodec.DeserializeContext, ByteBuf) MapBeanPropertyMetadata#decodePropertyValue
+     */
     protected FieldLengthExtractor detectFieldLengthExtractor(XtreamField xtreamField) {
         if (xtreamField.length() > 0) {
             return new FieldLengthExtractor.ConstantFieldLengthExtractor(xtreamField.length());
@@ -79,9 +86,20 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
                     final FiledDataType filedDataType = XtreamTypes.detectFieldDataType(this.rawClass());
                     return switch (filedDataType) {
                         case sequence, nested, map -> new FieldLengthExtractor.ConstantFieldLengthExtractor(-2);
-                        default -> new FieldLengthExtractor.PlaceholderFieldLengthExtractor("Did you forget to specify length() / lengthExpression() for Field: [ " + this.field + " ]");
+                        case basic -> {
+                            // String 类型: 没指定长度 ==> 读取剩余所有字节
+                            if (this.rawClass() == String.class) {
+                                yield new FieldLengthExtractor.ConstantFieldLengthExtractor(-2);
+                            }
+                            yield this.placeholderFieldLengthExtractor();
+                        }
+                        default -> this.placeholderFieldLengthExtractor();
                     };
                 });
+    }
+
+    private FieldLengthExtractor.PlaceholderFieldLengthExtractor placeholderFieldLengthExtractor() {
+        return new FieldLengthExtractor.PlaceholderFieldLengthExtractor("Did you forget to specify length() / lengthExpression() for Field: [ " + this.field + " ]");
     }
 
     protected int initOrder() {

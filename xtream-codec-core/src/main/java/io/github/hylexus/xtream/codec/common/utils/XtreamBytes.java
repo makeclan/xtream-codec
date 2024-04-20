@@ -86,4 +86,16 @@ public class XtreamBytes {
         System.arraycopy(bytes, 0, newBytes, length - bytes.length, bytes.length);
         return newBytes;
     }
+
+    public static short readU8(ByteBuf readable) {
+        return readable.readUnsignedByte();
+    }
+
+    public static int readU16(ByteBuf readable) {
+        return readable.readUnsignedShort();
+    }
+
+    public static String readBcd(ByteBuf readable, int length) {
+        return BcdOps.decodeBcd8421AsString(readable, length);
+    }
 }
