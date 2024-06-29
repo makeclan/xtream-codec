@@ -22,10 +22,14 @@ repositories {
 }
 
 val mavenRepoConfig = getMavenRepoConfig()
+val mavenPublications = setOf(
+    "xtream-codec-core",
+    "xtream-codec-server-reactive",
+)
 
 // region Java
 configure(subprojects) {
-    if (isNotJavaProject(project)) {
+    if (!isJavaProject(project)) {
         return@configure
     }
     println("configure ....... " + project.name)
@@ -99,7 +103,7 @@ configure(subprojects) {
         // If set to true, then all boms will be excluded from the report
         excludeBoms = true
 
-        excludes = arrayOf("xtream-codec:xtream-codec-core")
+        excludes = mavenPublications.map { "xtream-codec:$it" }.toTypedArray()
 
         // Set output directory for the report data.
         // Defaults to ${project.buildDir}/reports/dependency-license.
@@ -126,7 +130,7 @@ configure(subprojects) {
 
 // region Maven
 configure(subprojects) {
-    if (isNotJavaProject(project)) {
+    if (!isJavaProject(project)) {
         return@configure
     }
     apply(plugin = "maven-publish")
@@ -285,21 +289,20 @@ configure(subprojects) {
 }
 // endregion Maven
 
-fun isNotJavaProject(project: Project): Boolean {
-    return project == rootProject
-            ||
-            !setOf(
-                "xtream-codec-core",
+fun isJavaProject(project: Project): Boolean {
+    return project != rootProject
+            && (
+            mavenPublications.contains(project.name)
+                    || setOf(
                 "xtream-codec-core-debug",
-            ).contains(project.name)
+                "xtream-codec-server-reactive-debug-tcp",
+                "xtream-codec-server-reactive-debug-udp",
+            ).contains(project.name))
 }
 
+
 fun isMavenPublications(project: Project): Boolean {
-    return !isNotJavaProject(project)
-            &&
-            setOf(
-                "xtream-codec-core"
-            ).contains(project.name)
+    return mavenPublications.contains(project.name)
 }
 
 fun needSign() = !rootProject.version.toString().lowercase().endsWith("snapshot")
