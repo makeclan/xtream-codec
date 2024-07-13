@@ -15,24 +15,33 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import reactor.core.publisher.Mono;
 import reactor.netty.NettyInbound;
 
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author hylexus
  */
 public abstract class AbstractXtreamRequest implements XtreamRequest {
-
+    protected final ByteBufAllocator allocator;
     protected final NettyInbound delegate;
     protected final Mono<XtreamSession> sessionMono;
     protected final ByteBuf body;
+    protected String id;
 
-    public AbstractXtreamRequest(NettyInbound delegate, XtreamSession session, ByteBuf body) {
+    public AbstractXtreamRequest(ByteBufAllocator allocator, NettyInbound delegate, XtreamSession session, ByteBuf body) {
+        this.allocator = allocator;
         this.delegate = delegate;
         this.sessionMono = Mono.just(session).cache();
         this.body = body;
+    }
+
+    @Override
+    public ByteBufAllocator bufferFactory() {
+        return this.allocator;
     }
 
     @Override
@@ -41,7 +50,19 @@ public abstract class AbstractXtreamRequest implements XtreamRequest {
     }
 
     @Override
-    public ByteBuf body() {
+    public String getId() {
+        if (this.id == null) {
+            this.id = initId();
+        }
+        return this.id;
+    }
+
+    protected String initId() {
+        return UUID.randomUUID().toString().replace("-", "");
+    }
+
+    @Override
+    public ByteBuf payload() {
         return this.body;
     }
 

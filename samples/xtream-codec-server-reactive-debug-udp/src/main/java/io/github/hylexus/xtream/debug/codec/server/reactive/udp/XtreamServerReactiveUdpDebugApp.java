@@ -13,53 +13,35 @@
 package io.github.hylexus.xtream.debug.codec.server.reactive.udp;
 
 
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.*;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp.UdpXtreamHandlerAdapter;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.LoggingXtreamFilter;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.XtreamServerBuilder;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp.UdpXtreamNettyHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.netty.udp.UdpServer;
-
-import java.util.List;
 
 public class XtreamServerReactiveUdpDebugApp {
 
     private static final Logger log = LoggerFactory.getLogger(XtreamServerReactiveUdpDebugApp.class);
 
     public static void main(String[] args) {
-        final UdpServer server = UdpServer.create()
-                .doOnBind(config -> {
-                    log.info("doOnBind,{}", config);
-                })
-                .doOnBound(conn -> {
-                    log.info("doOnBound {}", conn);
-                })
-                .doOnUnbound(connection -> {
-                    log.info("doOnUnbound, {}", connection);
-                })
-                .wiretap(true)
-                .host("localhost")
-                .port(8989)
-                .doOnChannelInit((observer, channel, remoteAddress) -> {
-                    log.info("doOnChannelInit {}", channel);
-                })
-                .handle(new UdpXtreamHandlerAdapter(
-                                new FilteringXtreamHandler(
-                                        new DispatcherXtreamHandler(
-                                                List.of(new DemoUdpXtreamHandlerMapping()),
-                                                List.of(new SimpleXtreamHandlerAdapter()),
-                                                List.of(new LoggingXtreamHandlerResultHandler())
-                                        ),
-                                        List.of(
-                                                new LoggingXtreamFilter(),
-                                                new LoggingXtreamFilter()
-                                        )
-                                )
-                        )
-                );
-
-        server.bindNow().onDispose()
-                .block();
-
+        XtreamServerBuilder.newUdpServerBuilder()
+                .addCustomizer(server -> server.doOnBind(config -> log.info("doOnBind,{}", config))
+                        .doOnBound(conn -> log.info("doOnBound {}", conn))
+                        .doOnUnbound(connection -> log.info("doOnUnbound, {}", connection))
+                        .wiretap(true)
+                        .host("localhost")
+                        .port(8989)
+                        .doOnChannelInit((observer, channel, remoteAddress) -> log.info("doOnChannelInit {}", channel))
+                )
+                .addCustomizer(server -> server.handle(
+                        UdpXtreamNettyHandlerAdapter.newDefaultBuilder()
+                                .addHandlerMapping(new DemoUdpXtreamHandlerMapping())
+                                .enableBuiltinHandlerAdapters()
+                                .enableBuiltinHandlerResultHandlers()
+                                .addFilter(new LoggingXtreamFilter())
+                                .build()
+                ))
+                .build()
+                .start();
     }
-
 }

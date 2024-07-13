@@ -13,13 +13,18 @@
 package io.github.hylexus.xtream.codec.common.utils;
 
 import io.netty.util.ReferenceCounted;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author hylexus
  */
-@Slf4j
 public class XtreamUtils {
+    private static final Logger log = LoggerFactory.getLogger(XtreamUtils.class);
+
     public static boolean hasElement(String str) {
         return str != null && !str.isEmpty();
     }
@@ -43,4 +48,22 @@ public class XtreamUtils {
             }
         }
     }
+
+    public static String detectMainClassPackageName() {
+        final StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+        final List<String> candidates = new ArrayList<>();
+        for (StackTraceElement element : stackTraceElements) {
+            if ("main".equals(element.getMethodName())) {
+                final String className = element.getClassName();
+                final int lastDotIndex = className.lastIndexOf('.');
+                final String packageName = lastDotIndex > 0 ? className.substring(0, lastDotIndex) : "";
+                candidates.add(packageName);
+            }
+        }
+        if (candidates.isEmpty()) {
+            throw new IllegalStateException("Cannot determine Main class");
+        }
+        return candidates.getLast();
+    }
+
 }

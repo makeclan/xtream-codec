@@ -13,56 +13,41 @@
 package io.github.hylexus.xtream.debug.codec.server.reactive.tcp;
 
 
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.*;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.TcpXtreamHandlerAdapter;
+import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamRequestExceptionHandler;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.LoggingXtreamFilter;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.XtreamServerBuilder;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.TcpXtreamNettyHandlerAdapter;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
-import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.netty.DisposableServer;
-import reactor.netty.tcp.TcpServer;
-
-import java.util.List;
 
 public class XtreamServerReactiveTcpDebugApp {
 
     private static final Logger log = LoggerFactory.getLogger(XtreamServerReactiveTcpDebugApp.class);
 
     public static void main(String[] args) {
-        DisposableServer server =
-                TcpServer.create()
-                        .host("localhost")
+        XtreamServerBuilder.newTcpServerBuilder()
+                .addCustomizer(server -> server.host("localhost")
                         .port(8888)
-                        .doOnConnection(conn -> {
-                            log.info("doOnConnection {}", conn);
-                        })
+                        .doOnConnection(conn -> log.info("doOnConnection {}", conn))
                         .doOnChannelInit((observer, channel, remoteAddress) -> {
                             log.info("doOnChannelInit {}", channel);
                             channel.pipeline()
-                                    .addFirst(new LoggingHandler("io.github.hylexus.xtream.debug.codec.server.reactive.tcp"))
-                                    .addFirst(new DelimiterBasedFrameDecoder(1024, true, Unpooled.copiedBuffer(new byte[]{0x7e})))
-                            ;
-
+                                    .addFirst(new DelimiterBasedFrameDecoder(1024, true, Unpooled.copiedBuffer(new byte[]{0x7e})));
                         })
-                        .handle(new TcpXtreamHandlerAdapter(
-                                        new FilteringXtreamHandler(
-                                                new DispatcherXtreamHandler(
-                                                        List.of(new DemoTcpXtreamHandlerMapping()),
-                                                        List.of(new SimpleXtreamHandlerAdapter()),
-                                                        List.of(new LoggingXtreamHandlerResultHandler())
-                                                ),
-                                                List.of(
-                                                        new LoggingXtreamFilter(),
-                                                        new LoggingXtreamFilter()
-                                                )
-                                        )
-                                )
-                        )
-                        .bindNow();
-
-        server.onDispose()
-                .block();
+                )
+                .addCustomizer(server -> server.handle(
+                        TcpXtreamNettyHandlerAdapter.newDefaultBuilder()
+                                .addHandlerMapping(new DemoTcpXtreamHandlerMapping())
+                                .addHandlerMapping(new DemoTcpXtreamHandlerMapping2())
+                                .enableBuiltinHandlerAdapters()
+                                .enableBuiltinHandlerResultHandlers()
+                                .addFilter(new LoggingXtreamFilter())
+                                .addExceptionHandler(new XtreamRequestExceptionHandler.LoggingXtreamRequestExceptionHandler())
+                                .build()
+                ))
+                .build()
+                .start();
     }
-
 }

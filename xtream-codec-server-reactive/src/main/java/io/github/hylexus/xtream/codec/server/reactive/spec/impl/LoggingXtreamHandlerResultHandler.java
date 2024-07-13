@@ -33,12 +33,12 @@ public class LoggingXtreamHandlerResultHandler implements XtreamHandlerResultHan
 
     @Override
     public Mono<Void> handleResult(XtreamExchange exchange, XtreamHandlerResult result) {
-        log.info("LoggingXtreamHandlerResultHandler#handleResult: {}", result);
+        log.error("LoggingXtreamHandlerResultHandler#handleResult: {}", result);
         return Mono.empty();
     }
 
     @Override
     public int order() {
-        return OrderedComponent.LOWEST_PRECEDENCE;
+        return OrderedComponent.LOWEST_PRECEDENCE - 1;
     }
 }

@@ -12,6 +12,7 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec;
 
+import io.netty.buffer.ByteBufAllocator;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
@@ -24,6 +25,10 @@ import java.util.Map;
  * @author hylexus
  */
 public interface XtreamExchange {
+
+    default ByteBufAllocator bufferFactory() {
+        return response().bufferFactory();
+    }
 
     XtreamRequest request();
 

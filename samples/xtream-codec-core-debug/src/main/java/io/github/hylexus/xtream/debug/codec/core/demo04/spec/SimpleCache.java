@@ -17,14 +17,15 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.RemovalCause;
 import com.github.benmanes.caffeine.cache.RemovalListener;
 import io.github.hylexus.xtream.codec.common.utils.XtreamUtils;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.Map;
 import java.util.function.Function;
 
-@Slf4j
 public class SimpleCache {
+    private static final Logger log = LoggerFactory.getLogger(SimpleCache.class);
     protected final Cache<String, Map<Integer, BaseJt808Msg>> cache;
     public static final String LOG_PREFIX = "<SubPackage>";
 

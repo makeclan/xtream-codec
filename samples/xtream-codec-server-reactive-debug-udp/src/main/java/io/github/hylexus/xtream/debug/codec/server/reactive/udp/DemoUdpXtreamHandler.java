@@ -13,16 +13,15 @@
 package io.github.hylexus.xtream.debug.codec.server.reactive.udp;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
+import io.github.hylexus.xtream.codec.server.reactive.spec.handler.SimpleXtreamRequestHandler;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.CompositeByteBuf;
 import io.netty.buffer.Unpooled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
-public class DemoUdpXtreamHandler implements XtreamHandler {
+public class DemoUdpXtreamHandler implements SimpleXtreamRequestHandler {
 
     private static final Logger log = LoggerFactory.getLogger(DemoUdpXtreamHandler.class);
 
@@ -32,10 +31,10 @@ public class DemoUdpXtreamHandler implements XtreamHandler {
     @Override
     public Mono<Void> handle(XtreamExchange exchange) {
         log.info("{}", exchange.request().remoteAddress());
-        final ByteBuf byteBuf = exchange.request().body();
-        final CompositeByteBuf compositeByteBuf = ByteBufAllocator.DEFAULT.compositeBuffer(2);
+        final ByteBuf byteBuf = exchange.request().payload();
+        final CompositeByteBuf compositeByteBuf = exchange.bufferFactory().compositeBuffer(2);
         compositeByteBuf.addComponents(true, byteBuf.copy());
-        compositeByteBuf.addComponents(true, Unpooled.wrappedBuffer(new byte[]{1,1,1,1}));
+        compositeByteBuf.addComponents(true, Unpooled.wrappedBuffer(new byte[]{1, 1, 1, 1}));
         return exchange.response()
                 .writeWith(Mono.just(compositeByteBuf));
     }

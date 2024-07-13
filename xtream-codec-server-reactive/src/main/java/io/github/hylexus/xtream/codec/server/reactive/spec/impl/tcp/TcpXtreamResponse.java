@@ -13,6 +13,7 @@
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamResponse;
+import io.netty.buffer.ByteBufAllocator;
 import reactor.netty.NettyOutbound;
 
 /**
@@ -20,8 +21,8 @@ import reactor.netty.NettyOutbound;
  */
 public class TcpXtreamResponse extends AbstractXtreamResponse {
 
-    public TcpXtreamResponse(NettyOutbound delegate) {
-        super(delegate);
+    public TcpXtreamResponse(ByteBufAllocator allocator, NettyOutbound delegate) {
+        super(delegate, allocator);
     }
 
 }

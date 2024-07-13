@@ -14,6 +14,7 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamRequest;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.socket.DatagramPacket;
 import reactor.netty.NettyInbound;
 
@@ -26,8 +27,8 @@ public class UdpXtreamRequest extends AbstractXtreamRequest {
 
     private final InetSocketAddress remoteAddress;
 
-    public UdpXtreamRequest(NettyInbound delegate, XtreamSession session, DatagramPacket datagramPacket) {
-        super(delegate, session, datagramPacket.content());
+    public UdpXtreamRequest(ByteBufAllocator allocator, NettyInbound delegate, XtreamSession session, DatagramPacket datagramPacket) {
+        super(allocator, delegate, session, datagramPacket.content());
         this.remoteAddress = datagramPacket.sender();
     }
 

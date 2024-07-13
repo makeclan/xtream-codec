@@ -13,6 +13,7 @@
 package io.github.hylexus.xtream.codec.server.reactive.spec;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import reactor.core.publisher.Mono;
 import reactor.netty.NettyInbound;
 
@@ -23,10 +24,13 @@ import java.util.Map;
  * @author hylexus
  */
 public interface XtreamRequest {
+    ByteBufAllocator bufferFactory();
 
     NettyInbound underlyingInbound();
 
-    ByteBuf body();
+    String getId();
+
+    ByteBuf payload();
 
     InetSocketAddress remoteAddress();
 

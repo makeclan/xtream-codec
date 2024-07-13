@@ -15,6 +15,7 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamRequest;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import reactor.netty.Connection;
 import reactor.netty.NettyInbound;
 
@@ -28,8 +29,8 @@ public class TcpXtreamRequest extends AbstractXtreamRequest {
 
     private final NettyInbound delegate;
 
-    public TcpXtreamRequest(NettyInbound delegate, XtreamSession session, ByteBuf body) {
-        super(delegate, session, body);
+    public TcpXtreamRequest(ByteBufAllocator allocator, NettyInbound delegate, XtreamSession session, ByteBuf body) {
+        super(allocator, delegate, session, body);
         this.delegate = delegate;
     }
 

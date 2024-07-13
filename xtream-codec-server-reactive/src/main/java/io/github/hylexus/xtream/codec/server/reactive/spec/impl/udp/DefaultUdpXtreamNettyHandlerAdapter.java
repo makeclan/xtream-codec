@@ -13,27 +13,30 @@
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.socket.DatagramPacket;
-import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
 
 import java.net.InetSocketAddress;
-import java.util.function.BiFunction;
 
 /**
  * @author hylexus
  */
-@Slf4j
-public class UdpXtreamHandlerAdapter implements BiFunction<NettyInbound, NettyOutbound, Publisher<Void>> {
+public class DefaultUdpXtreamNettyHandlerAdapter implements UdpXtreamNettyHandlerAdapter {
 
+    private static final Logger log = LoggerFactory.getLogger(DefaultUdpXtreamNettyHandlerAdapter.class);
     private final XtreamHandler xtreamHandler;
+    private final ByteBufAllocator allocator;
 
-    public UdpXtreamHandlerAdapter(XtreamHandler xtreamHandler) {
+    public DefaultUdpXtreamNettyHandlerAdapter(XtreamHandler xtreamHandler, ByteBufAllocator allocator) {
         this.xtreamHandler = xtreamHandler;
-        log.info("UdpXtreamHandlerAdapter initialized");
+        this.allocator = allocator;
+        log.info("DefaultUdpXtreamNettyHandlerAdapter initialized");
     }
 
     @Override
@@ -42,17 +45,17 @@ public class UdpXtreamHandlerAdapter implements BiFunction<NettyInbound, NettyOu
             if (object instanceof DatagramPacket datagramPacket) {
                 return handleRequest(nettyInbound, nettyOutbound, datagramPacket);
             } else {
-                return Mono.error(new RuntimeException("xxx"));
+                return Mono.error(new IllegalStateException("Cannot handle message. type = [" + object.getClass() + "]"));
             }
         });
     }
 
-    private Mono<Void> handleRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, DatagramPacket datagramPacket) {
+    protected Mono<Void> handleRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, DatagramPacket datagramPacket) {
         final InetSocketAddress remoteAddr = datagramPacket.sender();
         final UdpXtreamSession session = new UdpXtreamSession();
         final UdpXtreamExchange exchange = new UdpXtreamExchange(
-                new UdpXtreamRequest(nettyInbound, session, datagramPacket),
-                new UdpXtreamResponse(nettyOutbound, remoteAddr),
+                new UdpXtreamRequest(allocator, nettyInbound, session, datagramPacket),
+                new UdpXtreamResponse(allocator, nettyOutbound, remoteAddr),
                 session
         );
         return xtreamHandler

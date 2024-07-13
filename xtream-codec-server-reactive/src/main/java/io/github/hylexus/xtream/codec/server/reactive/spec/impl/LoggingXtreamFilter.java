@@ -29,12 +29,16 @@ public class LoggingXtreamFilter implements XtreamFilter {
 
     private static final Logger log = LoggerFactory.getLogger(LoggingXtreamFilter.class);
 
+    public LoggingXtreamFilter() {
+    }
+
     @Override
     public Mono<Void> filter(XtreamExchange exchange, XtreamFilterChain chain) {
-        log.info("==> Receive [{}] message: remoteAddr = {}, payload = {}",
+        log.info("==> Receive [{}] message: id = {}, remoteAddr = {}, payload = {}",
                 exchange instanceof TcpXtreamExchange ? "TCP" : "UDP",
+                exchange.request().getId(),
                 exchange.request().remoteAddress(),
-                FormatUtils.toHexString(exchange.request().body())
+                FormatUtils.toHexString(exchange.request().payload())
         );
         return chain.filter(exchange);
     }

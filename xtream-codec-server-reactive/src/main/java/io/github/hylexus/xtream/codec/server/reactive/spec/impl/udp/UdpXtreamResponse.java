@@ -14,6 +14,7 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamResponse;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.socket.DatagramPacket;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
@@ -28,8 +29,8 @@ import java.net.InetSocketAddress;
 public class UdpXtreamResponse extends AbstractXtreamResponse {
     protected final InetSocketAddress remoteAddress;
 
-    public UdpXtreamResponse(NettyOutbound delegate, InetSocketAddress remoteAddress) {
-        super(delegate);
+    public UdpXtreamResponse(ByteBufAllocator allocator, NettyOutbound delegate, InetSocketAddress remoteAddress) {
+        super(delegate, allocator);
         this.remoteAddress = remoteAddress;
     }
 
@@ -40,4 +41,11 @@ public class UdpXtreamResponse extends AbstractXtreamResponse {
                 .then();
     }
 
+    @Override
+    public Mono<Void> writeAndFlushWith(Publisher<? extends Publisher<? extends ByteBuf>> publisher) {
+        return Flux.from(publisher)
+                .flatMap(source -> Flux.from(source).map(byteBuf -> new DatagramPacket(byteBuf, remoteAddress)))
+                .flatMap(datagramPacket -> this.underlyingOutbound().sendObject(datagramPacket))
+                .then();
+    }
 }

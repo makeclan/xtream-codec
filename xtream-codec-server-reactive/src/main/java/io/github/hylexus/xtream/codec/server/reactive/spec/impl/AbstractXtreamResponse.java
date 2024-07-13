@@ -14,7 +14,9 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamResponse;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.netty.NettyOutbound;
 
@@ -23,9 +25,11 @@ import reactor.netty.NettyOutbound;
  */
 public abstract class AbstractXtreamResponse implements XtreamResponse {
     protected final NettyOutbound delegate;
+    protected final ByteBufAllocator byteBufAllocator;
 
-    public AbstractXtreamResponse(NettyOutbound delegate) {
+    public AbstractXtreamResponse(NettyOutbound delegate, ByteBufAllocator byteBufAllocator) {
         this.delegate = delegate;
+        this.byteBufAllocator = byteBufAllocator;
     }
 
     @Override
@@ -34,7 +38,17 @@ public abstract class AbstractXtreamResponse implements XtreamResponse {
     }
 
     @Override
+    public ByteBufAllocator bufferFactory() {
+        return this.byteBufAllocator;
+    }
+
+    @Override
     public Mono<Void> writeWith(Publisher<? extends ByteBuf> body) {
         return this.delegate.send(body).then();
+    }
+
+    @Override
+    public Mono<Void> writeAndFlushWith(Publisher<? extends Publisher<? extends ByteBuf>> publisher) {
+        return this.delegate.sendGroups(Flux.from(publisher)).then();
     }
 }

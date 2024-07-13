@@ -54,6 +54,10 @@ configure(subprojects) {
             mavenBom("org.springframework.boot:spring-boot-dependencies:${getConfigAsString("defaultSpringBootBomVersion")}")
             mavenBom("org.springframework.cloud:spring-cloud-dependencies:${getConfigAsString("defaultSpringCloudBomVersion")}")
         }
+
+        dependencies{
+            dependency("io.github.classgraph:classgraph:4.8.174")
+        }
     }
 
     repositories {

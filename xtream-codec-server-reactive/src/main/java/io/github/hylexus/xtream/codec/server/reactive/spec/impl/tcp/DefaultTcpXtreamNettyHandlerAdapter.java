@@ -13,25 +13,27 @@
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
-import lombok.extern.slf4j.Slf4j;
+import io.netty.buffer.ByteBufAllocator;
 import org.reactivestreams.Publisher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
 
-import java.util.function.BiFunction;
-
 /**
  * @author hylexus
  */
-@Slf4j
-public class TcpXtreamHandlerAdapter implements BiFunction<NettyInbound, NettyOutbound, Publisher<Void>> {
+public class DefaultTcpXtreamNettyHandlerAdapter implements TcpXtreamNettyHandlerAdapter {
 
+    private static final Logger log = LoggerFactory.getLogger(DefaultTcpXtreamNettyHandlerAdapter.class);
     private final XtreamHandler xtreamHandler;
+    private final ByteBufAllocator allocator;
 
-    public TcpXtreamHandlerAdapter(XtreamHandler xtreamHandler) {
+    public DefaultTcpXtreamNettyHandlerAdapter(XtreamHandler xtreamHandler, ByteBufAllocator allocator) {
         this.xtreamHandler = xtreamHandler;
-        log.info("XtreamTcpHandlerAdapter initialized");
+        this.allocator = allocator;
+        log.info("DefaultTcpXtreamNettyHandlerAdapter initialized");
     }
 
     @Override
@@ -43,8 +45,8 @@ public class TcpXtreamHandlerAdapter implements BiFunction<NettyInbound, NettyOu
 
             final TcpXtreamSession session = new TcpXtreamSession();
             final TcpXtreamExchange exchange = new TcpXtreamExchange(
-                    new TcpXtreamRequest(nettyInbound, session, byteBuf),
-                    new TcpXtreamResponse(nettyOutbound),
+                    new TcpXtreamRequest(allocator, nettyInbound, session, byteBuf),
+                    new TcpXtreamResponse(allocator, nettyOutbound),
                     session
             );
             return xtreamHandler
@@ -53,6 +55,6 @@ public class TcpXtreamHandlerAdapter implements BiFunction<NettyInbound, NettyOu
                         // ...
                         log.error(throwable.getMessage(), throwable);
                     });
-        }).then();
+        });
     }
 }

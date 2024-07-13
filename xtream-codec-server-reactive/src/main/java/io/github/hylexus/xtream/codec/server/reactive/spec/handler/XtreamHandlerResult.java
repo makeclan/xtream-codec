@@ -12,6 +12,8 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec.handler;
 
+import io.github.hylexus.xtream.codec.common.bean.XtreamMethodParameter;
+
 /**
  * 当前类是从 `org.springframework.web.reactive.HandlerResult` 复制过来修改的。
  * <p>
@@ -24,11 +26,14 @@ public class XtreamHandlerResult {
     private final Object handler;
 
     private final Object returnValue;
+    private final XtreamMethodParameter returnType;
+
     private XtreamDispatchExceptionHandler exceptionHandler;
 
-    public XtreamHandlerResult(Object handler, Object returnValue) {
+    public XtreamHandlerResult(Object handler, Object returnValue, XtreamMethodParameter returnType) {
         this.handler = handler;
         this.returnValue = returnValue;
+        this.returnType = returnType;
     }
 
     public Object getHandler() {
@@ -37,6 +42,10 @@ public class XtreamHandlerResult {
 
     public Object getReturnValue() {
         return returnValue;
+    }
+
+    public XtreamMethodParameter getReturnType() {
+        return returnType;
     }
 
     public XtreamDispatchExceptionHandler getExceptionHandler() {

@@ -15,7 +15,7 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 
 import io.github.hylexus.xtream.codec.core.annotation.OrderedComponent;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
+import io.github.hylexus.xtream.codec.server.reactive.spec.handler.SimpleXtreamRequestHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerResult;
 import reactor.core.publisher.Mono;
@@ -23,16 +23,16 @@ import reactor.core.publisher.Mono;
 /**
  * @author hylexus
  */
-public class SimpleXtreamHandlerAdapter implements XtreamHandlerAdapter {
+public class SimpleXtreamRequestHandlerHandlerAdapter implements XtreamHandlerAdapter {
 
     @Override
     public boolean supports(Object handler) {
-        return XtreamHandler.class.isAssignableFrom(handler.getClass());
+        return SimpleXtreamRequestHandler.class.isAssignableFrom(handler.getClass());
     }
 
     @Override
     public Mono<XtreamHandlerResult> handle(XtreamExchange exchange, Object handler) {
-        final XtreamHandler xtreamHandler = (XtreamHandler) handler;
+        final SimpleXtreamRequestHandler xtreamHandler = (SimpleXtreamRequestHandler) handler;
         return xtreamHandler.handle(exchange).then(Mono.empty());
     }
 
