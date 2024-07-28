@@ -10,11 +10,12 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package io.github.hylexus.xtream.debug.codec.server.reactive.tcp;
+package io.github.hylexus.xtream.debug.codec.server.reactive.udp.handlermapping;
 
 import io.github.hylexus.xtream.codec.common.utils.XtreamUtils;
 import io.github.hylexus.xtream.codec.core.utils.BeanUtils;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
+import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.AbstractXtreamRequestMappingHandlerMapping;
 import reactor.core.publisher.Mono;
 
 import java.util.function.Function;
@@ -22,13 +23,13 @@ import java.util.function.Function;
 /**
  * @author hylexus
  */
-public class DemoTcpXtreamHandlerMapping2 extends AbstractXtreamRequestMappingHandlerMapping {
+public class DemoUdpXtreamHandlerMapping2 extends AbstractXtreamRequestMappingHandlerMapping {
 
-    public DemoTcpXtreamHandlerMapping2() {
+    public DemoUdpXtreamHandlerMapping2() {
         this(new String[]{XtreamUtils.detectMainClassPackageName()}, cls -> BeanUtils.createNewInstance(cls, new Object[0]));
     }
 
-    public DemoTcpXtreamHandlerMapping2(String[] basePackages, Function<Class<?>, Object> instanceFactory) {
+    public DemoUdpXtreamHandlerMapping2(String[] basePackages, Function<Class<?>, Object> instanceFactory) {
         super(basePackages, instanceFactory);
     }
 

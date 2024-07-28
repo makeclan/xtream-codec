@@ -29,14 +29,14 @@ public abstract class AbstractXtreamRequest implements XtreamRequest {
     protected final ByteBufAllocator allocator;
     protected final NettyInbound delegate;
     protected final Mono<XtreamSession> sessionMono;
-    protected final ByteBuf body;
+    protected final ByteBuf payload;
     protected String id;
 
-    public AbstractXtreamRequest(ByteBufAllocator allocator, NettyInbound delegate, XtreamSession session, ByteBuf body) {
+    public AbstractXtreamRequest(ByteBufAllocator allocator, NettyInbound delegate, Mono<XtreamSession> session, ByteBuf payload) {
         this.allocator = allocator;
         this.delegate = delegate;
-        this.sessionMono = Mono.just(session).cache();
-        this.body = body;
+        this.sessionMono = session;
+        this.payload = payload;
     }
 
     @Override
@@ -63,7 +63,7 @@ public abstract class AbstractXtreamRequest implements XtreamRequest {
 
     @Override
     public ByteBuf payload() {
-        return this.body;
+        return this.payload;
     }
 
     @Override

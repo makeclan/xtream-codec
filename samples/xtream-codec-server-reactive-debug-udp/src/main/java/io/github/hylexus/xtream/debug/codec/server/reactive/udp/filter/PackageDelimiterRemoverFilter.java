@@ -10,40 +10,39 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
+package io.github.hylexus.xtream.debug.codec.server.reactive.udp.filter;
 
-import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
-import io.github.hylexus.xtream.codec.core.annotation.OrderedComponent;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilterChain;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.netty.buffer.ByteBuf;
 import reactor.core.publisher.Mono;
 
-/**
- * @author hylexus
- */
-public class LoggingXtreamFilter implements XtreamFilter {
-
-    private static final Logger log = LoggerFactory.getLogger(LoggingXtreamFilter.class);
-
-    public LoggingXtreamFilter() {
-    }
+public class PackageDelimiterRemoverFilter implements XtreamFilter {
 
     @Override
     public Mono<Void> filter(XtreamExchange exchange, XtreamFilterChain chain) {
-        log.info("==> Receive [{}] message: id = {}, remoteAddr = {}, payload = {}",
-                exchange.request().type(),
-                exchange.request().getId(),
-                exchange.request().remoteAddress(),
-                FormatUtils.toHexString(exchange.request().payload())
-        );
+        final ByteBuf originalPayload = exchange.request().payload();
+
+        // 仅仅是个示例(808报文)
+        // 以 0x7e 开头 && 以 0x7e 结尾 ==> 去掉开头和结尾的 0x7e(示例项目的解码器不需要分隔符)
+        if (originalPayload.readableBytes() > 2
+                && originalPayload.getByte(0) == 0x7e
+                && originalPayload.getByte(originalPayload.readableBytes() - 1) == 0x7e) {
+
+            final XtreamExchange mutatedExchange = exchange.mutate().request(requestBuilder -> {
+                final ByteBuf newPayload = originalPayload.slice(1, originalPayload.readableBytes() - 2);
+                requestBuilder.payload(newPayload);
+            }).build();
+
+            return chain.filter(mutatedExchange);
+        }
+
         return chain.filter(exchange);
     }
 
     @Override
     public int order() {
-        return OrderedComponent.HIGHEST_PRECEDENCE + 1000;
+        return -1;
     }
 }

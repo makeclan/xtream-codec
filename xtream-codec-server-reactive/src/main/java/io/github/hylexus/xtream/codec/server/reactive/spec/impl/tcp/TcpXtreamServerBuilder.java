@@ -25,7 +25,7 @@ public class TcpXtreamServerBuilder {
         this.customizers = new ArrayList<>();
     }
 
-    public TcpXtreamServerBuilder addCustomizer(TcpNettyServerCustomizer customizer) {
+    public TcpXtreamServerBuilder addServerCustomizer(TcpNettyServerCustomizer customizer) {
         this.customizers.add(customizer);
         return this;
     }

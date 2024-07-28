@@ -10,17 +10,15 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package io.github.hylexus.xtream.debug.codec.server.reactive.tcp;
+package io.github.hylexus.xtream.debug.codec.server.reactive.udp.handler;
 
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMapping;
-import reactor.core.publisher.Mono;
+import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamRequestMapping;
 
-public class DemoTcpXtreamHandlerMapping implements XtreamHandlerMapping {
+import java.lang.annotation.*;
 
-    @Override
-    public Mono<Object> getHandler(XtreamExchange exchange) {
-        return Mono.just(new DemoTcpXtreamHandler());
-    }
-
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@XtreamRequestMapping
+public @interface MyUdpRequestRouter {
 }

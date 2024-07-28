@@ -30,9 +30,10 @@ import reactor.core.publisher.Mono;
  */
 public class XtreamResponseBodyHandlerResultHandler implements XtreamHandlerResultHandler {
 
-    private final XtreamMessageCodec encoder = new XtreamMessageCodec(new EntityCodec());
+    private final XtreamMessageCodec encoder;
 
-    public XtreamResponseBodyHandlerResultHandler() {
+    public XtreamResponseBodyHandlerResultHandler(EntityCodec entityCodec) {
+        this.encoder = new XtreamMessageCodec(entityCodec);
     }
 
     @Override

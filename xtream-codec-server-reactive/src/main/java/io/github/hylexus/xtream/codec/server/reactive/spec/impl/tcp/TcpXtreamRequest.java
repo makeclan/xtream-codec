@@ -16,6 +16,7 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import reactor.core.publisher.Mono;
 import reactor.netty.Connection;
 import reactor.netty.NettyInbound;
 
@@ -29,9 +30,14 @@ public class TcpXtreamRequest extends AbstractXtreamRequest {
 
     private final NettyInbound delegate;
 
-    public TcpXtreamRequest(ByteBufAllocator allocator, NettyInbound delegate, XtreamSession session, ByteBuf body) {
+    public TcpXtreamRequest(ByteBufAllocator allocator, NettyInbound delegate, Mono<XtreamSession> session, ByteBuf body) {
         super(allocator, delegate, session, body);
         this.delegate = delegate;
+    }
+
+    @Override
+    public Type type() {
+        return Type.TCP;
     }
 
     @Override
@@ -39,6 +45,11 @@ public class TcpXtreamRequest extends AbstractXtreamRequest {
         final AddrHolder addrHolder = new AddrHolder();
         this.delegate.withConnection(addrHolder);
         return addrHolder.remoteAddress;
+    }
+
+    @Override
+    public XtreamRequestBuilder mutate() {
+        return new DefaultTcpXtreamRequestBuilder(this);
     }
 
     static class AddrHolder implements Consumer<Connection> {

@@ -12,7 +12,10 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp;
 
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamNettyHandlerAdapter;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamExchange;
 import io.netty.buffer.ByteBufAllocator;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
@@ -24,7 +27,7 @@ import reactor.netty.NettyOutbound;
 /**
  * @author hylexus
  */
-public class DefaultTcpXtreamNettyHandlerAdapter implements TcpXtreamNettyHandlerAdapter {
+public class DefaultTcpXtreamNettyHandlerAdapter implements XtreamNettyHandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultTcpXtreamNettyHandlerAdapter.class);
     private final XtreamHandler xtreamHandler;
@@ -44,8 +47,8 @@ public class DefaultTcpXtreamNettyHandlerAdapter implements TcpXtreamNettyHandle
             }
 
             final TcpXtreamSession session = new TcpXtreamSession();
-            final TcpXtreamExchange exchange = new TcpXtreamExchange(
-                    new TcpXtreamRequest(allocator, nettyInbound, session, byteBuf),
+            final XtreamExchange exchange = new DefaultXtreamExchange(
+                    new TcpXtreamRequest(allocator, nettyInbound, Mono.just(session), byteBuf),
                     new TcpXtreamResponse(allocator, nettyOutbound),
                     session
             );

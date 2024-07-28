@@ -36,16 +36,15 @@ public class XtreamMethodParameter {
 
     private final Method method;
     private final int index;
-    private final List<Type> genericType;
+    private final List<Type> genericType = new ArrayList<>();
     private final Class<?> containerClass;
 
     private Class<?> parameterType;
-    private Annotation[] parameterAnnotations;
+    private volatile Annotation[] parameterAnnotations;
 
     public XtreamMethodParameter(int index, Method method) {
         this.index = index;
         this.method = method;
-        this.genericType = new ArrayList<>();
         this.containerClass = this.method.getDeclaringClass();
         this.init();
     }
@@ -71,23 +70,25 @@ public class XtreamMethodParameter {
     private void initGenericType(Type type) {
         if (type instanceof Class<?> cls) {
             this.parameterType = cls;
-            return;
-        }
-        if (!(type instanceof ParameterizedType parameterizedType)) {
+        } else if (type instanceof ParameterizedType parameterizedType) {
+            this.parameterType = (Class<?>) parameterizedType.getRawType();
+            this.genericType.addAll(Arrays.asList(parameterizedType.getActualTypeArguments()));
+        } else {
             log.error("Unsupported type : {}", type);
-            return;
         }
-        this.parameterType = (Class<?>) parameterizedType.getRawType();
-        this.genericType.addAll(Arrays.asList(parameterizedType.getActualTypeArguments()));
     }
 
     public Annotation[] getParameterAnnotations() {
         if (this.parameterAnnotations == null) {
-            if (this.index >= 0) {
-                final Annotation[][] annotations = this.method.getParameterAnnotations();
-                this.parameterAnnotations = annotations[this.index];
-            } else {
-                throw new IllegalArgumentException("param index >=0");
+            synchronized (this) {
+                if (this.parameterAnnotations == null) {
+                    if (this.index >= 0) {
+                        final Annotation[][] annotations = this.method.getParameterAnnotations();
+                        this.parameterAnnotations = annotations[this.index];
+                    } else {
+                        this.parameterAnnotations = new Annotation[0];
+                    }
+                }
             }
         }
         return this.parameterAnnotations;
@@ -122,6 +123,26 @@ public class XtreamMethodParameter {
 
     public Method getMethod() {
         return method;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final XtreamMethodParameter that = (XtreamMethodParameter) o;
+        return index == that.index
+                && containerClass == that.containerClass
+                && method.equals(that.method);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * this.method.hashCode() + this.index;
     }
 
     @Override

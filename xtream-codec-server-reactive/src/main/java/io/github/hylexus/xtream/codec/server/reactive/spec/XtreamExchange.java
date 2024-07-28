@@ -16,6 +16,7 @@ import io.netty.buffer.ByteBufAllocator;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * 当前类是从 `org.springframework.web.server.ServerWebExchange` 复制过来修改的。
@@ -36,8 +37,19 @@ public interface XtreamExchange {
 
     Mono<XtreamSession> session();
 
+    XtreamExchangeBuilder mutate();
+
     default Map<String, Object> attributes() {
         return request().attributes();
     }
 
+    interface XtreamExchangeBuilder {
+        XtreamExchangeBuilder request(XtreamRequest request);
+
+        XtreamExchangeBuilder request(Consumer<XtreamRequest.XtreamRequestBuilder> requestBuilder);
+
+        XtreamExchangeBuilder response(XtreamResponse response);
+
+        XtreamExchange build();
+    }
 }

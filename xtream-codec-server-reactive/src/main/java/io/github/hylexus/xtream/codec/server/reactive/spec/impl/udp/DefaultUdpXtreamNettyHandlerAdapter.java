@@ -12,7 +12,10 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp;
 
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamNettyHandlerAdapter;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamExchange;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.socket.DatagramPacket;
 import org.reactivestreams.Publisher;
@@ -27,7 +30,7 @@ import java.net.InetSocketAddress;
 /**
  * @author hylexus
  */
-public class DefaultUdpXtreamNettyHandlerAdapter implements UdpXtreamNettyHandlerAdapter {
+public class DefaultUdpXtreamNettyHandlerAdapter implements XtreamNettyHandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultUdpXtreamNettyHandlerAdapter.class);
     private final XtreamHandler xtreamHandler;
@@ -53,8 +56,8 @@ public class DefaultUdpXtreamNettyHandlerAdapter implements UdpXtreamNettyHandle
     protected Mono<Void> handleRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, DatagramPacket datagramPacket) {
         final InetSocketAddress remoteAddr = datagramPacket.sender();
         final UdpXtreamSession session = new UdpXtreamSession();
-        final UdpXtreamExchange exchange = new UdpXtreamExchange(
-                new UdpXtreamRequest(allocator, nettyInbound, session, datagramPacket),
+        final XtreamExchange exchange = new DefaultXtreamExchange(
+                new UdpXtreamRequest(allocator, nettyInbound, Mono.just(session), datagramPacket),
                 new UdpXtreamResponse(allocator, nettyOutbound, remoteAddr),
                 session
         );

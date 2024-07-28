@@ -12,19 +12,23 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp;
 
-
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamResponse;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamExchange;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamRequestBuilder;
 
-/**
- * @author hylexus
- */
-public class TcpXtreamExchange extends AbstractXtreamExchange {
+public class DefaultTcpXtreamRequestBuilder extends AbstractXtreamRequestBuilder {
 
-    public TcpXtreamExchange(XtreamRequest request, XtreamResponse response, XtreamSession session) {
-        super(request, response, session);
+    public DefaultTcpXtreamRequestBuilder(XtreamRequest delegate) {
+        super(delegate);
     }
 
+    @Override
+    public XtreamRequest build() {
+
+        return new TcpXtreamRequest(
+                this.delegate.bufferFactory(),
+                this.delegate.underlyingInbound(),
+                sessionMono != null ? sessionMono : delegate.session(),
+                payload != null ? payload : delegate.payload()
+        );
+    }
 }

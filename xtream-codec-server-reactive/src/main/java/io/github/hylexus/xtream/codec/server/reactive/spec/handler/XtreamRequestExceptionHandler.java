@@ -14,9 +14,6 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.handler;
 
 import io.github.hylexus.xtream.codec.core.annotation.OrderedComponent;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp.UdpXtreamExchange;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
 /**
@@ -38,7 +35,7 @@ public interface XtreamRequestExceptionHandler extends OrderedComponent {
 
         @Override
         public Mono<Void> handleRequestException(XtreamExchange exchange, Throwable ex) {
-            final String type = exchange instanceof UdpXtreamExchange ? "UDP" : "TCP";
+            final String type = exchange.request().type().name();
             final String description = "[ExceptionHandlingXtreamHandler] " + "[" + type + "] " + exchange;
             return Mono.<Void>error(ex).checkpoint(description);
         }
@@ -50,22 +47,4 @@ public interface XtreamRequestExceptionHandler extends OrderedComponent {
 
     }
 
-    class LoggingXtreamRequestExceptionHandler implements XtreamRequestExceptionHandler {
-
-        private static final Logger log = LoggerFactory.getLogger(XtreamRequestExceptionHandler.class);
-
-        public LoggingXtreamRequestExceptionHandler() {
-        }
-
-        @Override
-        public Mono<Void> handleRequestException(XtreamExchange exchange, Throwable ex) {
-            log.error("[LoggingXtreamRequestExceptionHandler] ", ex);
-            return Mono.empty();
-        }
-
-        @Override
-        public int order() {
-            return OrderedComponent.LOWEST_PRECEDENCE - 1;
-        }
-    }
 }

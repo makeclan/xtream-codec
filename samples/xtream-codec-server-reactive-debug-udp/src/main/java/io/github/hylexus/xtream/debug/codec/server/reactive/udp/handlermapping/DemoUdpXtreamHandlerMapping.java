@@ -10,10 +10,11 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package io.github.hylexus.xtream.debug.codec.server.reactive.udp;
+package io.github.hylexus.xtream.debug.codec.server.reactive.udp.handlermapping;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMapping;
+import io.github.hylexus.xtream.debug.codec.server.reactive.udp.handler.DemoUdpXtreamHandler;
 import reactor.core.publisher.Mono;
 
 public class DemoUdpXtreamHandlerMapping implements XtreamHandlerMapping {

@@ -16,6 +16,7 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamRequest;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.socket.DatagramPacket;
+import reactor.core.publisher.Mono;
 import reactor.netty.NettyInbound;
 
 import java.net.InetSocketAddress;
@@ -27,14 +28,24 @@ public class UdpXtreamRequest extends AbstractXtreamRequest {
 
     private final InetSocketAddress remoteAddress;
 
-    public UdpXtreamRequest(ByteBufAllocator allocator, NettyInbound delegate, XtreamSession session, DatagramPacket datagramPacket) {
+    public UdpXtreamRequest(ByteBufAllocator allocator, NettyInbound delegate, Mono<XtreamSession> session, DatagramPacket datagramPacket) {
         super(allocator, delegate, session, datagramPacket.content());
         this.remoteAddress = datagramPacket.sender();
     }
 
     @Override
+    public Type type() {
+        return Type.UDP;
+    }
+
+    @Override
     public InetSocketAddress remoteAddress() {
         return this.remoteAddress;
+    }
+
+    @Override
+    public XtreamRequestBuilder mutate() {
+        return new DefaultUdpXtreamRequestBuilder(this);
     }
 
 }

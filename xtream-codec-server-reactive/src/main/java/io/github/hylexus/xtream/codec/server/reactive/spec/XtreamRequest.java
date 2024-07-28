@@ -24,6 +24,14 @@ import java.util.Map;
  * @author hylexus
  */
 public interface XtreamRequest {
+
+    enum Type {
+        TCP,
+        UDP
+    }
+
+    Type type();
+
     ByteBufAllocator bufferFactory();
 
     NettyInbound underlyingInbound();
@@ -36,6 +44,18 @@ public interface XtreamRequest {
 
     Map<String, Object> attributes();
 
-    Mono<? extends XtreamSession> session();
+    Mono<XtreamSession> session();
 
+    XtreamRequestBuilder mutate();
+
+    interface XtreamRequestBuilder {
+
+        XtreamRequestBuilder payload(ByteBuf payload);
+
+        XtreamRequestBuilder remoteAddress(InetSocketAddress remoteAddress);
+
+        XtreamRequestBuilder session(Mono<XtreamSession> session);
+
+        XtreamRequest build();
+    }
 }

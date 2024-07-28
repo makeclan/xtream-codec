@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package io.github.hylexus.xtream.debug.codec.server.reactive.tcp;
+package io.github.hylexus.xtream.debug.codec.server.reactive.tcp.handler;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.SimpleXtreamRequestHandler;

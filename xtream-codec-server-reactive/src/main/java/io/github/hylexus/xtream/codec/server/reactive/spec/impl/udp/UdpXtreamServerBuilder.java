@@ -28,7 +28,7 @@ public class UdpXtreamServerBuilder {
         this.customizers = new ArrayList<>();
     }
 
-    public UdpXtreamServerBuilder addCustomizer(UdpNettyServerCustomizer customizer) {
+    public UdpXtreamServerBuilder addServerCustomizer(UdpNettyServerCustomizer customizer) {
         this.customizers.add(customizer);
         return this;
     }

@@ -12,6 +12,7 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 
+import io.github.hylexus.xtream.codec.core.EntityCodec;
 import io.github.hylexus.xtream.codec.core.annotation.OrderedComponent;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
@@ -23,12 +24,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
  * @author hylexus
  */
-public abstract class AbstractXtreamHandlerAdapterBuilder<C extends AbstractXtreamHandlerAdapterBuilder<C, A>, A extends XtreamNettyHandlerAdapter> {
+public abstract class AbstractXtreamHandlerAdapterBuilder<C extends AbstractXtreamHandlerAdapterBuilder<C>> {
     private static final Logger log = LoggerFactory.getLogger(AbstractXtreamHandlerAdapterBuilder.class);
     protected final ByteBufAllocator byteBufAllocator;
     private final List<XtreamHandlerMapping> handlerMappings;
@@ -39,11 +42,6 @@ public abstract class AbstractXtreamHandlerAdapterBuilder<C extends AbstractXtre
 
     private final List<XtreamFilter> xtreamFilters;
     private final List<XtreamRequestExceptionHandler> exceptionHandlers;
-
-
-    public AbstractXtreamHandlerAdapterBuilder() {
-        this(ByteBufAllocator.DEFAULT);
-    }
 
     public AbstractXtreamHandlerAdapterBuilder(ByteBufAllocator allocator) {
         this.handlerMappings = new ArrayList<>();
@@ -59,6 +57,18 @@ public abstract class AbstractXtreamHandlerAdapterBuilder<C extends AbstractXtre
         return (C) this;
     }
 
+    public C addHandlerMappings(XtreamHandlerMapping... handlerMappings) {
+        if (handlerMappings != null) {
+            this.handlerMappings.addAll(Arrays.asList(handlerMappings));
+        }
+        return self();
+    }
+
+    public C addHandlerMappings(Collection<XtreamHandlerMapping> handlerMappings) {
+        this.handlerMappings.addAll(handlerMappings);
+        return self();
+    }
+
     public C addHandlerMapping(XtreamHandlerMapping handlerMapping) {
         this.handlerMappings.add(handlerMapping);
         return self();
@@ -69,8 +79,8 @@ public abstract class AbstractXtreamHandlerAdapterBuilder<C extends AbstractXtre
         return self();
     }
 
-    public C enableBuiltinHandlerAdapters() {
-        return this.enableBuiltinHandlerAdapters(DelegateXtreamHandlerMethodArgumentResolver.INSTANCE);
+    public C enableBuiltinHandlerAdapters(EntityCodec entityCodec) {
+        return this.enableBuiltinHandlerAdapters(DelegateXtreamHandlerMethodArgumentResolver.createDefault(entityCodec));
     }
 
     public C enableBuiltinHandlerAdapters(XtreamHandlerMethodArgumentResolver argumentResolver) {
@@ -85,8 +95,8 @@ public abstract class AbstractXtreamHandlerAdapterBuilder<C extends AbstractXtre
         return self();
     }
 
-    public C enableBuiltinHandlerResultHandlers() {
-        this.addHandlerResultHandler(new XtreamResponseBodyHandlerResultHandler());
+    public C enableBuiltinHandlerResultHandlers(EntityCodec codec) {
+        this.addHandlerResultHandler(new XtreamResponseBodyHandlerResultHandler(codec));
         this.addHandlerResultHandler(new LoggingXtreamHandlerResultHandler());
         return self();
     }
@@ -137,7 +147,7 @@ public abstract class AbstractXtreamHandlerAdapterBuilder<C extends AbstractXtre
         return self();
     }
 
-    public abstract A build();
+    public abstract XtreamNettyHandlerAdapter build();
 
     protected XtreamHandler createRequestHandler() {
         if (this.handlerMappings.isEmpty()) {

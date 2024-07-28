@@ -13,22 +13,21 @@
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamNettyHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamHandlerAdapterBuilder;
 import io.netty.buffer.ByteBufAllocator;
 
 /**
  * @author hylexus
  */
-public class UdpXtreamHandlerAdapterBuilder extends AbstractXtreamHandlerAdapterBuilder<UdpXtreamHandlerAdapterBuilder, UdpXtreamNettyHandlerAdapter> {
-    public UdpXtreamHandlerAdapterBuilder() {
-    }
+public class UdpXtreamHandlerAdapterBuilder extends AbstractXtreamHandlerAdapterBuilder<UdpXtreamHandlerAdapterBuilder> {
 
     public UdpXtreamHandlerAdapterBuilder(ByteBufAllocator allocator) {
         super(allocator);
     }
 
     @Override
-    public UdpXtreamNettyHandlerAdapter build() {
+    public XtreamNettyHandlerAdapter build() {
         final XtreamHandler exceptionHandlingHandler = createRequestHandler();
         return new DefaultUdpXtreamNettyHandlerAdapter(exceptionHandlingHandler, super.byteBufAllocator);
     }

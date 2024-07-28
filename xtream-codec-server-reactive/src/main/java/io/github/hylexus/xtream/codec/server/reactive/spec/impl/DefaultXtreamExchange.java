@@ -25,15 +25,19 @@ import java.util.Map;
 /**
  * @author hylexus
  */
-public abstract class AbstractXtreamExchange implements XtreamExchange {
+public class DefaultXtreamExchange implements XtreamExchange {
     protected final XtreamRequest request;
     protected final XtreamResponse response;
     protected final Mono<XtreamSession> sessionMono;
 
-    public AbstractXtreamExchange(XtreamRequest request, XtreamResponse response, XtreamSession session) {
+    public DefaultXtreamExchange(XtreamRequest request, XtreamResponse response, XtreamSession session) {
+        this(request, response, Mono.just(session).cache());
+    }
+
+    public DefaultXtreamExchange(XtreamRequest request, XtreamResponse response, Mono<XtreamSession> session) {
         this.request = request;
         this.response = response;
-        this.sessionMono = Mono.just(session).cache();
+        this.sessionMono = session;
     }
 
     @Override
@@ -49,6 +53,11 @@ public abstract class AbstractXtreamExchange implements XtreamExchange {
     @Override
     public Mono<XtreamSession> session() {
         return this.sessionMono;
+    }
+
+    @Override
+    public XtreamExchangeBuilder mutate() {
+        return new DefaultXtreamExchangeBuilder(this);
     }
 
 

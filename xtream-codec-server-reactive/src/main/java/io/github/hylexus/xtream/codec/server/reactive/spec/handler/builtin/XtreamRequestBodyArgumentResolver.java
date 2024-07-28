@@ -25,9 +25,10 @@ import reactor.core.publisher.Mono;
  * @author hylexus
  */
 public class XtreamRequestBodyArgumentResolver implements XtreamHandlerMethodArgumentResolver {
-    private final XtreamMessageCodec entityCodec = new XtreamMessageCodec(new EntityCodec());
+    private final XtreamMessageCodec messageCodec;
 
-    public XtreamRequestBodyArgumentResolver() {
+    public XtreamRequestBodyArgumentResolver(EntityCodec entityCodec) {
+        this.messageCodec = new XtreamMessageCodec(entityCodec);
     }
 
     @Override
@@ -40,7 +41,7 @@ public class XtreamRequestBodyArgumentResolver implements XtreamHandlerMethodArg
         if (ByteBuf.class.isAssignableFrom(parameter.getParameterType())) {
             return Mono.justOrEmpty(exchange.request().payload());
         }
-        final Object instance = this.entityCodec.decode(parameter.getParameterType(), exchange.request().payload().slice());
+        final Object instance = this.messageCodec.decode(parameter.getParameterType(), exchange.request().payload().slice());
         return Mono.justOrEmpty(instance);
     }
 }

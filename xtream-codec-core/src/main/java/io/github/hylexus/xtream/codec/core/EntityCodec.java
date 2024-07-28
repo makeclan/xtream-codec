@@ -18,6 +18,7 @@ import io.netty.buffer.ByteBuf;
 public class EntityCodec {
     private final EntityEncoder entityEncoder;
     private final EntityDecoder entityDecoder;
+    public static EntityCodec DEFAULT = new EntityCodec();
 
     public EntityCodec() {
         this(new SimpleBeanMetadataRegistry());
