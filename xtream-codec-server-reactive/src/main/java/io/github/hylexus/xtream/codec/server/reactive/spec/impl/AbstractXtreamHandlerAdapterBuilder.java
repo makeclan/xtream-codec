@@ -14,6 +14,7 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 
 import io.github.hylexus.xtream.codec.core.EntityCodec;
 import io.github.hylexus.xtream.codec.core.annotation.OrderedComponent;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchangeCreator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamNettyHandlerAdapter;
@@ -42,6 +43,7 @@ public abstract class AbstractXtreamHandlerAdapterBuilder<C extends AbstractXtre
 
     private final List<XtreamFilter> xtreamFilters;
     private final List<XtreamRequestExceptionHandler> exceptionHandlers;
+    protected XtreamExchangeCreator xtreamExchangeCreator;
 
     public AbstractXtreamHandlerAdapterBuilder(ByteBufAllocator allocator) {
         this.handlerMappings = new ArrayList<>();
@@ -132,6 +134,11 @@ public abstract class AbstractXtreamHandlerAdapterBuilder<C extends AbstractXtre
         return self();
     }
 
+    public C addFilters(Collection<XtreamFilter> filters) {
+        this.xtreamFilters.addAll(filters);
+        return self();
+    }
+
     public C removeFilter(Class<? extends XtreamFilter> cls) {
         this.xtreamFilters.removeIf(m -> m.getClass().equals(cls));
         return self();
@@ -147,9 +154,17 @@ public abstract class AbstractXtreamHandlerAdapterBuilder<C extends AbstractXtre
         return self();
     }
 
+    public C setXtreamExchangeCreator(XtreamExchangeCreator xtreamExchangeCreator) {
+        this.xtreamExchangeCreator = xtreamExchangeCreator;
+        return self();
+    }
+
     public abstract XtreamNettyHandlerAdapter build();
 
     protected XtreamHandler createRequestHandler() {
+        if (this.xtreamExchangeCreator == null) {
+            this.xtreamExchangeCreator = XtreamExchangeCreator.DEFAULT;
+        }
         if (this.handlerMappings.isEmpty()) {
             throw new IllegalStateException("No [" + XtreamHandlerMapping.class.getSimpleName() + "] instance configured.");
         }

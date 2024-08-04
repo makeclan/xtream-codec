@@ -25,6 +25,7 @@ val mavenRepoConfig = getMavenRepoConfig()
 val mavenPublications = setOf(
     "xtream-codec-core",
     "xtream-codec-server-reactive",
+    "xtream-codec-ext-jt-808-server-spring-boot-starter",
 )
 
 // region Java
@@ -55,7 +56,7 @@ configure(subprojects) {
             mavenBom("org.springframework.cloud:spring-cloud-dependencies:${getConfigAsString("defaultSpringCloudBomVersion")}")
         }
 
-        dependencies{
+        dependencies {
             dependency("io.github.classgraph:classgraph:4.8.174")
         }
     }
@@ -107,7 +108,8 @@ configure(subprojects) {
         // If set to true, then all boms will be excluded from the report
         excludeBoms = true
 
-        excludes = mavenPublications.map { "xtream-codec:$it" }.toTypedArray()
+        // excludes = mavenPublications.map { "xtream-codec:$it" }.toTypedArray()
+        excludes = mavenPublications.flatMap { listOf("xtream-codec:$it", "xtream-codec.ext.jtt:$it") }.toTypedArray()
 
         // Set output directory for the report data.
         // Defaults to ${project.buildDir}/reports/dependency-license.
@@ -153,6 +155,8 @@ configure(subprojects) {
             manifest.attributes["Implementation-Version"] = getProjectVersion()
             manifest.attributes["Automatic-Module-Name"] = project.name.replace('-', '.')
             manifest.attributes["Created-By"] = "${System.getProperty("java.version")} (${System.getProperty("java.specification.vendor")})"
+            // manifest.attributes["Created-By"] = "${System.getProperty("java.version")} (${System.getProperty("java.vendor")})"
+            manifest.attributes["Minimum-Jdk-Version"] = getJavaVersion()
         }
 
         from(rootProject.projectDir) {
@@ -301,6 +305,7 @@ fun isJavaProject(project: Project): Boolean {
                 "xtream-codec-core-debug",
                 "xtream-codec-server-reactive-debug-tcp",
                 "xtream-codec-server-reactive-debug-udp",
+                "jt-808-server-spring-boot-starter-debug",
             ).contains(project.name))
 }
 

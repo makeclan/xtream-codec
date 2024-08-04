@@ -35,7 +35,7 @@ public class LoggingXtreamFilter implements XtreamFilter {
     public Mono<Void> filter(XtreamExchange exchange, XtreamFilterChain chain) {
         log.info("==> Receive [{}] message: id = {}, remoteAddr = {}, payload = {}",
                 exchange.request().type(),
-                exchange.request().getId(),
+                exchange.request().logId(),
                 exchange.request().remoteAddress(),
                 FormatUtils.toHexString(exchange.request().payload())
         );

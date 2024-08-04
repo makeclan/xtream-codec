@@ -49,7 +49,7 @@ public class DispatcherXtreamHandler implements XtreamHandler {
         return Flux.fromIterable(this.handlerMappings)
                 .concatMap(mapping -> mapping.getHandler(exchange))
                 .next()
-                .switchIfEmpty(createNotFoundError())
+                .switchIfEmpty(createNotFoundError(exchange))
                 .onErrorResume(ex -> handleResultMono(exchange, Mono.error(ex)))
                 .flatMap(handler -> handleRequestWith(exchange, handler));
     }
@@ -101,9 +101,9 @@ public class DispatcherXtreamHandler implements XtreamHandler {
                 "No HandlerResultHandler for " + handlerResult.getReturnValue()));
     }
 
-    private <R> Mono<R> createNotFoundError() {
+    private <R> Mono<R> createNotFoundError(XtreamExchange exchange) {
         return Mono.defer(() -> {
-            Exception ex = new NotYetImplementedException("createNotFoundError");
+            Exception ex = new NotYetImplementedException("No handler found for request: " + exchange.request());
             return Mono.error(ex);
         });
     }

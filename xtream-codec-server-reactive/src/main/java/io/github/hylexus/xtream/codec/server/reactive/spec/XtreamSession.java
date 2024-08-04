@@ -23,4 +23,5 @@ public interface XtreamSession {
 
     Map<String, Object> attributes();
 
+    XtreamRequest.Type type();
 }

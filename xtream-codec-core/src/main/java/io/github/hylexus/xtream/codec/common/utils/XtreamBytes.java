@@ -13,6 +13,7 @@
 package io.github.hylexus.xtream.codec.common.utils;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 
 /**
  * @author hylexus
@@ -20,6 +21,11 @@ import io.netty.buffer.ByteBuf;
 public class XtreamBytes {
 
     private static final char[] DIGITS_HEX = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+
+    public static ByteBuf byteBufFromHexString(ByteBufAllocator allocator, String hexString) {
+        final byte[] bytes = XtreamBytes.decodeHex(hexString);
+        return allocator.buffer().writeBytes(bytes);
+    }
 
     public static String encodeHex(ByteBuf byteBuf) {
         final StringBuilder builder = new StringBuilder();
@@ -85,6 +91,21 @@ public class XtreamBytes {
         final byte[] newBytes = new byte[length];
         System.arraycopy(bytes, 0, newBytes, length - bytes.length, bytes.length);
         return newBytes;
+    }
+
+    public static byte[] getBytes(ByteBuf byteBuf, int startIndex, int length) {
+        final byte[] bytes = new byte[length];
+        byteBuf.getBytes(startIndex, bytes, 0, length);
+        return bytes;
+    }
+
+    public static int getWord(ByteBuf byteBuf, int start) {
+        return byteBuf.getUnsignedShort(start);
+    }
+
+    public static String getBcd(ByteBuf byteBuf, int startIndex, int length) {
+        final byte[] bytes = getBytes(byteBuf, startIndex, length);
+        return BcdOps.bcd2StringV2(bytes);
     }
 
     public static short readU8(ByteBuf readable) {

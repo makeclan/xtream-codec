@@ -36,7 +36,7 @@ public interface XtreamRequest {
 
     NettyInbound underlyingInbound();
 
-    String getId();
+    String logId();
 
     ByteBuf payload();
 

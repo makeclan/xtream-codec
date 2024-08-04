@@ -18,9 +18,8 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamResponse;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.TcpXtreamResponse;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp.UdpXtreamRequest;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp.UdpXtreamResponse;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamRequest;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamResponse;
 import io.github.hylexus.xtream.debug.codec.server.reactive.udp.message.DemoLocationMsg01;
 import io.github.hylexus.xtream.debug.codec.server.reactive.udp.message.DemoLocationMsg02;
 import io.netty.buffer.ByteBuf;
@@ -50,9 +49,9 @@ public class DemoUdpXtreamHandler2 {
             @XtreamRequestBody ByteBuf msg03,
             XtreamSession session,
             XtreamRequest request,
-            UdpXtreamRequest udpRequest,
+            DefaultXtreamRequest udpRequest,
             XtreamResponse response,
-            UdpXtreamResponse udpResponse) {
+            DefaultXtreamResponse udpResponse) {
 
         assertSame(exchange.request().payload(), msg03);
         assertSame(exchange.request(), request);

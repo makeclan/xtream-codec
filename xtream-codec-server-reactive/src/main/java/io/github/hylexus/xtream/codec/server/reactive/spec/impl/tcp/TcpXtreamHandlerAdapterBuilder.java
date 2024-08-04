@@ -28,7 +28,7 @@ public class TcpXtreamHandlerAdapterBuilder extends AbstractXtreamHandlerAdapter
 
     public XtreamNettyHandlerAdapter build() {
         final XtreamHandler exceptionHandlingHandler = createRequestHandler();
-        return new DefaultTcpXtreamNettyHandlerAdapter(exceptionHandlingHandler, super.byteBufAllocator);
+        return new DefaultTcpXtreamNettyHandlerAdapter(super.byteBufAllocator, super.xtreamExchangeCreator, exceptionHandlingHandler);
     }
 
 }

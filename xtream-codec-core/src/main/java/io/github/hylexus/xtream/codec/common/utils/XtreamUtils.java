@@ -12,6 +12,7 @@
 
 package io.github.hylexus.xtream.codec.common.utils;
 
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.ReferenceCounted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ import java.util.List;
  * @author hylexus
  */
 public class XtreamUtils {
+    public static final ByteBufAllocator DEFAULT_BUFFER_FACTORY = ByteBufAllocator.DEFAULT;
     private static final Logger log = LoggerFactory.getLogger(XtreamUtils.class);
 
     public static boolean hasElement(String str) {
@@ -64,6 +66,12 @@ public class XtreamUtils {
             throw new IllegalStateException("Cannot determine Main class");
         }
         return candidates.getLast();
+    }
+
+    public static int setBitRange(int from, int length, int target, int offset) {
+        return ((~(((1 << length) - 1) << offset)) & target)
+                |
+                (from << offset);
     }
 
 }

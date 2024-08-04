@@ -29,7 +29,7 @@ public class UdpXtreamHandlerAdapterBuilder extends AbstractXtreamHandlerAdapter
     @Override
     public XtreamNettyHandlerAdapter build() {
         final XtreamHandler exceptionHandlingHandler = createRequestHandler();
-        return new DefaultUdpXtreamNettyHandlerAdapter(exceptionHandlingHandler, super.byteBufAllocator);
+        return new DefaultUdpXtreamNettyHandlerAdapter(super.byteBufAllocator, super.xtreamExchangeCreator, exceptionHandlingHandler);
     }
 
 }

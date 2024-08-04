@@ -13,9 +13,9 @@
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchangeCreator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamNettyHandlerAdapter;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamExchange;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.socket.DatagramPacket;
 import org.reactivestreams.Publisher;
@@ -25,20 +25,20 @@ import reactor.core.publisher.Mono;
 import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
 
-import java.net.InetSocketAddress;
-
 /**
  * @author hylexus
  */
 public class DefaultUdpXtreamNettyHandlerAdapter implements XtreamNettyHandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultUdpXtreamNettyHandlerAdapter.class);
-    private final XtreamHandler xtreamHandler;
-    private final ByteBufAllocator allocator;
+    protected final XtreamHandler xtreamHandler;
+    protected final ByteBufAllocator allocator;
+    protected final XtreamExchangeCreator exchangeCreator;
 
-    public DefaultUdpXtreamNettyHandlerAdapter(XtreamHandler xtreamHandler, ByteBufAllocator allocator) {
+    public DefaultUdpXtreamNettyHandlerAdapter(ByteBufAllocator allocator, XtreamExchangeCreator exchangeCreator, XtreamHandler xtreamHandler) {
         this.xtreamHandler = xtreamHandler;
         this.allocator = allocator;
+        this.exchangeCreator = exchangeCreator;
         log.info("DefaultUdpXtreamNettyHandlerAdapter initialized");
     }
 
@@ -54,13 +54,7 @@ public class DefaultUdpXtreamNettyHandlerAdapter implements XtreamNettyHandlerAd
     }
 
     protected Mono<Void> handleRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, DatagramPacket datagramPacket) {
-        final InetSocketAddress remoteAddr = datagramPacket.sender();
-        final UdpXtreamSession session = new UdpXtreamSession();
-        final XtreamExchange exchange = new DefaultXtreamExchange(
-                new UdpXtreamRequest(allocator, nettyInbound, Mono.just(session), datagramPacket),
-                new UdpXtreamResponse(allocator, nettyOutbound, remoteAddr),
-                session
-        );
+        final XtreamExchange exchange = this.exchangeCreator.createUdpExchange(allocator, nettyInbound, nettyOutbound, datagramPacket);
         return xtreamHandler
                 .handle(exchange)
                 .doOnError(Throwable.class, throwable -> {

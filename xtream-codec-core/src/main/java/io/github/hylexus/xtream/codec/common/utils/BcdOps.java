@@ -92,4 +92,22 @@ public abstract class BcdOps {
             return (byte) (asc - 48);
         }
     }
+
+    public static String bcd2StringV2(byte[] bytes) {
+        return bcd2StringV2(bytes, 0, bytes.length);
+    }
+
+    public static String bcd2StringV2(byte[] bytes, int start, int end) {
+        assert start < end : "start < end";
+
+        int length = end - start;
+        StringBuilder builder = new StringBuilder(length << 2);
+
+        for (int i = start; i < end; ++i) {
+            builder.append((bytes[i] & 240) >>> 4);
+            builder.append(bytes[i] & 15);
+        }
+
+        return builder.toString();
+    }
 }

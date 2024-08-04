@@ -59,12 +59,18 @@ public abstract class AbstractXtreamRequestMappingHandlerMapping implements Xtre
         final Set<Class<?>> classes = this.doScan(basePackages);
 
         for (final Class<?> cls : classes) {
-            ReflectionUtils.doWithMethods(cls, method -> {
-                final XtreamHandlerMethod handlerMethod = new ReactiveXtreamHandlerMethod(cls, method);
-                final Object containerInstance = instanceFactory.apply(cls);
-                handlerMethod.setContainerInstance(containerInstance);
-                handlerMethods.add(handlerMethod);
-            });
+            ReflectionUtils.doWithMethods(
+                    cls,
+                    method -> {
+                        log.info(method.getName());
+                        final XtreamHandlerMethod handlerMethod = new ReactiveXtreamHandlerMethod(cls, method);
+                        final Object containerInstance = instanceFactory.apply(cls);
+                        handlerMethod.setContainerInstance(containerInstance);
+                        handlerMethods.add(handlerMethod);
+                    },
+                    // 排除 Object.class 中定义的方法
+                    method -> !method.getDeclaringClass().equals(Object.class)
+            );
         }
     }
 

@@ -18,8 +18,8 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamResponse;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.TcpXtreamRequest;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.TcpXtreamResponse;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamRequest;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamResponse;
 import io.github.hylexus.xtream.debug.codec.server.reactive.tcp.message.DemoLocationMsg01;
 import io.github.hylexus.xtream.debug.codec.server.reactive.tcp.message.DemoLocationMsg02;
 import io.netty.buffer.ByteBuf;
@@ -49,9 +49,9 @@ public class DemoTcpXtreamHandler2 {
             @XtreamRequestBody ByteBuf msg03,
             XtreamSession session,
             XtreamRequest request,
-            TcpXtreamRequest tcpRequest,
+            DefaultXtreamRequest tcpRequest,
             XtreamResponse response,
-            TcpXtreamResponse tcpResponse) {
+            DefaultXtreamResponse tcpResponse) {
 
         assertSame(exchange.request().payload(), msg03);
         assertSame(exchange.request(), request);
