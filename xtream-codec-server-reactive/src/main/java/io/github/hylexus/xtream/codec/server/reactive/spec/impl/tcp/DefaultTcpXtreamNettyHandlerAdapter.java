@@ -12,10 +12,10 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp;
 
+import io.github.hylexus.xtream.codec.server.reactive.spec.TcpXtreamNettyHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchangeCreator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamNettyHandlerAdapter;
 import io.netty.buffer.ByteBufAllocator;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ import reactor.netty.NettyOutbound;
 /**
  * @author hylexus
  */
-public class DefaultTcpXtreamNettyHandlerAdapter implements XtreamNettyHandlerAdapter {
+public class DefaultTcpXtreamNettyHandlerAdapter implements TcpXtreamNettyHandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultTcpXtreamNettyHandlerAdapter.class);
     protected final XtreamHandler xtreamHandler;

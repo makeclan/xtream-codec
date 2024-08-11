@@ -22,5 +22,8 @@ public interface JtProtocolConstant {
 
     Charset JT_808_STRING_ENCODING = Charset.forName("GBK");
     int PACKAGE_DELIMITER = 0x7E;
-    int MAX_PACKAGE_LENGTH = 1024;
+    int DEFAULT_MAX_PACKAGE_SIZE = 1024;
+
+    String BEAN_NAME_CHANNEL_INBOUND_HANDLER_ADAPTER = "Jt808DelimiterBasedFrameDecoder";
+
 }

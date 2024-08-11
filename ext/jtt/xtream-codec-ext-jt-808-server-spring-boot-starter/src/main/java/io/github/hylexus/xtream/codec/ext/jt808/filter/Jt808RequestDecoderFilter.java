@@ -12,7 +12,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.filter;
 
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestDecoder;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilterChain;
@@ -20,7 +20,7 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import reactor.core.publisher.Mono;
 
 public class Jt808RequestDecoderFilter implements XtreamFilter {
-
+    public static final int ORDER = -100;
     protected final Jt808RequestDecoder jt808RequestDecoder;
 
     public Jt808RequestDecoderFilter(Jt808RequestDecoder jt808RequestDecoder) {
@@ -33,5 +33,10 @@ public class Jt808RequestDecoderFilter implements XtreamFilter {
         // 将原始的 XtreamRequest 解析为 JTT/808 格式的请求
         final XtreamRequest jt808Request = this.jt808RequestDecoder.decode(originalRequest.bufferFactory(), originalRequest.underlyingInbound(), originalRequest.payload());
         return chain.filter(exchange.mutate().request(jt808Request).build());
+    }
+
+    @Override
+    public int order() {
+        return ORDER;
     }
 }

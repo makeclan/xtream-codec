@@ -12,23 +12,23 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.exception;
 
-public class Jt808MsgEscapeException extends Jt808MessageDecodeException {
-    public Jt808MsgEscapeException() {
+public class Jt808MessageEscapeException extends Jt808MessageDecodeException {
+    public Jt808MessageEscapeException() {
     }
 
-    public Jt808MsgEscapeException(String message) {
+    public Jt808MessageEscapeException(String message) {
         super(message);
     }
 
-    public Jt808MsgEscapeException(String message, Throwable cause) {
+    public Jt808MessageEscapeException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public Jt808MsgEscapeException(Throwable cause) {
+    public Jt808MessageEscapeException(Throwable cause) {
         super(cause);
     }
 
-    public Jt808MsgEscapeException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public Jt808MessageEscapeException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

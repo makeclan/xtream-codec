@@ -13,7 +13,6 @@
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamNettyHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamHandlerAdapterBuilder;
 import io.netty.buffer.ByteBufAllocator;
 
@@ -26,7 +25,7 @@ public class TcpXtreamHandlerAdapterBuilder extends AbstractXtreamHandlerAdapter
         super(allocator);
     }
 
-    public XtreamNettyHandlerAdapter build() {
+    public DefaultTcpXtreamNettyHandlerAdapter build() {
         final XtreamHandler exceptionHandlingHandler = createRequestHandler();
         return new DefaultTcpXtreamNettyHandlerAdapter(super.byteBufAllocator, super.xtreamExchangeCreator, exceptionHandlingHandler);
     }

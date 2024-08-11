@@ -109,6 +109,11 @@ public abstract class AbstractXtreamHandlerAdapterBuilder<C extends AbstractXtre
         return self();
     }
 
+    public C addHandlerAdapters(Collection<XtreamHandlerAdapter> handlerAdapters) {
+        this.handlerAdapters.addAll(handlerAdapters);
+        return self();
+    }
+
     public C addHandlerAdapter(XtreamHandlerAdapter handlerAdapter) {
         this.handlerAdapters.add(handlerAdapter);
         return self();
@@ -116,6 +121,11 @@ public abstract class AbstractXtreamHandlerAdapterBuilder<C extends AbstractXtre
 
     public C removeHandlerAdapter(Class<? extends XtreamHandlerAdapter> cls) {
         this.handlerAdapters.removeIf(m -> m.getClass().equals(cls));
+        return self();
+    }
+
+    public C addHandlerResultHandlers(Collection<XtreamHandlerResultHandler> resultHandlers) {
+        this.resultHandlers.addAll(resultHandlers);
         return self();
     }
 
@@ -144,6 +154,11 @@ public abstract class AbstractXtreamHandlerAdapterBuilder<C extends AbstractXtre
         return self();
     }
 
+    public C addExceptionHandlers(Collection<XtreamRequestExceptionHandler> exceptionHandlers) {
+        this.exceptionHandlers.addAll(exceptionHandlers);
+        return self();
+    }
+
     public C addExceptionHandler(XtreamRequestExceptionHandler exceptionHandler) {
         this.exceptionHandlers.add(exceptionHandler);
         return self();
@@ -163,7 +178,7 @@ public abstract class AbstractXtreamHandlerAdapterBuilder<C extends AbstractXtre
 
     protected XtreamHandler createRequestHandler() {
         if (this.xtreamExchangeCreator == null) {
-            this.xtreamExchangeCreator = XtreamExchangeCreator.DEFAULT;
+            this.xtreamExchangeCreator = new DefaultXtreamExchangeCreator(new DefaultXtreamSessionManager());
         }
         if (this.handlerMappings.isEmpty()) {
             throw new IllegalStateException("No [" + XtreamHandlerMapping.class.getSimpleName() + "] instance configured.");

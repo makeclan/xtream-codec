@@ -14,6 +14,9 @@ package io.github.hylexus.xtream.codec.common.utils;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import io.netty.util.ReferenceCounted;
+
+import java.util.Collection;
 
 /**
  * @author hylexus
@@ -21,6 +24,24 @@ import io.netty.buffer.ByteBufAllocator;
 public class XtreamBytes {
 
     private static final char[] DIGITS_HEX = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+
+    public static void releaseBufList(Collection<? extends ReferenceCounted> components) {
+        if (components == null || components.isEmpty()) {
+            return;
+        }
+        for (final ReferenceCounted component : components) {
+            releaseBuf(component);
+        }
+    }
+
+    public static void releaseBuf(ReferenceCounted objects) {
+        if (objects == null) {
+            return;
+        }
+        if (objects.refCnt() > 0) {
+            objects.release();
+        }
+    }
 
     public static ByteBuf byteBufFromHexString(ByteBufAllocator allocator, String hexString) {
         final byte[] bytes = XtreamBytes.decodeHex(hexString);
@@ -99,6 +120,10 @@ public class XtreamBytes {
         return bytes;
     }
 
+    public static byte[] getBytes(ByteBuf byteBuf) {
+        return getBytes(byteBuf, byteBuf.readerIndex(), byteBuf.readableBytes());
+    }
+
     public static int getWord(ByteBuf byteBuf, int start) {
         return byteBuf.getUnsignedShort(start);
     }
@@ -118,5 +143,14 @@ public class XtreamBytes {
 
     public static String readBcd(ByteBuf readable, int length) {
         return BcdOps.decodeBcd8421AsString(readable, length);
+    }
+
+    public static ByteBuf writeWord(ByteBuf byteBuf, int value) {
+        return byteBuf.writeShort(value);
+    }
+
+    public static ByteBuf writeBcd(ByteBuf byteBuf, String value) {
+        BcdOps.encodeBcd8421StringIntoByteBuf(value, byteBuf);
+        return byteBuf;
     }
 }

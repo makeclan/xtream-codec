@@ -40,7 +40,7 @@ public interface TcpNettyServerCustomizer extends NettyServerCustomizer<TcpServe
 
         @Override
         public int order() {
-            return OrderedComponent.HIGHEST_PRECEDENCE + 1;
+            return OrderedComponent.HIGHEST_PRECEDENCE;
         }
     }
 

@@ -14,6 +14,7 @@ package io.github.hylexus.xtream.codec.common.bean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -96,17 +97,32 @@ public class XtreamMethodParameter {
 
     @SuppressWarnings("unchecked")
     public <A extends Annotation> Optional<A> getParameterAnnotation(Class<A> annotationType) {
-        final Annotation[] annotations = this.getParameterAnnotations();
-        for (Annotation ann : annotations) {
-            if (annotationType.isInstance(ann)) {
-                return Optional.of((A) ann);
-            }
-        }
-        return Optional.empty();
+        // todo 优化
+        return Optional.ofNullable(AnnotatedElementUtils.getMergedAnnotation(this.method.getParameters()[this.index], annotationType));
+        // final Annotation[] annotations = this.getParameterAnnotations();
+        // for (Annotation ann : annotations) {
+        //     if (annotationType.isInstance(ann)) {
+        //         return Optional.of((A) ann);
+        //     }
+        // }
+        // return Optional.empty();
     }
 
     public boolean hasMethodAnnotation(Class<? extends Annotation> annotationType) {
-        return this.method.isAnnotationPresent(annotationType);
+        // return this.method.isAnnotationPresent(annotationType);
+        // todo 优化
+        return AnnotatedElementUtils.hasAnnotation(this.method, annotationType);
+    }
+
+    public <A extends Annotation> A getMethodAnnotation(Class<A> annotationType) {
+        // return this.method.isAnnotationPresent(annotationType);
+        // todo 优化
+        return AnnotatedElementUtils.getMergedAnnotation(this.method, annotationType);
+    }
+
+    public boolean hasReturnTypeAnnotation(Class<? extends Annotation> annotationType) {
+        // todo 优化
+        return AnnotatedElementUtils.hasAnnotation(this.method.getAnnotatedReturnType(), annotationType);
     }
 
     public List<Type> getGenericType() {

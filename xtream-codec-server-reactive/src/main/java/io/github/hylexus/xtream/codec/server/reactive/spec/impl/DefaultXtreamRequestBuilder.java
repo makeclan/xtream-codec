@@ -56,14 +56,12 @@ public class DefaultXtreamRequestBuilder implements XtreamRequest.XtreamRequestB
             return new DefaultXtreamRequest(
                     this.delegate.bufferFactory(),
                     this.delegate.underlyingInbound(),
-                    this.sessionMono != null ? this.sessionMono : this.delegate.session(),
                     this.payload != null ? this.payload : this.delegate.payload()
             );
         }
         return new DefaultXtreamRequest(
                 this.delegate.bufferFactory(),
                 this.delegate.underlyingInbound(),
-                this.sessionMono != null ? this.sessionMono : this.delegate.session(),
                 this.createDatagramPacket(this.payload)
         );
     }

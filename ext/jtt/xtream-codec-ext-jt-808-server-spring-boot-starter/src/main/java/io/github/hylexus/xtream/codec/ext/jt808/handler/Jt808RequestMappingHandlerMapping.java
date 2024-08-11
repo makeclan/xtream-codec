@@ -35,23 +35,27 @@ import java.util.Map;
 /**
  * @author hylexus
  */
-public class XtreamExtJt808RequestMappingHandlerMapping implements XtreamHandlerMapping, ApplicationContextAware, InitializingBean {
+public class Jt808RequestMappingHandlerMapping implements XtreamHandlerMapping, ApplicationContextAware, InitializingBean {
+    private static final Logger log = LoggerFactory.getLogger(Jt808RequestMappingHandlerMapping.class);
     // <messageId,<version,handler>>
     private final Map<Integer, Map<Jt808ProtocolVersion, XtreamHandlerMethod>> mappings = new HashMap<>();
-
-    private static final Logger log = LoggerFactory.getLogger(XtreamExtJt808RequestMappingHandlerMapping.class);
     protected ApplicationContext applicationContext;
 
-    public XtreamExtJt808RequestMappingHandlerMapping() {
+    public Jt808RequestMappingHandlerMapping() {
     }
-
 
     @Override
     public Mono<Object> getHandler(XtreamExchange exchange) {
         if (exchange.request() instanceof Jt808Request jt808Request) {
-            final Map<Jt808ProtocolVersion, XtreamHandlerMethod> multiVersionHandlers = mappings.get(jt808Request.header().msgId());
+            final Map<Jt808ProtocolVersion, XtreamHandlerMethod> multiVersionHandlers = mappings.get(jt808Request.header().messageId());
+            if (multiVersionHandlers == null || multiVersionHandlers.isEmpty()) {
+                return Mono.empty();
+            }
             final XtreamHandlerMethod handler = multiVersionHandlers.get(jt808Request.header().version());
-            return Mono.justOrEmpty(handler);
+            if (handler == null) {
+                return Mono.justOrEmpty(multiVersionHandlers.get(Jt808ProtocolVersion.AUTO_DETECTION));
+            }
+            return Mono.just(handler);
         }
         return Mono.empty();
     }
@@ -65,10 +69,9 @@ public class XtreamExtJt808RequestMappingHandlerMapping implements XtreamHandler
             ReflectionUtils.doWithMethods(
                     cls,
                     method -> {
-                        log.info(method.getName());
                         final XtreamHandlerMethod handlerMethod = new ReactiveXtreamHandlerMethod(cls, method);
                         handlerMethod.setContainerInstance(instance);
-                        final Jt808RequestHandlerMapping annotation = AnnotatedElementUtils.findMergedAnnotation(method, Jt808RequestHandlerMapping.class);
+                        final Jt808RequestHandlerMapping annotation = AnnotatedElementUtils.getMergedAnnotation(method, Jt808RequestHandlerMapping.class);
                         if (annotation != null) {
                             final int[] messageIds = annotation.messageIds();
                             for (final int messageId : messageIds) {

@@ -33,7 +33,6 @@ import java.util.function.Consumer;
 public class DefaultXtreamRequest implements XtreamRequest {
     protected final ByteBufAllocator allocator;
     protected final NettyInbound delegate;
-    protected final Mono<XtreamSession> sessionMono;
     protected final ByteBuf payload;
     protected String id;
     protected final Type type;
@@ -42,10 +41,9 @@ public class DefaultXtreamRequest implements XtreamRequest {
     /**
      * TCP
      */
-    public DefaultXtreamRequest(ByteBufAllocator allocator, NettyInbound delegate, Mono<XtreamSession> session, ByteBuf payload) {
+    public DefaultXtreamRequest(ByteBufAllocator allocator, NettyInbound delegate, ByteBuf payload) {
         this.allocator = allocator;
         this.delegate = delegate;
-        this.sessionMono = session;
         this.payload = payload;
         this.type = Type.TCP;
         this.remoteAddress = this.initTcpRemoteAddress(delegate);
@@ -54,10 +52,9 @@ public class DefaultXtreamRequest implements XtreamRequest {
     /**
      * UDP
      */
-    public DefaultXtreamRequest(ByteBufAllocator allocator, NettyInbound delegate, Mono<XtreamSession> session, DatagramPacket datagramPacket) {
+    public DefaultXtreamRequest(ByteBufAllocator allocator, NettyInbound delegate, DatagramPacket datagramPacket) {
         this.allocator = allocator;
         this.delegate = delegate;
-        this.sessionMono = session;
         this.payload = datagramPacket.content();
         this.type = Type.UDP;
         this.remoteAddress = datagramPacket.sender();
@@ -103,11 +100,6 @@ public class DefaultXtreamRequest implements XtreamRequest {
     @Override
     public Map<String, Object> attributes() {
         return Map.of();
-    }
-
-    @Override
-    public Mono<XtreamSession> session() {
-        return this.sessionMono;
     }
 
     @Override

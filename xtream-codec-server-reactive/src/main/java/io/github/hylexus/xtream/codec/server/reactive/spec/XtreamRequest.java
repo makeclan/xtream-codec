@@ -44,8 +44,6 @@ public interface XtreamRequest {
 
     Map<String, Object> attributes();
 
-    Mono<XtreamSession> session();
-
     XtreamRequestBuilder mutate();
 
     interface XtreamRequestBuilder {

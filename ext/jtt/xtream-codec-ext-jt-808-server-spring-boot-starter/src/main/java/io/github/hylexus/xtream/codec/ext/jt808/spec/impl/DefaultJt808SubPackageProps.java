@@ -12,10 +12,12 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.spec.impl;
 
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
+
 /**
  * @author hylexus
  */
-public class DefaultJt808SubPackageProps implements io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader.Jt808SubPackageProps {
+public class DefaultJt808SubPackageProps implements Jt808RequestHeader.Jt808SubPackageProps {
     private int totalSubPackageCount;
     private int currentPackageNo;
 

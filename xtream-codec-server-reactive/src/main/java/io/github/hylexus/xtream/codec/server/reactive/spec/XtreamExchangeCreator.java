@@ -13,7 +13,6 @@
 package io.github.hylexus.xtream.codec.server.reactive.spec;
 
 import io.github.hylexus.xtream.codec.common.exception.NotYetImplementedException;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamExchangeCreator;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.socket.DatagramPacket;
@@ -30,5 +29,4 @@ public interface XtreamExchangeCreator {
         throw new NotYetImplementedException();
     }
 
-    XtreamExchangeCreator DEFAULT = new DefaultXtreamExchangeCreator();
 }

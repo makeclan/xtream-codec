@@ -16,7 +16,6 @@ import io.github.hylexus.xtream.codec.common.bean.XtreamMethodParameter;
 import io.github.hylexus.xtream.codec.core.EntityCodec;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamRequestBody;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.codec.XtreamMessageCodec;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMethodArgumentResolver;
 import io.netty.buffer.ByteBuf;
 import reactor.core.publisher.Mono;
@@ -25,10 +24,10 @@ import reactor.core.publisher.Mono;
  * @author hylexus
  */
 public class XtreamRequestBodyArgumentResolver implements XtreamHandlerMethodArgumentResolver {
-    private final XtreamMessageCodec messageCodec;
+    private final EntityCodec messageCodec;
 
     public XtreamRequestBodyArgumentResolver(EntityCodec entityCodec) {
-        this.messageCodec = new XtreamMessageCodec(entityCodec);
+        this.messageCodec = entityCodec;
     }
 
     @Override

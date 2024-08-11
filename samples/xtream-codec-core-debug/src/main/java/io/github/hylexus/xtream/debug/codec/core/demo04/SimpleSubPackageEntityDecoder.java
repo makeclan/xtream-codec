@@ -14,7 +14,7 @@ package io.github.hylexus.xtream.debug.codec.core.demo04;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanMetadata;
 import io.github.hylexus.xtream.codec.common.utils.XtreamByteReader;
-import io.github.hylexus.xtream.codec.common.utils.XtreamUtils;
+import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.core.BeanMetadataRegistry;
 import io.github.hylexus.xtream.codec.core.EntityDecoder;
 import io.github.hylexus.xtream.codec.core.impl.SimpleBeanMetadataRegistry;
@@ -87,7 +87,7 @@ public class SimpleSubPackageEntityDecoder extends EntityDecoder {
         jt808Msg.setInternalTemporarySubPackageBodyByteBuf(bodySlice.copy());
         final BaseJt808Msg old = subPackages.put(jt808Msg.getHeader().getCurrentPackageNo(), jt808Msg);
         if (old != null) {
-            XtreamUtils.release(old.getInternalTemporarySubPackageBodyByteBuf());
+            XtreamBytes.releaseBuf(old.getInternalTemporarySubPackageBodyByteBuf());
         }
         return subPackages;
     }

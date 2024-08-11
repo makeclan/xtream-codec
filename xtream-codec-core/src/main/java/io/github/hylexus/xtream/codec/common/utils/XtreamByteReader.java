@@ -36,7 +36,7 @@ public interface XtreamByteReader {
         try {
             return fn.apply(of(buf));
         } finally {
-            XtreamUtils.release(buf);
+            XtreamBytes.releaseBuf(buf);
         }
     }
 
@@ -45,7 +45,7 @@ public interface XtreamByteReader {
         try {
             fn.accept(of(buf));
         } finally {
-            XtreamUtils.release(buf);
+            XtreamBytes.releaseBuf(buf);
         }
     }
 

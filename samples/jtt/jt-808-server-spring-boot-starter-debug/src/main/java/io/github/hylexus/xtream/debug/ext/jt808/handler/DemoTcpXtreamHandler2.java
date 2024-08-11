@@ -12,10 +12,12 @@
 
 package io.github.hylexus.xtream.debug.ext.jt808.handler;
 
-import io.github.hylexus.xtream.codec.core.annotation.XtreamRequestBody;
+import io.github.hylexus.xtream.codec.ext.jt808.handler.Jt808RequestBody;
 import io.github.hylexus.xtream.codec.ext.jt808.handler.Jt808RequestHandler;
 import io.github.hylexus.xtream.codec.ext.jt808.handler.Jt808RequestHandlerMapping;
+import io.github.hylexus.xtream.codec.ext.jt808.handler.Jt808ResponseBody;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamResponse;
@@ -24,11 +26,12 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamReq
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamResponse;
 import io.github.hylexus.xtream.debug.ext.jt808.message.DemoLocationMsg01;
 import io.github.hylexus.xtream.debug.ext.jt808.message.DemoLocationMsg02;
+import io.github.hylexus.xtream.debug.ext.jt808.message.ServerCommonReplyMsg;
 import io.netty.buffer.ByteBuf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import static io.github.hylexus.xtream.codec.common.utils.XtreamAssertions.assertSame;
 
@@ -44,32 +47,29 @@ public class DemoTcpXtreamHandler2 {
     public DemoTcpXtreamHandler2() {
     }
 
-    @Jt808RequestHandlerMapping(messageIds = 0x0200, versions = Jt808ProtocolVersion.VERSION_2019)
-    public Flux<DemoLocationMsg01> handle(
-            // public ByteBuf handle(
+    @Jt808RequestHandlerMapping(messageIds = 0x0200, versions = Jt808ProtocolVersion.AUTO_DETECTION)
+    @Jt808ResponseBody(messageId = 0x8001, maxPackageSize = 1000)
+    public Mono<ServerCommonReplyMsg> demo1(
             XtreamExchange exchange,
-            @XtreamRequestBody DemoLocationMsg01 msg01,
-            @XtreamRequestBody DemoLocationMsg02 msg02,
-            @XtreamRequestBody ByteBuf msg03,
             XtreamSession session,
             XtreamRequest request,
+            Jt808Request jt808Request,
             DefaultXtreamRequest tcpRequest,
             XtreamResponse response,
-            DefaultXtreamResponse tcpResponse) {
+            DefaultXtreamResponse tcpResponse,
+            @Jt808RequestBody DemoLocationMsg01 msg01,
+            @Jt808RequestBody DemoLocationMsg02 msg02,
+            @Jt808RequestBody ByteBuf msg03) {
 
         assertSame(exchange.request().payload(), msg03);
         assertSame(exchange.request(), request);
+        assertSame(exchange.request(), jt808Request);
         assertSame(exchange.request(), tcpRequest);
         assertSame(exchange.response(), response);
         assertSame(exchange.response(), tcpResponse);
-
-        final DemoLocationMsg01 msg = new DemoLocationMsg01();
-        msg.setMsgId(0x01);
-        msg.setMsgBodyProps(222);
-        msg.setProtocolVersion((byte) 1);
-        msg.setTerminalId("6666");
-        // return Flux.error(new RuntimeException("..."));
-        // return ByteBufAllocator.DEFAULT.buffer().writeBytes(new byte[]{1,1,2,2});
-        return Flux.just(msg).concatWith(Flux.just(msg));
+        final ServerCommonReplyMsg responseBody = ServerCommonReplyMsg.success(0x0200, jt808Request.header().flowId());
+        // return Mono.empty();
+        return Mono.just(responseBody);
     }
+
 }

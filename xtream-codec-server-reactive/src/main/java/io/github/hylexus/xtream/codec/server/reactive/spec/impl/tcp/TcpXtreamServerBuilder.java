@@ -13,6 +13,7 @@
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -27,6 +28,11 @@ public class TcpXtreamServerBuilder {
 
     public TcpXtreamServerBuilder addServerCustomizer(TcpNettyServerCustomizer customizer) {
         this.customizers.add(customizer);
+        return this;
+    }
+
+    public TcpXtreamServerBuilder addServerCustomizers(Collection<TcpNettyServerCustomizer> customizers) {
+        this.customizers.addAll(customizers);
         return this;
     }
 

@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.spec.impl;
+package io.github.hylexus.xtream.codec.ext.jt808.codec.impl;
 
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.common.utils.XtreamUtils;
@@ -38,20 +38,20 @@ class DefaultJt808RequestDecoderTest {
     void setUp() {
         this.nettyInbound = mock(NettyInbound.class);
         when(nettyInbound.withConnection(any())).thenReturn(nettyInbound);
-        this.decoder = new DefaultJt808RequestDecoder(new DefaultJt808MsgBytesProcessor(allocator));
+        this.decoder = new DefaultJt808RequestDecoder(new DefaultJt808BytesProcessor(allocator));
     }
 
     @Test
     void test() {
         final String hexString = "02004086010000000001893094655200E4000000000000000101D907F2073D336C000000000000211124114808010400000026030200003001153101002504000000001404000000011504000000FA160400000000170200001803000000EA10FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF02020000EF0400000000F31B01711800000000000000000000000000000000000000000000000056";
         final Jt808Request request = doDecode(hexString);
-        assertEquals(0x0200, request.header().msgId());
+        assertEquals(0x0200, request.header().messageId());
         assertEquals(Jt808ProtocolVersion.VERSION_2019, request.header().version());
         assertEquals("00000000018930946552", request.header().terminalId());
         assertEquals(228, request.header().flowId());
-        final Jt808RequestHeader.Jt808MsgBodyProps bodyProps = request.header().msgBodyProps();
+        final Jt808RequestHeader.Jt808MessageBodyProps bodyProps = request.header().messageBodyProps();
         assertEquals(16518, bodyProps.intValue());
-        assertEquals(134, bodyProps.msgBodyLength());
+        assertEquals(134, bodyProps.messageBodyLength());
         assertFalse(bodyProps.hasSubPackage());
         assertEquals(0, bodyProps.encryptionType());
     }

@@ -17,7 +17,7 @@ import java.lang.annotation.*;
 /**
  * @author hylexus
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface XtreamResponseBody {

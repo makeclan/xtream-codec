@@ -17,7 +17,7 @@ import java.lang.annotation.*;
 /**
  * @author hylexus
  */
-@Target({ElementType.PARAMETER})
+@Target({ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface XtreamRequestBody {

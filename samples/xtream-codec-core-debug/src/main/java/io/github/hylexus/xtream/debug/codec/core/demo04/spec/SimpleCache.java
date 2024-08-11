@@ -16,7 +16,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.RemovalCause;
 import com.github.benmanes.caffeine.cache.RemovalListener;
-import io.github.hylexus.xtream.codec.common.utils.XtreamUtils;
+import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ public class SimpleCache {
                             || cause == RemovalCause.COLLECTED;
                     if (isExpired) {
                         value.forEach((currentPackageNo, subPackage) -> {
-                            XtreamUtils.release(subPackage.getInternalTemporarySubPackageBodyByteBuf());
+                            XtreamBytes.releaseBuf(subPackage.getInternalTemporarySubPackageBodyByteBuf());
                             log.info("{} {} has been released. reason = {}", LOG_PREFIX, subPackage, cause);
                         });
                     }

@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp;
+package io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp;
 
 import io.github.hylexus.xtream.codec.core.annotation.OrderedComponent;
 import io.github.hylexus.xtream.codec.server.reactive.spec.NettyServerCustomizer;
@@ -34,7 +34,7 @@ public interface UdpNettyServerCustomizer extends NettyServerCustomizer<UdpServe
 
         @Override
         public int order() {
-            return OrderedComponent.HIGHEST_PRECEDENCE + 1;
+            return OrderedComponent.HIGHEST_PRECEDENCE;
         }
     }
 

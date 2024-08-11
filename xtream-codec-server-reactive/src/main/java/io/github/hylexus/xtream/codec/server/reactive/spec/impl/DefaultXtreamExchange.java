@@ -13,10 +13,7 @@
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 
 
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamResponse;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
+import io.github.hylexus.xtream.codec.server.reactive.spec.*;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
@@ -30,14 +27,10 @@ public class DefaultXtreamExchange implements XtreamExchange {
     protected final XtreamResponse response;
     protected final Mono<XtreamSession> sessionMono;
 
-    public DefaultXtreamExchange(XtreamRequest request, XtreamResponse response, XtreamSession session) {
-        this(request, response, Mono.just(session).cache());
-    }
-
-    public DefaultXtreamExchange(XtreamRequest request, XtreamResponse response, Mono<XtreamSession> session) {
+    public DefaultXtreamExchange(XtreamSessionManager sessionManager, XtreamRequest request, XtreamResponse response) {
         this.request = request;
         this.response = response;
-        this.sessionMono = session;
+        this.sessionMono = sessionManager.getSession(this, true);
     }
 
     @Override
@@ -59,7 +52,6 @@ public class DefaultXtreamExchange implements XtreamExchange {
     public XtreamExchangeBuilder mutate() {
         return new DefaultXtreamExchangeBuilder(this);
     }
-
 
     @Override
     public Map<String, Object> attributes() {

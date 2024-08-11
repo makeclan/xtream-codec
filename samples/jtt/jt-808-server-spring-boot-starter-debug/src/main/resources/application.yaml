@@ -10,3 +10,13 @@
 # See the Mulan PSL v2 for more details.
 #
 
+jt808-server:
+  enabled: true
+  tcp-server:
+    enabled: true
+    host: 0.0.0.0
+    port: 7777
+  udp-server:
+    enabled: true
+    host: 0.0.0.0
+    port: 8888

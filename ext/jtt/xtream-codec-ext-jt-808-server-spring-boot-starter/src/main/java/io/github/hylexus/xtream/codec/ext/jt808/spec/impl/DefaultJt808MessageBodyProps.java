@@ -19,11 +19,11 @@ import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
 /**
  * @author hylexus
  */
-public class DefaultJt808MsgBodyProps implements Jt808RequestHeader.Jt808MsgBodyProps {
+public class DefaultJt808MessageBodyProps implements Jt808RequestHeader.Jt808MessageBodyProps {
 
     private final int intValue;
 
-    public DefaultJt808MsgBodyProps(int intValue) {
+    public DefaultJt808MessageBodyProps(int intValue) {
         this.intValue = intValue;
     }
 
@@ -34,66 +34,66 @@ public class DefaultJt808MsgBodyProps implements Jt808RequestHeader.Jt808MsgBody
 
     @Override
     public String toString() {
-        return "MsgBodyProps{"
+        return "MessageBodyProps{"
                 + "intValue=" + intValue
-                + ", msgBodyLength=" + msgBodyLength()
+                + ", messageBodyLength=" + messageBodyLength()
                 + ", hasSubPackage=" + hasSubPackage()
                 + ", encryptionType=" + encryptionType()
                 + '}';
     }
 
-    public static class DefaultJt808MsgBodyPropsBuilder implements Jt808RequestHeader.Jt808MsgBodyPropsBuilder {
+    public static class DefaultJt808MessageBodyPropsBuilder implements Jt808RequestHeader.Jt808MessageBodyPropsBuilder {
         private int intValue;
 
-        public DefaultJt808MsgBodyPropsBuilder() {
+        public DefaultJt808MessageBodyPropsBuilder() {
         }
 
-        public DefaultJt808MsgBodyPropsBuilder(int intValue) {
+        public DefaultJt808MessageBodyPropsBuilder(int intValue) {
             this.intValue = intValue;
         }
 
         @Override
-        public Jt808RequestHeader.Jt808MsgBodyPropsBuilder msgBodyLength(int msgBodyLength) {
-            this.intValue = XtreamUtils.setBitRange(msgBodyLength, 10, intValue, 0);
+        public Jt808RequestHeader.Jt808MessageBodyPropsBuilder messageBodyLength(int messageBodyLength) {
+            this.intValue = XtreamUtils.setBitRange(messageBodyLength, 10, intValue, 0);
             return this;
         }
 
         @Override
-        public Jt808RequestHeader.Jt808MsgBodyPropsBuilder encryptionType(int encryptionType) {
+        public Jt808RequestHeader.Jt808MessageBodyPropsBuilder encryptionType(int encryptionType) {
             this.intValue = XtreamUtils.setBitRange(encryptionType, 3, intValue, 10);
             return this;
         }
 
         @Override
-        public Jt808RequestHeader.Jt808MsgBodyPropsBuilder hasSubPackage(int subPackageIdentifier) {
+        public Jt808RequestHeader.Jt808MessageBodyPropsBuilder hasSubPackage(int subPackageIdentifier) {
             this.intValue = XtreamUtils.setBitRange(subPackageIdentifier, 1, intValue, 13);
             return this;
         }
 
         @Override
-        public Jt808RequestHeader.Jt808MsgBodyPropsBuilder hasSubPackage(boolean hasSubPackage) {
+        public Jt808RequestHeader.Jt808MessageBodyPropsBuilder hasSubPackage(boolean hasSubPackage) {
             return this.hasSubPackage(hasSubPackage ? 1 : 0);
         }
 
         @Override
-        public Jt808RequestHeader.Jt808MsgBodyPropsBuilder versionIdentifier(int versionIdentifier) {
+        public Jt808RequestHeader.Jt808MessageBodyPropsBuilder versionIdentifier(int versionIdentifier) {
             this.intValue = XtreamUtils.setBitRange(versionIdentifier, 1, intValue, 14);
             return this;
         }
 
         @Override
-        public Jt808RequestHeader.Jt808MsgBodyPropsBuilder versionIdentifier(Jt808ProtocolVersion version) {
+        public Jt808RequestHeader.Jt808MessageBodyPropsBuilder versionIdentifier(Jt808ProtocolVersion version) {
             return this.versionIdentifier(version.getVersionBit());
         }
 
         @Override
-        public Jt808RequestHeader.Jt808MsgBodyPropsBuilder reversedBit15(int reversedBit15) {
+        public Jt808RequestHeader.Jt808MessageBodyPropsBuilder reversedBit15(int reversedBit15) {
             this.intValue = XtreamUtils.setBitRange(reversedBit15, 1, intValue, 15);
             return this;
         }
 
-        public Jt808RequestHeader.Jt808MsgBodyProps build() {
-            return new DefaultJt808MsgBodyProps(intValue);
+        public Jt808RequestHeader.Jt808MessageBodyProps build() {
+            return new DefaultJt808MessageBodyProps(intValue);
         }
     }
 }

@@ -12,10 +12,10 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp;
 
+import io.github.hylexus.xtream.codec.server.reactive.spec.UdpXtreamNettyHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchangeCreator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamNettyHandlerAdapter;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.socket.DatagramPacket;
 import org.reactivestreams.Publisher;
@@ -28,7 +28,7 @@ import reactor.netty.NettyOutbound;
 /**
  * @author hylexus
  */
-public class DefaultUdpXtreamNettyHandlerAdapter implements XtreamNettyHandlerAdapter {
+public class DefaultUdpXtreamNettyHandlerAdapter implements UdpXtreamNettyHandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultUdpXtreamNettyHandlerAdapter.class);
     protected final XtreamHandler xtreamHandler;

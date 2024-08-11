@@ -13,4 +13,5 @@ dependencies {
     api("org.springframework.boot:spring-boot-starter")
     api("org.springframework.boot:spring-boot-starter-test")
     api("org.mockito:mockito-core")
+    compileOnly("org.bouncycastle:bcprov-jdk18on")
 }

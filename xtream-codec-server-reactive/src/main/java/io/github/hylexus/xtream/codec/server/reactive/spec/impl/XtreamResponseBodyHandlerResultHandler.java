@@ -12,15 +12,14 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 
-import io.github.hylexus.xtream.codec.common.bean.XtreamTypeDescriptor;
 import io.github.hylexus.xtream.codec.core.EntityCodec;
+import io.github.hylexus.xtream.codec.core.annotation.OrderedComponent;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamResponseBody;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.codec.XtreamMessageCodec;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerResult;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerResultHandler;
 import io.netty.buffer.ByteBuf;
-import org.reactivestreams.Publisher;
+import io.netty.buffer.ByteBufAllocator;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -30,10 +29,10 @@ import reactor.core.publisher.Mono;
  */
 public class XtreamResponseBodyHandlerResultHandler implements XtreamHandlerResultHandler {
 
-    private final XtreamMessageCodec encoder;
+    private final EntityCodec entityCodec;
 
     public XtreamResponseBodyHandlerResultHandler(EntityCodec entityCodec) {
-        this.encoder = new XtreamMessageCodec(entityCodec);
+        this.entityCodec = entityCodec;
     }
 
     @Override
@@ -48,16 +47,36 @@ public class XtreamResponseBodyHandlerResultHandler implements XtreamHandlerResu
             return Mono.empty();
         }
 
-        final Publisher<?> publisher = this.adaptReturnValue(result.getReturnValue());
-
-        final Flux<ByteBuf> byteBufFlux = this.encoder.encode(publisher, exchange.bufferFactory(), XtreamTypeDescriptor.fromMethodReturnType(result.getReturnType()));
+        final Flux<ByteBuf> byteBufFlux = this.encode(exchange.bufferFactory(), result);
         return exchange.response().writeWith(byteBufFlux);
     }
 
-    protected Publisher<?> adaptReturnValue(Object returnValue) {
-        if (returnValue instanceof Publisher<?> publisher) {
-            return publisher;
+    public Flux<ByteBuf> encode(ByteBufAllocator allocator, XtreamHandlerResult handlerResult) {
+        final Object returnValue = handlerResult.getReturnValue();
+        return switch (returnValue) {
+            case null -> Flux.error(new IllegalArgumentException("message is null"));
+            case Mono<?> mono -> mono.map(msg -> this.doEncode(msg, allocator)).flux();
+            case Flux<?> flux -> flux.map(msg -> this.doEncode(msg, allocator));
+            case Object obj -> Flux.just(this.doEncode(obj, allocator));
+        };
+    }
+
+    protected ByteBuf doEncode(Object message, ByteBufAllocator allocator) {
+        if (message instanceof ByteBuf byteBuf) {
+            return byteBuf;
         }
-        return Mono.just(returnValue);
+        final ByteBuf buffer = allocator.buffer();
+        try {
+            this.entityCodec.encode(message, buffer);
+        } catch (Throwable e) {
+            buffer.release();
+            throw new RuntimeException(e);
+        }
+        return buffer;
+    }
+
+    @Override
+    public int order() {
+        return OrderedComponent.BUILTIN_COMPONENT_PRECEDENCE;
     }
 }

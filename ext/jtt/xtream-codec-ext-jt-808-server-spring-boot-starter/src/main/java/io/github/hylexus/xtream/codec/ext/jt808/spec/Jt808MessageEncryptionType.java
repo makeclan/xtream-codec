@@ -15,7 +15,26 @@ package io.github.hylexus.xtream.codec.ext.jt808.spec;
 
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 
-public interface Jt808MsgEncryptionType {
+public interface Jt808MessageEncryptionType {
+
+    int DEFAULT_ENCRYPTION_TYPE = 0b000;
+
+    static Jt808MessageEncryptionType fromMessageBodyProps(int bodyPros) {
+        // bit[10-12] 0001,1100,0000,0000(1C00)(加密类型)
+        return new Default((bodyPros & 0x1c00) >> 10);
+    }
+
+    static Jt808MessageEncryptionType fromIntValue(int value) {
+        return new Default(value & 0b111);
+    }
+
+    static Jt808MessageEncryptionType fromBits(int bit10, int bit11, int bit12) {
+        return new Default(
+                (bit10 & 0b1)
+                        | ((bit11 << 1) & 0b10)
+                        | ((bit12 << 2) & 0b100)
+        );
+    }
 
     int intValue();
 
@@ -35,25 +54,7 @@ public interface Jt808MsgEncryptionType {
         return this.intValue() != 0;
     }
 
-    static Jt808MsgEncryptionType fromMsgBodyProps(int bodyPros) {
-        // bit[10-12] 0001,1100,0000,0000(1C00)(加密类型)
-        return new Default((bodyPros & 0x1c00) >> 10);
-    }
-
-    static Jt808MsgEncryptionType fromIntValue(int value) {
-        return new Default(value & 0b111);
-    }
-
-    static Jt808MsgEncryptionType fromBits(int bit10, int bit11, int bit12) {
-        return new Default(
-                (bit10 & 0b1)
-                        | ((bit11 << 1) & 0b10)
-                        | ((bit12 << 2) & 0b100)
-        );
-    }
-
-
-    class Default implements Jt808MsgEncryptionType {
+    class Default implements Jt808MessageEncryptionType {
         private final int value;
 
         public Default(int value) {

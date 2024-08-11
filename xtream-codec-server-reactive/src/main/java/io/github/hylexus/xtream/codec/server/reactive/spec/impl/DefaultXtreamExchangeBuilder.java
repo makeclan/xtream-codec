@@ -13,6 +13,7 @@
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchangeDecorator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamResponse;
 
@@ -51,11 +52,7 @@ public class DefaultXtreamExchangeBuilder implements XtreamExchange.XtreamExchan
 
     @Override
     public XtreamExchange build() {
-        return new DefaultXtreamExchange(
-                request != null ? request : delegate.request(),
-                response != null ? response : delegate.response(),
-                delegate.session()
-        );
+        return new XtreamExchangeDecorator(this.delegate, this.request, this.response);
     }
 
 }

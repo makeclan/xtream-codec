@@ -58,6 +58,7 @@ configure(subprojects) {
 
         dependencies {
             dependency("io.github.classgraph:classgraph:4.8.174")
+            dependency("org.bouncycastle:bcprov-jdk18on:1.78.1")
         }
     }
 

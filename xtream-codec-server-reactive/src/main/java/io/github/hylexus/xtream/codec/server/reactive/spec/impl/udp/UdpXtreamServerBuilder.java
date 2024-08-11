@@ -12,9 +12,8 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp;
 
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.UdpNettyServerCustomizer;
-
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -26,6 +25,11 @@ public class UdpXtreamServerBuilder {
 
     public UdpXtreamServerBuilder() {
         this.customizers = new ArrayList<>();
+    }
+
+    public UdpXtreamServerBuilder addServerCustomizers(Collection<UdpNettyServerCustomizer> customizers) {
+        this.customizers.addAll(customizers);
+        return this;
     }
 
     public UdpXtreamServerBuilder addServerCustomizer(UdpNettyServerCustomizer customizer) {

@@ -12,6 +12,7 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec;
 
+
 import java.util.Map;
 
 /**
@@ -24,4 +25,5 @@ public interface XtreamSession {
     Map<String, Object> attributes();
 
     XtreamRequest.Type type();
+
 }

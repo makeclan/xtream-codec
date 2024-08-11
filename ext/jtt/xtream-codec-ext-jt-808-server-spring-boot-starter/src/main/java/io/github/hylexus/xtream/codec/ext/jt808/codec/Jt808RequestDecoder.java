@@ -10,9 +10,18 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.spec;
+package io.github.hylexus.xtream.codec.ext.jt808.codec;
 
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamResponse;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
+import reactor.netty.NettyInbound;
 
-public interface Jt808Response extends XtreamResponse {
+/**
+ * @author hylexus
+ */
+public interface Jt808RequestDecoder {
+
+    Jt808Request decode(ByteBufAllocator allocator, NettyInbound nettyInbound, ByteBuf payload);
+
 }

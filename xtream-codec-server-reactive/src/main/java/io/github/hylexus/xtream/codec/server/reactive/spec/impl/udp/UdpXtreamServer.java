@@ -14,7 +14,6 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp;
 
 import io.github.hylexus.xtream.codec.core.annotation.OrderedComponent;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamServer;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.UdpNettyServerCustomizer;
 import reactor.netty.DisposableChannel;
 import reactor.netty.udp.UdpServer;
 import reactor.netty.udp.UdpServerConfig;

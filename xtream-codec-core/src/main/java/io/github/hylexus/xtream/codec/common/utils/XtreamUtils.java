@@ -13,7 +13,6 @@
 package io.github.hylexus.xtream.codec.common.utils;
 
 import io.netty.buffer.ByteBufAllocator;
-import io.netty.util.ReferenceCounted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,26 +28,6 @@ public class XtreamUtils {
 
     public static boolean hasElement(String str) {
         return str != null && !str.isEmpty();
-    }
-
-    public static void release(Object... objects) {
-        if (objects == null) {
-            return;
-        }
-        for (Object object : objects) {
-            if (object == null) {
-                continue;
-            }
-            try {
-                if (object instanceof ReferenceCounted referenceCounted) {
-                    if (referenceCounted.refCnt() > 0) {
-                        referenceCounted.release();
-                    }
-                }
-            } catch (Throwable e) {
-                log.error("", e);
-            }
-        }
     }
 
     public static String detectMainClassPackageName() {

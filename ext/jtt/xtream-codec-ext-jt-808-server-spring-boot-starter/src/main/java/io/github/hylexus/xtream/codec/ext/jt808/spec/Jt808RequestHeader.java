@@ -13,7 +13,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.spec;
 
 
-import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808MsgBodyProps;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808MessageBodyProps;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808RequestHeader;
 
 /**
@@ -22,16 +22,35 @@ import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808RequestHea
 public interface Jt808RequestHeader {
 
     // region 请求头属性定义
+    default int messageBodyStartIndex() {
+        return Jt808RequestHeader.messageBodyStartIndex(version(), messageBodyProps().hasSubPackage());
+    }
+
+    static int messageBodyStartIndex(Jt808ProtocolVersion version, boolean hasSubPackage) {
+        // 2011, 2013
+        if (version.getVersionBit() == Jt808ProtocolVersion.VERSION_2013.getVersionBit()) {
+            return hasSubPackage ? 16 : 12;
+        }
+        // 2019
+        if (version.getVersionBit() == Jt808ProtocolVersion.VERSION_2019.getVersionBit()) {
+            return hasSubPackage ? 21 : 17;
+        }
+        throw new IllegalStateException("未知版本, version=" + version);
+    }
+
+    static Jt808MessageHeaderBuilder newBuilder() {
+        return new DefaultJt808RequestHeader.DefaultJt808MessageHeaderBuilder();
+    }
 
     /**
      * byte[0-2) 消息ID word(16)
      */
-    int msgId();
+    int messageId();
 
     /**
      * byte[2-4)    消息体属性 word(16)
      */
-    Jt808MsgBodyProps msgBodyProps();
+    Jt808MessageBodyProps messageBodyProps();
 
     /**
      * {@code v2013}: byte[4-10)    终端手机号或设备ID bcd[6]
@@ -39,6 +58,7 @@ public interface Jt808RequestHeader {
      * {@code v2019}: byte[5-15)    终端手机号或设备ID bcd[10]
      */
     String terminalId();
+    // endregion 请求头属性定义
 
     /**
      * {@code v2013}: byte[10-12) 消息流水号 word(16)
@@ -53,48 +73,41 @@ public interface Jt808RequestHeader {
      * {@code v2019}: byte[17-21)    消息包封装项
      */
     Jt808SubPackageProps subPackage();
-    // endregion 请求头属性定义
 
     // region 辅助方法定义
     Jt808ProtocolVersion version();
 
-    static int msgBodyStartIndex(Jt808ProtocolVersion version, boolean hasSubPackage) {
-        // 2011, 2013
-        if (version.getVersionBit() == Jt808ProtocolVersion.VERSION_2013.getVersionBit()) {
-            return hasSubPackage ? 16 : 12;
-        }
-        // 2019
-        if (version.getVersionBit() == Jt808ProtocolVersion.VERSION_2019.getVersionBit()) {
-            return hasSubPackage ? 21 : 17;
-        }
-        throw new IllegalStateException("未知版本, version=" + version);
-    }
-
-    default int msgBodyStartIndex() {
-        return Jt808RequestHeader.msgBodyStartIndex(version(), msgBodyProps().hasSubPackage());
-    }
-
-    default int msgBodyLength() {
-        return msgBodyProps().msgBodyLength();
+    default int messageBodyLength() {
+        return messageBodyProps().messageBodyLength();
     }
 
     String toString();
 
-    static Jt808MsgHeaderBuilder newBuilder() {
-        return new DefaultJt808RequestHeader.DefaultJt808MsgHeaderBuilder();
-    }
-
-    default Jt808MsgHeaderBuilder mutate() {
-        return new DefaultJt808RequestHeader.DefaultJt808MsgHeaderBuilder(this);
+    default Jt808MessageHeaderBuilder mutate() {
+        return new DefaultJt808RequestHeader.DefaultJt808MessageHeaderBuilder(this);
     }
     // endregion 辅助方法定义
 
-    interface Jt808MsgBodyProps {
+    interface Jt808MessageBodyProps {
+
+        static int create(int messageBodySize, int encryptionType, boolean isSubPackage, Jt808ProtocolVersion version, int reversedBit15) {
+            // [ 0-9 ] 0000,0011,1111,1111(3FF)(消息体长度)
+            int props = (messageBodySize & 0x3FF)
+                    // [10-12] 0001,1100,0000,0000(1C00)(加密类型)
+                    | ((encryptionType << 10) & 0x1C00)
+                    // [ 13_ ] 0010,0000,0000,0000(2000)(是否有子包)
+                    | (((isSubPackage ? 1 : 0) << 13) & 0x2000)
+                    // [14_ ]  0100,0000,0000,0000(4000)(保留位)
+                    | ((version.getVersionBit() << 14) & 0x4000)
+                    // [15_ ]  1000,0000,0000,0000(8000)(保留位)
+                    | ((reversedBit15 << 15) & 0x8000);
+            return props & 0xFFFF;
+        }
 
         int intValue();
 
         // bit[0-9] 0000,0011,1111,1111(3FF)(消息体长度)
-        default int msgBodyLength() {
+        default int messageBodyLength() {
             return intValue() & 0x3ff;
         }
 
@@ -111,8 +124,8 @@ public interface Jt808RequestHeader {
          * @see #encryptionType()
          * @since 2.1.4
          */
-        default Jt808MsgEncryptionType dataEncryptionType() {
-            return Jt808MsgEncryptionType.fromIntValue(this.encryptionType());
+        default Jt808MessageEncryptionType dataEncryptionType() {
+            return Jt808MessageEncryptionType.fromIntValue(this.encryptionType());
         }
 
         // bit[13] 0010,0000,0000,0000(2000)(是否有子包)
@@ -130,8 +143,8 @@ public interface Jt808RequestHeader {
             return (intValue() & 0x8000) >> 15;
         }
 
-        default Jt808MsgBodyPropsBuilder mutate() {
-            return new DefaultJt808MsgBodyProps.DefaultJt808MsgBodyPropsBuilder(this.intValue());
+        default Jt808MessageBodyPropsBuilder mutate() {
+            return new DefaultJt808MessageBodyProps.DefaultJt808MessageBodyPropsBuilder(this.intValue());
         }
     }
 
@@ -148,37 +161,37 @@ public interface Jt808RequestHeader {
         int currentPackageNo();
     }
 
-    interface Jt808MsgBodyPropsBuilder {
+    interface Jt808MessageBodyPropsBuilder {
 
-        Jt808MsgBodyPropsBuilder msgBodyLength(int msgBodyLength);
+        Jt808MessageBodyPropsBuilder messageBodyLength(int messageBodyLength);
 
-        Jt808MsgBodyPropsBuilder encryptionType(int encryptionType);
+        Jt808MessageBodyPropsBuilder encryptionType(int encryptionType);
 
-        Jt808MsgBodyPropsBuilder hasSubPackage(int subPackageIdentifier);
+        Jt808MessageBodyPropsBuilder hasSubPackage(int subPackageIdentifier);
 
-        Jt808MsgBodyPropsBuilder hasSubPackage(boolean hasSubPackage);
+        Jt808MessageBodyPropsBuilder hasSubPackage(boolean hasSubPackage);
 
-        Jt808MsgBodyPropsBuilder versionIdentifier(int versionIdentifier);
+        Jt808MessageBodyPropsBuilder versionIdentifier(int versionIdentifier);
 
-        Jt808MsgBodyPropsBuilder versionIdentifier(Jt808ProtocolVersion version);
+        Jt808MessageBodyPropsBuilder versionIdentifier(Jt808ProtocolVersion version);
 
-        Jt808MsgBodyPropsBuilder reversedBit15(int reversedBit15);
+        Jt808MessageBodyPropsBuilder reversedBit15(int reversedBit15);
 
-        Jt808MsgBodyProps build();
+        Jt808MessageBodyProps build();
     }
 
-    interface Jt808MsgHeaderBuilder {
-        Jt808MsgHeaderBuilder version(Jt808ProtocolVersion version);
+    interface Jt808MessageHeaderBuilder {
+        Jt808MessageHeaderBuilder version(Jt808ProtocolVersion version);
 
-        Jt808MsgHeaderBuilder msgType(int msgType);
+        Jt808MessageHeaderBuilder messageId(int messageId);
 
-        Jt808MsgHeaderBuilder msgBodyProps(Jt808MsgBodyProps msgBodyProps);
+        Jt808MessageHeaderBuilder messageBodyProps(Jt808MessageBodyProps messageBodyProps);
 
-        Jt808MsgHeaderBuilder terminalId(String terminalId);
+        Jt808MessageHeaderBuilder terminalId(String terminalId);
 
-        Jt808MsgHeaderBuilder flowId(int flowId);
+        Jt808MessageHeaderBuilder flowId(int flowId);
 
-        Jt808MsgHeaderBuilder subPackageProps(Jt808SubPackageProps subPackageProps);
+        Jt808MessageHeaderBuilder subPackageProps(Jt808SubPackageProps subPackageProps);
 
         Jt808RequestHeader build();
     }

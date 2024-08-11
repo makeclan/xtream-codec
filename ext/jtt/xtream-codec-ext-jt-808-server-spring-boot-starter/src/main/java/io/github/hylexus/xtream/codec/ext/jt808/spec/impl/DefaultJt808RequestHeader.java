@@ -27,10 +27,10 @@ public class DefaultJt808RequestHeader implements Jt808RequestHeader {
     private Jt808ProtocolVersion version;
 
     // byte[0-1] 消息ID
-    private int msgType;
+    private int messageId;
 
     // byte[2-3] 消息体属性
-    private Jt808MsgBodyProps msgBodyProps;
+    private Jt808MessageBodyProps messageBodyProps;
 
     // byte[4-9] 终端Id
     private String terminalId;
@@ -44,10 +44,10 @@ public class DefaultJt808RequestHeader implements Jt808RequestHeader {
     }
 
     public DefaultJt808RequestHeader(
-            Jt808ProtocolVersion version, int msgType, Jt808MsgBodyProps msgBodyProps, String terminalId, int flowId, Jt808SubPackageProps subPackageProps) {
+            Jt808ProtocolVersion version, int messageId, Jt808MessageBodyProps messageBodyProps, String terminalId, int flowId, Jt808SubPackageProps subPackageProps) {
         this.version = version;
-        this.msgType = msgType;
-        this.msgBodyProps = msgBodyProps;
+        this.messageId = messageId;
+        this.messageBodyProps = messageBodyProps;
         this.terminalId = terminalId;
         this.flowId = flowId;
     }
@@ -58,13 +58,13 @@ public class DefaultJt808RequestHeader implements Jt808RequestHeader {
     }
 
     @Override
-    public int msgId() {
-        return msgType;
+    public int messageId() {
+        return messageId;
     }
 
     @Override
-    public Jt808MsgBodyProps msgBodyProps() {
-        return msgBodyProps;
+    public Jt808MessageBodyProps messageBodyProps() {
+        return messageBodyProps;
     }
 
     @Override
@@ -82,80 +82,80 @@ public class DefaultJt808RequestHeader implements Jt808RequestHeader {
         return this.subPackageProps;
     }
 
-    public void setMsgBodyPropsField(int msgBodyPropsField) {
-        this.msgBodyProps = new DefaultJt808MsgBodyProps(msgBodyPropsField);
+    public void setMessageBodyPropsField(int messageBodyPropsField) {
+        this.messageBodyProps = new DefaultJt808MessageBodyProps(messageBodyPropsField);
     }
 
     @Override
     public String toString() {
         return "HeaderSpec{"
-               + "version=" + version
-               + ", terminalId='" + terminalId + '\''
-               + ", msgId=" + msgType
-               + ", flowId=" + flowId
-               + ", msgBodyProps=" + msgBodyProps
-               + '}';
+                + "version=" + version
+                + ", terminalId='" + terminalId + '\''
+                + ", messageId=" + messageId
+                + ", flowId=" + flowId
+                + ", messageBodyProps=" + messageBodyProps
+                + '}';
     }
 
-    public static class DefaultJt808MsgHeaderBuilder implements Jt808MsgHeaderBuilder {
+    public static class DefaultJt808MessageHeaderBuilder implements Jt808MessageHeaderBuilder {
 
         private Jt808ProtocolVersion version;
-        private int msgId;
-        private Jt808MsgBodyProps msgBodyProps;
+        private int messageId;
+        private Jt808MessageBodyProps messageBodyProps;
         private String terminalId;
         private int flowId;
         private Jt808SubPackageProps subPackageProps;
 
-        public DefaultJt808MsgHeaderBuilder() {
+        public DefaultJt808MessageHeaderBuilder() {
         }
 
-        public DefaultJt808MsgHeaderBuilder(Jt808RequestHeader header) {
-            this.msgId = header.msgId();
-            this.msgBodyProps = header.msgBodyProps();
+        public DefaultJt808MessageHeaderBuilder(Jt808RequestHeader header) {
+            this.messageId = header.messageId();
+            this.messageBodyProps = header.messageBodyProps();
             this.terminalId = header.terminalId();
             this.flowId = header.flowId();
             this.version = header.version();
         }
 
         @Override
-        public Jt808MsgHeaderBuilder version(Jt808ProtocolVersion version) {
+        public Jt808MessageHeaderBuilder version(Jt808ProtocolVersion version) {
             this.version = version;
             return this;
         }
 
         @Override
-        public Jt808MsgHeaderBuilder msgType(int msgType) {
-            this.msgId = msgType;
+        public Jt808MessageHeaderBuilder messageId(int messageId) {
+            this.messageId = messageId;
             return this;
         }
 
         @Override
-        public Jt808MsgHeaderBuilder msgBodyProps(Jt808MsgBodyProps msgBodyProps) {
-            this.msgBodyProps = msgBodyProps;
+        public Jt808MessageHeaderBuilder messageBodyProps(Jt808MessageBodyProps messageBodyProps) {
+            this.messageBodyProps = messageBodyProps;
             return this;
         }
 
         @Override
-        public Jt808MsgHeaderBuilder terminalId(String terminalId) {
+        public Jt808MessageHeaderBuilder terminalId(String terminalId) {
             this.terminalId = terminalId;
             return this;
         }
 
         @Override
-        public Jt808MsgHeaderBuilder flowId(int flowId) {
+        public Jt808MessageHeaderBuilder flowId(int flowId) {
             this.flowId = flowId;
             return this;
         }
 
         @Override
-        public Jt808MsgHeaderBuilder subPackageProps(Jt808SubPackageProps subPackageProps) {
+        public Jt808MessageHeaderBuilder subPackageProps(Jt808SubPackageProps subPackageProps) {
             this.subPackageProps = subPackageProps;
             return this;
         }
 
         @Override
         public Jt808RequestHeader build() {
-            return new DefaultJt808RequestHeader(version, msgId, msgBodyProps, terminalId, flowId, subPackageProps);
+            return new DefaultJt808RequestHeader(version, messageId, messageBodyProps, terminalId, flowId, subPackageProps);
         }
     }
 

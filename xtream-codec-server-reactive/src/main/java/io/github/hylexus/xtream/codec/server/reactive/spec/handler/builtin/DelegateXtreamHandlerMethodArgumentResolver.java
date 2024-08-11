@@ -30,13 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DelegateXtreamHandlerMethodArgumentResolver implements XtreamHandlerMethodArgumentResolver {
 
     public static XtreamHandlerMethodArgumentResolver createDefault(EntityCodec entityCodec) {
-        return new DelegateXtreamHandlerMethodArgumentResolver(List.of(
-                new XtreamExchangeArgumentResolver(),
-                new XtreamRequestBodyArgumentResolver(entityCodec),
-                new XtreamRequestArgumentResolver(),
-                new XtreamResponseArgumentResolver(),
-                new XtreamSessionArgumentResolver()
-        ));
+        return new DelegateXtreamHandlerMethodArgumentResolver().addDefault(entityCodec);
     }
 
     private final List<XtreamHandlerMethodArgumentResolver> argumentResolvers = new ArrayList<>();
@@ -51,6 +45,14 @@ public class DelegateXtreamHandlerMethodArgumentResolver implements XtreamHandle
         this.argumentResolverCache = new ConcurrentHashMap<>();
     }
 
+    public DelegateXtreamHandlerMethodArgumentResolver addDefault(EntityCodec messageCodec) {
+        this.addArgumentResolver(new XtreamExchangeArgumentResolver());
+        this.addArgumentResolver(new XtreamRequestBodyArgumentResolver(messageCodec));
+        this.addArgumentResolver(new XtreamRequestArgumentResolver());
+        this.addArgumentResolver(new XtreamResponseArgumentResolver());
+        this.addArgumentResolver(new XtreamSessionArgumentResolver());
+        return this;
+    }
 
     public DelegateXtreamHandlerMethodArgumentResolver addArgumentResolver(XtreamHandlerMethodArgumentResolver argumentResolver) {
         this.argumentResolvers.add(argumentResolver);

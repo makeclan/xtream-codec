@@ -13,17 +13,15 @@
 package io.github.hylexus.xtream.codec.ext.jt808.spec.impl;
 
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
-import io.github.hylexus.xtream.codec.common.utils.XtreamUtils;
+import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamRequest;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamRequestBuilder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.socket.DatagramPacket;
-import reactor.core.publisher.Mono;
 import reactor.netty.NettyInbound;
 
 public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Request {
@@ -36,7 +34,7 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
      * TCP
      */
     public DefaultJt808Request(XtreamRequest delegate, Jt808RequestHeader header, ByteBuf body, int originalCheckSum, int calculatedCheckSum) {
-        this(delegate.bufferFactory(), delegate.underlyingInbound(), delegate.session(), delegate.payload(), header, body, originalCheckSum, calculatedCheckSum);
+        this(delegate.bufferFactory(), delegate.underlyingInbound(), delegate.payload(), header, body, originalCheckSum, calculatedCheckSum);
     }
 
     /**
@@ -45,13 +43,12 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
     public DefaultJt808Request(
             ByteBufAllocator allocator,
             NettyInbound delegate,
-            Mono<XtreamSession> session,
             ByteBuf payload,
             Jt808RequestHeader header,
             ByteBuf body,
             int originalCheckSum,
             int calculatedCheckSum) {
-        super(allocator, delegate, session, payload);
+        super(allocator, delegate, payload);
         this.header = header;
         this.body = body;
         this.originalCheckSum = originalCheckSum;
@@ -62,14 +59,14 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
      * UDP
      */
     public DefaultJt808Request(XtreamRequest delegate, DatagramPacket datagramPacket, Jt808RequestHeader header, ByteBuf body, int originalCheckSum, int calculatedCheckSum) {
-        this(delegate.bufferFactory(), delegate.underlyingInbound(), delegate.session(), datagramPacket, header, body, originalCheckSum, calculatedCheckSum);
+        this(delegate.bufferFactory(), delegate.underlyingInbound(), datagramPacket, header, body, originalCheckSum, calculatedCheckSum);
     }
 
     /**
      * UDP
      */
-    public DefaultJt808Request(ByteBufAllocator allocator, NettyInbound delegate, Mono<XtreamSession> session, DatagramPacket datagramPacket, Jt808RequestHeader header, ByteBuf body, int originalCheckSum, int calculatedCheckSum) {
-        super(allocator, delegate, session, datagramPacket);
+    public DefaultJt808Request(ByteBufAllocator allocator, NettyInbound delegate, DatagramPacket datagramPacket, Jt808RequestHeader header, ByteBuf body, int originalCheckSum, int calculatedCheckSum) {
+        super(allocator, delegate, datagramPacket);
         this.header = header;
         this.body = body;
         this.originalCheckSum = originalCheckSum;
@@ -104,7 +101,7 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
     @Override
     public String toString() {
         return "DefaultJt808Request{"
-                + "msgId=" + header().msgId() + "(0x" + FormatUtils.toHexString(header.msgId(), 4) + ")"
+                + "messageId=" + header().messageId() + "(0x" + FormatUtils.toHexString(header.messageId(), 4) + ")"
                 + ", header=" + header
                 + ", checkSum=" + originalCheckSum
                 + '}';
@@ -135,7 +132,7 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
                 return this;
             } finally {
                 if (autoRelease) {
-                    XtreamUtils.release(old);
+                    XtreamBytes.releaseBuf(old);
                 }
             }
         }
