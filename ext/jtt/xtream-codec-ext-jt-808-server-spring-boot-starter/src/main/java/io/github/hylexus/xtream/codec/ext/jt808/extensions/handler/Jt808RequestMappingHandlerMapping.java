@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.handler;
+package io.github.hylexus.xtream.codec.ext.jt808.extensions.handler;
 
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;

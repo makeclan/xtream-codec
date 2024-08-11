@@ -10,21 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.handler;
-
-
-import io.github.hylexus.xtream.codec.core.annotation.XtreamRequestBody;
-
-import java.lang.annotation.*;
-
-
 /**
- * @author hylexus
+ * 这个包里都是 xtream-server 扩展点的实现。
  */
-@Target({ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@XtreamRequestBody
-public @interface Jt808RequestBody {
-
-}
+package io.github.hylexus.xtream.codec.ext.jt808.extensions;

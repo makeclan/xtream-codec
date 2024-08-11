@@ -17,7 +17,7 @@ import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.core.EntityCodec;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808BytesProcessor;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808ResponseEncoder;
-import io.github.hylexus.xtream.codec.ext.jt808.handler.Jt808ResponseBody;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.*;
 import io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolConstant;
 import io.netty.buffer.ByteBuf;

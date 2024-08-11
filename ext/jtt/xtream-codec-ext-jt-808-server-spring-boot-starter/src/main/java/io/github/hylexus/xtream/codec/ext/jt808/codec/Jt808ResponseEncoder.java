@@ -12,7 +12,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.codec;
 
-import io.github.hylexus.xtream.codec.ext.jt808.handler.Jt808ResponseBody;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriber;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import io.netty.buffer.ByteBuf;

@@ -12,6 +12,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.spec;
 
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import io.netty.buffer.ByteBuf;
 
 /**
@@ -35,7 +36,7 @@ public interface Jt808MessageEncryptionHandler {
      * @param plaintextBody 明文数据；可能是完整包，也可能是一个子包
      * @return 返回密文 或者 原样返回 {@code plaintextBody}
      * @implNote 如果该方法返回的是一个 <strong>新的 ByteBuf</strong>，那么实现类应该负责将入参 {@code plaintextBody} 释放掉
-     * @see io.github.hylexus.xtream.codec.ext.jt808.handler.Jt808ResponseBody#encryptionType()
+     * @see Jt808ResponseBody#encryptionType()
      * @see Jt808MessageDescriber#encryptionType()
      */
     ByteBuf encryptResponseBody(Jt808MessageDescriber describer, ByteBuf plaintextBody);

@@ -10,11 +10,10 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.handler;
+package io.github.hylexus.xtream.codec.ext.jt808.extensions.handler;
 
 
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
-import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamRequestMapping;
+import io.github.hylexus.xtream.codec.core.annotation.XtreamRequestBody;
 
 import java.lang.annotation.*;
 
@@ -22,22 +21,10 @@ import java.lang.annotation.*;
 /**
  * @author hylexus
  */
-@Target({ElementType.METHOD})
+@Target({ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@XtreamRequestMapping
-public @interface Jt808RequestHandlerMapping {
-
-    /**
-     * @return 当前处理器方法能处理的消息类型
-     */
-    int[] messageIds();
-
-    /**
-     * @return 当前处理器能处理的消息对应的版本
-     */
-    Jt808ProtocolVersion[] versions() default {Jt808ProtocolVersion.AUTO_DETECTION};
-
-    String desc() default "";
+@XtreamRequestBody
+public @interface Jt808RequestBody {
 
 }

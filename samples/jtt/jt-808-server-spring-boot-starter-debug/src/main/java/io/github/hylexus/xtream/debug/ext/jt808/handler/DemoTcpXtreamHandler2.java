@@ -12,10 +12,10 @@
 
 package io.github.hylexus.xtream.debug.ext.jt808.handler;
 
-import io.github.hylexus.xtream.codec.ext.jt808.handler.Jt808RequestBody;
-import io.github.hylexus.xtream.codec.ext.jt808.handler.Jt808RequestHandler;
-import io.github.hylexus.xtream.codec.ext.jt808.handler.Jt808RequestHandlerMapping;
-import io.github.hylexus.xtream.codec.ext.jt808.handler.Jt808ResponseBody;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestBody;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestHandler;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestHandlerMapping;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
