@@ -14,11 +14,9 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.socket.DatagramPacket;
-import reactor.core.publisher.Mono;
 import reactor.netty.Connection;
 import reactor.netty.NettyInbound;
 
@@ -111,7 +109,7 @@ public class DefaultXtreamRequest implements XtreamRequest {
     public String toString() {
         return "DefaultXtreamRequest{"
                 + "id='" + id + '\''
-                + ", payload='" + FormatUtils.toHexString(payload) + '\''
+                + ", payload='" + (payload.refCnt() > 0 ? FormatUtils.toHexString(payload) : "<FREED>") + '\''
                 + '}';
     }
 

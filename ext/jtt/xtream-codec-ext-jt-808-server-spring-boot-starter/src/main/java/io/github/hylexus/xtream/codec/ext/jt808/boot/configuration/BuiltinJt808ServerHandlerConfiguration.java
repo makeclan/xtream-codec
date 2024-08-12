@@ -13,8 +13,9 @@
 package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration;
 
 import io.github.hylexus.xtream.codec.core.EntityCodec;
-import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808ResponseEncoder;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestCombiner;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808ResponseEncoder;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.filter.Jt808RequestDecoderFilter;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestMappingHandlerMapping;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBodyHandlerResultHandler;
@@ -48,8 +49,8 @@ public class BuiltinJt808ServerHandlerConfiguration {
     }
 
     @Bean
-    Jt808RequestDecoderFilter jt808RequestDecoderFilter(Jt808RequestDecoder jt808RequestDecoder) {
-        return new Jt808RequestDecoderFilter(jt808RequestDecoder);
+    Jt808RequestDecoderFilter jt808RequestDecoderFilter(Jt808RequestDecoder jt808RequestDecoder, Jt808RequestCombiner jt808RequestCombiner) {
+        return new Jt808RequestDecoderFilter(jt808RequestDecoder, jt808RequestCombiner);
     }
     // endregion filters
 

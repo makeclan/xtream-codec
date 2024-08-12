@@ -139,10 +139,9 @@ public class DefaultJt808ResponseEncoder implements Jt808ResponseEncoder {
             );
         }
         return allocator.compositeBuffer()
-                .writeByte(JtProtocolConstant.PACKAGE_DELIMITER)
+                .addComponent(true, allocator.buffer().writeByte(JtProtocolConstant.PACKAGE_DELIMITER))
                 .addComponent(true, escaped)
-                .writeByte(JtProtocolConstant.PACKAGE_DELIMITER)
-                ;
+                .addComponent(true, allocator.buffer().writeByte(JtProtocolConstant.PACKAGE_DELIMITER));
     }
 
     private ByteBuf encodeBody(Object entity) {

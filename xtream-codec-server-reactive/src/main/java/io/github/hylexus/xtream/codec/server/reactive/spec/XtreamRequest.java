@@ -12,9 +12,9 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec;
 
+import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import reactor.core.publisher.Mono;
 import reactor.netty.NettyInbound;
 
 import java.net.InetSocketAddress;
@@ -44,15 +44,21 @@ public interface XtreamRequest {
 
     Map<String, Object> attributes();
 
+    default void release() {
+        XtreamBytes.releaseBuf(this.payload());
+    }
+
     XtreamRequestBuilder mutate();
 
     interface XtreamRequestBuilder {
 
-        XtreamRequestBuilder payload(ByteBuf payload);
+        default XtreamRequestBuilder payload(ByteBuf payload) {
+            return this.payload(payload, true);
+        }
+
+        XtreamRequestBuilder payload(ByteBuf payload, boolean autoRelease);
 
         XtreamRequestBuilder remoteAddress(InetSocketAddress remoteAddress);
-
-        XtreamRequestBuilder session(Mono<XtreamSession> session);
 
         XtreamRequest build();
     }

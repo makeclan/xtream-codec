@@ -12,6 +12,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.spec.impl;
 
+import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
 import lombok.Setter;
@@ -44,7 +45,7 @@ public class DefaultJt808RequestHeader implements Jt808RequestHeader {
     }
 
     public DefaultJt808RequestHeader(
-            Jt808ProtocolVersion version, int messageId, Jt808MessageBodyProps messageBodyProps, String terminalId, int flowId, Jt808SubPackageProps subPackageProps) {
+            Jt808ProtocolVersion version, int messageId, Jt808MessageBodyProps messageBodyProps, String terminalId, int flowId) {
         this.version = version;
         this.messageId = messageId;
         this.messageBodyProps = messageBodyProps;
@@ -82,16 +83,12 @@ public class DefaultJt808RequestHeader implements Jt808RequestHeader {
         return this.subPackageProps;
     }
 
-    public void setMessageBodyPropsField(int messageBodyPropsField) {
-        this.messageBodyProps = new DefaultJt808MessageBodyProps(messageBodyPropsField);
-    }
-
     @Override
     public String toString() {
         return "HeaderSpec{"
                 + "version=" + version
                 + ", terminalId='" + terminalId + '\''
-                + ", messageId=" + messageId
+                + ", messageId=" + messageId + "(0x" + FormatUtils.toHexString(messageId, 2) + ")"
                 + ", flowId=" + flowId
                 + ", messageBodyProps=" + messageBodyProps
                 + '}';
@@ -104,7 +101,6 @@ public class DefaultJt808RequestHeader implements Jt808RequestHeader {
         private Jt808MessageBodyProps messageBodyProps;
         private String terminalId;
         private int flowId;
-        private Jt808SubPackageProps subPackageProps;
 
         public DefaultJt808MessageHeaderBuilder() {
         }
@@ -148,14 +144,8 @@ public class DefaultJt808RequestHeader implements Jt808RequestHeader {
         }
 
         @Override
-        public Jt808MessageHeaderBuilder subPackageProps(Jt808SubPackageProps subPackageProps) {
-            this.subPackageProps = subPackageProps;
-            return this;
-        }
-
-        @Override
         public Jt808RequestHeader build() {
-            return new DefaultJt808RequestHeader(version, messageId, messageBodyProps, terminalId, flowId, subPackageProps);
+            return new DefaultJt808RequestHeader(version, messageId, messageBodyProps, terminalId, flowId);
         }
     }
 

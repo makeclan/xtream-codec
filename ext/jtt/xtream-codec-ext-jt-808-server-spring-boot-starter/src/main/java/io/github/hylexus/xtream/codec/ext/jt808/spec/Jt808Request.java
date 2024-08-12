@@ -19,25 +19,42 @@ public interface Jt808Request extends XtreamRequest {
 
     Jt808RequestHeader header();
 
-    ByteBuf body();
+    default ByteBuf body() {
+        return this.payload();
+    }
 
     int calculatedCheckSum();
 
     int originalCheckSum();
 
+    @Override
+    Jt808RequestBuilder mutate();
+
     interface Jt808RequestBuilder extends XtreamRequestBuilder {
 
         Jt808RequestBuilder header(Jt808RequestHeader header);
 
-        Jt808RequestBuilder body(ByteBuf body, boolean autoRelease);
+        @Override
+        default Jt808RequestBuilder payload(ByteBuf payload) {
+            return this.payload(payload, true);
+        }
+
+        @Override
+        Jt808RequestBuilder payload(ByteBuf payload, boolean autoRelease);
+
+        default Jt808RequestBuilder body(ByteBuf body, boolean autoRelease) {
+            return this.payload(body, autoRelease);
+        }
 
         default Jt808RequestBuilder body(ByteBuf body) {
-            return this.body(body, true);
+            return this.payload(body);
         }
 
         Jt808RequestBuilder calculatedCheckSum(Integer calculatedCheckSum);
 
         Jt808RequestBuilder originalCheckSum(Integer originalCheckSum);
 
+        @Override
+        Jt808Request build();
     }
 }

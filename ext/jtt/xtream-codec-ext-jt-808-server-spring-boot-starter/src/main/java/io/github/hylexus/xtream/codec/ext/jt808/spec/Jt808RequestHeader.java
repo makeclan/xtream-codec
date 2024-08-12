@@ -191,8 +191,6 @@ public interface Jt808RequestHeader {
 
         Jt808MessageHeaderBuilder flowId(int flowId);
 
-        Jt808MessageHeaderBuilder subPackageProps(Jt808SubPackageProps subPackageProps);
-
         Jt808RequestHeader build();
     }
 }

@@ -12,6 +12,10 @@
 
 package io.github.hylexus.xtream.debug.ext.jt808.handler;
 
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.BuiltinMsg0100V2011;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.BuiltinMsg0100V2013;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.BuiltinMsg0100V2019;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.BuiltinMsg8100;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestBody;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestHandler;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestHandlerMapping;
@@ -70,6 +74,42 @@ public class DemoTcpXtreamHandler2 {
         final ServerCommonReplyMsg responseBody = ServerCommonReplyMsg.success(0x0200, jt808Request.header().flowId());
         // return Mono.empty();
         return Mono.just(responseBody);
+    }
+
+    @Jt808RequestHandlerMapping(messageIds = 0x0100)
+    @Jt808ResponseBody(messageId = 0x8100, maxPackageSize = 1000)
+    public Mono<BuiltinMsg8100> processMessage0x0100V2011(Jt808Request request, @Jt808RequestBody BuiltinMsg0100V2011 requestBody) {
+        log.info("receive message [0x0100-v2011]: {}", requestBody);
+        final BuiltinMsg8100 builtinMsg8100 = new BuiltinMsg8100()
+                .setTerminalFlowId(request.header().flowId())
+                .setResult((short) 0)
+                .setAuthCode("auth-code-2011");
+
+        return Mono.just(builtinMsg8100);
+    }
+
+    @Jt808RequestHandlerMapping(messageIds = 0x0100)
+    @Jt808ResponseBody(messageId = 0x8100, maxPackageSize = 1000)
+    public Mono<BuiltinMsg8100> processMessage0x0100V2013(Jt808Request request, @Jt808RequestBody BuiltinMsg0100V2013 requestBody) {
+        log.info("receive message [0x0100-v2013]: {}", requestBody);
+        final BuiltinMsg8100 builtinMsg8100 = new BuiltinMsg8100()
+                .setTerminalFlowId(request.header().flowId())
+                .setResult((short) 0)
+                .setAuthCode("auth-code-2013");
+
+        return Mono.just(builtinMsg8100);
+    }
+
+    @Jt808RequestHandlerMapping(messageIds = 0x0100)
+    @Jt808ResponseBody(messageId = 0x8100, maxPackageSize = 1000)
+    public Mono<BuiltinMsg8100> processMessage0x0100V2019(Jt808Request request, @Jt808RequestBody BuiltinMsg0100V2019 requestBody) {
+        log.info("receive message [0x0100-v2019]: {}", requestBody);
+        final BuiltinMsg8100 builtinMsg8100 = new BuiltinMsg8100()
+                .setTerminalFlowId(request.header().flowId())
+                .setResult((short) 0)
+                .setAuthCode("auth-code-2019");
+
+        return Mono.just(builtinMsg8100);
     }
 
 }

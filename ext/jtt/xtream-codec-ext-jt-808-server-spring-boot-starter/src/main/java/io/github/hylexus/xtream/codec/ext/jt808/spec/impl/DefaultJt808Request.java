@@ -13,12 +13,10 @@
 package io.github.hylexus.xtream.codec.ext.jt808.spec.impl;
 
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
-import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamRequestBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamRequest;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamRequestBuilder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.socket.DatagramPacket;
@@ -26,31 +24,22 @@ import reactor.netty.NettyInbound;
 
 public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Request {
     protected final Jt808RequestHeader header;
-    protected final ByteBuf body;
     protected final int originalCheckSum;
     protected final int calculatedCheckSum;
 
     /**
      * TCP
      */
-    public DefaultJt808Request(XtreamRequest delegate, Jt808RequestHeader header, ByteBuf body, int originalCheckSum, int calculatedCheckSum) {
-        this(delegate.bufferFactory(), delegate.underlyingInbound(), delegate.payload(), header, body, originalCheckSum, calculatedCheckSum);
-    }
-
-    /**
-     * TCP
-     */
     public DefaultJt808Request(
             ByteBufAllocator allocator,
-            NettyInbound delegate,
+            NettyInbound nettyInbound,
             ByteBuf payload,
             Jt808RequestHeader header,
-            ByteBuf body,
             int originalCheckSum,
             int calculatedCheckSum) {
-        super(allocator, delegate, payload);
+
+        super(allocator, nettyInbound, payload);
         this.header = header;
-        this.body = body;
         this.originalCheckSum = originalCheckSum;
         this.calculatedCheckSum = calculatedCheckSum;
     }
@@ -58,17 +47,16 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
     /**
      * UDP
      */
-    public DefaultJt808Request(XtreamRequest delegate, DatagramPacket datagramPacket, Jt808RequestHeader header, ByteBuf body, int originalCheckSum, int calculatedCheckSum) {
-        this(delegate.bufferFactory(), delegate.underlyingInbound(), datagramPacket, header, body, originalCheckSum, calculatedCheckSum);
-    }
+    public DefaultJt808Request(
+            ByteBufAllocator allocator,
+            NettyInbound nettyInbound,
+            DatagramPacket datagramPacket,
+            Jt808RequestHeader header,
+            int originalCheckSum,
+            int calculatedCheckSum) {
 
-    /**
-     * UDP
-     */
-    public DefaultJt808Request(ByteBufAllocator allocator, NettyInbound delegate, DatagramPacket datagramPacket, Jt808RequestHeader header, ByteBuf body, int originalCheckSum, int calculatedCheckSum) {
-        super(allocator, delegate, datagramPacket);
+        super(allocator, nettyInbound, datagramPacket);
         this.header = header;
-        this.body = body;
         this.originalCheckSum = originalCheckSum;
         this.calculatedCheckSum = calculatedCheckSum;
     }
@@ -76,11 +64,6 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
     @Override
     public Jt808RequestHeader header() {
         return this.header;
-    }
-
-    @Override
-    public ByteBuf body() {
-        return this.body;
     }
 
     @Override
@@ -94,7 +77,7 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
     }
 
     @Override
-    public XtreamRequestBuilder mutate() {
+    public Jt808RequestBuilder mutate() {
         return new DefaultJt808RequestBuilder(this);
     }
 
@@ -107,12 +90,13 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
                 + '}';
     }
 
-    public static class DefaultJt808RequestBuilder extends DefaultXtreamRequestBuilder implements Jt808RequestBuilder {
+    public static class DefaultJt808RequestBuilder
+            extends AbstractXtreamRequestBuilder<Jt808RequestBuilder, Jt808Request>
+            implements Jt808RequestBuilder {
+
         protected Jt808RequestHeader header;
-        protected ByteBuf body;
         protected Integer originalCheckSum;
         protected Integer calculatedCheckSum;
-        protected Jt808Request delegateRequest;
 
         public DefaultJt808RequestBuilder(Jt808Request delegateRequest) {
             super(delegateRequest);
@@ -122,19 +106,6 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
         public Jt808RequestBuilder header(Jt808RequestHeader header) {
             this.header = header;
             return this;
-        }
-
-        @Override
-        public Jt808RequestBuilder body(ByteBuf body, boolean autoRelease) {
-            final ByteBuf old = this.body;
-            try {
-                this.body = body;
-                return this;
-            } finally {
-                if (autoRelease) {
-                    XtreamBytes.releaseBuf(old);
-                }
-            }
         }
 
         @Override
@@ -150,22 +121,23 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
         }
 
         @Override
-        public XtreamRequest build() {
+        public Jt808Request build() {
             if (this.delegateRequest.type() == Type.TCP) {
                 return new DefaultJt808Request(
-                        this.delegateRequest,
+                        this.delegateRequest.bufferFactory(),
+                        this.delegateRequest.underlyingInbound(),
+                        this.payload == null ? this.delegateRequest.payload() : this.payload,
                         this.header != null ? this.header : this.delegateRequest.header(),
-                        this.body != null ? this.body : this.delegateRequest.body(),
                         this.originalCheckSum != null ? this.originalCheckSum : this.delegateRequest.originalCheckSum(),
                         this.calculatedCheckSum != null ? this.calculatedCheckSum : this.delegateRequest.calculatedCheckSum()
                 );
             }
 
             return new DefaultJt808Request(
-                    this.delegateRequest,
+                    this.delegateRequest.bufferFactory(),
+                    this.delegateRequest.underlyingInbound(),
                     this.createDatagramPacket(this.payload),
                     this.header != null ? this.header : this.delegateRequest.header(),
-                    this.body != null ? this.body : this.delegateRequest.body(),
                     this.originalCheckSum != null ? this.originalCheckSum : this.delegateRequest.originalCheckSum(),
                     this.calculatedCheckSum != null ? this.calculatedCheckSum : this.delegateRequest.calculatedCheckSum()
             );

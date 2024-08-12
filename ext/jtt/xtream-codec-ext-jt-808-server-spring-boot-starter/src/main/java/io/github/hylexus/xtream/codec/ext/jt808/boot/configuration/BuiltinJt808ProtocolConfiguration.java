@@ -14,13 +14,16 @@ package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration;
 
 import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
 import io.github.hylexus.xtream.codec.core.EntityCodec;
+import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808BytesProcessor;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestCombiner;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808BytesProcessor;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808RequestCombiner;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808RequestDecoder;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808ResponseEncoder;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808FlowIdGenerator;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageEncryptionHandler;
-import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808BytesProcessor;
-import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808RequestDecoder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 
@@ -33,13 +36,22 @@ public class BuiltinJt808ProtocolConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     Jt808BytesProcessor jt808BytesProcessor(BufferFactoryHolder bufferFactoryHolder) {
         return new DefaultJt808BytesProcessor(bufferFactoryHolder.getAllocator());
     }
 
     @Bean
+    @ConditionalOnMissingBean
     Jt808RequestDecoder jt808RequestDecoder(Jt808BytesProcessor jt808BytesProcessor) {
         return new DefaultJt808RequestDecoder(jt808BytesProcessor);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    Jt808RequestCombiner jt808RequestCombiner(BufferFactoryHolder bufferFactoryHolder, XtreamJt808ServerProperties properties) {
+        final XtreamJt808ServerProperties.RequestSubPackageStorage subPackageStorage = properties.getRequestSubPackageStorage();
+        return new DefaultJt808RequestCombiner(bufferFactoryHolder.getAllocator(), subPackageStorage.getMaximumSize(), subPackageStorage.getTtl());
     }
 
     @Bean

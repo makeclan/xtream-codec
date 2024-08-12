@@ -11,12 +11,25 @@
 #
 
 jt808-server:
+  # false: 不会进行任何自动配置
   enabled: true
+  # 分包请求暂存器
+  request-sub-package-storage:
+    maximum-size: 1024
+    ttl: 45s
+  # TCP 服务配置
   tcp-server:
+    # 是否启动 TCP 服务
     enabled: true
+    # 绑定所有网卡
     host: 0.0.0.0
+    # TCP 服务端口
     port: 7777
+  # UDP 服务配置
   udp-server:
+    # 是否启动 UDP 服务
     enabled: true
+    # 绑定所有网卡
     host: 0.0.0.0
+    # UDP 服务端口
     port: 8888

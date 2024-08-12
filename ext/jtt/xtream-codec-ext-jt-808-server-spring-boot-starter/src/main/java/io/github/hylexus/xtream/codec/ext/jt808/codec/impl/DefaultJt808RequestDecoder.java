@@ -58,9 +58,8 @@ public class DefaultJt808RequestDecoder implements Jt808RequestDecoder {
         return new DefaultJt808Request(
                 allocator,
                 nettyInbound,
-                payload,
-                header,
                 body,
+                header,
                 originalCheckSum,
                 calculatedCheckSum
         );

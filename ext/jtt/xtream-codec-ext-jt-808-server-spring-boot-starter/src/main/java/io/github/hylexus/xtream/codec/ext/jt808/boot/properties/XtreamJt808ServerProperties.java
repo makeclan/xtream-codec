@@ -16,6 +16,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.time.Duration;
 
 @Getter
 @Setter
@@ -23,7 +26,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "jt808-server")
 public class XtreamJt808ServerProperties {
     private boolean enabled = true;
+
+    @NestedConfigurationProperty
+    private RequestSubPackageStorage requestSubPackageStorage = new RequestSubPackageStorage();
+
+    @NestedConfigurationProperty
     private TcpServerProps tcpServer = new TcpServerProps();
+
+    @NestedConfigurationProperty
     private UdpServerProps udpServer = new UdpServerProps();
 
     @Getter
@@ -47,5 +57,19 @@ public class XtreamJt808ServerProperties {
     @ToString
     public static class UdpServerProps extends BaseTcpServerProps {
 
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class RequestSubPackageStorage {
+        /**
+         * 缓存最大大小
+         */
+        private int maximumSize = 1024;
+        /**
+         * 缓存条目的存活时间
+         */
+        private Duration ttl = Duration.ofSeconds(60);
     }
 }
