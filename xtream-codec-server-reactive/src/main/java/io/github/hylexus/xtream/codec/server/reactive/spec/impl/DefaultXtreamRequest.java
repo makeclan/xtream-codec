@@ -108,7 +108,7 @@ public class DefaultXtreamRequest implements XtreamRequest {
     @Override
     public String toString() {
         return "DefaultXtreamRequest{"
-                + "id='" + id + '\''
+                + "id='" + logId() + '\''
                 + ", payload='" + (payload.refCnt() > 0 ? FormatUtils.toHexString(payload) : "<FREED>") + '\''
                 + '}';
     }

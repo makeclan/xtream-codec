@@ -14,7 +14,9 @@ package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration;
 
 import io.github.hylexus.xtream.codec.core.annotation.OrderedComponent;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
-import io.github.hylexus.xtream.codec.ext.jt808.extensions.filter.udp.Jt808PackageDelimiterRemoverFilter;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808UdpDatagramPackageSplitter;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808UdpDatagramPackageSplitter;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.filter.udp.Jt808UpDatagramPackageSplitterFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.TcpXtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.UdpXtreamNettyHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
@@ -43,8 +45,16 @@ import static io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolConstant.
 public class BuiltinJt808ServerUdpConfiguration {
 
     @Bean
-    Jt808PackageDelimiterRemoverFilter jt808PackageDelimiterRemoverFilter() {
-        return new Jt808PackageDelimiterRemoverFilter();
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(prefix = "jt808-server.udp-server", name = "enable-builtin-multiple-udp-package-splitter", havingValue = "true", matchIfMissing = true)
+    Jt808UdpDatagramPackageSplitter jt808UpDatagramPackageSplitter() {
+        return new DefaultJt808UdpDatagramPackageSplitter();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "jt808-server.udp-server", name = "enable-builtin-multiple-udp-package-splitter", havingValue = "true", matchIfMissing = true)
+    Jt808UpDatagramPackageSplitterFilter jt808UpDatagramPackageSplitterFilter(Jt808UdpDatagramPackageSplitter splitter) {
+        return new Jt808UpDatagramPackageSplitterFilter(splitter);
     }
 
     @Bean

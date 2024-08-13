@@ -32,7 +32,7 @@ public class PackageDelimiterRemoverFilter implements UdpXtreamFilter {
 
             final XtreamExchange mutatedExchange = exchange.mutate().request(requestBuilder -> {
                 final ByteBuf newPayload = originalPayload.slice(1, originalPayload.readableBytes() - 2);
-                requestBuilder.payload(newPayload);
+                requestBuilder.payload(newPayload, false);
             }).build();
 
             return chain.filter(mutatedExchange);

@@ -33,3 +33,6 @@ jt808-server:
     host: 0.0.0.0
     # UDP 服务端口
     port: 8888
+    # 一个 UDP 包可能包含多个 JT808 报文
+    # 是否启用内置的 UDP 包拆分器
+    enable-builtin-multiple-udp-package-splitter: true

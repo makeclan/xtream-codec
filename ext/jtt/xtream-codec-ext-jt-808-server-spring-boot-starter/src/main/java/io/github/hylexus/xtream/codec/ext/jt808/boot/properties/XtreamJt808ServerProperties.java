@@ -56,7 +56,10 @@ public class XtreamJt808ServerProperties {
     @Setter
     @ToString
     public static class UdpServerProps extends BaseTcpServerProps {
-
+        /**
+         * 是否启用内置的 UDP 多包拆分器
+         */
+        private boolean enableBuiltinMultipleUdpPackageSplitter = true;
     }
 
     @Getter
