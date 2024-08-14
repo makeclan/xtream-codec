@@ -25,6 +25,9 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamRequest
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.XtreamServerBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.TcpNettyServerCustomizer;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.TcpXtreamServer;
+import io.github.hylexus.xtream.codec.server.reactive.spec.resources.DefaultTcpXtreamNettyResourceFactory;
+import io.github.hylexus.xtream.codec.server.reactive.spec.resources.TcpXtreamNettyResourceFactory;
+import io.github.hylexus.xtream.codec.server.reactive.spec.resources.XtreamNettyResourceFactory;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import org.springframework.beans.factory.ObjectProvider;
@@ -66,17 +69,37 @@ public class BuiltinJt808ServerTcpConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
+    TcpXtreamNettyResourceFactory tcpXtreamNettyResourceFactory(XtreamJt808ServerProperties serverProperties) {
+        final XtreamJt808ServerProperties.TcpLoopResourcesProperty loopResources = serverProperties.getTcpServer().getLoopResources();
+        return new DefaultTcpXtreamNettyResourceFactory(new XtreamNettyResourceFactory.LoopResourcesProperty(
+                loopResources.getThreadNamePrefix(),
+                loopResources.getSelectCount(),
+                loopResources.getWorkerCount(),
+                loopResources.isDaemon(),
+                loopResources.isColocate(),
+                loopResources.isPreferNative()
+        ));
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
     TcpXtreamServer tcpXtreamServer(
             TcpXtreamNettyHandlerAdapter tcpXtreamNettyHandlerAdapter,
+            TcpXtreamNettyResourceFactory resourceFactory,
             ObjectProvider<TcpNettyServerCustomizer> customizers) {
 
         return XtreamServerBuilder.newTcpServerBuilder()
+                // handler
                 .addServerCustomizer(server -> server.handle(tcpXtreamNettyHandlerAdapter))
+                // 分包
                 .addServerCustomizer(server -> server.doOnChannelInit((observer, channel, remoteAddress) -> {
                     // stripDelimiter=true
                     final DelimiterBasedFrameDecoder frameDecoder = new DelimiterBasedFrameDecoder(DEFAULT_MAX_PACKAGE_SIZE, true, Unpooled.copiedBuffer(new byte[]{PACKAGE_DELIMITER}));
                     channel.pipeline().addFirst(BEAN_NAME_CHANNEL_INBOUND_HANDLER_ADAPTER, frameDecoder);
                 }))
+                // loopResources
+                .addServerCustomizer(server -> server.runOn(resourceFactory.loopResources(), resourceFactory.preferNative()))
+                // 用户自定义配置
                 .addServerCustomizers(customizers.stream().toList())
                 .build();
     }

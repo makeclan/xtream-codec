@@ -28,8 +28,9 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamRequest
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.XtreamServerBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp.UdpNettyServerCustomizer;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp.UdpXtreamServer;
-import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.github.hylexus.xtream.codec.server.reactive.spec.resources.DefaultUdpXtreamNettyResourceFactory;
+import io.github.hylexus.xtream.codec.server.reactive.spec.resources.UdpXtreamNettyResourceFactory;
+import io.github.hylexus.xtream.codec.server.reactive.spec.resources.XtreamNettyResourceFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -38,8 +39,6 @@ import org.springframework.util.StringUtils;
 import reactor.netty.udp.UdpServer;
 
 import java.util.List;
-
-import static io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolConstant.*;
 
 @ConditionalOnProperty(prefix = "jt808-server.udp-server", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class BuiltinJt808ServerUdpConfiguration {
@@ -82,17 +81,31 @@ public class BuiltinJt808ServerUdpConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
+    UdpXtreamNettyResourceFactory udpXtreamNettyResourceFactory(XtreamJt808ServerProperties serverProperties) {
+        final XtreamJt808ServerProperties.UdpLoopResourcesProperty loopResources = serverProperties.getUdpServer().getLoopResources();
+        return new DefaultUdpXtreamNettyResourceFactory(new XtreamNettyResourceFactory.LoopResourcesProperty(
+                loopResources.getThreadNamePrefix(),
+                loopResources.getSelectCount(),
+                loopResources.getWorkerCount(),
+                loopResources.isDaemon(),
+                loopResources.isColocate(),
+                loopResources.isPreferNative()
+        ));
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
     UdpXtreamServer udpXtreamServer(
             UdpXtreamNettyHandlerAdapter udpXtreamNettyHandlerAdapter,
+            UdpXtreamNettyResourceFactory resourceFactory,
             ObjectProvider<UdpNettyServerCustomizer> customizers) {
 
         return XtreamServerBuilder.newUdpServerBuilder()
+                // handler
                 .addServerCustomizer(server -> server.handle(udpXtreamNettyHandlerAdapter))
-                .addServerCustomizer(server -> server.doOnChannelInit((observer, channel, remoteAddress) -> {
-                    // stripDelimiter=true
-                    final DelimiterBasedFrameDecoder frameDecoder = new DelimiterBasedFrameDecoder(DEFAULT_MAX_PACKAGE_SIZE, true, Unpooled.copiedBuffer(new byte[]{PACKAGE_DELIMITER}));
-                    channel.pipeline().addFirst(BEAN_NAME_CHANNEL_INBOUND_HANDLER_ADAPTER, frameDecoder);
-                }))
+                // loopResources
+                .addServerCustomizer(server -> server.runOn(resourceFactory.loopResources(), resourceFactory.preferNative()))
+                // 用户自定义配置
                 .addServerCustomizers(customizers.stream().toList())
                 .build();
     }

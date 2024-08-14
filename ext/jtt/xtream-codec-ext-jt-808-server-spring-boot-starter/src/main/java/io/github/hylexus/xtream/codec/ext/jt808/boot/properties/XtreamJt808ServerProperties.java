@@ -17,6 +17,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import reactor.netty.resources.LoopResources;
 
 import java.time.Duration;
 
@@ -50,6 +51,9 @@ public class XtreamJt808ServerProperties {
     @ToString
     public static class TcpServerProps extends BaseTcpServerProps {
 
+        @NestedConfigurationProperty
+        private TcpLoopResourcesProperty loopResources = new TcpLoopResourcesProperty();
+
     }
 
     @Getter
@@ -60,6 +64,34 @@ public class XtreamJt808ServerProperties {
          * 是否启用内置的 UDP 多包拆分器
          */
         private boolean enableBuiltinMultipleUdpPackageSplitter = true;
+
+        @NestedConfigurationProperty
+        private UdpLoopResourcesProperty loopResources = new UdpLoopResourcesProperty();
+
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class TcpLoopResourcesProperty {
+        private String threadNamePrefix = "xtream-tcp";
+        private int selectCount = LoopResources.DEFAULT_IO_SELECT_COUNT;
+        private int workerCount = LoopResources.DEFAULT_IO_WORKER_COUNT;
+        private boolean daemon = true;
+        private boolean colocate = true;
+        private boolean preferNative = LoopResources.DEFAULT_NATIVE;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class UdpLoopResourcesProperty {
+        private String threadNamePrefix = "xtream-udp";
+        private int selectCount = LoopResources.DEFAULT_IO_SELECT_COUNT;
+        private int workerCount = LoopResources.DEFAULT_IO_WORKER_COUNT;
+        private boolean daemon = true;
+        private boolean colocate = true;
+        private boolean preferNative = LoopResources.DEFAULT_NATIVE;
     }
 
     @Getter
