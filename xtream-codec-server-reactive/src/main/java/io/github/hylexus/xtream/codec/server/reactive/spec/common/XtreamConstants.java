@@ -12,15 +12,11 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec.common;
 
-import java.lang.reflect.Method;
-
-/**
- * @author hylexus
- */
-public class ReactiveXtreamHandlerMethod extends XtreamHandlerMethod {
-
-    public ReactiveXtreamHandlerMethod(Class<?> containerClass, Method handler) {
-        super(containerClass, handler);
+public final class XtreamConstants {
+    private XtreamConstants() {
     }
+
+    public static final String BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER = "xtreamHandlerAdapterNonBlockingScheduler";
+    public static final String BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER = "xtreamHandlerAdapterBlockingScheduler";
 
 }

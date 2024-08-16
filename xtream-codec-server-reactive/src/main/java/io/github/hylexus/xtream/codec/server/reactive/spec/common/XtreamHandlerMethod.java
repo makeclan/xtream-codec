@@ -13,6 +13,8 @@
 package io.github.hylexus.xtream.codec.server.reactive.spec.common;
 
 import io.github.hylexus.xtream.codec.common.bean.XtreamMethodParameter;
+import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerResult;
+import reactor.core.publisher.Mono;
 
 import java.lang.reflect.Method;
 
@@ -34,6 +36,16 @@ public abstract class XtreamHandlerMethod {
         this.containerClass = containerClass;
         this.method = method;
         this.parameters = this.initMethodParameters(method);
+    }
+
+    public Mono<XtreamHandlerResult> invoke(Object containerInstance, Object[] args) {
+        try {
+            final Object result = this.method.invoke(containerInstance, args);
+            final XtreamMethodParameter returnType = new XtreamMethodParameter(-1, this.method);
+            return Mono.just(new XtreamHandlerResult(this, result, returnType));
+        } catch (Throwable e) {
+            return Mono.error(e);
+        }
     }
 
     private XtreamMethodParameter[] initMethodParameters(Method method) {

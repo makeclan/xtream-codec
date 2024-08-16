@@ -23,11 +23,13 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.Deleg
 import io.netty.buffer.ByteBufAllocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 /**
  * @author hylexus
@@ -86,7 +88,14 @@ public abstract class AbstractXtreamHandlerAdapterBuilder<C extends AbstractXtre
     }
 
     public C enableBuiltinHandlerAdapters(XtreamHandlerMethodArgumentResolver argumentResolver) {
-        this.addHandlerAdapter(new XtreamHandlerMethodHandlerAdapter(argumentResolver));
+        // todo 优化
+        this.addHandlerAdapter(
+                new XtreamHandlerMethodHandlerAdapter(
+                        argumentResolver,
+                        Schedulers.boundedElastic(),
+                        Schedulers.fromExecutorService(Executors.newVirtualThreadPerTaskExecutor())
+                )
+        );
         this.addHandlerAdapter(new SimpleXtreamRequestHandlerHandlerAdapter());
         return self();
     }

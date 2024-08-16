@@ -10,17 +10,19 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package io.github.hylexus.xtream.codec.server.reactive.spec.common;
+package io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler;
 
-import java.lang.reflect.Method;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-/**
- * @author hylexus
- */
-public class ReactiveXtreamHandlerMethod extends XtreamHandlerMethod {
+@Getter
+@Setter
+@ToString
+public class ParallelProperties {
+    private String threadNamePrefix = "parallel";
+    private boolean daemon = true;
+    private boolean rejectBlockingTask = true;
 
-    public ReactiveXtreamHandlerMethod(Class<?> containerClass, Method handler) {
-        super(containerClass, handler);
-    }
-
+    private int parallelism = Runtime.getRuntime().availableProcessors() * 2;
 }

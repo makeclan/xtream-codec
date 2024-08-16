@@ -37,10 +37,13 @@ public class XtreamJt808ServerProperties {
     @NestedConfigurationProperty
     private UdpServerProps udpServer = new UdpServerProps();
 
+    @NestedConfigurationProperty
+    private HandlerMethodSchedulerProperties handlerSchedulers = new HandlerMethodSchedulerProperties();
+
     @Getter
     @Setter
     @ToString
-    public static class BaseTcpServerProps {
+    public static class BaseServerProps {
         private boolean enabled = true;
         private String host;
         private int port = 6666;
@@ -49,7 +52,7 @@ public class XtreamJt808ServerProperties {
     @Getter
     @Setter
     @ToString
-    public static class TcpServerProps extends BaseTcpServerProps {
+    public static class TcpServerProps extends BaseServerProps {
 
         @NestedConfigurationProperty
         private TcpLoopResourcesProperty loopResources = new TcpLoopResourcesProperty();
@@ -59,7 +62,7 @@ public class XtreamJt808ServerProperties {
     @Getter
     @Setter
     @ToString
-    public static class UdpServerProps extends BaseTcpServerProps {
+    public static class UdpServerProps extends BaseServerProps {
         /**
          * 是否启用内置的 UDP 多包拆分器
          */
@@ -68,6 +71,17 @@ public class XtreamJt808ServerProperties {
         @NestedConfigurationProperty
         private UdpLoopResourcesProperty loopResources = new UdpLoopResourcesProperty();
 
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class HandlerMethodSchedulerProperties {
+        @NestedConfigurationProperty
+        private XtreamServerSchedulerProperties nonBlockingScheduler = new XtreamServerSchedulerProperties();
+
+        @NestedConfigurationProperty
+        private XtreamServerSchedulerProperties blockingScheduler = new XtreamServerSchedulerProperties();
     }
 
     @Getter

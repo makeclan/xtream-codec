@@ -25,6 +25,13 @@ jt808-server:
     host: 0.0.0.0
     # TCP 服务端口
     port: 7777
+    loop-resources:
+      select-count: 1
+      worker-count: 10
+      thread-name-prefix: xtream-tcp
+      daemon: true
+      colocate: true
+      prefer-native: true
   # UDP 服务配置
   udp-server:
     # 是否启动 UDP 服务
@@ -36,3 +43,47 @@ jt808-server:
     # 一个 UDP 包可能包含多个 JT808 报文
     # 是否启用内置的 UDP 包拆分器
     enable-builtin-multiple-udp-package-splitter: true
+    loop-resources:
+      select-count: 1
+      worker-count: 10
+      thread-name-prefix: xtream-udp
+      daemon: true
+      colocate: true
+      prefer-native: true
+  handler-schedulers:
+    non-blocking-scheduler:
+      type: parallel
+      bounded-elastic:
+        thread-name-prefix: bounded-elastic
+        thread-capacity: 10
+        queued-task-capacity: 1024
+        reject-blocking-task: true
+        daemon: true
+        ttl: 1m
+      parallel:
+        thread-name-prefix: parallel
+        parallelism: 10
+        daemon: true
+        reject-blocking-task: true
+      single:
+        daemon: true
+        reject-blocking-task: true
+        thread-name-prefix: single
+    blocking-scheduler:
+      type: bounded_elastic
+      bounded-elastic:
+        thread-name-prefix: blocking-bounded-elastic
+        thread-capacity: 10
+        queued-task-capacity: 1024
+        reject-blocking-task: true
+        daemon: true
+        ttl: 1m
+      parallel:
+        thread-name-prefix: blocking-parallel
+        parallelism: 10
+        daemon: true
+        reject-blocking-task: true
+      single:
+        daemon: true
+        reject-blocking-task: true
+        thread-name-prefix: blocking-single

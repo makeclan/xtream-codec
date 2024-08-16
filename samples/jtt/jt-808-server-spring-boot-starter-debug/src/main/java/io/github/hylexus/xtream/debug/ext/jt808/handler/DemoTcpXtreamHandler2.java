@@ -104,6 +104,7 @@ public class DemoTcpXtreamHandler2 {
     @Jt808ResponseBody(messageId = 0x8100, maxPackageSize = 1000)
     public Mono<BuiltinMsg8100> processMessage0x0100V2019(Jt808Request request, @Jt808RequestBody BuiltinMsg0100V2019 requestBody) {
         log.info("receive message [0x0100-v2019]: {}", requestBody);
+        log.info("{}", Thread.currentThread());
         final BuiltinMsg8100 builtinMsg8100 = new BuiltinMsg8100()
                 .setTerminalFlowId(request.header().flowId())
                 .setResult((short) 0)

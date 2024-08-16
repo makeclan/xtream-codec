@@ -14,8 +14,8 @@ package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration;
 
 import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
 import io.github.hylexus.xtream.codec.core.EntityCodec;
-import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.listener.XtreamExtJt808ServerStartupListener;
+import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import io.netty.buffer.ByteBufAllocator;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -29,6 +29,7 @@ import org.springframework.context.annotation.Import;
         BuiltinJt808ServerTcpConfiguration.class,
         BuiltinJt808ServerUdpConfiguration.class,
         BuiltinJt808ProtocolConfiguration.class,
+        BuiltinReactorSchedulerConfiguration.class,
 })
 @EnableConfigurationProperties({
         XtreamJt808ServerProperties.class,
