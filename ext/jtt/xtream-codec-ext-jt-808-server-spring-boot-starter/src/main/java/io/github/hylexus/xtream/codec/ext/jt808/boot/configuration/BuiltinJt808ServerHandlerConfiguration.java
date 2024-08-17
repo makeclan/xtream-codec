@@ -19,7 +19,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808ResponseE
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.filter.Jt808RequestDecoderFilter;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestMappingHandlerMapping;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBodyHandlerResultHandler;
-import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamConstants;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMethodArgumentResolver;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMethodHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.DelegateXtreamHandlerMethodArgumentResolver;
@@ -28,10 +28,8 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.impl.LoggingXtreamFil
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.LoggingXtreamHandlerResultHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.SimpleXtreamRequestHandlerHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.XtreamResponseBodyHandlerResultHandler;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import reactor.core.scheduler.Scheduler;
 
 import java.util.List;
 
@@ -80,14 +78,9 @@ public class BuiltinJt808ServerHandlerConfiguration {
     @Bean
     XtreamHandlerMethodHandlerAdapter xtreamHandlerMethodHandlerAdapter(
             XtreamHandlerMethodArgumentResolver argumentResolver,
-            @Qualifier(XtreamConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER) Scheduler nonBlockingScheduler,
-            @Qualifier(XtreamConstants.BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER) Scheduler blockingScheduler) {
+            XtreamSchedulerRegistry schedulerRegistry) {
 
-        return new XtreamHandlerMethodHandlerAdapter(
-                argumentResolver,
-                nonBlockingScheduler,
-                blockingScheduler
-        );
+        return new XtreamHandlerMethodHandlerAdapter(argumentResolver, schedulerRegistry);
     }
 
     @Bean

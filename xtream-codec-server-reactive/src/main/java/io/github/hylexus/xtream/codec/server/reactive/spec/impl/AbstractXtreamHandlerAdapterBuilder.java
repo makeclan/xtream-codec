@@ -20,6 +20,7 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamNettyHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.*;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.DelegateXtreamHandlerMethodArgumentResolver;
+import io.github.hylexus.xtream.codec.server.reactive.spec.resources.DefaultXtreamSchedulerRegistry;
 import io.netty.buffer.ByteBufAllocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,10 +93,13 @@ public abstract class AbstractXtreamHandlerAdapterBuilder<C extends AbstractXtre
         this.addHandlerAdapter(
                 new XtreamHandlerMethodHandlerAdapter(
                         argumentResolver,
-                        Schedulers.boundedElastic(),
-                        Schedulers.fromExecutorService(Executors.newVirtualThreadPerTaskExecutor())
+                        new DefaultXtreamSchedulerRegistry(
+                                Schedulers.boundedElastic(),
+                                Schedulers.fromExecutorService(Executors.newVirtualThreadPerTaskExecutor())
+                        )
                 )
         );
+
         this.addHandlerAdapter(new SimpleXtreamRequestHandlerHandlerAdapter());
         return self();
     }

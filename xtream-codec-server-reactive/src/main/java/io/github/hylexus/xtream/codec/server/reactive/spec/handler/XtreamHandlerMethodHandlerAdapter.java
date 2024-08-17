@@ -14,6 +14,7 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.handler;
 
 import io.github.hylexus.xtream.codec.common.bean.XtreamMethodParameter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.common.ReactiveXtreamHandlerMethod;
 import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamHandlerMethod;
 import reactor.core.publisher.Mono;
@@ -31,14 +32,15 @@ public class XtreamHandlerMethodHandlerAdapter implements XtreamHandlerAdapter {
     protected static final Mono<Object[]> EMPTY_ARGS = Mono.just(new Object[0]);
     protected static final Object NO_ARG_VALUE = new Object();
     protected final XtreamHandlerMethodArgumentResolver argumentResolver;
-
-    protected final Scheduler blockingScheduler;
+    protected final XtreamSchedulerRegistry schedulerRegistry;
     protected final Scheduler nonBlockingScheduler;
+    protected final Scheduler blockingScheduler;
 
-    public XtreamHandlerMethodHandlerAdapter(XtreamHandlerMethodArgumentResolver argumentResolver, Scheduler nonBlockingScheduler, Scheduler blockingScheduler) {
+    public XtreamHandlerMethodHandlerAdapter(XtreamHandlerMethodArgumentResolver argumentResolver, XtreamSchedulerRegistry schedulerRegistry) {
         this.argumentResolver = argumentResolver;
-        this.blockingScheduler = blockingScheduler;
-        this.nonBlockingScheduler = nonBlockingScheduler;
+        this.schedulerRegistry = schedulerRegistry;
+        this.nonBlockingScheduler = schedulerRegistry.defaultNonBlockingScheduler();
+        this.blockingScheduler = schedulerRegistry.defaultBlockingScheduler();
     }
 
     @Override

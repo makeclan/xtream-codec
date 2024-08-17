@@ -19,8 +19,11 @@ import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler.Bounde
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler.ParallelProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler.SchedulerType;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler.SingleProperties;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamConstants;
+import io.github.hylexus.xtream.codec.server.reactive.spec.resources.DefaultXtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.resources.XtreamReactorThreadFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import reactor.core.scheduler.Scheduler;
@@ -30,6 +33,14 @@ import java.util.concurrent.Executors;
 
 
 public class BuiltinReactorSchedulerConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean
+    XtreamSchedulerRegistry xtreamSchedulerRegistry(
+            @Qualifier(XtreamConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER) Scheduler nonBlockingScheduler,
+            @Qualifier(XtreamConstants.BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER) Scheduler blockingScheduler) {
+        return new DefaultXtreamSchedulerRegistry(nonBlockingScheduler, blockingScheduler);
+    }
 
     @Bean(name = XtreamConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER)
     @ConditionalOnMissingBean(name = XtreamConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER)
