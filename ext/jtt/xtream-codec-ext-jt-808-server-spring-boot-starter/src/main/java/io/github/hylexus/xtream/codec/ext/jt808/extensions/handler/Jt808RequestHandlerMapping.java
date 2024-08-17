@@ -14,7 +14,8 @@ package io.github.hylexus.xtream.codec.ext.jt808.extensions.handler;
 
 
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
-import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamRequestMapping;
+import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamRequestHandlerMapping;
+import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.*;
 
@@ -25,8 +26,11 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@XtreamRequestMapping
+@XtreamRequestHandlerMapping
 public @interface Jt808RequestHandlerMapping {
+
+    @AliasFor(annotation = XtreamRequestHandlerMapping.class, attribute = "scheduler")
+    String scheduler() default "";
 
     /**
      * @return 当前处理器方法能处理的消息类型

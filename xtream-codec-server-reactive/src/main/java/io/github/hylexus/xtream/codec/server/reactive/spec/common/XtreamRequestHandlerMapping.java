@@ -10,15 +10,18 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package io.github.hylexus.xtream.debug.codec.server.reactive.tcp.handler;
-
-import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamRequestHandlerMapping;
+package io.github.hylexus.xtream.codec.server.reactive.spec.common;
 
 import java.lang.annotation.*;
 
-@Target({ElementType.METHOD})
+/**
+ * @author hylexus
+ */
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@XtreamRequestHandlerMapping
-public @interface MyTcpRequestRouter {
+public @interface XtreamRequestHandlerMapping {
+
+    String scheduler() default "";
+
 }

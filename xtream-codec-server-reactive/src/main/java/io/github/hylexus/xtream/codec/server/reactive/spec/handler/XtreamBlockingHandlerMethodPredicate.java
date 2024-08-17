@@ -10,15 +10,12 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package io.github.hylexus.xtream.debug.codec.server.reactive.tcp.handler;
+package io.github.hylexus.xtream.codec.server.reactive.spec.handler;
 
-import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamRequestHandlerMapping;
+import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamHandlerMethod;
 
-import java.lang.annotation.*;
+public interface XtreamBlockingHandlerMethodPredicate {
 
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@XtreamRequestHandlerMapping
-public @interface MyTcpRequestRouter {
+    boolean isBlockingHandlerMethod(XtreamHandlerMethod handlerMethod);
+
 }

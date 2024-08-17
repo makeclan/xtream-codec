@@ -13,6 +13,10 @@
 package io.github.hylexus.xtream.codec.ext.jt808.extensions.handler;
 
 
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
+import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamRequestHandler;
+import org.springframework.core.annotation.AliasFor;
+
 import java.lang.annotation.*;
 
 
@@ -22,6 +26,13 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@XtreamRequestHandler
 public @interface Jt808RequestHandler {
+
+    @AliasFor(annotation = XtreamRequestHandler.class, attribute = "nonBlockingScheduler")
+    String nonBlockingScheduler() default XtreamSchedulerRegistry.SCHEDULER_NAME_NON_BLOCKING;
+
+    @AliasFor(annotation = XtreamRequestHandler.class, attribute = "blockingScheduler")
+    String blockingScheduler() default XtreamSchedulerRegistry.SCHEDULER_NAME_BLOCKING;
 
 }

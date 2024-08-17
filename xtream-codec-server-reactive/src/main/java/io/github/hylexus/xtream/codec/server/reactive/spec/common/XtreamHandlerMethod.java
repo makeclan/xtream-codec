@@ -15,6 +15,7 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.common;
 import io.github.hylexus.xtream.codec.common.bean.XtreamMethodParameter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerResult;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
 
 import java.lang.reflect.Method;
 
@@ -31,6 +32,7 @@ public abstract class XtreamHandlerMethod {
     protected Object containerInstance;
     protected final Method method;
     protected final XtreamMethodParameter[] parameters;
+    protected Scheduler scheduler;
 
     public XtreamHandlerMethod(Class<?> containerClass, Method method) {
         this.containerClass = containerClass;
@@ -77,5 +79,14 @@ public abstract class XtreamHandlerMethod {
 
     public void setContainerInstance(Object containerInstance) {
         this.containerInstance = containerInstance;
+    }
+
+    public Scheduler getScheduler() {
+        return scheduler;
+    }
+
+    public XtreamHandlerMethod setScheduler(Scheduler scheduler) {
+        this.scheduler = scheduler;
+        return this;
     }
 }

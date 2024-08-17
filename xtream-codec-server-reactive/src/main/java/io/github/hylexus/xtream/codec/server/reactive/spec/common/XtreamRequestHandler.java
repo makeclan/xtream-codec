@@ -12,13 +12,22 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec.common;
 
+
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
+
 import java.lang.annotation.*;
+
 
 /**
  * @author hylexus
  */
-@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface XtreamRequestMapping {
+public @interface XtreamRequestHandler {
+
+    String nonBlockingScheduler() default XtreamSchedulerRegistry.SCHEDULER_NAME_NON_BLOCKING;
+
+    String blockingScheduler() default XtreamSchedulerRegistry.SCHEDULER_NAME_BLOCKING;
+
 }

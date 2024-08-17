@@ -14,11 +14,8 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.handler;
 
 import io.github.hylexus.xtream.codec.common.bean.XtreamMethodParameter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
-import io.github.hylexus.xtream.codec.server.reactive.spec.common.ReactiveXtreamHandlerMethod;
 import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamHandlerMethod;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,15 +29,9 @@ public class XtreamHandlerMethodHandlerAdapter implements XtreamHandlerAdapter {
     protected static final Mono<Object[]> EMPTY_ARGS = Mono.just(new Object[0]);
     protected static final Object NO_ARG_VALUE = new Object();
     protected final XtreamHandlerMethodArgumentResolver argumentResolver;
-    protected final XtreamSchedulerRegistry schedulerRegistry;
-    protected final Scheduler nonBlockingScheduler;
-    protected final Scheduler blockingScheduler;
 
-    public XtreamHandlerMethodHandlerAdapter(XtreamHandlerMethodArgumentResolver argumentResolver, XtreamSchedulerRegistry schedulerRegistry) {
+    public XtreamHandlerMethodHandlerAdapter(XtreamHandlerMethodArgumentResolver argumentResolver) {
         this.argumentResolver = argumentResolver;
-        this.schedulerRegistry = schedulerRegistry;
-        this.nonBlockingScheduler = schedulerRegistry.defaultNonBlockingScheduler();
-        this.blockingScheduler = schedulerRegistry.defaultBlockingScheduler();
     }
 
     @Override
@@ -51,14 +42,11 @@ public class XtreamHandlerMethodHandlerAdapter implements XtreamHandlerAdapter {
     @Override
     public Mono<XtreamHandlerResult> handle(XtreamExchange exchange, Object handler) {
         final XtreamHandlerMethod handlerMethod = (XtreamHandlerMethod) handler;
-        final Scheduler scheduler = handlerMethod instanceof ReactiveXtreamHandlerMethod
-                ? this.nonBlockingScheduler
-                : this.blockingScheduler;
 
         return this.resolveArguments(exchange, handlerMethod).flatMap(args -> {
             // ...
             return handlerMethod.invoke(handlerMethod.getContainerInstance(), args);
-        }).subscribeOn(scheduler);
+        }).subscribeOn(handlerMethod.getScheduler());
     }
 
     private Mono<Object[]> resolveArguments(XtreamExchange exchange, XtreamHandlerMethod handlerMethod) {

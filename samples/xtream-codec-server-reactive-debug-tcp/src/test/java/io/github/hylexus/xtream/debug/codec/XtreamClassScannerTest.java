@@ -14,8 +14,7 @@ package io.github.hylexus.xtream.debug.codec;
 
 import io.github.hylexus.xtream.codec.common.utils.DefaultXtreamClassScanner;
 import io.github.hylexus.xtream.codec.common.utils.XtreamClassScanner;
-import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamRequestMapping;
-import org.junit.jupiter.api.Test;
+import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamRequestHandlerMapping;
 
 import java.util.Set;
 
@@ -25,7 +24,7 @@ public class XtreamClassScannerTest {
     void test() {
         final String pkg = "io.github.hylexus.xtream.debug.codec.server.reactive.tcp";
         // final Class<XtreamField> annotation = XtreamField.class;
-        final Class<XtreamRequestMapping> annotation = XtreamRequestMapping.class;
+        final Class<XtreamRequestHandlerMapping> annotation = XtreamRequestHandlerMapping.class;
         final XtreamClassScanner scanner = new DefaultXtreamClassScanner();
         System.out.println("===".repeat(10));
         final Set<Class<?>> result = scanner.scan(

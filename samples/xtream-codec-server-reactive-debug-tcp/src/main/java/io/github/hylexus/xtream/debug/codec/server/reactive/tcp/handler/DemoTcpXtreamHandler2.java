@@ -18,6 +18,7 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamResponse;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
+import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamRequestHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamRequest;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamResponse;
 import io.github.hylexus.xtream.debug.codec.server.reactive.tcp.message.DemoLocationMsg01;
@@ -32,6 +33,7 @@ import static io.github.hylexus.xtream.codec.common.utils.XtreamAssertions.asser
 /**
  * @author hylexus
  */
+@XtreamRequestHandler
 public class DemoTcpXtreamHandler2 {
 
     private static final Logger log = LoggerFactory.getLogger(DemoTcpXtreamHandler2.class);

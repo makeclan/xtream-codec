@@ -12,13 +12,13 @@
 
 package io.github.hylexus.xtream.debug.codec.server.reactive.udp.handler;
 
-import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamRequestMapping;
+import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamRequestHandlerMapping;
 
 import java.lang.annotation.*;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@XtreamRequestMapping
+@XtreamRequestHandlerMapping
 public @interface MyUdpRequestRouter {
 }

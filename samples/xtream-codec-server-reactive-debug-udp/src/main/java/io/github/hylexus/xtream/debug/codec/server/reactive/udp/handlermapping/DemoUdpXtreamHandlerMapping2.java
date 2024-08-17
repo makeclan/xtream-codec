@@ -15,22 +15,30 @@ package io.github.hylexus.xtream.debug.codec.server.reactive.udp.handlermapping;
 import io.github.hylexus.xtream.codec.common.utils.XtreamUtils;
 import io.github.hylexus.xtream.codec.core.utils.BeanUtils;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.AbstractXtreamRequestMappingHandlerMapping;
+import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.AbstractSimpleXtreamRequestMappingHandlerMapping;
+import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.DefaultXtreamBlockingHandlerMethodPredicate;
+import io.github.hylexus.xtream.codec.server.reactive.spec.resources.DefaultXtreamSchedulerRegistry;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.function.Function;
 
 /**
  * @author hylexus
  */
-public class DemoUdpXtreamHandlerMapping2 extends AbstractXtreamRequestMappingHandlerMapping {
+public class DemoUdpXtreamHandlerMapping2 extends AbstractSimpleXtreamRequestMappingHandlerMapping {
 
     public DemoUdpXtreamHandlerMapping2() {
         this(new String[]{XtreamUtils.detectMainClassPackageName()}, cls -> BeanUtils.createNewInstance(cls, new Object[0]));
     }
 
     public DemoUdpXtreamHandlerMapping2(String[] basePackages, Function<Class<?>, Object> instanceFactory) {
-        super(basePackages, instanceFactory);
+        // todo 优化
+        super(
+                new DefaultXtreamSchedulerRegistry(Schedulers.parallel(), Schedulers.boundedElastic()),
+                new DefaultXtreamBlockingHandlerMethodPredicate(),
+                basePackages, instanceFactory
+        );
     }
 
     @Override

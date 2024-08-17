@@ -15,9 +15,11 @@ package io.github.hylexus.xtream.codec.ext.jt808.extensions.handler;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.common.ReactiveXtreamHandlerMethod;
 import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamHandlerMethod;
-import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMapping;
+import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamBlockingHandlerMethodPredicate;
+import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.AbstractXtreamRequestMappingHandlerMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -28,20 +30,25 @@ import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.util.ReflectionUtils;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * @author hylexus
  */
-public class Jt808RequestMappingHandlerMapping implements XtreamHandlerMapping, ApplicationContextAware, InitializingBean {
+public class Jt808RequestMappingHandlerMapping extends AbstractXtreamRequestMappingHandlerMapping implements ApplicationContextAware, InitializingBean {
     private static final Logger log = LoggerFactory.getLogger(Jt808RequestMappingHandlerMapping.class);
     // <messageId,<version,handler>>
     private final Map<Integer, Map<Jt808ProtocolVersion, XtreamHandlerMethod>> mappings = new HashMap<>();
     protected ApplicationContext applicationContext;
 
-    public Jt808RequestMappingHandlerMapping() {
+    public Jt808RequestMappingHandlerMapping(XtreamSchedulerRegistry schedulerRegistry, XtreamBlockingHandlerMethodPredicate blockingHandlerMethodPredicate) {
+        super(schedulerRegistry, blockingHandlerMethodPredicate);
     }
 
     @Override
@@ -66,19 +73,25 @@ public class Jt808RequestMappingHandlerMapping implements XtreamHandlerMapping, 
         for (final Map.Entry<String, Object> entry : beans.entrySet()) {
             final Object instance = entry.getValue();
             final Class<?> cls = instance.getClass();
+            final Jt808RequestHandler classLevelAnnotation = requireNonNull(AnnotatedElementUtils.getMergedAnnotation(cls, Jt808RequestHandler.class));
             ReflectionUtils.doWithMethods(
                     cls,
                     method -> {
                         final XtreamHandlerMethod handlerMethod = new ReactiveXtreamHandlerMethod(cls, method);
                         handlerMethod.setContainerInstance(instance);
-                        final Jt808RequestHandlerMapping annotation = AnnotatedElementUtils.getMergedAnnotation(method, Jt808RequestHandlerMapping.class);
-                        if (annotation != null) {
-                            final int[] messageIds = annotation.messageIds();
-                            for (final int messageId : messageIds) {
-                                final Map<Jt808ProtocolVersion, XtreamHandlerMethod> map = this.mappings.computeIfAbsent(messageId, k -> new HashMap<>());
-                                for (final Jt808ProtocolVersion version : annotation.versions()) {
-                                    map.put(version, handlerMethod);
-                                }
+                        final Jt808RequestHandlerMapping annotation = Objects.requireNonNull(AnnotatedElementUtils.getMergedAnnotation(method, Jt808RequestHandlerMapping.class));
+                        final Scheduler scheduler = this.determineScheduler(
+                                handlerMethod,
+                                annotation.scheduler(),
+                                classLevelAnnotation.blockingScheduler(),
+                                classLevelAnnotation.nonBlockingScheduler()
+                        );
+                        handlerMethod.setScheduler(scheduler);
+                        final int[] messageIds = annotation.messageIds();
+                        for (final int messageId : messageIds) {
+                            final Map<Jt808ProtocolVersion, XtreamHandlerMethod> map = this.mappings.computeIfAbsent(messageId, k -> new HashMap<>());
+                            for (final Jt808ProtocolVersion version : annotation.versions()) {
+                                map.put(version, handlerMethod);
                             }
                         }
                     },
@@ -96,5 +109,11 @@ public class Jt808RequestMappingHandlerMapping implements XtreamHandlerMapping, 
     @Override
     public void afterPropertiesSet() throws Exception {
         this.initHandlerMethods();
+    }
+
+    @Override
+    public int order() {
+        // 0
+        return super.order();
     }
 }

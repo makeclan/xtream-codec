@@ -21,6 +21,8 @@ import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler.Schedu
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler.SingleProperties;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamConstants;
+import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamBlockingHandlerMethodPredicate;
+import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.DefaultXtreamBlockingHandlerMethodPredicate;
 import io.github.hylexus.xtream.codec.server.reactive.spec.resources.DefaultXtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.resources.XtreamReactorThreadFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,6 +35,12 @@ import java.util.concurrent.Executors;
 
 
 public class BuiltinReactorSchedulerConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean
+    XtreamBlockingHandlerMethodPredicate xtreamBlockingHandlerMethodPredicate() {
+        return new DefaultXtreamBlockingHandlerMethodPredicate();
+    }
 
     @Bean
     @ConditionalOnMissingBean

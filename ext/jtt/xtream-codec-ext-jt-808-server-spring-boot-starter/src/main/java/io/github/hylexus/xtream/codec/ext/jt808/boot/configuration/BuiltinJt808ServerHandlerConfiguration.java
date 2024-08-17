@@ -20,6 +20,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.extensions.filter.Jt808RequestDe
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestMappingHandlerMapping;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBodyHandlerResultHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
+import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamBlockingHandlerMethodPredicate;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMethodArgumentResolver;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMethodHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.DelegateXtreamHandlerMethodArgumentResolver;
@@ -57,8 +58,11 @@ public class BuiltinJt808ServerHandlerConfiguration {
 
     // region handlerMappings
     @Bean
-    Jt808RequestMappingHandlerMapping jt808RequestMappingHandlerMapping() {
-        return new Jt808RequestMappingHandlerMapping();
+    Jt808RequestMappingHandlerMapping jt808RequestMappingHandlerMapping(
+            XtreamSchedulerRegistry schedulerRegistry,
+            XtreamBlockingHandlerMethodPredicate blockingHandlerMethodPredicate) {
+
+        return new Jt808RequestMappingHandlerMapping(schedulerRegistry, blockingHandlerMethodPredicate);
     }
     // endregion handlerMappings
 
@@ -76,11 +80,9 @@ public class BuiltinJt808ServerHandlerConfiguration {
     }
 
     @Bean
-    XtreamHandlerMethodHandlerAdapter xtreamHandlerMethodHandlerAdapter(
-            XtreamHandlerMethodArgumentResolver argumentResolver,
-            XtreamSchedulerRegistry schedulerRegistry) {
+    XtreamHandlerMethodHandlerAdapter xtreamHandlerMethodHandlerAdapter(XtreamHandlerMethodArgumentResolver argumentResolver) {
 
-        return new XtreamHandlerMethodHandlerAdapter(argumentResolver, schedulerRegistry);
+        return new XtreamHandlerMethodHandlerAdapter(argumentResolver);
     }
 
     @Bean
