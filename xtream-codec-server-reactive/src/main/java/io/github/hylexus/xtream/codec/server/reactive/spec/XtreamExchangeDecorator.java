@@ -57,11 +57,6 @@ public class XtreamExchangeDecorator implements XtreamExchange {
     }
 
     @Override
-    public XtreamExchangeBuilder mutate() {
-        return delegate.mutate();
-    }
-
-    @Override
     public Map<String, Object> attributes() {
         return delegate.attributes();
     }

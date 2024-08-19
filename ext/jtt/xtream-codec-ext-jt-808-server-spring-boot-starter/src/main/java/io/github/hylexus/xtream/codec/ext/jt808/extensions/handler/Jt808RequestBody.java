@@ -14,6 +14,7 @@ package io.github.hylexus.xtream.codec.ext.jt808.extensions.handler;
 
 
 import io.github.hylexus.xtream.codec.core.annotation.XtreamRequestBody;
+import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.*;
 
@@ -26,5 +27,8 @@ import java.lang.annotation.*;
 @Documented
 @XtreamRequestBody
 public @interface Jt808RequestBody {
+
+    @AliasFor(annotation = XtreamRequestBody.class, attribute = "bufferAsSlice")
+    boolean bufferAsSlice() default true;
 
 }

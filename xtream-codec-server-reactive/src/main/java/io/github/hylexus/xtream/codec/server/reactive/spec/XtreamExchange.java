@@ -12,6 +12,7 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec;
 
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamExchangeBuilder;
 import io.netty.buffer.ByteBufAllocator;
 import reactor.core.publisher.Mono;
 
@@ -37,7 +38,9 @@ public interface XtreamExchange {
 
     Mono<XtreamSession> session();
 
-    XtreamExchangeBuilder mutate();
+    default XtreamExchangeBuilder mutate() {
+        return new DefaultXtreamExchangeBuilder(this);
+    }
 
     default Map<String, Object> attributes() {
         return request().attributes();

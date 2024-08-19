@@ -49,11 +49,6 @@ public class DefaultXtreamExchange implements XtreamExchange {
     }
 
     @Override
-    public XtreamExchangeBuilder mutate() {
-        return new DefaultXtreamExchangeBuilder(this);
-    }
-
-    @Override
     public Map<String, Object> attributes() {
         return new HashMap<>();
     }

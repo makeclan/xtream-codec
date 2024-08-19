@@ -24,120 +24,64 @@ import java.util.List;
 @ToString
 public class DemoLocationMsg02 {
 
-    // 消息头
-    @Preset.RustStyle.struct
-    private Header header;
+    // region 消息体
+    // 报警标志  DWORD(4)
+    @Preset.JtStyle.Dword
+    private long alarmFlag;
 
-    // 消息体
-    @Preset.RustStyle.struct(lengthExpression = "header.msgBodyLength()")
-    private Body body;
+    // 状态  DWORD(4)
+    @Preset.JtStyle.Dword
+    private long status;
 
-    // 校验码
-    @Preset.RustStyle.i8
-    private byte checkSum;
+    // 纬度  DWORD(4)
+    @Preset.JtStyle.Dword
+    private long latitude;
 
-    @Getter
-    @Setter
-    @ToString
-    public static class Header {
-        // byte[0-2)    消息ID word(16)
-        @Preset.RustStyle.u16
-        private int msgId;
+    // 经度  DWORD(4)
+    @Preset.JtStyle.Dword
+    private long longitude;
 
-        // byte[2-4)    消息体属性 word(16)
-        @Preset.RustStyle.u16
-        private int msgBodyProps;
+    // 高程  WORD(2)
+    @Preset.JtStyle.Word
+    private int altitude;
 
-        // byte[4]     协议版本号
-        @Preset.RustStyle.u8
-        private byte protocolVersion;
+    // 速度  WORD(2)
+    @Preset.JtStyle.Word
+    private int speed;
 
-        // byte[5-15)    终端手机号或设备ID bcd[10]
-        @Preset.RustStyle.str(charset = "bcd_8421", length = 10)
-        private String terminalId;
+    // 方向  WORD(2)
+    @Preset.JtStyle.Word
+    private int direction;
 
-        // byte[15-17)    消息流水号 word(16)
-        @Preset.RustStyle.u16
-        private int msgSerialNo;
+    // 时间  BCD[6] yyMMddHHmmss
+    @Preset.JtStyle.BCD(length = 6)
+    private String time;
 
-        // byte[17-21)    消息包封装项
-        @Preset.RustStyle.u32(condition = "hasSubPackage()")
-        private Long subPackageInfo;
-
-        // bit[0-9] 0000,0011,1111,1111(3FF)(消息体长度)
-        public int msgBodyLength() {
-            return msgBodyProps & 0x3ff;
-        }
-
-        // bit[13] 0010,0000,0000,0000(2000)(是否有子包)
-        public boolean hasSubPackage() {
-            // return ((msgBodyProperty & 0x2000) >> 13) == 1;
-            return (msgBodyProps & 0x2000) > 0;
-        }
-    }
-
-
-    @Getter
-    @Setter
-    @ToString
-    public static class Body {
-        // 报警标志  DWORD(4)
-        @Preset.RustStyle.u32
-        private long alarmFlag;
-
-        // 状态  DWORD(4)
-        @Preset.RustStyle.u32
-        private long status;
-
-        // 纬度  DWORD(4)
-        @Preset.RustStyle.u32
-        private long latitude;
-
-        // 经度  DWORD(4)
-        @Preset.RustStyle.u32
-        private long longitude;
-
-        // 高程  WORD(2)
-        @Preset.RustStyle.u16
-        private int altitude;
-
-        // 速度  WORD(2)
-        @Preset.RustStyle.u16
-        private int speed;
-
-        // 方向  WORD(2)
-        @Preset.RustStyle.u16
-        private int direction;
-
-        // 时间  BCD[6] yyMMddHHmmss
-        @Preset.RustStyle.str(charset = "bcd_8421", length = 6)
-        private String time;
-
-        @Preset.RustStyle.list
-        private List<ExtraItem> extraItems;
-    }
-
+    // 长度：消息体长度减去前面的 28 字节
+    @Preset.JtStyle.List
+    private List<DemoLocationMsg01.ExtraItem> extraItems;
+    // endregion 消息体
 
     @Setter
     @Getter
     @ToString
     public static class ExtraItem {
         // 附加信息ID   BYTE(1~255)
-        @Preset.RustStyle.u8
+        @Preset.JtStyle.Byte
         private short id;
         // 附加信息长度   BYTE(1~255)
-        @Preset.RustStyle.u8
+        @Preset.JtStyle.Byte
         private short contentLength;
         // 附加信息内容  BYTE[N]
-        @Preset.RustStyle.byte_array(lengthExpression = "getContentLength()")
+        @Preset.JtStyle.Bytes(lengthExpression = "getContentLength()")
         private byte[] content;
 
         public ExtraItem() {
         }
 
-        public ExtraItem(short id, short contentLength, byte[] content) {
+        public ExtraItem(short id, short length, byte[] content) {
             this.id = id;
-            this.contentLength = contentLength;
+            this.contentLength = length;
             this.content = content;
         }
     }

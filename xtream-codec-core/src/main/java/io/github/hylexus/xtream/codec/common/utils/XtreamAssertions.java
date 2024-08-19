@@ -41,4 +41,14 @@ public abstract class XtreamAssertions {
             throw new AssertionError(message);
         }
     }
+
+    public static void assertNotSame(Object expected, Object actual) {
+        assertNotSame(expected, actual, "Expected: not same but was: <" + actual + ">");
+    }
+
+    public static void assertNotSame(Object expected, Object actual, String message) {
+        if (expected == actual) {
+            throw new AssertionError(message);
+        }
+    }
 }

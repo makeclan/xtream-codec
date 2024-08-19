@@ -20,14 +20,31 @@ import java.lang.annotation.*;
 
 /**
  * @author hylexus
+ * @see XtreamRequestHandlerMapping#scheduler()
+ * @see XtreamSchedulerRegistry#defaultNonBlockingScheduler()
+ * @see XtreamSchedulerRegistry#defaultBlockingScheduler()
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface XtreamRequestHandler {
 
+    /**
+     * 默认的 <strong color="red">非阻塞</strong> 处理器的调度器。
+     * <p>
+     * 可以被 {@link XtreamRequestHandlerMapping#scheduler()} 覆盖
+     *
+     * @see XtreamRequestHandlerMapping#scheduler()
+     */
     String nonBlockingScheduler() default XtreamSchedulerRegistry.SCHEDULER_NAME_NON_BLOCKING;
 
+    /**
+     * 默认的 <strong color="red">阻塞</strong> 处理器的调度器。
+     * <p>
+     * 可以被 {@link XtreamRequestHandlerMapping#scheduler()} 覆盖
+     *
+     * @see XtreamRequestHandlerMapping#scheduler()
+     */
     String blockingScheduler() default XtreamSchedulerRegistry.SCHEDULER_NAME_BLOCKING;
 
 }

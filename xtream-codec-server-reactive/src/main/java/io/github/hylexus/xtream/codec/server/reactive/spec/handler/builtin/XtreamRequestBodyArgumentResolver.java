@@ -38,6 +38,10 @@ public class XtreamRequestBodyArgumentResolver implements XtreamHandlerMethodArg
     @Override
     public Mono<Object> resolveArgument(XtreamMethodParameter parameter, XtreamExchange exchange) {
         if (ByteBuf.class.isAssignableFrom(parameter.getParameterType())) {
+            final XtreamRequestBody annotation = parameter.getParameterAnnotation(XtreamRequestBody.class).orElseThrow();
+            if (annotation.bufferAsSlice()) {
+                return Mono.justOrEmpty(exchange.request().payload().slice());
+            }
             return Mono.justOrEmpty(exchange.request().payload());
         }
         final Object instance = this.messageCodec.decode(parameter.getParameterType(), exchange.request().payload().slice());

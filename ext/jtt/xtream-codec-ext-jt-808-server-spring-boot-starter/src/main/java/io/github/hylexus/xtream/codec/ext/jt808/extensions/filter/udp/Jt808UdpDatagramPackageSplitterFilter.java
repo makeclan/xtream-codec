@@ -27,11 +27,11 @@ import java.util.List;
 /**
  * 一个 UDP 包里可能有多个 JT808 数据包，这里使用 {@link Jt808UdpDatagramPackageSplitter} 拆包后再处理。
  */
-public class Jt808UpDatagramPackageSplitterFilter implements UdpXtreamFilter {
+public class Jt808UdpDatagramPackageSplitterFilter implements UdpXtreamFilter {
 
     protected final Jt808UdpDatagramPackageSplitter datagramPackageSplitter;
 
-    public Jt808UpDatagramPackageSplitterFilter(Jt808UdpDatagramPackageSplitter datagramPackageSplitter) {
+    public Jt808UdpDatagramPackageSplitterFilter(Jt808UdpDatagramPackageSplitter datagramPackageSplitter) {
         this.datagramPackageSplitter = datagramPackageSplitter;
     }
 
