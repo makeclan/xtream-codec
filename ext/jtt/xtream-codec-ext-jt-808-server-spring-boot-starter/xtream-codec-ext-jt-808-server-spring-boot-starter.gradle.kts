@@ -15,7 +15,8 @@ dependencies {
     api(project(":xtream-codec-server-reactive"))
     api("com.github.ben-manes.caffeine:caffeine")
     api("org.springframework.boot:spring-boot-starter")
-    api("org.springframework.boot:spring-boot-starter-test")
-    api("org.mockito:mockito-core")
     compileOnly("org.bouncycastle:bcprov-jdk18on")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.mockito:mockito-core")
 }

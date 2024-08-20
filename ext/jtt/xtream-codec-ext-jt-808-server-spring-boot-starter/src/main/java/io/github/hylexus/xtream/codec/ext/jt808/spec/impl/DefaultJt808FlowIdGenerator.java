@@ -17,7 +17,6 @@
 package io.github.hylexus.xtream.codec.ext.jt808.spec.impl;
 
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808FlowIdGenerator;
-import org.assertj.core.util.VisibleForTesting;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -39,7 +38,7 @@ public class DefaultJt808FlowIdGenerator implements Jt808FlowIdGenerator {
         this.currentValue = new AtomicInteger(0);
     }
 
-    @VisibleForTesting
+    // VisibleForTesting
     DefaultJt808FlowIdGenerator(int init) {
         this.currentValue = new AtomicInteger(this.mask(init));
     }
