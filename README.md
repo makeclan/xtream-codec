@@ -7,8 +7,8 @@
 </p>
 
 <p align="center">
-    <a href="http://license.coscl.org.cn/MulanPSL2">
-        <img alt="license" src="https://img.shields.io/badge/license-MulanPSL2-blue" />
+    <a href="https://www.apache.org/licenses/LICENSE-2.0">
+        <img alt="license" src="https://img.shields.io/badge/license-Apache2-blue" />
     </a>
     <a href="https://openjdk.org/projects/jdk/21">
         <img alt="JDK" src="https://img.shields.io/badge/jdk-21-red" />
@@ -34,8 +34,4 @@
 
 ## License
 
-`xtream-codec` 使用 **木兰宽松许可证，第2版**(**MulanPSL2**)。 详情见 [LICENSE](LICENSE) 文件。
-
-- **MulanPSL2** 完全兼容 **Apache License, Version 2.0** 协议。兼容性见 [ASF 3RD PARTY LICENSE POLICY](https://www.apache.org/legal/resolved.html#category-a)
-- **MulanPSL2** 比 **Apache License, Version 2.0** 协议 更加宽松
-
+`xtream-codec` 使用 [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)。 详情见 [LICENSE](LICENSE) 文件。

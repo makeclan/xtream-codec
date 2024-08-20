@@ -2,7 +2,7 @@
   "name": "xtream-codec",
   "version": "0.0.1-beta.1",
   "description": "docs for xtream-codec",
-  "license": "MulanPSL2",
+  "license": "Apache License 2.0",
   "type": "module",
   "scripts": {
     "docs:dev": "vuepress-vite dev src",

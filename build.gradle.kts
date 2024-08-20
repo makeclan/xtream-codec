@@ -233,7 +233,6 @@ configure(subprojects) {
                             license {
                                 name.set(getConfigAsString("projectLicenseName"))
                                 url.set(getConfigAsString("projectLicenseUrl"))
-                                distribution.set(getConfigAsString("projectLicenseDistribution"))
                             }
                         }
 
