@@ -30,7 +30,7 @@ import java.lang.annotation.*;
 public @interface XtreamRequestHandler {
 
     /**
-     * 默认的 <strong color="red">非阻塞</strong> 处理器的调度器。
+     * 默认的 <strong style="color:red;">非阻塞</strong> 处理器的调度器。
      * <p>
      * 可以被 {@link XtreamRequestHandlerMapping#scheduler()} 覆盖
      *
@@ -39,7 +39,7 @@ public @interface XtreamRequestHandler {
     String nonBlockingScheduler() default XtreamSchedulerRegistry.SCHEDULER_NAME_NON_BLOCKING;
 
     /**
-     * 默认的 <strong color="red">阻塞</strong> 处理器的调度器。
+     * 默认的 <strong style="color:red;">阻塞</strong> 处理器的调度器。
      * <p>
      * 可以被 {@link XtreamRequestHandlerMapping#scheduler()} 覆盖
      *

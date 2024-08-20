@@ -1,4 +1,7 @@
 dependencies {
+
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
     // common start
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")

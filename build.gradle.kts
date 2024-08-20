@@ -183,6 +183,17 @@ configure(subprojects) {
         options.encoding = "UTF-8"
         options.memberLevel = JavadocMemberLevel.PROTECTED
         options.header = project.name
+        options.source= "21"
+
+        val docletOptions = options as StandardJavadocDocletOptions
+        docletOptions.addBooleanOption("html5", true)
+        docletOptions.version(true)
+        docletOptions.links("https://docs.oracle.com/en/java/javase/21/docs/api")
+        docletOptions.charSet("UTF-8")
+        docletOptions.use(true)
+        docletOptions.addStringOption("Xdoclint:none", "-quiet")
+
+        isFailOnError = false
         version = getProjectVersion()
         logging.captureStandardError(LogLevel.INFO)
         logging.captureStandardOutput(LogLevel.INFO)
@@ -194,7 +205,7 @@ configure(subprojects) {
         from(sourceSets.getByName("main").java.srcDirs)
     }
 
-    val javDocJar by tasks.creating(Jar::class) {
+    val javaDocJar by tasks.creating(Jar::class) {
         archiveClassifier.set("javadoc")
         from(tasks.named("javadoc"))
     }
@@ -206,7 +217,7 @@ configure(subprojects) {
 
                     from(components["java"])
                     artifact(sourcesJar)
-                    artifact(javDocJar)
+                    artifact(javaDocJar)
 
                     groupId = getConfigAsString("projectGroupId")
                     artifactId = project.name

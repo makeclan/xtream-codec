@@ -25,7 +25,7 @@ public class BaseJt808Msg {
      */
     private Jt808MsgHeader header;
     /**
-     * <h3 color="red">警告！！！</h3>
+     * <h3 style="color:red;">警告！！！</h3>
      * 不要依赖这个属性。
      * <p>
      * 不要依赖这个属性。

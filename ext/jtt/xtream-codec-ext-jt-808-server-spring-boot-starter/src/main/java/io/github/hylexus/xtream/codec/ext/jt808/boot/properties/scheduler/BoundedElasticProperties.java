@@ -28,5 +28,5 @@ public class BoundedElasticProperties {
 
     private int threadCapacity = Math.max(16, Runtime.getRuntime().availableProcessors() * 2);
     private int queuedTaskCapacity = 512;
-    private Duration ttl;
+    private Duration ttl = Duration.ofMinutes(1);
 }
