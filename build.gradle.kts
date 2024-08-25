@@ -4,7 +4,7 @@ import java.util.*
 
 plugins {
     id("java-library")
-    id("io.spring.dependency-management") version "1.1.1"
+    id("io.spring.dependency-management") version "1.1.6"
     id("maven-publish")
     id("signing")
     id("checkstyle")
