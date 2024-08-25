@@ -54,7 +54,6 @@ public class DefaultJt808BytesProcessor implements Jt808BytesProcessor {
         }
 
         final List<ByteBuf> byteBufList = new ArrayList<>();
-        boolean hasError = false;
         try {
             do {
                 final byte current = byteBuf.getByte(indexOf);
@@ -71,8 +70,8 @@ public class DefaultJt808BytesProcessor implements Jt808BytesProcessor {
                         // xxx7D02xxx --> xxx7Exxx
                         byteBufList.add(byteBuf.retainedSlice(from, indexOf - from + 1));
                     }
-                    byteBuf.setByte(indexOf, 0x7E);
-                    // byteBufList.add(allocator.buffer().writeByte(0x7e));
+                    // byteBuf.setByte(indexOf, 0x7E);
+                    byteBufList.add(allocator.buffer().writeByte(0x7e));
                     from = indexOf + 2;
                 } else {
                     log.warn("0x7d should be followed by 0x01 or 0x02, but {}", next);
@@ -87,14 +86,9 @@ public class DefaultJt808BytesProcessor implements Jt808BytesProcessor {
                 byteBufList.add(byteBuf.retainedSlice(from, readableBytes - from));
             }
         } catch (Throwable e) {
-            hasError = true;
             // 发生异常时将内部 component 释放掉
             XtreamBytes.releaseBufList(byteBufList);
             throw e;
-        } finally {
-            if (!hasError) {
-                XtreamBytes.releaseBuf(byteBuf);
-            }
         }
         return allocator.compositeBuffer(byteBufList.size()).addComponents(true, byteBufList);
     }

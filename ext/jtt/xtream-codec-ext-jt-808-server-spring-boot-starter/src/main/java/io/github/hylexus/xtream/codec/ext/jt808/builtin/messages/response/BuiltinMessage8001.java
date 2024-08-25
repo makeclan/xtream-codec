@@ -14,48 +14,40 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages;
+package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
+import lombok.experimental.Accessors;
 
 /**
- * 内置终端注册消息体(2011)
+ * 平台通用应答 0x8001
  *
  * @author hylexus
  */
 @Getter
 @Setter
 @ToString
-public class BuiltinMsg0100V2013 {
-    // 1. [0-2) WORD 省域ID
+@Accessors(chain = true)
+public class BuiltinMessage8001 {
+    /**
+     * 1. 应答流水号 WORD    对应的终端消息的流水号
+     */
     @Preset.JtStyle.Word
-    private int provinceId;
+    protected int clientFlowId;
 
-    // 2. [2-4) WORD 省域ID
+    /**
+     * 2. 应答id WORD     对应的终端消息的 ID
+     */
     @Preset.JtStyle.Word
-    private int cityId;
+    protected int clientMessageId;
 
-    // 3. [4-9) BYTE[5] 制造商ID
-    @Preset.JtStyle.Bytes(length = 5)
-    private String manufacturerId;
-
-    // 4. [9-17) BYTE[8] 终端型号
-    @Preset.JtStyle.Bytes(length = 20)
-    private String terminalType;
-
-    // 5. [17-24) BYTE[7] 终端ID
-    @Preset.JtStyle.Bytes(length = 7)
-    private String terminalId;
-
-    // 6. [24]   BYTE    车牌颜色
+    /**
+     * 3. 结果  BYTE    0:成功/确认; 1:失败; 2:消息有误; 3:不支持; 4:报警处理确认
+     */
     @Preset.JtStyle.Byte
-    private short color;
+    protected short result;
 
-    // 7. [25,n)   String    车辆标识
-    @Preset.JtStyle.Str(lengthExpression = "#ctx.msgBodyLength() - 25")
-    private String carIdentifier;
 }

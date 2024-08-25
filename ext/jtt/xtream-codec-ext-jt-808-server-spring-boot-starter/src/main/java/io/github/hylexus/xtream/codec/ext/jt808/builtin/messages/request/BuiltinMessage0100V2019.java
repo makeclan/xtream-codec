@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages;
+package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import lombok.Getter;
@@ -23,14 +23,15 @@ import lombok.ToString;
 
 
 /**
- * 内置终端注册消息体(2011)
+ * 终端注册(2019)
  *
  * @author hylexus
+ * @see io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.BuiltinMessage8100
  */
 @Getter
 @Setter
 @ToString
-public class BuiltinMsg0100V2011 {
+public class BuiltinMessage0100V2019 {
     // 1. [0-2) WORD 省域ID
     @Preset.JtStyle.Word
     private int provinceId;
@@ -40,15 +41,15 @@ public class BuiltinMsg0100V2011 {
     private int cityId;
 
     // 3. [4-9) BYTE[5] 制造商ID
-    @Preset.JtStyle.Bytes(length = 5)
+    @Preset.JtStyle.Bytes(length = 11)
     private String manufacturerId;
 
     // 4. [9-17) BYTE[8] 终端型号
-    @Preset.JtStyle.Bytes(length = 8)
+    @Preset.JtStyle.Bytes(length = 30)
     private String terminalType;
 
     // 5. [17-24) BYTE[7] 终端ID
-    @Preset.JtStyle.Bytes(length = 7)
+    @Preset.JtStyle.Bytes(length = 30)
     private String terminalId;
 
     // 6. [24]   BYTE    车牌颜色
@@ -56,6 +57,6 @@ public class BuiltinMsg0100V2011 {
     private short color;
 
     // 7. [25,n)   String    车辆标识
-    @Preset.JtStyle.Str(lengthExpression = "#ctx.msgBodyLength() - 25")
+    @Preset.JtStyle.Str
     private String carIdentifier;
 }

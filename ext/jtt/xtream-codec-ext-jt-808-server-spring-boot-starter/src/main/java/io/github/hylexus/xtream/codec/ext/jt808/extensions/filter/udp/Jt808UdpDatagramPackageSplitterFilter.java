@@ -53,7 +53,10 @@ public class Jt808UdpDatagramPackageSplitterFilter implements UdpXtreamFilter {
 
         if (exchanges.size() == 1) {
             final XtreamExchange first = exchanges.getFirst();
-            return chain.filter(first).doFinally(signalType -> first.request().release());
+            return chain.filter(first).doFinally(signalType -> {
+                // ...
+                first.request().release();
+            });
         }
 
         return Flux.fromIterable(exchanges).flatMap(ex -> {

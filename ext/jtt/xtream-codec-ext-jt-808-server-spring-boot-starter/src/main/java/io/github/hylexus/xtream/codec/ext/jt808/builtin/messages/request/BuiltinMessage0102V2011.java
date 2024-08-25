@@ -14,48 +14,28 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages;
+package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
+import lombok.experimental.Accessors;
 
 /**
- * 内置终端注册消息体(2011)
+ * 终端鉴权 0x0102
  *
  * @author hylexus
  */
 @Getter
 @Setter
 @ToString
-public class BuiltinMsg0100V2019 {
-    // 1. [0-2) WORD 省域ID
-    @Preset.JtStyle.Word
-    private int provinceId;
+@Accessors(chain = true)
+public class BuiltinMessage0102V2011 {
 
-    // 2. [2-4) WORD 省域ID
-    @Preset.JtStyle.Word
-    private int cityId;
-
-    // 3. [4-9) BYTE[5] 制造商ID
-    @Preset.JtStyle.Bytes(length = 11)
-    private String manufacturerId;
-
-    // 4. [9-17) BYTE[8] 终端型号
-    @Preset.JtStyle.Bytes(length = 30)
-    private String terminalType;
-
-    // 5. [17-24) BYTE[7] 终端ID
-    @Preset.JtStyle.Bytes(length = 30)
-    private String terminalId;
-
-    // 6. [24]   BYTE    车牌颜色
-    @Preset.JtStyle.Byte
-    private short color;
-
-    // 7. [25,n)   String    车辆标识
+    /**
+     * 鉴权码 STRING 终端重连后上报鉴权码
+     */
     @Preset.JtStyle.Str
-    private String carIdentifier;
+    private String authCode;
 }

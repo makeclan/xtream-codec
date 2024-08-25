@@ -17,10 +17,10 @@
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 
 
-import io.github.hylexus.xtream.codec.common.exception.NotYetImplementedException;
 import io.github.hylexus.xtream.codec.core.annotation.OrderedComponent;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
+import io.github.hylexus.xtream.codec.server.reactive.spec.exception.RequestHandlerNotFoundException;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -54,7 +54,7 @@ public class DispatcherXtreamHandler implements XtreamHandler {
                 .concatMap(mapping -> mapping.getHandler(exchange))
                 .next()
                 .switchIfEmpty(createNotFoundError(exchange))
-                .onErrorResume(ex -> handleResultMono(exchange, Mono.error(ex)))
+                // .onErrorResume(ex -> handleResultMono(exchange, Mono.error(ex)))
                 .flatMap(handler -> handleRequestWith(exchange, handler));
     }
 
@@ -107,7 +107,7 @@ public class DispatcherXtreamHandler implements XtreamHandler {
 
     private <R> Mono<R> createNotFoundError(XtreamExchange exchange) {
         return Mono.defer(() -> {
-            Exception ex = new NotYetImplementedException("No handler found for request: " + exchange.request());
+            Exception ex = new RequestHandlerNotFoundException("No handler found", exchange);
             return Mono.error(ex);
         });
     }

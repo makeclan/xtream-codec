@@ -16,10 +16,9 @@
 
 package io.github.hylexus.xtream.debug.ext.jt808.handler;
 
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.BuiltinMsg0100V2011;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.BuiltinMsg0100V2013;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.BuiltinMsg0100V2019;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.BuiltinMsg8100;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.*;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.BuiltinMessage8100;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.ServerCommonReplyMessage;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestBody;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestHandler;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestHandlerMapping;
@@ -34,7 +33,6 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamReq
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamResponse;
 import io.github.hylexus.xtream.debug.ext.jt808.message.DemoLocationMsg01;
 import io.github.hylexus.xtream.debug.ext.jt808.message.DemoLocationMsg02;
-import io.github.hylexus.xtream.debug.ext.jt808.message.ServerCommonReplyMsg;
 import io.netty.buffer.ByteBuf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,19 +47,43 @@ import static io.github.hylexus.xtream.codec.common.utils.XtreamAssertions.asser
  */
 @Component
 @Jt808RequestHandler
-public class DemoTcpXtreamHandler2 {
+public class DemoJt808RequestHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(DemoTcpXtreamHandler2.class);
+    private static final Logger log = LoggerFactory.getLogger(DemoJt808RequestHandler.class);
 
-    public DemoTcpXtreamHandler2() {
+    public DemoJt808RequestHandler() {
     }
 
     /**
+     * 终端鉴权(V2019)
+     */
+    @Jt808RequestHandlerMapping(messageIds = 0x0102, versions = Jt808ProtocolVersion.VERSION_2019)
+    @Jt808ResponseBody(messageId = 0x8001)
+    public Mono<ServerCommonReplyMessage> processMessage0102V2019(Jt808Request request, @Jt808RequestBody BuiltinMessage0102V2019 requestBody) {
+        log.info("receive message [0x0100-v2019]: {}", requestBody);
+        final ServerCommonReplyMessage responseBody = ServerCommonReplyMessage.success(request);
+        return Mono.just(responseBody);
+    }
+
+    /**
+     * 终端鉴权(V2011 or V2013)
+     */
+    @Jt808RequestHandlerMapping(messageIds = 0x0102, versions = {Jt808ProtocolVersion.VERSION_2011, Jt808ProtocolVersion.VERSION_2013})
+    @Jt808ResponseBody(messageId = 0x8001)
+    public Mono<ServerCommonReplyMessage> processMessage0102(Jt808Request request, @Jt808RequestBody BuiltinMessage0102V2013 requestBody) {
+        log.info("receive message [0x0100-(v2011 or v2013)]: {}", requestBody);
+        final ServerCommonReplyMessage responseBody = ServerCommonReplyMessage.success(request);
+        return Mono.just(responseBody);
+    }
+
+    /**
+     * 位置上报(V2019)
+     * <p>
      * 7e02004086010000000001893094655200E4000000000000000101D907F2073D336C000000000000211124114808010400000026030200003001153101002504000000001404000000011504000000FA160400000000170200001803000000EA10FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF02020000EF0400000000F31B017118000000000000000000000000000000000000000000000000567e
      */
     @Jt808RequestHandlerMapping(messageIds = 0x0200, versions = Jt808ProtocolVersion.VERSION_2019)
     @Jt808ResponseBody(messageId = 0x8001, maxPackageSize = 1000)
-    public Mono<ServerCommonReplyMsg> processMessage0200V2019(
+    public Mono<ServerCommonReplyMessage> processMessage0200V2019(
             XtreamExchange exchange,
             XtreamSession xtreamSession,
             XtreamRequest xtreamRequest,
@@ -85,12 +107,14 @@ public class DemoTcpXtreamHandler2 {
         assertSame(exchange.request(), defaultXtreamRequest);
         assertSame(exchange.response(), xtreamResponse);
         assertSame(exchange.response(), defaultXtreamResponse);
-        final ServerCommonReplyMsg responseBody = ServerCommonReplyMsg.success(0x0200, jt808Request.header().flowId());
+        final ServerCommonReplyMessage responseBody = ServerCommonReplyMessage.success(jt808Request);
         // return Mono.empty();
         return Mono.just(responseBody);
     }
 
     /**
+     * 终端注册(V2019)
+     * <p>
      * 不分包:
      * <p>
      * 7E010060240100000000013912344329000000030001000B00026964393837363534333231747970653030313233343536373831323334353637277E7E010060240100000000013912344329000100030002383837363534333231494430303030313233343536373831323334353637383837363534357E7E0100600E010000000001391234432900020003000333323101B8CA4A2D313233343539347E
@@ -103,39 +127,52 @@ public class DemoTcpXtreamHandler2 {
      */
     @Jt808RequestHandlerMapping(messageIds = 0x0100, versions = Jt808ProtocolVersion.VERSION_2019)
     @Jt808ResponseBody(messageId = 0x8100, maxPackageSize = 1000)
-    public Mono<BuiltinMsg8100> processMessage0x0100V2019(Jt808Request request, @Jt808RequestBody BuiltinMsg0100V2019 requestBody) {
+    public Mono<BuiltinMessage8100> processMessage0x0100V2019(Jt808Request request, @Jt808RequestBody BuiltinMessage0100V2019 requestBody) {
         log.info("receive message [0x0100-v2019]: {}", requestBody);
         log.info("{}", Thread.currentThread());
-        final BuiltinMsg8100 builtinMsg8100 = new BuiltinMsg8100()
-                .setTerminalFlowId(request.header().flowId())
+        final BuiltinMessage8100 builtinMessage8100 = new BuiltinMessage8100()
+                .setClientFlowId(request.header().flowId())
                 .setResult((short) 0)
                 .setAuthCode("auth-code-2019");
 
-        return Mono.just(builtinMsg8100);
+        return Mono.just(builtinMessage8100);
     }
 
+    /**
+     * 终端注册(V2013)
+     */
     @Jt808RequestHandlerMapping(messageIds = 0x0100, versions = Jt808ProtocolVersion.VERSION_2013)
     @Jt808ResponseBody(messageId = 0x8100, maxPackageSize = 1000)
-    public Mono<BuiltinMsg8100> processMessage0x0100V2013(Jt808Request request, @Jt808RequestBody BuiltinMsg0100V2013 requestBody) {
+    public Mono<BuiltinMessage8100> processMessage0x0100V2013(Jt808Request request, @Jt808RequestBody BuiltinMessage0100V2013 requestBody) {
         log.info("receive message [0x0100-v2013]: {}", requestBody);
-        final BuiltinMsg8100 builtinMsg8100 = new BuiltinMsg8100()
-                .setTerminalFlowId(request.header().flowId())
+        final BuiltinMessage8100 builtinMessage8100 = new BuiltinMessage8100()
+                .setClientFlowId(request.header().flowId())
                 .setResult((short) 0)
                 .setAuthCode("auth-code-2013");
 
-        return Mono.just(builtinMsg8100);
+        return Mono.just(builtinMessage8100);
     }
 
+    /**
+     * 终端注册(V2011)
+     */
     @Jt808RequestHandlerMapping(messageIds = 0x0100, versions = Jt808ProtocolVersion.VERSION_2011)
     @Jt808ResponseBody(messageId = 0x8100, maxPackageSize = 1000)
-    public Mono<BuiltinMsg8100> processMessage0x0100V2011(Jt808Request request, @Jt808RequestBody BuiltinMsg0100V2011 requestBody) {
+    public Mono<BuiltinMessage8100> processMessage0x0100V2011(Jt808Request request, @Jt808RequestBody BuiltinMessage0100V2011 requestBody) {
         log.info("receive message [0x0100-v2011]: {}", requestBody);
-        final BuiltinMsg8100 builtinMsg8100 = new BuiltinMsg8100()
-                .setTerminalFlowId(request.header().flowId())
+        final BuiltinMessage8100 builtinMessage8100 = new BuiltinMessage8100()
+                .setClientFlowId(request.header().flowId())
                 .setResult((short) 0)
                 .setAuthCode("auth-code-2011");
 
-        return Mono.just(builtinMsg8100);
+        return Mono.just(builtinMessage8100);
     }
 
+    @Jt808RequestHandlerMapping(messageIds = 0x0002)
+    @Jt808ResponseBody(messageId = 0x8001)
+    public Mono<ServerCommonReplyMessage> processMessage0002(Jt808Request request, @Jt808RequestBody BuiltinMessage0002 requestBody) {
+        log.info("receive message [0x0002]: {}", requestBody);
+        final ServerCommonReplyMessage responseBody = ServerCommonReplyMessage.success(request);
+        return Mono.just(responseBody);
+    }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages;
+package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import lombok.Getter;
@@ -22,20 +22,30 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+/**
+ * 终端通用应答 0x8001
+ *
+ * @author hylexus
+ */
 @Getter
 @Setter
 @ToString
 @Accessors(chain = true)
-public class BuiltinMsg8100 {
-
-    // 1. byte[0,2) WORD 对应的终端注册消息的流水号
+public class BuiltinMessage0001 {
+    /**
+     * 1. 应答流水号 WORD    对应的平台消息的流水号
+     */
     @Preset.JtStyle.Word
-    private int terminalFlowId;
-    // 2. byte[2,3) BYTE 0:成功;1:车辆已被注册;2:数据库中无该车辆; 3:终端已被注册;4:数据库中无该终端
+    private int serverFlowId;
+
+    /**
+     * 2. 应答id WORD     对应的平台消息的 ID
+     */
+    @Preset.JtStyle.Word
+    private int serverMessageId;
+    /**
+     * 3. 结果  byte 0:成功/确认; 1:失败; 2:消息有误; 3:不支持
+     */
     @Preset.JtStyle.Byte
     private short result;
-    // 3. byte[3,x) STRING 鉴权码(只有在成功后才有该字段)
-    @Preset.JtStyle.Str(condition = "result == 0")
-    private String authCode;
-
 }

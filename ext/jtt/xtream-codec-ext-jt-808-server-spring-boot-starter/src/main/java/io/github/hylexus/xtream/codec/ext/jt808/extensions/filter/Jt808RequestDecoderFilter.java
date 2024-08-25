@@ -44,7 +44,10 @@ public class Jt808RequestDecoderFilter implements XtreamFilter {
 
         // 不是子包
         if (!jt808Request.header().messageBodyProps().hasSubPackage()) {
-            return chain.filter(this.mutatedExchange(exchange, jt808Request));
+            return chain.filter(this.mutatedExchange(exchange, jt808Request)).doFinally(signalType -> {
+                // ...
+                jt808Request.release();
+            });
         }
 
         // 合并子包
