@@ -50,7 +50,7 @@ public class DefaultJt808BytesProcessor implements Jt808BytesProcessor {
         int from = byteBuf.readerIndex();
         int indexOf = byteBuf.indexOf(from, readableBytes, delimiter);
         if (indexOf < 0) {
-            return byteBuf;
+            return byteBuf.retain();
         }
 
         final List<ByteBuf> byteBufList = new ArrayList<>();

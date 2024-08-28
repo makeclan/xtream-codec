@@ -60,6 +60,10 @@ public class DefaultTcpXtreamNettyHandlerAdapter implements TcpXtreamNettyHandle
                         // ...
                         log.error(throwable.getMessage(), throwable);
                     });
+
+        }).onErrorResume(throwable -> {
+            log.error("Unexpected Error", throwable);
+            return Mono.empty();
         });
     }
 }

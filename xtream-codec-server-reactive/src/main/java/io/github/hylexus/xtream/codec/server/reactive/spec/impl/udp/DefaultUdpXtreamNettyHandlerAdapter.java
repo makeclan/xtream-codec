@@ -54,6 +54,9 @@ public class DefaultUdpXtreamNettyHandlerAdapter implements UdpXtreamNettyHandle
             } else {
                 return Mono.error(new IllegalStateException("Cannot handle message. type = [" + object.getClass() + "]"));
             }
+        }).onErrorResume(throwable -> {
+            log.error("Unexpected Error", throwable);
+            return Mono.empty();
         });
     }
 

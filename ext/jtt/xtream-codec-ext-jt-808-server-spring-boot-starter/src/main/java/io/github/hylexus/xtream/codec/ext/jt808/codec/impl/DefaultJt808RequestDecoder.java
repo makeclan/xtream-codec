@@ -50,23 +50,28 @@ public class DefaultJt808RequestDecoder implements Jt808RequestDecoder {
         }
         final ByteBuf escaped = this.jt808MessageProcessor.doEscapeForReceive(payload);
 
-        if (log.isDebugEnabled()) {
-            log.debug("+ >>>>>>>>>>>>>>> : 7E{}7E", FormatUtils.toHexString(escaped));
-        }
+        try {
+            if (log.isDebugEnabled()) {
+                log.debug("+ >>>>>>>>>>>>>>> : 7E{}7E", FormatUtils.toHexString(escaped));
+            }
 
-        final Jt808RequestHeader header = this.parseMessageHeaderSpec(escaped);
-        final int messageBodyStartIndex = Jt808RequestHeader.messageBodyStartIndex(header.version(), header.messageBodyProps().hasSubPackage());
-        final byte originalCheckSum = escaped.getByte(escaped.readableBytes() - 1);
-        final byte calculatedCheckSum = this.jt808MessageProcessor.calculateCheckSum(escaped.slice(0, escaped.readableBytes() - 1));
-        final ByteBuf body = escaped.slice(messageBodyStartIndex, header.messageBodyLength());
-        return new DefaultJt808Request(
-                allocator,
-                nettyInbound,
-                body,
-                header,
-                originalCheckSum,
-                calculatedCheckSum
-        );
+            final Jt808RequestHeader header = this.parseMessageHeaderSpec(escaped);
+            final int messageBodyStartIndex = Jt808RequestHeader.messageBodyStartIndex(header.version(), header.messageBodyProps().hasSubPackage());
+            final byte originalCheckSum = escaped.getByte(escaped.readableBytes() - 1);
+            final byte calculatedCheckSum = this.jt808MessageProcessor.calculateCheckSum(escaped.slice(0, escaped.readableBytes() - 1));
+            final ByteBuf body = escaped.slice(messageBodyStartIndex, header.messageBodyLength());
+            return new DefaultJt808Request(
+                    allocator,
+                    nettyInbound,
+                    body,
+                    header,
+                    originalCheckSum,
+                    calculatedCheckSum
+            );
+        } catch (Throwable e) {
+            XtreamBytes.releaseBuf(escaped);
+            throw e;
+        }
     }
 
     protected Jt808RequestHeader parseMessageHeaderSpec(ByteBuf byteBuf) {

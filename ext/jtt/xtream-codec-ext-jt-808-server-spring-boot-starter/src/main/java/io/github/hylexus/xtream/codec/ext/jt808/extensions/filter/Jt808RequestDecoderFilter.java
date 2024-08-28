@@ -42,12 +42,16 @@ public class Jt808RequestDecoderFilter implements XtreamFilter {
         // 将原始的 XtreamRequest 解析为 JTT/808 格式的请求
         final Jt808Request jt808Request = this.jt808RequestDecoder.decode(originalRequest.bufferFactory(), originalRequest.underlyingInbound(), originalRequest.payload());
 
+        return this.doProcessJt808Request(exchange, chain, jt808Request).doFinally(signalType -> {
+            // ...
+            jt808Request.release();
+        });
+    }
+
+    protected Mono<Void> doProcessJt808Request(XtreamExchange exchange, XtreamFilterChain chain, Jt808Request jt808Request) {
         // 不是子包
         if (!jt808Request.header().messageBodyProps().hasSubPackage()) {
-            return chain.filter(this.mutatedExchange(exchange, jt808Request)).doFinally(signalType -> {
-                // ...
-                jt808Request.release();
-            });
+            return chain.filter(this.mutatedExchange(exchange, jt808Request));
         }
 
         // 合并子包
@@ -65,7 +69,7 @@ public class Jt808RequestDecoderFilter implements XtreamFilter {
         });
     }
 
-    private XtreamExchange mutatedExchange(XtreamExchange exchange, Jt808Request request) {
+    protected XtreamExchange mutatedExchange(XtreamExchange exchange, Jt808Request request) {
         return exchange.mutate().request(request).build();
     }
 
