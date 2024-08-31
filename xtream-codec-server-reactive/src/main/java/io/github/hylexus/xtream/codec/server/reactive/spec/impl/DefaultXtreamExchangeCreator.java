@@ -38,7 +38,7 @@ public class DefaultXtreamExchangeCreator implements XtreamExchangeCreator {
     @Override
     public XtreamExchange createTcpExchange(ByteBufAllocator allocator, NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf byteBuf) {
         final XtreamRequest.Type type = XtreamRequest.Type.TCP;
-        final DefaultXtreamRequest request = new DefaultXtreamRequest(allocator, nettyInbound, byteBuf);
+        final DefaultXtreamRequest request = new DefaultXtreamRequest(this.generateLogId(nettyInbound), allocator, nettyInbound, byteBuf);
         final InetSocketAddress remoteAddress = request.remoteAddress();
         final DefaultXtreamResponse response = new DefaultXtreamResponse(allocator, nettyOutbound, type, remoteAddress);
 
@@ -49,7 +49,7 @@ public class DefaultXtreamExchangeCreator implements XtreamExchangeCreator {
     public XtreamExchange createUdpExchange(ByteBufAllocator allocator, NettyInbound nettyInbound, NettyOutbound nettyOutbound, DatagramPacket datagramPacket) {
         final InetSocketAddress remoteAddr = datagramPacket.sender();
         final XtreamRequest.Type type = XtreamRequest.Type.UDP;
-        final DefaultXtreamRequest request = new DefaultXtreamRequest(allocator, nettyInbound, datagramPacket);
+        final DefaultXtreamRequest request = new DefaultXtreamRequest(this.generateLogId(nettyInbound), allocator, nettyInbound, datagramPacket);
         final DefaultXtreamResponse response = new DefaultXtreamResponse(allocator, nettyOutbound, type, remoteAddr);
 
         return new DefaultXtreamExchange(sessionManager, request, response);

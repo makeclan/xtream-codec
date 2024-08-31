@@ -32,11 +32,11 @@ public interface Jt808RequestHeader {
 
     static int messageBodyStartIndex(Jt808ProtocolVersion version, boolean hasSubPackage) {
         // 2011, 2013
-        if (version.getVersionBit() == Jt808ProtocolVersion.VERSION_2013.getVersionBit()) {
+        if (version.versionBit() == Jt808ProtocolVersion.VERSION_2013.versionBit()) {
             return hasSubPackage ? 16 : 12;
         }
         // 2019
-        if (version.getVersionBit() == Jt808ProtocolVersion.VERSION_2019.getVersionBit()) {
+        if (version.versionBit() == Jt808ProtocolVersion.VERSION_2019.versionBit()) {
             return hasSubPackage ? 21 : 17;
         }
         throw new IllegalStateException("未知版本, version=" + version);
@@ -102,7 +102,7 @@ public interface Jt808RequestHeader {
                     // [ 13_ ] 0010,0000,0000,0000(2000)(是否有子包)
                     | (((isSubPackage ? 1 : 0) << 13) & 0x2000)
                     // [14_ ]  0100,0000,0000,0000(4000)(保留位)
-                    | ((version.getVersionBit() << 14) & 0x4000)
+                    | ((version.versionBit() << 14) & 0x4000)
                     // [15_ ]  1000,0000,0000,0000(8000)(保留位)
                     | ((reversedBit15 << 15) & 0x8000);
             return props & 0xFFFF;

@@ -35,6 +35,7 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
      * TCP
      */
     public DefaultJt808Request(
+            String traceId,
             ByteBufAllocator allocator,
             NettyInbound nettyInbound,
             ByteBuf payload,
@@ -42,7 +43,7 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
             int originalCheckSum,
             int calculatedCheckSum) {
 
-        super(allocator, nettyInbound, payload);
+        super(traceId, allocator, nettyInbound, payload);
         this.header = header;
         this.originalCheckSum = originalCheckSum;
         this.calculatedCheckSum = calculatedCheckSum;
@@ -52,6 +53,7 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
      * UDP
      */
     public DefaultJt808Request(
+            String traceId,
             ByteBufAllocator allocator,
             NettyInbound nettyInbound,
             DatagramPacket datagramPacket,
@@ -59,7 +61,7 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
             int originalCheckSum,
             int calculatedCheckSum) {
 
-        super(allocator, nettyInbound, datagramPacket);
+        super(traceId, allocator, nettyInbound, datagramPacket);
         this.header = header;
         this.originalCheckSum = originalCheckSum;
         this.calculatedCheckSum = calculatedCheckSum;
@@ -128,6 +130,7 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
         public Jt808Request build() {
             if (this.delegateRequest.type() == Type.TCP) {
                 return new DefaultJt808Request(
+                        this.delegateRequest.logId(),
                         this.delegateRequest.bufferFactory(),
                         this.delegateRequest.underlyingInbound(),
                         this.payload == null ? this.delegateRequest.payload() : this.payload,
@@ -138,6 +141,7 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
             }
 
             return new DefaultJt808Request(
+                    this.delegateRequest.logId(),
                     this.delegateRequest.bufferFactory(),
                     this.delegateRequest.underlyingInbound(),
                     this.createDatagramPacket(this.payload),
@@ -147,4 +151,5 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
             );
         }
     }
+
 }

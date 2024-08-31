@@ -177,7 +177,7 @@ public class DefaultJt808ResponseEncoder implements Jt808ResponseEncoder {
 
         // bytes[4] 协议版本号 byte
         if (version == Jt808ProtocolVersion.VERSION_2019) {
-            header.writeByte(response.version().getVersionBit());
+            header.writeByte(response.version().versionBit());
         }
 
         // bytes[5-14) 终端手机号 BCD[10]

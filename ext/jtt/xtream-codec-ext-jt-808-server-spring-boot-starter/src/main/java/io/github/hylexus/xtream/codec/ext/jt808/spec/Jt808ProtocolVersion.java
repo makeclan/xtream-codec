@@ -47,11 +47,11 @@ public enum Jt808ProtocolVersion {
     }
 
     // getters
-    public byte getVersionBit() {
+    public byte versionBit() {
         return versionBit;
     }
 
-    public String getShortDesc() {
+    public String shortDesc() {
         return shortDesc;
     }
 }

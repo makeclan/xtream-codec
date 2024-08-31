@@ -16,23 +16,34 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.extensions.filter;
 
+import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestCombiner;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
+import io.github.hylexus.xtream.codec.ext.jt808.event.BuiltinJt808EventPayloads;
+import io.github.hylexus.xtream.codec.ext.jt808.event.BuiltinJt808EventType;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilterChain;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
+import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 import reactor.core.publisher.Mono;
 
 public class Jt808RequestDecoderFilter implements XtreamFilter {
     public static final int ORDER = -100;
     protected final Jt808RequestDecoder jt808RequestDecoder;
     protected final Jt808RequestCombiner requestCombiner;
+    protected final XtreamEventPublisher eventPublisher;
 
     public Jt808RequestDecoderFilter(Jt808RequestDecoder jt808RequestDecoder, Jt808RequestCombiner requestCombiner) {
+        this(jt808RequestDecoder, requestCombiner, null);
+    }
+
+    public Jt808RequestDecoderFilter(Jt808RequestDecoder jt808RequestDecoder, Jt808RequestCombiner requestCombiner, XtreamEventPublisher eventPublisher) {
         this.jt808RequestDecoder = jt808RequestDecoder;
         this.requestCombiner = requestCombiner;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -40,12 +51,34 @@ public class Jt808RequestDecoderFilter implements XtreamFilter {
         final XtreamRequest originalRequest = exchange.request();
 
         // 将原始的 XtreamRequest 解析为 JTT/808 格式的请求
-        final Jt808Request jt808Request = this.jt808RequestDecoder.decode(originalRequest.bufferFactory(), originalRequest.underlyingInbound(), originalRequest.payload());
+        final Jt808Request jt808Request = this.jt808RequestDecoder.decode(originalRequest.logId(), originalRequest.bufferFactory(), originalRequest.underlyingInbound(), originalRequest.payload());
+
+        this.publishEvent(exchange, jt808Request, originalRequest);
 
         return this.doProcessJt808Request(exchange, chain, jt808Request).doFinally(signalType -> {
             // ...
             jt808Request.release();
         });
+    }
+
+    private void publishEvent(XtreamExchange exchange, Jt808Request jt808Request, XtreamRequest originalRequest) {
+        if (this.eventPublisher == null) {
+            return;
+        }
+        this.eventPublisher.publishIfNecessary(
+                BuiltinJt808EventType.PRESET_IO_RECEIVE,
+                () -> {
+                    final Jt808RequestHeader header = jt808Request.header();
+                    return new BuiltinJt808EventPayloads.Jt808ReceiveEvent(
+                            exchange.request().logId(),
+                            header.version().shortDesc(),
+                            header.messageBodyProps().hasSubPackage(),
+                            header.messageId(),
+                            FormatUtils.toHexString(originalRequest.payload()),
+                            FormatUtils.toHexString(jt808Request.payload())
+                    );
+                }
+        );
     }
 
     protected Mono<Void> doProcessJt808Request(XtreamExchange exchange, XtreamFilterChain chain, Jt808Request jt808Request) {

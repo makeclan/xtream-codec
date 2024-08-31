@@ -24,6 +24,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.extensions.filter.Jt808RequestDe
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestMappingHandlerMapping;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBodyHandlerResultHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
+import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamBlockingHandlerMethodPredicate;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMethodArgumentResolver;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMethodHandlerAdapter;
@@ -33,6 +34,7 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.impl.LoggingXtreamFil
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.LoggingXtreamHandlerResultHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.SimpleXtreamRequestHandlerHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.XtreamResponseBodyHandlerResultHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 
@@ -55,8 +57,11 @@ public class BuiltinJt808ServerHandlerConfiguration {
     }
 
     @Bean
-    Jt808RequestDecoderFilter jt808RequestDecoderFilter(Jt808RequestDecoder jt808RequestDecoder, Jt808RequestCombiner jt808RequestCombiner) {
-        return new Jt808RequestDecoderFilter(jt808RequestDecoder, jt808RequestCombiner);
+    Jt808RequestDecoderFilter jt808RequestDecoderFilter(
+            Jt808RequestDecoder jt808RequestDecoder,
+            Jt808RequestCombiner jt808RequestCombiner,
+            @Autowired(required = false) XtreamEventPublisher eventPublisher) {
+        return new Jt808RequestDecoderFilter(jt808RequestDecoder, jt808RequestCombiner, eventPublisher);
     }
     // endregion filters
 
@@ -107,8 +112,10 @@ public class BuiltinJt808ServerHandlerConfiguration {
     }
 
     @Bean
-    Jt808ResponseBodyHandlerResultHandler jt808ResponseBodyHandlerResultHandler(DefaultJt808ResponseEncoder jt808ResponseEncoder) {
-        return new Jt808ResponseBodyHandlerResultHandler(jt808ResponseEncoder);
+    Jt808ResponseBodyHandlerResultHandler jt808ResponseBodyHandlerResultHandler(
+            DefaultJt808ResponseEncoder jt808ResponseEncoder,
+            @Autowired XtreamEventPublisher eventPublisher) {
+        return new Jt808ResponseBodyHandlerResultHandler(jt808ResponseEncoder, eventPublisher);
     }
     // endregion handlerResultHandlers
 

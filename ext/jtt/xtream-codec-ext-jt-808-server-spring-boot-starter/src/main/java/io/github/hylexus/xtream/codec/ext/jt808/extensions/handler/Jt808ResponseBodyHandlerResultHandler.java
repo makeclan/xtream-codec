@@ -16,10 +16,14 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.extensions.handler;
 
+import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808ResponseEncoder;
+import io.github.hylexus.xtream.codec.ext.jt808.event.BuiltinJt808EventPayloads;
+import io.github.hylexus.xtream.codec.ext.jt808.event.BuiltinJt808EventType;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
+import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerResult;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerResultHandler;
 import io.netty.buffer.ByteBuf;
@@ -29,9 +33,11 @@ import reactor.core.publisher.Mono;
 public class Jt808ResponseBodyHandlerResultHandler implements XtreamHandlerResultHandler {
 
     protected final DefaultJt808ResponseEncoder jt808ResponseEncoder;
+    protected final XtreamEventPublisher eventPublisher;
 
-    public Jt808ResponseBodyHandlerResultHandler(DefaultJt808ResponseEncoder jt808ResponseEncoder) {
+    public Jt808ResponseBodyHandlerResultHandler(DefaultJt808ResponseEncoder jt808ResponseEncoder, XtreamEventPublisher eventPublisher) {
         this.jt808ResponseEncoder = jt808ResponseEncoder;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -50,8 +56,23 @@ public class Jt808ResponseBodyHandlerResultHandler implements XtreamHandlerResul
         final Jt808RequestHeader requestHeader = request.header();
         return this.adaptReturnValue(returnValue).flatMap(body -> {
             final ByteBuf responseBuf = this.jt808ResponseEncoder.encode(body, requestHeader.version(), requestHeader.terminalId(), annotation);
+            this.publishEvent(exchange, responseBuf);
             return exchange.response().writeWith(Mono.just(responseBuf));
         });
+    }
+
+    private void publishEvent(XtreamExchange exchange, ByteBuf responseBuf) {
+        if (this.eventPublisher == null) {
+            return;
+        }
+        this.eventPublisher.publishIfNecessary(
+                BuiltinJt808EventType.PRESET_IO_SEND,
+                () -> new BuiltinJt808EventPayloads.Jt808SendEvent(
+                        exchange.request().logId(),
+                        0,
+                        FormatUtils.toHexString(responseBuf)
+                )
+        );
     }
 
     protected Mono<?> adaptReturnValue(Object returnValue) {

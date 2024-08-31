@@ -23,6 +23,8 @@ import io.netty.channel.socket.DatagramPacket;
 import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
 
+import java.util.UUID;
+
 public interface XtreamExchangeCreator {
 
     default XtreamExchange createTcpExchange(ByteBufAllocator allocator, NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf byteBuf) {
@@ -31,6 +33,10 @@ public interface XtreamExchangeCreator {
 
     default XtreamExchange createUdpExchange(ByteBufAllocator allocator, NettyInbound nettyInbound, NettyOutbound nettyOutbound, DatagramPacket datagramPacket) {
         throw new NotYetImplementedException();
+    }
+
+    default String generateLogId(NettyInbound inbound) {
+        return UUID.randomUUID().toString().replace("-", "");
     }
 
 }

@@ -14,18 +14,32 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.codec;
+package io.github.hylexus.xtream.codec.ext.jt808.event;
 
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
-import reactor.netty.NettyInbound;
+import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEvent;
 
 /**
  * @author hylexus
  */
-public interface Jt808RequestDecoder {
+public enum BuiltinJt808EventType implements XtreamEvent.XtreamEventType {
+    PRESET_IO_RECEIVE(100, "请求"),
+    PRESET_IO_SEND(101, "响应"),
+    ;
+    private final int code;
+    private final String description;
 
-    Jt808Request decode(String traceId, ByteBufAllocator allocator, NettyInbound nettyInbound, ByteBuf payload);
+    BuiltinJt808EventType(int code, String description) {
+        this.code = code;
+        this.description = description;
+    }
 
+    @Override
+    public int code() {
+        return this.code;
+    }
+
+    @Override
+    public String description() {
+        return this.description;
+    }
 }

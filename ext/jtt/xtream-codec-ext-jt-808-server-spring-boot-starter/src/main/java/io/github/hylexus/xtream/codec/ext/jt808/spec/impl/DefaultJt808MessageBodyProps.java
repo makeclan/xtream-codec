@@ -87,7 +87,7 @@ public class DefaultJt808MessageBodyProps implements Jt808RequestHeader.Jt808Mes
 
         @Override
         public Jt808RequestHeader.Jt808MessageBodyPropsBuilder versionIdentifier(Jt808ProtocolVersion version) {
-            return this.versionIdentifier(version.getVersionBit());
+            return this.versionIdentifier(version.versionBit());
         }
 
         @Override

@@ -29,12 +29,15 @@ public class DefaultXtreamRequestBuilder
     public XtreamRequest build() {
         if (this.delegateRequest.type() == XtreamRequest.Type.TCP) {
             return new DefaultXtreamRequest(
+                    this.delegateRequest.logId(),
                     this.delegateRequest.bufferFactory(),
                     this.delegateRequest.underlyingInbound(),
                     this.payload != null ? this.payload : this.delegateRequest.payload()
             );
         }
+
         return new DefaultXtreamRequest(
+                this.delegateRequest.logId(),
                 this.delegateRequest.bufferFactory(),
                 this.delegateRequest.underlyingInbound(),
                 this.createDatagramPacket(this.payload)

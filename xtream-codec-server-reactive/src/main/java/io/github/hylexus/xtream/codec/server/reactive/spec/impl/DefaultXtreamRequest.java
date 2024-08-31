@@ -26,7 +26,6 @@ import reactor.netty.NettyInbound;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
@@ -43,7 +42,8 @@ public class DefaultXtreamRequest implements XtreamRequest {
     /**
      * TCP
      */
-    public DefaultXtreamRequest(ByteBufAllocator allocator, NettyInbound delegate, ByteBuf payload) {
+    public DefaultXtreamRequest(String traceId, ByteBufAllocator allocator, NettyInbound delegate, ByteBuf payload) {
+        this.id = traceId;
         this.allocator = allocator;
         this.delegate = delegate;
         this.payload = payload;
@@ -54,7 +54,8 @@ public class DefaultXtreamRequest implements XtreamRequest {
     /**
      * UDP
      */
-    public DefaultXtreamRequest(ByteBufAllocator allocator, NettyInbound delegate, DatagramPacket datagramPacket) {
+    public DefaultXtreamRequest(String traceId, ByteBufAllocator allocator, NettyInbound delegate, DatagramPacket datagramPacket) {
+        this.id = traceId;
         this.allocator = allocator;
         this.delegate = delegate;
         this.payload = datagramPacket.content();
@@ -79,14 +80,7 @@ public class DefaultXtreamRequest implements XtreamRequest {
 
     @Override
     public String logId() {
-        if (this.id == null) {
-            this.id = initId();
-        }
         return this.id;
-    }
-
-    protected String initId() {
-        return UUID.randomUUID().toString().replace("-", "");
     }
 
     @Override

@@ -44,25 +44,35 @@ public class Jt808UdpDatagramPackageSplitterFilter implements UdpXtreamFilter {
         final ByteBuf originalPayload = exchange.request().payload();
         final List<ByteBuf> byteBufList = this.datagramPackageSplitter.split(originalPayload);
 
-        final List<XtreamExchange> exchanges = new ArrayList<>();
-
-        for (final ByteBuf payload : byteBufList) {
-            final XtreamExchange newExchange = exchange.mutate().request(xtreamRequestBuilder -> xtreamRequestBuilder.payload(payload, false)).build();
-            exchanges.add(newExchange);
+        // 只有一个包(绝大多数场景)
+        if (byteBufList.size() == 1) {
+            final XtreamExchange newExchange = newExchange(exchange, byteBufList.getFirst());
+            return chain.filter(newExchange).doFinally(signalType -> {
+                // ...
+                newExchange.request().release();
+            });
         }
 
-        if (exchanges.size() == 1) {
-            final XtreamExchange first = exchanges.getFirst();
-            return chain.filter(first).doFinally(signalType -> {
-                // ...
-                first.request().release();
-            });
+        // 每个(完整)包都触发一次处理逻辑
+        final List<XtreamExchange> exchanges = new ArrayList<>(byteBufList.size());
+        for (final ByteBuf payload : byteBufList) {
+            final XtreamExchange newExchange = newExchange(exchange, payload);
+            exchanges.add(newExchange);
         }
 
         return Flux.fromIterable(exchanges).flatMap(ex -> {
             // ...
-            return chain.filter(ex).doFinally(signalType -> ex.request().release());
+            return chain.filter(ex).doFinally(signalType -> {
+                // ...
+                ex.request().release();
+            });
         }).then();
+    }
+
+    protected static XtreamExchange newExchange(XtreamExchange exchange, ByteBuf byteBufList) {
+        return exchange.mutate()
+                .request(builder -> builder.payload(byteBufList, false))
+                .build();
     }
 
     @Override

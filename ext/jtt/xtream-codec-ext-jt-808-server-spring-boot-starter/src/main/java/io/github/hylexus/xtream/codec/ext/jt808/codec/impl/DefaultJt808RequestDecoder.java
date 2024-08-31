@@ -44,7 +44,7 @@ public class DefaultJt808RequestDecoder implements Jt808RequestDecoder {
     }
 
     @Override
-    public Jt808Request decode(ByteBufAllocator allocator, NettyInbound nettyInbound, ByteBuf payload) {
+    public Jt808Request decode(String traceId, ByteBufAllocator allocator, NettyInbound nettyInbound, ByteBuf payload) {
         if (log.isDebugEnabled()) {
             log.debug("- >>>>>>>>>>>>>>> : 7E{}7E", FormatUtils.toHexString(payload));
         }
@@ -61,6 +61,7 @@ public class DefaultJt808RequestDecoder implements Jt808RequestDecoder {
             final byte calculatedCheckSum = this.jt808MessageProcessor.calculateCheckSum(escaped.slice(0, escaped.readableBytes() - 1));
             final ByteBuf body = escaped.slice(messageBodyStartIndex, header.messageBodyLength());
             return new DefaultJt808Request(
+                    traceId,
                     allocator,
                     nettyInbound,
                     body,
@@ -82,7 +83,7 @@ public class DefaultJt808RequestDecoder implements Jt808RequestDecoder {
         final Jt808RequestHeader.Jt808MessageBodyProps messageBodyProps = new DefaultJt808MessageBodyProps(messageBodyPropsIntValue);
 
         final Jt808ProtocolVersion version = this.detectVersion(messageId, messageBodyProps, byteBuf);
-        if (version.getVersionBit() == 1) {
+        if (version.versionBit() == 1) {
             return this.parseHeaderGreatThanOrEqualsV2019(version, messageBodyProps, byteBuf);
         } else if (version == Jt808ProtocolVersion.VERSION_2013 || version == Jt808ProtocolVersion.VERSION_2011) {
             return this.parseHeaderLessThanOrEqualsV2013(version, messageBodyProps, byteBuf);
@@ -97,7 +98,7 @@ public class DefaultJt808RequestDecoder implements Jt808RequestDecoder {
         }
 
         final byte version = byteBuf.getByte(4);
-        if (version == Jt808ProtocolVersion.VERSION_2019.getVersionBit()) {
+        if (version == Jt808ProtocolVersion.VERSION_2019.versionBit()) {
             return Jt808ProtocolVersion.VERSION_2019;
         }
         return Jt808ProtocolVersion.VERSION_2013;
