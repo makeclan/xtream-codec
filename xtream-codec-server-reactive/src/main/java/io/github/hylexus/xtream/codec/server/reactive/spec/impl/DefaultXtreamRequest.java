@@ -79,7 +79,7 @@ public class DefaultXtreamRequest implements XtreamRequest {
     }
 
     @Override
-    public String logId() {
+    public String traceId() {
         return this.id;
     }
 
@@ -106,7 +106,7 @@ public class DefaultXtreamRequest implements XtreamRequest {
     @Override
     public String toString() {
         return "DefaultXtreamRequest{"
-                + "id='" + logId() + '\''
+                + "id='" + traceId() + '\''
                 + ", payload='" + (payload.refCnt() > 0 ? FormatUtils.toHexString(payload) : "<FREED>") + '\''
                 + '}';
     }

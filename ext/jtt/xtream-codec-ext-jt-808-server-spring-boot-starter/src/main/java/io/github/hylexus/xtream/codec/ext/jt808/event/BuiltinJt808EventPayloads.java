@@ -25,7 +25,7 @@ public class BuiltinJt808EventPayloads {
      * 收到 JT808 请求
      */
     public record Jt808ReceiveEvent(
-            String requestId,
+            String traceId,
             String version,
             boolean isSubPackage,
             int messageId,
@@ -37,7 +37,7 @@ public class BuiltinJt808EventPayloads {
      * 回复 JT808 响应
      */
     public record Jt808SendEvent(
-            String requestId,
+            String traceId,
             int messageId,
             String hexString) {
     }

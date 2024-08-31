@@ -56,23 +56,9 @@ public class Jt808ResponseBodyHandlerResultHandler implements XtreamHandlerResul
         final Jt808RequestHeader requestHeader = request.header();
         return this.adaptReturnValue(returnValue).flatMap(body -> {
             final ByteBuf responseBuf = this.jt808ResponseEncoder.encode(body, requestHeader.version(), requestHeader.terminalId(), annotation);
-            this.publishEvent(exchange, responseBuf);
+            this.publishEventIfNecessary(exchange, responseBuf);
             return exchange.response().writeWith(Mono.just(responseBuf));
         });
-    }
-
-    private void publishEvent(XtreamExchange exchange, ByteBuf responseBuf) {
-        if (this.eventPublisher == null) {
-            return;
-        }
-        this.eventPublisher.publishIfNecessary(
-                BuiltinJt808EventType.PRESET_IO_SEND,
-                () -> new BuiltinJt808EventPayloads.Jt808SendEvent(
-                        exchange.request().logId(),
-                        0,
-                        FormatUtils.toHexString(responseBuf)
-                )
-        );
     }
 
     protected Mono<?> adaptReturnValue(Object returnValue) {
@@ -82,5 +68,19 @@ public class Jt808ResponseBodyHandlerResultHandler implements XtreamHandlerResul
             case Flux<?> ignored -> Mono.error(() -> new IllegalArgumentException("Flux is not supported"));
             case Object object -> Mono.just(object);
         };
+    }
+
+    protected void publishEventIfNecessary(XtreamExchange exchange, ByteBuf responseBuf) {
+        if (this.eventPublisher == null) {
+            return;
+        }
+        this.eventPublisher.publishIfNecessary(
+                BuiltinJt808EventType.PRESET_IO_SEND,
+                () -> new BuiltinJt808EventPayloads.Jt808SendEvent(
+                        exchange.request().traceId(),
+                        0,
+                        FormatUtils.toHexString(responseBuf)
+                )
+        );
     }
 }

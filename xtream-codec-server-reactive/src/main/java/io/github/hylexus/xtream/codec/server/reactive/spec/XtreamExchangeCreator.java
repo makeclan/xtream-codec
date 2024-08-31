@@ -35,7 +35,7 @@ public interface XtreamExchangeCreator {
         throw new NotYetImplementedException();
     }
 
-    default String generateLogId(NettyInbound inbound) {
+    default String generateTraceId(NettyInbound inbound) {
         return UUID.randomUUID().toString().replace("-", "");
     }
 

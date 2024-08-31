@@ -130,7 +130,7 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
         public Jt808Request build() {
             if (this.delegateRequest.type() == Type.TCP) {
                 return new DefaultJt808Request(
-                        this.delegateRequest.logId(),
+                        this.delegateRequest.traceId(),
                         this.delegateRequest.bufferFactory(),
                         this.delegateRequest.underlyingInbound(),
                         this.payload == null ? this.delegateRequest.payload() : this.payload,
@@ -141,7 +141,7 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
             }
 
             return new DefaultJt808Request(
-                    this.delegateRequest.logId(),
+                    this.delegateRequest.traceId(),
                     this.delegateRequest.bufferFactory(),
                     this.delegateRequest.underlyingInbound(),
                     this.createDatagramPacket(this.payload),
