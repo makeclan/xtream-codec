@@ -114,7 +114,7 @@ public class BuiltinJt808ServerHandlerConfiguration {
     @Bean
     Jt808ResponseBodyHandlerResultHandler jt808ResponseBodyHandlerResultHandler(
             DefaultJt808ResponseEncoder jt808ResponseEncoder,
-            @Autowired XtreamEventPublisher eventPublisher) {
+            @Autowired(required = false) XtreamEventPublisher eventPublisher) {
         return new Jt808ResponseBodyHandlerResultHandler(jt808ResponseEncoder, eventPublisher);
     }
     // endregion handlerResultHandlers
