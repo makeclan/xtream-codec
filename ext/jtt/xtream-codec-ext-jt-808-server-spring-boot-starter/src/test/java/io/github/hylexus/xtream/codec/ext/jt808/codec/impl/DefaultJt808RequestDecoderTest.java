@@ -18,6 +18,7 @@ package io.github.hylexus.xtream.codec.ext.jt808.codec.impl;
 
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.common.utils.XtreamUtils;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageEncryptionHandler;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
@@ -26,6 +27,8 @@ import io.netty.buffer.ByteBufAllocator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import reactor.netty.NettyInbound;
+
+import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -42,7 +45,7 @@ class DefaultJt808RequestDecoderTest {
     void setUp() {
         this.nettyInbound = mock(NettyInbound.class);
         when(nettyInbound.withConnection(any())).thenReturn(nettyInbound);
-        this.decoder = new DefaultJt808RequestDecoder(new DefaultJt808BytesProcessor(allocator));
+        this.decoder = new DefaultJt808RequestDecoder(new DefaultJt808BytesProcessor(allocator), new Jt808MessageEncryptionHandler.NoOps(), new DefaultJt808RequestCombiner(allocator, 100, Duration.ofSeconds(100)));
     }
 
     @Test

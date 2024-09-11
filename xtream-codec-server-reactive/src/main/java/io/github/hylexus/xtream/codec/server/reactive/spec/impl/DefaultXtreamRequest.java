@@ -35,15 +35,15 @@ public class DefaultXtreamRequest implements XtreamRequest {
     protected final ByteBufAllocator allocator;
     protected final NettyInbound delegate;
     protected final ByteBuf payload;
-    protected String id;
+    protected String requestId;
     protected final Type type;
     protected InetSocketAddress remoteAddress;
 
     /**
      * TCP
      */
-    public DefaultXtreamRequest(String traceId, ByteBufAllocator allocator, NettyInbound delegate, ByteBuf payload) {
-        this.id = traceId;
+    public DefaultXtreamRequest(String requestId, ByteBufAllocator allocator, NettyInbound delegate, ByteBuf payload) {
+        this.requestId = requestId;
         this.allocator = allocator;
         this.delegate = delegate;
         this.payload = payload;
@@ -54,8 +54,8 @@ public class DefaultXtreamRequest implements XtreamRequest {
     /**
      * UDP
      */
-    public DefaultXtreamRequest(String traceId, ByteBufAllocator allocator, NettyInbound delegate, DatagramPacket datagramPacket) {
-        this.id = traceId;
+    public DefaultXtreamRequest(String requestId, ByteBufAllocator allocator, NettyInbound delegate, DatagramPacket datagramPacket) {
+        this.requestId = requestId;
         this.allocator = allocator;
         this.delegate = delegate;
         this.payload = datagramPacket.content();
@@ -79,8 +79,8 @@ public class DefaultXtreamRequest implements XtreamRequest {
     }
 
     @Override
-    public String traceId() {
-        return this.id;
+    public String requestId() {
+        return this.requestId;
     }
 
     @Override
@@ -106,7 +106,7 @@ public class DefaultXtreamRequest implements XtreamRequest {
     @Override
     public String toString() {
         return "DefaultXtreamRequest{"
-                + "id='" + traceId() + '\''
+                + "requestId='" + requestId() + '\''
                 + ", payload='" + (payload.refCnt() > 0 ? FormatUtils.toHexString(payload) : "<FREED>") + '\''
                 + '}';
     }

@@ -26,6 +26,9 @@ import reactor.netty.NettyInbound;
  */
 public interface Jt808RequestDecoder {
 
-    Jt808Request decode(String traceId, ByteBufAllocator allocator, NettyInbound nettyInbound, ByteBuf payload);
+    /**
+     * @see <a href="https://github.com/hylexus/jt-framework/issues/82">https://github.com/hylexus/jt-framework/issues/82</a>
+     */
+    Jt808Request decode(String requestId, ByteBufAllocator allocator, NettyInbound nettyInbound, ByteBuf payload);
 
 }

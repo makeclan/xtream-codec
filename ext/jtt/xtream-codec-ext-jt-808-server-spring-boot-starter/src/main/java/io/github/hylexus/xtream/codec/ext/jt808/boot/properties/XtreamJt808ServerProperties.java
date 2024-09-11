@@ -33,6 +33,9 @@ public class XtreamJt808ServerProperties {
     private boolean enabled = true;
 
     @NestedConfigurationProperty
+    private BuiltinFilters builtinFilters = new BuiltinFilters();
+
+    @NestedConfigurationProperty
     private RequestSubPackageStorage requestSubPackageStorage = new RequestSubPackageStorage();
 
     @NestedConfigurationProperty
@@ -124,5 +127,20 @@ public class XtreamJt808ServerProperties {
          * 缓存条目的存活时间
          */
         private Duration ttl = Duration.ofSeconds(60);
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class BuiltinFilters {
+        private BaseFilterProps requestLogger = new BaseFilterProps();
+        private BaseFilterProps requestDecoder = new BaseFilterProps();
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class BaseFilterProps {
+        private boolean enabled = true;
     }
 }

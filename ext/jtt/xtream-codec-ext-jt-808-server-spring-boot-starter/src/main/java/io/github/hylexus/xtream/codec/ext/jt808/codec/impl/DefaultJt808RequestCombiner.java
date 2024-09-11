@@ -31,6 +31,7 @@ import io.netty.buffer.CompositeByteBuf;
 import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.netty.NettyInbound;
 
 import java.time.Duration;
 import java.util.Comparator;
@@ -46,6 +47,23 @@ public class DefaultJt808RequestCombiner implements Jt808RequestCombiner {
     public DefaultJt808RequestCombiner(ByteBufAllocator allocator, int maximumCacheSize, Duration cacheItemTtl) {
         this.cache = new SimpleCache(maximumCacheSize, cacheItemTtl);
         this.allocator = allocator;
+    }
+
+    @Override
+    public String getTraceId(NettyInbound nettyInbound, Jt808RequestHeader header) {
+        // 不是子包 ==> 随机生成一个
+        if (!header.messageBodyProps().hasSubPackage()) {
+            return Jt808RequestCombiner.randomTraceId();
+        }
+
+        // 是子包 ==> 尝试获取之前包的 traceId (确保同一个请求的所有子包的 traceId 相同)
+        final String key = this.buildSubPackageCacheKey(header);
+        final Map<Integer, CacheItem> subPackages = this.cache.getIfPresent(key);
+        if (subPackages == null || subPackages.isEmpty()) {
+            return Jt808RequestCombiner.randomTraceId();
+        }
+
+        return subPackages.values().iterator().next().traceId();
     }
 
     @Nullable
@@ -90,6 +108,7 @@ public class DefaultJt808RequestCombiner implements Jt808RequestCombiner {
                     .build();
 
             return jt808Request.mutate()
+                    .traceId(allPackages.getFirst().traceId())
                     .header(newHeader)
                     .body(compositeByteBuf, false)
                     .originalCheckSum(jt808Request.originalCheckSum())
@@ -102,7 +121,7 @@ public class DefaultJt808RequestCombiner implements Jt808RequestCombiner {
 
     private Map<Integer, CacheItem> cacheAndGetSubPackages(String key, Jt808Request jt808Msg) {
         final Map<Integer, CacheItem> subPackages = this.cache.get(key, k -> new ConcurrentHashMap<>());
-        final CacheItem cacheItem = new CacheItem(jt808Msg.header(), jt808Msg.body().retain());
+        final CacheItem cacheItem = new CacheItem(jt808Msg.traceId(), jt808Msg.header(), jt808Msg.body().retain());
         final CacheItem old = subPackages.put(jt808Msg.header().subPackage().currentPackageNo(), cacheItem);
         if (old != null) {
             XtreamBytes.releaseBuf(old.temporarySubPackageBodyByteBuf);
@@ -114,7 +133,7 @@ public class DefaultJt808RequestCombiner implements Jt808RequestCombiner {
         return String.format("%s_%d_%d", request.terminalId(), request.messageId(), request.subPackage().totalSubPackageCount());
     }
 
-    public record CacheItem(Jt808RequestHeader header, ByteBuf temporarySubPackageBodyByteBuf) {
+    public record CacheItem(String traceId, Jt808RequestHeader header, ByteBuf temporarySubPackageBodyByteBuf) {
     }
 
     public static class SimpleCache {
@@ -145,6 +164,10 @@ public class DefaultJt808RequestCombiner implements Jt808RequestCombiner {
 
         public Map<Integer, CacheItem> get(String key, Function<String, Map<Integer, CacheItem>> loader) {
             return this.cache.get(key, loader);
+        }
+
+        public Map<Integer, CacheItem> getIfPresent(String key) {
+            return this.cache.getIfPresent(key);
         }
 
         public void invalidate(String key) {

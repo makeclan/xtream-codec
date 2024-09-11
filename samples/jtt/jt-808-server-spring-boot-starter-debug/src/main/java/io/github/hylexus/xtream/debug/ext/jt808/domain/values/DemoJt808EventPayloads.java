@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.event;
+package io.github.hylexus.xtream.debug.ext.jt808.domain.values;
 
 /**
  * @author hylexus
  */
-public class BuiltinJt808EventPayloads {
+public class DemoJt808EventPayloads {
 
     /**
      * 收到 JT808 请求
      */
-    public record Jt808ReceiveEvent(
+    public record ReceiveRequest(
+            String requestId,
             String traceId,
             String version,
             boolean isSubPackage,
@@ -34,9 +35,22 @@ public class BuiltinJt808EventPayloads {
     }
 
     /**
+     * JT808 合并请求
+     */
+    public record MergeRequest(
+            String requestId,
+            String traceId,
+            String version,
+            boolean isSubPackage,
+            int messageId,
+            String mergedHexString) {
+    }
+
+    /**
      * 回复 JT808 响应
      */
-    public record Jt808SendEvent(
+    public record SendResponse(
+            String requestId,
             String traceId,
             int messageId,
             String hexString) {

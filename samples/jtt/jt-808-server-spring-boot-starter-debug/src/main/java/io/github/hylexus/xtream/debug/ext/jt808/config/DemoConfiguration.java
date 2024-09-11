@@ -16,8 +16,10 @@
 
 package io.github.hylexus.xtream.debug.ext.jt808.config;
 
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.builtin.DefaultXtreamEventPublisher;
+import io.github.hylexus.xtream.debug.ext.jt808.handler.DemoJt808RequestLifecycleListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -38,7 +40,12 @@ public class DemoConfiguration {
     }
 
     @Bean
-    CommandLineRunner commandLineRunner(XtreamEventPublisher publisher) {
+    Jt808RequestLifecycleListener jt808RequestLifecycleListener(XtreamEventPublisher eventPublisher) {
+        return new DemoJt808RequestLifecycleListener(eventPublisher);
+    }
+
+    @Bean
+    public CommandLineRunner commandLineRunner(XtreamEventPublisher publisher) {
         return args -> {
             publisher.subscribe().subscribe(event -> {
                 log.info("Event ::: {}", event);

@@ -26,6 +26,13 @@ server:
 jt808-server:
   # false: 不会进行任何自动配置
   enabled: true
+  builtin-filters:
+    # 内置的请求日志 filter(仅仅用于调试)
+    request-logger:
+      enabled: true
+    # 内置的请求解码 filter(如果不启用的话，你需要手动解码请求)
+    request-decoder:
+      enabled: true
   # 分包请求暂存器
   request-sub-package-storage:
     maximum-size: 1024

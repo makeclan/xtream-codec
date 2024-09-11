@@ -22,6 +22,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808Serve
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808BytesProcessor;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestCombiner;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808BytesProcessor;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808RequestCombiner;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808RequestDecoder;
@@ -47,8 +48,8 @@ public class BuiltinJt808ProtocolConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    Jt808RequestDecoder jt808RequestDecoder(Jt808BytesProcessor jt808BytesProcessor) {
-        return new DefaultJt808RequestDecoder(jt808BytesProcessor);
+    Jt808RequestDecoder jt808RequestDecoder(Jt808BytesProcessor jt808BytesProcessor, Jt808MessageEncryptionHandler encryptionHandler, Jt808RequestCombiner requestCombiner) {
+        return new DefaultJt808RequestDecoder(jt808BytesProcessor, encryptionHandler, requestCombiner);
     }
 
     @Bean
@@ -56,6 +57,12 @@ public class BuiltinJt808ProtocolConfiguration {
     Jt808RequestCombiner jt808RequestCombiner(BufferFactoryHolder bufferFactoryHolder, XtreamJt808ServerProperties properties) {
         final XtreamJt808ServerProperties.RequestSubPackageStorage subPackageStorage = properties.getRequestSubPackageStorage();
         return new DefaultJt808RequestCombiner(bufferFactoryHolder.getAllocator(), subPackageStorage.getMaximumSize(), subPackageStorage.getTtl());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    Jt808RequestLifecycleListener jt808RequestLifecycleListener() {
+        return new Jt808RequestLifecycleListener.NoopJt808RequestLifecycleListener();
     }
 
     @Bean

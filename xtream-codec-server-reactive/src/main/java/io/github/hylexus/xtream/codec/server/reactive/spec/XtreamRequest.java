@@ -41,9 +41,9 @@ public interface XtreamRequest {
     NettyInbound underlyingInbound();
 
     /**
-     * 同一次请求和响应，该值应该确保一致（即使是在中途重新包装或修改了 {@link XtreamRequest} 对象）。
+     * 同一个 ”网络包“ 的请求和响应，该值应该确保一致（即使是在中途重新包装或修改了 {@link XtreamRequest} 对象）。
      */
-    String traceId();
+    String requestId();
 
     ByteBuf payload();
 

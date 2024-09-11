@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.event;
+package io.github.hylexus.xtream.debug.ext.jt808.domain.values;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEvent;
 
 /**
  * @author hylexus
  */
-public enum BuiltinJt808EventType implements XtreamEvent.XtreamEventType {
-    PRESET_IO_RECEIVE(100, "请求"),
-    PRESET_IO_SEND(101, "响应"),
+public enum DemoJt808EventType implements XtreamEvent.XtreamEventType {
+    RECEIVE_PACKAGE(100, "请求"),
+    MERGE_PACKAGE(101, "合并请求"),
+    SEND_PACKAGE(102, "响应"),
     ;
+
     private final int code;
     private final String description;
 
-    BuiltinJt808EventType(int code, String description) {
+    DemoJt808EventType(int code, String description) {
         this.code = code;
         this.description = description;
     }

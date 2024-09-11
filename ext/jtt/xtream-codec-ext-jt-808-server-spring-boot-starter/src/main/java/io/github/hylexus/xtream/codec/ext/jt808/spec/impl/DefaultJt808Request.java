@@ -30,11 +30,13 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
     protected final Jt808RequestHeader header;
     protected final int originalCheckSum;
     protected final int calculatedCheckSum;
+    protected final String traceId;
 
     /**
      * TCP
      */
     public DefaultJt808Request(
+            String requestId,
             String traceId,
             ByteBufAllocator allocator,
             NettyInbound nettyInbound,
@@ -42,8 +44,8 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
             Jt808RequestHeader header,
             int originalCheckSum,
             int calculatedCheckSum) {
-
-        super(traceId, allocator, nettyInbound, payload);
+        super(requestId, allocator, nettyInbound, payload);
+        this.traceId = traceId;
         this.header = header;
         this.originalCheckSum = originalCheckSum;
         this.calculatedCheckSum = calculatedCheckSum;
@@ -53,6 +55,7 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
      * UDP
      */
     public DefaultJt808Request(
+            String requestId,
             String traceId,
             ByteBufAllocator allocator,
             NettyInbound nettyInbound,
@@ -61,10 +64,16 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
             int originalCheckSum,
             int calculatedCheckSum) {
 
-        super(traceId, allocator, nettyInbound, datagramPacket);
+        super(requestId, allocator, nettyInbound, datagramPacket);
+        this.traceId = traceId;
         this.header = header;
         this.originalCheckSum = originalCheckSum;
         this.calculatedCheckSum = calculatedCheckSum;
+    }
+
+    @Override
+    public String traceId() {
+        return this.traceId;
     }
 
     @Override
@@ -99,13 +108,20 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
     public static class DefaultJt808RequestBuilder
             extends AbstractXtreamRequestBuilder<Jt808RequestBuilder, Jt808Request>
             implements Jt808RequestBuilder {
-
+        protected String traceId;
         protected Jt808RequestHeader header;
         protected Integer originalCheckSum;
         protected Integer calculatedCheckSum;
 
         public DefaultJt808RequestBuilder(Jt808Request delegateRequest) {
             super(delegateRequest);
+            this.traceId = delegateRequest.traceId();
+        }
+
+        @Override
+        public Jt808RequestBuilder traceId(String traceId) {
+            this.traceId = traceId;
+            return this;
         }
 
         @Override
@@ -130,7 +146,8 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
         public Jt808Request build() {
             if (this.delegateRequest.type() == Type.TCP) {
                 return new DefaultJt808Request(
-                        this.delegateRequest.traceId(),
+                        this.delegateRequest.requestId(),
+                        this.traceId,
                         this.delegateRequest.bufferFactory(),
                         this.delegateRequest.underlyingInbound(),
                         this.payload == null ? this.delegateRequest.payload() : this.payload,
@@ -141,7 +158,8 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
             }
 
             return new DefaultJt808Request(
-                    this.delegateRequest.traceId(),
+                    this.delegateRequest.requestId(),
+                    this.traceId,
                     this.delegateRequest.bufferFactory(),
                     this.delegateRequest.underlyingInbound(),
                     this.createDatagramPacket(this.payload),

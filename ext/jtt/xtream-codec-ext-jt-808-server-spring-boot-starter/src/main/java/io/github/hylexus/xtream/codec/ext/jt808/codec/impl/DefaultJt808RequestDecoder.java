@@ -19,8 +19,10 @@ package io.github.hylexus.xtream.codec.ext.jt808.codec.impl;
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808BytesProcessor;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestCombiner;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
 import io.github.hylexus.xtream.codec.ext.jt808.exception.Jt808MessageDecodeException;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageEncryptionHandler;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
@@ -38,13 +40,17 @@ public class DefaultJt808RequestDecoder implements Jt808RequestDecoder {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultJt808RequestDecoder.class);
     protected final Jt808BytesProcessor jt808MessageProcessor;
+    protected final Jt808RequestCombiner requestCombiner;
+    protected final Jt808MessageEncryptionHandler encryptionHandler;
 
-    public DefaultJt808RequestDecoder(Jt808BytesProcessor jt808MessageProcessor) {
+    public DefaultJt808RequestDecoder(Jt808BytesProcessor jt808MessageProcessor, Jt808MessageEncryptionHandler encryptionHandler, Jt808RequestCombiner requestCombiner) {
         this.jt808MessageProcessor = jt808MessageProcessor;
+        this.requestCombiner = requestCombiner;
+        this.encryptionHandler = encryptionHandler;
     }
 
     @Override
-    public Jt808Request decode(String traceId, ByteBufAllocator allocator, NettyInbound nettyInbound, ByteBuf payload) {
+    public Jt808Request decode(String requestId, ByteBufAllocator allocator, NettyInbound nettyInbound, ByteBuf payload) {
         if (log.isDebugEnabled()) {
             log.debug("- >>>>>>>>>>>>>>> : 7E{}7E", FormatUtils.toHexString(payload));
         }
@@ -60,12 +66,28 @@ public class DefaultJt808RequestDecoder implements Jt808RequestDecoder {
             final byte originalCheckSum = escaped.getByte(escaped.readableBytes() - 1);
             final byte calculatedCheckSum = this.jt808MessageProcessor.calculateCheckSum(escaped.slice(0, escaped.readableBytes() - 1));
             final ByteBuf body = escaped.slice(messageBodyStartIndex, header.messageBodyLength());
+            final String traceId = this.requestCombiner.getTraceId(nettyInbound, header);
+
+            // 消息解密
+            // @see https://github.com/hylexus/jt-framework/issues/82
+            final ByteBuf newBody = this.encryptionHandler.decryptRequestBody(header, body);
+            final int newBodyLength = newBody.readableBytes();
+            final Jt808RequestHeader newHeader;
+            if (newBodyLength == body.readableBytes()) {
+                newHeader = header;
+            } else {
+                // 重新计算消息体属性(长度发生变化)
+                final Jt808RequestHeader.Jt808MessageBodyProps newMessageBodyProps = header.messageBodyProps().mutate().messageBodyLength(newBodyLength).build();
+                newHeader = header.mutate().messageBodyProps(newMessageBodyProps).build();
+            }
+
             return new DefaultJt808Request(
+                    requestId,
                     traceId,
                     allocator,
                     nettyInbound,
-                    body,
-                    header,
+                    newBody,
+                    newHeader,
                     originalCheckSum,
                     calculatedCheckSum
             );

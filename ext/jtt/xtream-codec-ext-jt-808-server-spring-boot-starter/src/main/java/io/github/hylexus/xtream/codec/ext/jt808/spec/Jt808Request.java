@@ -21,6 +21,13 @@ import io.netty.buffer.ByteBuf;
 
 public interface Jt808Request extends XtreamRequest {
 
+    /**
+     * 同一次请求和响应 该值应该确保一致（包括分包消息）。
+     *
+     * @see #requestId()
+     */
+    String traceId();
+
     Jt808RequestHeader header();
 
     default ByteBuf body() {
@@ -35,6 +42,8 @@ public interface Jt808Request extends XtreamRequest {
     Jt808RequestBuilder mutate();
 
     interface Jt808RequestBuilder extends XtreamRequestBuilder {
+
+        Jt808RequestBuilder traceId(String traceId);
 
         Jt808RequestBuilder header(Jt808RequestHeader header);
 
