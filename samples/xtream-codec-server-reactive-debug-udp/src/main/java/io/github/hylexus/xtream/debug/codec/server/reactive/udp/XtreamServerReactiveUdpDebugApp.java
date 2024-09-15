@@ -57,7 +57,7 @@ public class XtreamServerReactiveUdpDebugApp {
                                 .addExceptionHandler(new LoggingXtreamRequestExceptionHandler())
                                 .build()
                 ))
-                .build()
+                .build("demo")
                 .start();
     }
 }

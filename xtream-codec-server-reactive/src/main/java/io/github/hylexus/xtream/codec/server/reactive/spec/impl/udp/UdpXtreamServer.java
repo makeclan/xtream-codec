@@ -31,11 +31,8 @@ import java.util.List;
 public class UdpXtreamServer extends AbstractXtreamServer<UdpServer, UdpServerConfig, UdpNettyServerCustomizer> {
     private final List<UdpNettyServerCustomizer> nettyServerCustomizers;
 
-    public UdpXtreamServer() {
-        this(List.of());
-    }
-
-    public UdpXtreamServer(List<UdpNettyServerCustomizer> nettyServerCustomizers) {
+    public UdpXtreamServer(String name, List<UdpNettyServerCustomizer> nettyServerCustomizers) {
+        super(name);
         final List<UdpNettyServerCustomizer> customizers = new ArrayList<>(nettyServerCustomizers);
         customizers.add(new UdpNettyServerCustomizer.Default());
         this.nettyServerCustomizers = OrderedComponent.sort(customizers);

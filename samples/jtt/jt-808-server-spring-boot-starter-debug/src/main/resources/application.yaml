@@ -29,7 +29,7 @@ jt808-server:
   builtin-filters:
     # 内置的请求日志 filter(仅仅用于调试)
     request-logger:
-      enabled: true
+      enabled: false
     # 内置的请求解码 filter(如果不启用的话，你需要手动解码请求)
     request-decoder:
       enabled: true
@@ -37,8 +37,8 @@ jt808-server:
   request-sub-package-storage:
     maximum-size: 1024
     ttl: 45s
-  # TCP 服务配置
-  tcp-server:
+  # TCP 服务配置(指令服务器)
+  tcp-instruction-server:
     # 是否启动 TCP 服务
     enabled: true
     # 绑定所有网卡
@@ -52,17 +52,40 @@ jt808-server:
       daemon: true
       colocate: true
       prefer-native: true
-  # UDP 服务配置
-  udp-server:
+  # TCP 服务配置(附件服务器)
+  tcp-attachment-server:
+    loop-resources:
+      select-count: 1
+      worker-count: 10
+      thread-name-prefix: xtream-tcp
+      daemon: true
+      colocate: true
+      prefer-native: true
+    enabled: true
+    host: 0.0.0.0
+    port: 7778
+  # UDP 服务配置(指令服务器)
+  udp-instruction-server:
     # 是否启动 UDP 服务
     enabled: true
     # 绑定所有网卡
     host: 0.0.0.0
     # UDP 服务端口
     port: 8888
-    # 一个 UDP 包可能包含多个 JT808 报文
-    # 是否启用内置的 UDP 包拆分器
-    enable-builtin-multiple-udp-package-splitter: true
+    loop-resources:
+      select-count: 1
+      worker-count: 10
+      thread-name-prefix: xtream-udp
+      daemon: true
+      colocate: true
+      prefer-native: true
+  # UDP 服务配置(附件服务器)
+  udp-attachment-server:
+    enabled: true
+    # 绑定所有网卡
+    host: 0.0.0.0
+    # UDP 服务端口
+    port: 8889
     loop-resources:
       select-count: 1
       worker-count: 10
@@ -71,6 +94,7 @@ jt808-server:
       colocate: true
       prefer-native: true
   handler-schedulers:
+    ## [非阻塞型]处理器的调度器
     non-blocking-scheduler:
       type: parallel
       bounded-elastic:
@@ -89,6 +113,7 @@ jt808-server:
         daemon: true
         reject-blocking-task: true
         thread-name-prefix: single
+    ## [阻塞型]处理器的调度器
     blocking-scheduler:
       type: bounded_elastic
       bounded-elastic:

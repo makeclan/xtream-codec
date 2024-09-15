@@ -16,12 +16,13 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration;
 
-import io.github.hylexus.xtream.codec.core.annotation.OrderedComponent;
+import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
+import io.github.hylexus.xtream.codec.ext.jt808.utils.BuiltinConfigurationUtils;
+import io.github.hylexus.xtream.codec.ext.jt808.utils.Jt808AttachmentServerTcpHandlerAdapterBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.TcpXtreamNettyHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.UdpXtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamNettyHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMapping;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerResultHandler;
@@ -35,29 +36,32 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.resources.XtreamNetty
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.util.StringUtils;
-import reactor.netty.tcp.TcpServer;
 
 import java.util.List;
 
 import static io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolConstant.*;
 
-@ConditionalOnProperty(prefix = "jt808-server.tcp-server", name = "enabled", havingValue = "true", matchIfMissing = true)
-public class BuiltinJt808ServerTcpConfiguration {
+/**
+ * 附件服务器配置(TCP)
+ */
+@ConditionalOnProperty(prefix = "jt808-server.tcp-attachment-server", name = "enabled", havingValue = "true", matchIfMissing = true)
+public class BuiltinJt808AttachmentServerTcpConfiguration {
 
-    @Bean
-    @ConditionalOnMissingBean
+    @Bean(BEAN_NAME_JT_808_TCP_XTREAM_NETTY_HANDLER_ADAPTER_ATTACHMENT_SERVER)
+    @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_TCP_XTREAM_NETTY_HANDLER_ADAPTER_ATTACHMENT_SERVER)
     TcpXtreamNettyHandlerAdapter tcpXtreamNettyHandlerAdapter(
+            BufferFactoryHolder bufferFactoryHolder,
             List<XtreamHandlerMapping> handlerMappings,
             List<XtreamHandlerAdapter> handlerAdapters,
             List<XtreamHandlerResultHandler> handlerResultHandlers,
             List<XtreamFilter> xtreamFilters,
             List<XtreamRequestExceptionHandler> exceptionHandlers) {
 
-        return XtreamNettyHandlerAdapter.newTcpBuilder()
+        return new Jt808AttachmentServerTcpHandlerAdapterBuilder(bufferFactoryHolder.getAllocator())
                 .addHandlerMappings(handlerMappings)
                 .addHandlerAdapters(handlerAdapters)
                 .addHandlerResultHandlers(handlerResultHandlers)
@@ -66,15 +70,10 @@ public class BuiltinJt808ServerTcpConfiguration {
                 .build();
     }
 
-    @Bean
-    DefaultTcpServerCustomizer defaultTcpServerCustomizer(XtreamJt808ServerProperties serverProps) {
-        return new DefaultTcpServerCustomizer(serverProps);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
+    @Bean(BEAN_NAME_JT_808_TCP_XTREAM_NETTY_RESOURCE_FACTORY_ATTACHMENT_SERVER)
+    @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_TCP_XTREAM_NETTY_RESOURCE_FACTORY_ATTACHMENT_SERVER)
     TcpXtreamNettyResourceFactory tcpXtreamNettyResourceFactory(XtreamJt808ServerProperties serverProperties) {
-        final XtreamJt808ServerProperties.TcpLoopResourcesProperty loopResources = serverProperties.getTcpServer().getLoopResources();
+        final XtreamJt808ServerProperties.TcpLoopResourcesProperty loopResources = serverProperties.getTcpInstructionServer().getLoopResources();
         return new DefaultTcpXtreamNettyResourceFactory(new XtreamNettyResourceFactory.LoopResourcesProperty(
                 loopResources.getThreadNamePrefix(),
                 loopResources.getSelectCount(),
@@ -85,14 +84,18 @@ public class BuiltinJt808ServerTcpConfiguration {
         ));
     }
 
-    @Bean
-    @ConditionalOnMissingBean
+    @Bean(BEAN_NAME_JT_808_TCP_XTREAM_SERVER_ATTACHMENT_SERVER)
+    @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_TCP_XTREAM_SERVER_ATTACHMENT_SERVER)
     TcpXtreamServer tcpXtreamServer(
-            TcpXtreamNettyHandlerAdapter tcpXtreamNettyHandlerAdapter,
-            TcpXtreamNettyResourceFactory resourceFactory,
-            ObjectProvider<TcpNettyServerCustomizer> customizers) {
+            @Qualifier(BEAN_NAME_JT_808_TCP_XTREAM_NETTY_HANDLER_ADAPTER_INSTRUCTION_SERVER) TcpXtreamNettyHandlerAdapter tcpXtreamNettyHandlerAdapter,
+            @Qualifier(BEAN_NAME_JT_808_TCP_XTREAM_NETTY_RESOURCE_FACTORY_INSTRUCTION_SERVER) TcpXtreamNettyResourceFactory resourceFactory,
+            ObjectProvider<TcpNettyServerCustomizer> customizers,
+            XtreamJt808ServerProperties serverProperties) {
 
+        final XtreamJt808ServerProperties.TcpAttachmentServerProps tcpServer = serverProperties.getTcpAttachmentServer();
         return XtreamServerBuilder.newTcpServerBuilder()
+                // 默认 host和 port(用户自定义配置可以再次覆盖默认配置)
+                .addServerCustomizer(BuiltinConfigurationUtils.defaultTcpBasicConfigurer(tcpServer.getHost(), tcpServer.getPort()))
                 // handler
                 .addServerCustomizer(server -> server.handle(tcpXtreamNettyHandlerAdapter))
                 // 分包
@@ -105,27 +108,6 @@ public class BuiltinJt808ServerTcpConfiguration {
                 .addServerCustomizer(server -> server.runOn(resourceFactory.loopResources(), resourceFactory.preferNative()))
                 // 用户自定义配置
                 .addServerCustomizers(customizers.stream().toList())
-                .build();
-    }
-
-    public static class DefaultTcpServerCustomizer implements TcpNettyServerCustomizer {
-        private final XtreamJt808ServerProperties serverProps;
-
-        public DefaultTcpServerCustomizer(XtreamJt808ServerProperties serverProps) {
-            this.serverProps = serverProps;
-        }
-
-        public int order() {
-            return OrderedComponent.HIGHEST_PRECEDENCE + 1;
-        }
-
-        @Override
-        public TcpServer customize(TcpServer server) {
-            final XtreamJt808ServerProperties.TcpServerProps tcpServer = serverProps.getTcpServer();
-            if (StringUtils.hasText(tcpServer.getHost())) {
-                server = server.host(tcpServer.getHost());
-            }
-            return server.port(tcpServer.getPort());
-        }
+                .build("ATTACHMENT");
     }
 }

@@ -41,7 +41,7 @@ public class UdpXtreamServerBuilder {
         return this;
     }
 
-    public UdpXtreamServer build() {
-        return new UdpXtreamServer(this.customizers);
+    public UdpXtreamServer build(String name) {
+        return new UdpXtreamServer(name, this.customizers);
     }
 }

@@ -40,7 +40,8 @@ public class DefaultXtreamRequestBuilder
                 this.delegateRequest.requestId(),
                 this.delegateRequest.bufferFactory(),
                 this.delegateRequest.underlyingInbound(),
-                this.createDatagramPacket(this.payload)
+                this.payload != null ? this.payload : this.delegateRequest.payload(),
+                this.remoteAddress != null ? this.remoteAddress : this.delegateRequest.remoteAddress()
         );
     }
 

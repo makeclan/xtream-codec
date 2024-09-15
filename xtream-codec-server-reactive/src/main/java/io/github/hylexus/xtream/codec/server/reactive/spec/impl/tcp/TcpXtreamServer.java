@@ -33,7 +33,8 @@ public class TcpXtreamServer extends AbstractXtreamServer<TcpServer, TcpServerCo
 
     private final List<TcpNettyServerCustomizer> nettyServerCustomizers;
 
-    public TcpXtreamServer(List<TcpNettyServerCustomizer> nettyServerCustomizers) {
+    public TcpXtreamServer(String name, List<TcpNettyServerCustomizer> nettyServerCustomizers) {
+        super(name);
         final List<TcpNettyServerCustomizer> customizers = new ArrayList<>(nettyServerCustomizers);
         customizers.add(new TcpNettyServerCustomizer.Default());
         this.nettyServerCustomizers = OrderedComponent.sort(customizers);

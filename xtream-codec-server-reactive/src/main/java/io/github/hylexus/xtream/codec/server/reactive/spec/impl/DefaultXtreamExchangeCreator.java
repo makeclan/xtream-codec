@@ -22,7 +22,6 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import io.netty.channel.socket.DatagramPacket;
 import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
 
@@ -46,11 +45,10 @@ public class DefaultXtreamExchangeCreator implements XtreamExchangeCreator {
     }
 
     @Override
-    public XtreamExchange createUdpExchange(ByteBufAllocator allocator, NettyInbound nettyInbound, NettyOutbound nettyOutbound, DatagramPacket datagramPacket) {
-        final InetSocketAddress remoteAddr = datagramPacket.sender();
+    public XtreamExchange createUdpExchange(ByteBufAllocator allocator, NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf payload, InetSocketAddress remoteAddress) {
         final XtreamRequest.Type type = XtreamRequest.Type.UDP;
-        final DefaultXtreamRequest request = new DefaultXtreamRequest(this.generateRequestId(nettyInbound), allocator, nettyInbound, datagramPacket);
-        final DefaultXtreamResponse response = new DefaultXtreamResponse(allocator, nettyOutbound, type, remoteAddr);
+        final DefaultXtreamRequest request = new DefaultXtreamRequest(this.generateRequestId(nettyInbound), allocator, nettyInbound, payload, remoteAddress);
+        final DefaultXtreamResponse response = new DefaultXtreamResponse(allocator, nettyOutbound, type, remoteAddress);
 
         return new DefaultXtreamExchange(sessionManager, request, response);
     }

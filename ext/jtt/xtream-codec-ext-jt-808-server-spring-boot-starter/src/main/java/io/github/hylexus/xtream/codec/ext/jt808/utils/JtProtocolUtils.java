@@ -16,7 +16,13 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.utils;
 
-public class JtProtocolUtils {
+import io.netty.buffer.ByteBuf;
+
+public final class JtProtocolUtils {
+    private JtProtocolUtils() {
+    }
+
+    public static final byte[] ATTACHMENT_REQUEST_PREFIX = {0x30, 0x31, 0x63, 0x64};
 
     public static String trimTailing(String str, byte b) {
         final byte[] bytes = str.getBytes();
@@ -27,4 +33,15 @@ public class JtProtocolUtils {
         return str.substring(0, i + 1);
     }
 
+    public static boolean isAttachmentRequest(ByteBuf originalPayload) {
+        if (originalPayload.readableBytes() < ATTACHMENT_REQUEST_PREFIX.length) {
+            return false;
+        }
+        for (int i = 0; i < ATTACHMENT_REQUEST_PREFIX.length; i++) {
+            if (originalPayload.getByte(i) != ATTACHMENT_REQUEST_PREFIX[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

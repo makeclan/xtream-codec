@@ -20,7 +20,6 @@ import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import io.netty.channel.socket.DatagramPacket;
 import reactor.netty.Connection;
 import reactor.netty.NettyInbound;
 
@@ -54,13 +53,15 @@ public class DefaultXtreamRequest implements XtreamRequest {
     /**
      * UDP
      */
-    public DefaultXtreamRequest(String requestId, ByteBufAllocator allocator, NettyInbound delegate, DatagramPacket datagramPacket) {
+    public DefaultXtreamRequest(String requestId, ByteBufAllocator allocator, NettyInbound delegate, ByteBuf payload, InetSocketAddress remoteAddress) {
         this.requestId = requestId;
         this.allocator = allocator;
         this.delegate = delegate;
-        this.payload = datagramPacket.content();
+        // this.payload = datagramPacket.content();
+        this.payload = payload;
         this.type = Type.UDP;
-        this.remoteAddress = datagramPacket.sender();
+        // this.remoteAddress = datagramPacket.sender();
+        this.remoteAddress = remoteAddress;
     }
 
     @Override

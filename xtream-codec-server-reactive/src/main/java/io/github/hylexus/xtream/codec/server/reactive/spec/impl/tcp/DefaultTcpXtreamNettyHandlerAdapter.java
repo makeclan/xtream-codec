@@ -20,6 +20,7 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.TcpXtreamNettyHandler
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchangeCreator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
@@ -48,22 +49,26 @@ public class DefaultTcpXtreamNettyHandlerAdapter implements TcpXtreamNettyHandle
     @Override
     public Publisher<Void> apply(NettyInbound nettyInbound, NettyOutbound nettyOutbound) {
         return nettyInbound.receive().flatMap(byteBuf -> {
-            if (byteBuf.readableBytes() <= 0) {
-                return Mono.empty();
-            }
-
-            final XtreamExchange exchange = this.xtreamExchangeCreator.createTcpExchange(allocator, nettyInbound, nettyOutbound, byteBuf);
-
-            return xtreamHandler
-                    .handle(exchange)
-                    .doOnError(Throwable.class, throwable -> {
-                        // ...
-                        log.error(throwable.getMessage(), throwable);
-                    });
-
+            // ...
+            return this.handleSingleRequest(nettyInbound, nettyOutbound, byteBuf);
         }).onErrorResume(throwable -> {
             log.error("Unexpected Error", throwable);
             return Mono.empty();
         });
+    }
+
+    protected Mono<Void> handleSingleRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf payload) {
+        if (payload.readableBytes() <= 0) {
+            return Mono.empty();
+        }
+
+        final XtreamExchange exchange = this.xtreamExchangeCreator.createTcpExchange(allocator, nettyInbound, nettyOutbound, payload);
+
+        return xtreamHandler
+                .handle(exchange)
+                .doOnError(Throwable.class, throwable -> {
+                    // ...
+                    log.error(throwable.getMessage(), throwable);
+                });
     }
 }

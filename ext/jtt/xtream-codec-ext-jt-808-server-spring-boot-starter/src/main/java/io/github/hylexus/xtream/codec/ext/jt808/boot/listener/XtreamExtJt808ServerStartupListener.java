@@ -28,6 +28,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.lang.NonNull;
 
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class XtreamExtJt808ServerStartupListener implements ApplicationListener<ContextRefreshedEvent>, ApplicationContextAware {
@@ -42,8 +43,8 @@ public class XtreamExtJt808ServerStartupListener implements ApplicationListener<
 
     @Override
     public void onApplicationEvent(@NonNull ContextRefreshedEvent event) {
-        final boolean tcpServerEnabled = serverProps.getTcpServer().isEnabled();
-        final boolean udpServerEnabled = serverProps.getUdpServer().isEnabled();
+        final boolean tcpServerEnabled = serverProps.getTcpInstructionServer().isEnabled() || serverProps.getTcpAttachmentServer().isEnabled();
+        final boolean udpServerEnabled = serverProps.getUdpInstructionServer().isEnabled() || serverProps.getUdpAttachmentServer().isEnabled();
 
         if (!tcpServerEnabled && !udpServerEnabled) {
             log.error("Both tcpServer and udpServer are disabled, please enable one of them.");
@@ -52,13 +53,19 @@ public class XtreamExtJt808ServerStartupListener implements ApplicationListener<
 
         if (initialized.compareAndSet(false, true) && event.getApplicationContext().getParent() == null) {
             if (tcpServerEnabled) {
-                final TcpXtreamServer tcpServer = applicationContext.getBean(TcpXtreamServer.class);
-                tcpServer.start();
+                final Map<String, TcpXtreamServer> servers = applicationContext.getBeansOfType(TcpXtreamServer.class);
+                servers.forEach((name, tcpServer) -> {
+                    // ...
+                    tcpServer.start();
+                });
             }
 
             if (udpServerEnabled) {
-                final UdpXtreamServer udpServer = applicationContext.getBean(UdpXtreamServer.class);
-                udpServer.start();
+                final Map<String, UdpXtreamServer> servers = applicationContext.getBeansOfType(UdpXtreamServer.class);
+                servers.forEach((name, udpServer) -> {
+                    // ...
+                    udpServer.start();
+                });
             }
         }
     }

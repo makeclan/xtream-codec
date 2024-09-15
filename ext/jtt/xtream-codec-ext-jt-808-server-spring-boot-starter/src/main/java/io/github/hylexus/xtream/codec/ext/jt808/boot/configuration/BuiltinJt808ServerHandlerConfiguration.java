@@ -20,7 +20,7 @@ import io.github.hylexus.xtream.codec.core.EntityCodec;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestCombiner;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
-import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808ResponseEncoder;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808ResponseEncoder;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.filter.Jt808RequestDecoderFilter;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestMappingHandlerMapping;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBodyHandlerResultHandler;
@@ -117,7 +117,7 @@ public class BuiltinJt808ServerHandlerConfiguration {
 
     @Bean
     Jt808ResponseBodyHandlerResultHandler jt808ResponseBodyHandlerResultHandler(
-            DefaultJt808ResponseEncoder jt808ResponseEncoder,
+            Jt808ResponseEncoder jt808ResponseEncoder,
             Jt808RequestLifecycleListener lifecycleListener) {
         return new Jt808ResponseBodyHandlerResultHandler(jt808ResponseEncoder, lifecycleListener);
     }

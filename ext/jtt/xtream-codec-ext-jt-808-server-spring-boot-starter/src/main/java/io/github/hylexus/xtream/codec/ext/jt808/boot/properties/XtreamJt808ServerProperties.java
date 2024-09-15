@@ -39,10 +39,16 @@ public class XtreamJt808ServerProperties {
     private RequestSubPackageStorage requestSubPackageStorage = new RequestSubPackageStorage();
 
     @NestedConfigurationProperty
-    private TcpServerProps tcpServer = new TcpServerProps();
+    private TcpServerProps tcpInstructionServer = new TcpServerProps();
 
     @NestedConfigurationProperty
-    private UdpServerProps udpServer = new UdpServerProps();
+    private TcpAttachmentServerProps tcpAttachmentServer = new TcpAttachmentServerProps();
+
+    @NestedConfigurationProperty
+    private UdpServerProps udpInstructionServer = new UdpServerProps();
+
+    @NestedConfigurationProperty
+    private UdpAttachmentServerProps udpAttachmentServer = new UdpAttachmentServerProps();
 
     @NestedConfigurationProperty
     private HandlerMethodSchedulerProperties handlerSchedulers = new HandlerMethodSchedulerProperties();
@@ -69,11 +75,28 @@ public class XtreamJt808ServerProperties {
     @Getter
     @Setter
     @ToString
+    public static class TcpAttachmentServerProps extends BaseServerProps {
+
+        @NestedConfigurationProperty
+        private TcpLoopResourcesProperty loopResources = new TcpLoopResourcesProperty();
+
+    }
+
+    @Getter
+    @Setter
+    @ToString
     public static class UdpServerProps extends BaseServerProps {
-        /**
-         * 是否启用内置的 UDP 多包拆分器
-         */
-        private boolean enableBuiltinMultipleUdpPackageSplitter = true;
+
+        @NestedConfigurationProperty
+        private UdpLoopResourcesProperty loopResources = new UdpLoopResourcesProperty();
+
+    }
+
+
+    @Getter
+    @Setter
+    @ToString
+    public static class UdpAttachmentServerProps extends BaseServerProps {
 
         @NestedConfigurationProperty
         private UdpLoopResourcesProperty loopResources = new UdpLoopResourcesProperty();

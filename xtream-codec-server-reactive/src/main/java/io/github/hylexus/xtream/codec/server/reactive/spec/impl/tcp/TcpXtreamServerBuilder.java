@@ -40,7 +40,7 @@ public class TcpXtreamServerBuilder {
         return this;
     }
 
-    public TcpXtreamServer build() {
-        return new TcpXtreamServer(this.customizers);
+    public TcpXtreamServer build(String name) {
+        return new TcpXtreamServer(name, this.customizers);
     }
 }

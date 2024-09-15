@@ -61,7 +61,8 @@ public class DefaultUdpXtreamNettyHandlerAdapter implements UdpXtreamNettyHandle
     }
 
     protected Mono<Void> handleRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, DatagramPacket datagramPacket) {
-        final XtreamExchange exchange = this.exchangeCreator.createUdpExchange(allocator, nettyInbound, nettyOutbound, datagramPacket);
+        // final XtreamExchange exchange = this.exchangeCreator.createUdpExchange(allocator, nettyInbound, nettyOutbound, datagramPacket);
+        final XtreamExchange exchange = this.exchangeCreator.createUdpExchange(allocator, nettyInbound, nettyOutbound, datagramPacket.content(), datagramPacket.sender());
         return xtreamHandler
                 .handle(exchange)
                 .doOnError(Throwable.class, throwable -> {

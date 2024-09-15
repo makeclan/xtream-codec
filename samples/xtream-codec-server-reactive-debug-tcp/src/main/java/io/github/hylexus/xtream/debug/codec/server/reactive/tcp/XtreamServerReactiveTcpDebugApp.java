@@ -60,7 +60,7 @@ public class XtreamServerReactiveTcpDebugApp {
                                 .addExceptionHandler(new LoggingXtreamRequestExceptionHandler())
                                 .build()
                 ))
-                .build()
+                .build("demo")
                 .start();
     }
 }

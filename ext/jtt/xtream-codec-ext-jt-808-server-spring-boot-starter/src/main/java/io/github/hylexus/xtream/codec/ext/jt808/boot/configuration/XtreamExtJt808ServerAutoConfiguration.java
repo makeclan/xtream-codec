@@ -20,6 +20,13 @@ import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
 import io.github.hylexus.xtream.codec.core.EntityCodec;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.listener.XtreamExtJt808ServerStartupListener;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.*;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808BytesProcessor;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808RequestCombiner;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808RequestDecoder;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808ResponseEncoder;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808FlowIdGenerator;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageEncryptionHandler;
 import io.netty.buffer.ByteBufAllocator;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -30,9 +37,10 @@ import org.springframework.context.annotation.Import;
 @AutoConfiguration
 @Import({
         BuiltinJt808ServerHandlerConfiguration.class,
-        BuiltinJt808ServerTcpConfiguration.class,
-        BuiltinJt808ServerUdpConfiguration.class,
-        BuiltinJt808ProtocolConfiguration.class,
+        BuiltinJt808InstructionServerTcpConfiguration.class,
+        BuiltinJt808InstructionServerUdpConfiguration.class,
+        BuiltinJt808AttachmentServerTcpConfiguration.class,
+        BuiltinJt808AttachmentServerUdpConfiguration.class,
         BuiltinReactorSchedulerConfiguration.class,
 })
 @EnableConfigurationProperties({
@@ -49,6 +57,61 @@ public class XtreamExtJt808ServerAutoConfiguration {
     @ConditionalOnMissingBean
     EntityCodec entityCodec() {
         return EntityCodec.DEFAULT;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    Jt808FlowIdGenerator jt808FlowIdGenerator() {
+        return Jt808FlowIdGenerator.DEFAULT;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    Jt808BytesProcessor jt808BytesProcessor(BufferFactoryHolder bufferFactoryHolder) {
+        return new DefaultJt808BytesProcessor(bufferFactoryHolder.getAllocator());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    Jt808RequestDecoder jt808RequestDecoder(Jt808BytesProcessor jt808BytesProcessor, Jt808MessageEncryptionHandler encryptionHandler, Jt808RequestCombiner requestCombiner) {
+        return new DefaultJt808RequestDecoder(jt808BytesProcessor, encryptionHandler, requestCombiner);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    Jt808RequestCombiner jt808RequestCombiner(BufferFactoryHolder bufferFactoryHolder, XtreamJt808ServerProperties properties) {
+        final XtreamJt808ServerProperties.RequestSubPackageStorage subPackageStorage = properties.getRequestSubPackageStorage();
+        return new DefaultJt808RequestCombiner(bufferFactoryHolder.getAllocator(), subPackageStorage.getMaximumSize(), subPackageStorage.getTtl());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    Jt808RequestLifecycleListener jt808RequestLifecycleListener() {
+        return new Jt808RequestLifecycleListener.NoopJt808RequestLifecycleListener();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    Jt808MessageEncryptionHandler jt808MessageEncryptionHandler() {
+        return new Jt808MessageEncryptionHandler.NoOps();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    Jt808ResponseEncoder jt808ResponseEncoder(
+            BufferFactoryHolder factoryHolder,
+            Jt808FlowIdGenerator flowIdGenerator,
+            EntityCodec entityCodec,
+            Jt808BytesProcessor jt808BytesProcessor,
+            Jt808MessageEncryptionHandler encryptionHandler) {
+
+        return new DefaultJt808ResponseEncoder(
+                factoryHolder.getAllocator(),
+                flowIdGenerator,
+                entityCodec,
+                jt808BytesProcessor,
+                encryptionHandler
+        );
     }
 
     @Bean

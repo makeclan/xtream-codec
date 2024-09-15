@@ -39,6 +39,11 @@ public abstract class AbstractXtreamServer<
 
     private static final Logger log = LoggerFactory.getLogger(AbstractXtreamServer.class);
     protected volatile DisposableChannel disposableServer;
+    protected final String name;
+
+    protected AbstractXtreamServer(String name) {
+        this.name = name;
+    }
 
     @Override
     public void start() {
@@ -50,7 +55,7 @@ public abstract class AbstractXtreamServer<
 
         this.doStart();
 
-        log.info("XtreamServer listening on {}({})", this.disposableServer.address(), this.getServerType());
+        log.info("XtreamServer({}) listening on {}({})", this.name, this.disposableServer.address(), this.getServerType());
     }
 
     private void doStart() {

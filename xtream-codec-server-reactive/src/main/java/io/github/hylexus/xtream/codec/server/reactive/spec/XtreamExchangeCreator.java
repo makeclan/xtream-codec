@@ -19,10 +19,10 @@ package io.github.hylexus.xtream.codec.server.reactive.spec;
 import io.github.hylexus.xtream.codec.common.exception.NotYetImplementedException;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import io.netty.channel.socket.DatagramPacket;
 import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
 
+import java.net.InetSocketAddress;
 import java.util.UUID;
 
 public interface XtreamExchangeCreator {
@@ -31,7 +31,7 @@ public interface XtreamExchangeCreator {
         throw new NotYetImplementedException();
     }
 
-    default XtreamExchange createUdpExchange(ByteBufAllocator allocator, NettyInbound nettyInbound, NettyOutbound nettyOutbound, DatagramPacket datagramPacket) {
+    default XtreamExchange createUdpExchange(ByteBufAllocator allocator, NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf payload, InetSocketAddress remoteAddress) {
         throw new NotYetImplementedException();
     }
 

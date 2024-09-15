@@ -17,7 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.extensions.handler;
 
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
-import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808ResponseEncoder;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808ResponseEncoder;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
@@ -29,10 +29,10 @@ import reactor.core.publisher.Mono;
 
 public class Jt808ResponseBodyHandlerResultHandler implements XtreamHandlerResultHandler {
 
-    protected final DefaultJt808ResponseEncoder jt808ResponseEncoder;
+    protected final Jt808ResponseEncoder jt808ResponseEncoder;
     protected final Jt808RequestLifecycleListener lifecycleListener;
 
-    public Jt808ResponseBodyHandlerResultHandler(DefaultJt808ResponseEncoder jt808ResponseEncoder, Jt808RequestLifecycleListener lifecycleListener) {
+    public Jt808ResponseBodyHandlerResultHandler(Jt808ResponseEncoder jt808ResponseEncoder, Jt808RequestLifecycleListener lifecycleListener) {
         this.jt808ResponseEncoder = jt808ResponseEncoder;
         this.lifecycleListener = lifecycleListener;
     }

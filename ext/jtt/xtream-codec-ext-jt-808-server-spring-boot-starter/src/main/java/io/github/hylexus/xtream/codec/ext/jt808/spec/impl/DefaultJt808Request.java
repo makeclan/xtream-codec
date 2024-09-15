@@ -23,8 +23,9 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamRe
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import io.netty.channel.socket.DatagramPacket;
 import reactor.netty.NettyInbound;
+
+import java.net.InetSocketAddress;
 
 public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Request {
     protected final Jt808RequestHeader header;
@@ -59,12 +60,12 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
             String traceId,
             ByteBufAllocator allocator,
             NettyInbound nettyInbound,
-            DatagramPacket datagramPacket,
+            ByteBuf payload, InetSocketAddress remoteAddress,
             Jt808RequestHeader header,
             int originalCheckSum,
             int calculatedCheckSum) {
 
-        super(requestId, allocator, nettyInbound, datagramPacket);
+        super(requestId, allocator, nettyInbound, payload, remoteAddress);
         this.traceId = traceId;
         this.header = header;
         this.originalCheckSum = originalCheckSum;
@@ -162,7 +163,9 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
                     this.traceId,
                     this.delegateRequest.bufferFactory(),
                     this.delegateRequest.underlyingInbound(),
-                    this.createDatagramPacket(this.payload),
+                    // this.createDatagramPacket(this.payload),
+                    this.payload == null ? this.delegateRequest.payload() : this.payload,
+                    this.remoteAddress != null ? this.remoteAddress : this.delegateRequest.remoteAddress(),
                     this.header != null ? this.header : this.delegateRequest.header(),
                     this.originalCheckSum != null ? this.originalCheckSum : this.delegateRequest.originalCheckSum(),
                     this.calculatedCheckSum != null ? this.calculatedCheckSum : this.delegateRequest.calculatedCheckSum()
