@@ -30,6 +30,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageEncryptionHandl
 import io.netty.buffer.ByteBufAllocator;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -37,15 +38,12 @@ import org.springframework.context.annotation.Import;
 @AutoConfiguration
 @Import({
         BuiltinJt808ServerHandlerConfiguration.class,
-        BuiltinJt808InstructionServerTcpConfiguration.class,
-        BuiltinJt808InstructionServerUdpConfiguration.class,
-        BuiltinJt808AttachmentServerTcpConfiguration.class,
-        BuiltinJt808AttachmentServerUdpConfiguration.class,
         BuiltinReactorSchedulerConfiguration.class,
 })
 @EnableConfigurationProperties({
         XtreamJt808ServerProperties.class,
 })
+@ConditionalOnProperty(prefix = "jt808-server", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class XtreamExtJt808ServerAutoConfiguration {
 
     @Bean

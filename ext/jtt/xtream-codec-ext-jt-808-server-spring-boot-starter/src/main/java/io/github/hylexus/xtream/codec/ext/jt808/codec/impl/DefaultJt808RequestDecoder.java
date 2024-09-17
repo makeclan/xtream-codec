@@ -82,6 +82,7 @@ public class DefaultJt808RequestDecoder implements Jt808RequestDecoder {
             }
 
             return new DefaultJt808Request(
+                    null, // todo Jt808ServerType serverType
                     requestId,
                     traceId,
                     allocator,

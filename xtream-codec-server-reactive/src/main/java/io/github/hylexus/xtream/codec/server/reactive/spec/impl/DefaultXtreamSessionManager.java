@@ -19,37 +19,16 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionManager;
-import reactor.core.publisher.Mono;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+public class DefaultXtreamSessionManager extends AbstractXtreamSessionManager<XtreamSession> {
 
-public class DefaultXtreamSessionManager implements XtreamSessionManager {
-    protected final XtreamSessionIdGenerator sessionIdGenerator = new XtreamSessionIdGenerator.DefalutXtreamSessionIdGenerator();
-    protected final Map<String, XtreamSession> sessions = new ConcurrentHashMap<>();
-
-    public DefaultXtreamSessionManager() {
+    public DefaultXtreamSessionManager(XtreamSessionIdGenerator idGenerator) {
+        super(idGenerator);
     }
 
     @Override
-    public Mono<XtreamSession> getSession(XtreamExchange exchange) {
-        return Mono.defer(() -> {
-            final String sessionId = this.sessionIdGenerator.generateSessionId(exchange);
-            final XtreamSession session = this.sessions.get(sessionId);
-            if (session == null) {
-                return Mono.empty();
-            }
-            return Mono.just(session);
-        });
-    }
-
-    @Override
-    public Mono<XtreamSession> createSession(XtreamExchange exchange) {
+    protected XtreamSession doCreateSession(XtreamExchange exchange) {
         final String sessionId = this.sessionIdGenerator.generateSessionId(exchange);
-        final XtreamSession session = new DefaultXtreamSession(sessionId, exchange.request().type());
-        this.sessions.put(sessionId, session);
-        return Mono.just(session);
+        return new DefaultXtreamSession(sessionId, exchange.request().type());
     }
-
 }

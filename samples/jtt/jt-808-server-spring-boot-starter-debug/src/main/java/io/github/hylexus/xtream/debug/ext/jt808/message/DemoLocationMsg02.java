@@ -28,7 +28,6 @@ import java.util.List;
 @ToString
 public class DemoLocationMsg02 {
 
-    // region 消息体
     // 报警标志  DWORD(4)
     @Preset.JtStyle.Dword
     private long alarmFlag;
@@ -63,8 +62,7 @@ public class DemoLocationMsg02 {
 
     // 长度：消息体长度减去前面的 28 字节
     @Preset.JtStyle.List
-    private List<DemoLocationMsg01.ExtraItem> extraItems;
-    // endregion 消息体
+    private List<ExtraItem> extraItems;
 
     @Setter
     @Getter

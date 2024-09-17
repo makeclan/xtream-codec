@@ -96,6 +96,8 @@ public @interface XtreamFieldMapDescriptor {
         Class<?> javaType();
 
         XtreamField config() default @XtreamField();
+
+        String desc() default "";
     }
 
     @Getter

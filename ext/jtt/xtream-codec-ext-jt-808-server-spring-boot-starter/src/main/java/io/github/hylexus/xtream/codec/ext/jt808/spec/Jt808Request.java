@@ -28,6 +28,8 @@ public interface Jt808Request extends XtreamRequest {
      */
     String traceId();
 
+    Jt808ServerType serverType();
+
     Jt808RequestHeader header();
 
     default ByteBuf body() {

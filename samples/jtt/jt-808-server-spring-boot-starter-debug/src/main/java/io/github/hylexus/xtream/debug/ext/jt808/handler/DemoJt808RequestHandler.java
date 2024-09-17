@@ -25,22 +25,11 @@ import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestH
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamResponse;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamRequest;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamResponse;
-import io.github.hylexus.xtream.debug.ext.jt808.message.DemoLocationMsg01;
-import io.github.hylexus.xtream.debug.ext.jt808.message.DemoLocationMsg02;
-import io.netty.buffer.ByteBuf;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
-
-import static io.github.hylexus.xtream.codec.common.utils.XtreamAssertions.assertNotSame;
-import static io.github.hylexus.xtream.codec.common.utils.XtreamAssertions.assertSame;
 
 /**
  * @author hylexus
@@ -50,8 +39,10 @@ import static io.github.hylexus.xtream.codec.common.utils.XtreamAssertions.asser
 public class DemoJt808RequestHandler {
 
     private static final Logger log = LoggerFactory.getLogger(DemoJt808RequestHandler.class);
+    private final Jt808SessionManager jt808SessionManager;
 
-    public DemoJt808RequestHandler() {
+    public DemoJt808RequestHandler(Jt808SessionManager jt808SessionManager) {
+        this.jt808SessionManager = jt808SessionManager;
     }
 
     /**
@@ -76,41 +67,41 @@ public class DemoJt808RequestHandler {
         return Mono.just(responseBody);
     }
 
-    /**
-     * 位置上报(V2019)
-     * <p>
-     * 7e02004086010000000001893094655200E4000000000000000101D907F2073D336C000000000000211124114808010400000026030200003001153101002504000000001404000000011504000000FA160400000000170200001803000000EA10FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF02020000EF0400000000F31B017118000000000000000000000000000000000000000000000000567e
-     */
-    @Jt808RequestHandlerMapping(messageIds = 0x0200, versions = Jt808ProtocolVersion.VERSION_2019)
-    @Jt808ResponseBody(messageId = 0x8001, maxPackageSize = 1000)
-    public Mono<ServerCommonReplyMessage> processMessage0200V2019(
-            XtreamExchange exchange,
-            XtreamSession xtreamSession,
-            XtreamRequest xtreamRequest,
-            Jt808Request jt808Request,
-            DefaultXtreamRequest defaultXtreamRequest,
-            XtreamResponse xtreamResponse,
-            DefaultXtreamResponse defaultXtreamResponse,
-            @Jt808RequestBody DemoLocationMsg01 msg01,
-            @Jt808RequestBody DemoLocationMsg02 msg02,
-            @Jt808RequestBody ByteBuf buf01,
-            @Jt808RequestBody ByteBuf buf02,
-            @Jt808RequestBody(bufferAsSlice = false) ByteBuf buf03,
-            @Jt808RequestBody(bufferAsSlice = false) ByteBuf buf04) {
-
-        log.info("v2019-0x0200: {}", msg01);
-        assertNotSame(buf01, buf02);
-        assertNotSame(buf01, buf03);
-        assertSame(buf03, buf04);
-        assertSame(exchange.request(), xtreamRequest);
-        assertSame(exchange.request(), jt808Request);
-        assertSame(exchange.request(), defaultXtreamRequest);
-        assertSame(exchange.response(), xtreamResponse);
-        assertSame(exchange.response(), defaultXtreamResponse);
-        final ServerCommonReplyMessage responseBody = ServerCommonReplyMessage.success(jt808Request);
-        // return Mono.empty();
-        return Mono.just(responseBody);
-    }
+    // /**
+    //  * 位置上报(V2019)
+    //  * <p>
+    //  * 7e02004086010000000001893094655200E4000000000000000101D907F2073D336C000000000000211124114808010400000026030200003001153101002504000000001404000000011504000000FA160400000000170200001803000000EA10FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF02020000EF0400000000F31B017118000000000000000000000000000000000000000000000000567e
+    //  */
+    // @Jt808RequestHandlerMapping(messageIds = 0x0200, versions = Jt808ProtocolVersion.VERSION_2019)
+    // @Jt808ResponseBody(messageId = 0x8001, maxPackageSize = 1000)
+    // public Mono<ServerCommonReplyMessage> processMessage0200V2019(
+    //         XtreamExchange exchange,
+    //         XtreamSession xtreamSession,
+    //         XtreamRequest xtreamRequest,
+    //         Jt808Request jt808Request,
+    //         DefaultXtreamRequest defaultXtreamRequest,
+    //         XtreamResponse xtreamResponse,
+    //         DefaultXtreamResponse defaultXtreamResponse,
+    //         @Jt808RequestBody DemoLocationMsg01 msg01,
+    //         @Jt808RequestBody DemoLocationMsg02 msg02,
+    //         @Jt808RequestBody ByteBuf buf01,
+    //         @Jt808RequestBody ByteBuf buf02,
+    //         @Jt808RequestBody(bufferAsSlice = false) ByteBuf buf03,
+    //         @Jt808RequestBody(bufferAsSlice = false) ByteBuf buf04) {
+    //
+    //     log.info("v2019-0x0200: {}", msg01);
+    //     assertNotSame(buf01, buf02);
+    //     assertNotSame(buf01, buf03);
+    //     assertSame(buf03, buf04);
+    //     assertSame(exchange.request(), xtreamRequest);
+    //     assertSame(exchange.request(), jt808Request);
+    //     assertSame(exchange.request(), defaultXtreamRequest);
+    //     assertSame(exchange.response(), xtreamResponse);
+    //     assertSame(exchange.response(), defaultXtreamResponse);
+    //     final ServerCommonReplyMessage responseBody = ServerCommonReplyMessage.success(jt808Request);
+    //     // return Mono.empty();
+    //     return Mono.just(responseBody);
+    // }
 
     /**
      * 终端注册(V2019)

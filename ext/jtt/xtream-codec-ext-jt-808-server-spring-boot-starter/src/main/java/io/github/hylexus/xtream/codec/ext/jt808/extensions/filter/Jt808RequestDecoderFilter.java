@@ -20,11 +20,14 @@ import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestCombiner;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilterChain;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import reactor.core.publisher.Mono;
+
+import java.time.Instant;
 
 public class Jt808RequestDecoderFilter implements XtreamFilter {
     public static final int ORDER = -100;
@@ -47,10 +50,23 @@ public class Jt808RequestDecoderFilter implements XtreamFilter {
 
         this.lifecycleListener.afterRequestDecode(exchange, jt808Request, originalRequest);
 
-        return this.doProcessJt808Request(exchange, chain, jt808Request).doFinally(signalType -> {
-            // ...
-            jt808Request.release();
+        return exchange.session().flatMap(session -> {
+            this.populateSessionProperties((Jt808Session.MutableJt808Session) session, jt808Request);
+            return this.doProcessJt808Request(exchange, chain, jt808Request).doFinally(signalType -> {
+                // ...
+                jt808Request.release();
+            });
         });
+    }
+
+    protected void populateSessionProperties(Jt808Session.MutableJt808Session jt808Session, Jt808Request jt808Request) {
+        jt808Session.lastCommunicateTime(Instant.now());
+        if (jt808Session.terminalId() == null) {
+            jt808Session.terminalId(jt808Request.header().terminalId());
+        }
+        if (jt808Session.protocolVersion() == null) {
+            jt808Session.protocolVersion(jt808Request.header().version());
+        }
     }
 
     protected Mono<Void> doProcessJt808Request(XtreamExchange exchange, XtreamFilterChain chain, Jt808Request jt808Request) {

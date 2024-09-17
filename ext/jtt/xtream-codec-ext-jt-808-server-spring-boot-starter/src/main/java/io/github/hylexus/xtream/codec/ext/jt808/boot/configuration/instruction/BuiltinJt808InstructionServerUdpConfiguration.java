@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration;
+package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration.instruction;
 
 import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808UdpDatagramPackageSplitter;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808UdpDatagramPackageSplitter;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808InstructionServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt808.utils.BuiltinConfigurationUtils;
-import io.github.hylexus.xtream.codec.ext.jt808.utils.Jt808AttachmentServerUdpHandlerAdapterBuilder;
+import io.github.hylexus.xtream.codec.ext.jt808.utils.Jt808InstructionServerUdpHandlerAdapterBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.TcpXtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.UdpXtreamNettyHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
@@ -45,15 +47,22 @@ import java.util.List;
 import static io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolConstant.*;
 
 /**
- * 附件服务器配置(UDP)
+ * 指令服务器配置(UDP)
  */
-@ConditionalOnProperty(prefix = "jt808-server.udp-attachment-server", name = "enabled", havingValue = "true", matchIfMissing = true)
-public class BuiltinJt808AttachmentServerUdpConfiguration {
+@ConditionalOnProperty(prefix = "jt808-server.udp-instruction-server", name = "enabled", havingValue = "true", matchIfMissing = true)
+public class BuiltinJt808InstructionServerUdpConfiguration {
 
-    @Bean(BEAN_NAME_JT_808_UDP_XTREAM_NETTY_HANDLER_ADAPTER_ATTACHMENT_SERVER)
-    @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_UDP_XTREAM_NETTY_HANDLER_ADAPTER_ATTACHMENT_SERVER)
+    @Bean
+    @ConditionalOnMissingBean
+    Jt808UdpDatagramPackageSplitter jt808UpDatagramPackageSplitter() {
+        return new DefaultJt808UdpDatagramPackageSplitter();
+    }
+
+    @Bean(BEAN_NAME_JT_808_UDP_XTREAM_NETTY_HANDLER_ADAPTER_INSTRUCTION_SERVER)
+    @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_UDP_XTREAM_NETTY_HANDLER_ADAPTER_INSTRUCTION_SERVER)
     UdpXtreamNettyHandlerAdapter udpXtreamNettyHandlerAdapter(
             BufferFactoryHolder bufferFactoryHolder,
+            Jt808InstructionServerExchangeCreator exchangeCreator,
             Jt808UdpDatagramPackageSplitter udpDatagramPackageSplitter,
             List<XtreamHandlerMapping> handlerMappings,
             List<XtreamHandlerAdapter> handlerAdapters,
@@ -61,7 +70,8 @@ public class BuiltinJt808AttachmentServerUdpConfiguration {
             List<XtreamFilter> xtreamFilters,
             List<XtreamRequestExceptionHandler> exceptionHandlers) {
 
-        return new Jt808AttachmentServerUdpHandlerAdapterBuilder(bufferFactoryHolder.getAllocator(), udpDatagramPackageSplitter)
+        return new Jt808InstructionServerUdpHandlerAdapterBuilder(bufferFactoryHolder.getAllocator(), udpDatagramPackageSplitter)
+                .setXtreamExchangeCreator(exchangeCreator)
                 .addHandlerMappings(handlerMappings)
                 .addHandlerAdapters(handlerAdapters)
                 .addHandlerResultHandlers(handlerResultHandlers)
@@ -70,8 +80,8 @@ public class BuiltinJt808AttachmentServerUdpConfiguration {
                 .build();
     }
 
-    @Bean(BEAN_NAME_JT_808_UDP_XTREAM_NETTY_RESOURCE_FACTORY_ATTACHMENT_SERVER)
-    @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_UDP_XTREAM_NETTY_RESOURCE_FACTORY_ATTACHMENT_SERVER)
+    @Bean(BEAN_NAME_JT_808_UDP_XTREAM_NETTY_RESOURCE_FACTORY_INSTRUCTION_SERVER)
+    @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_UDP_XTREAM_NETTY_RESOURCE_FACTORY_INSTRUCTION_SERVER)
     UdpXtreamNettyResourceFactory udpXtreamNettyResourceFactory(XtreamJt808ServerProperties serverProperties) {
         final XtreamJt808ServerProperties.UdpLoopResourcesProperty loopResources = serverProperties.getUdpInstructionServer().getLoopResources();
         return new DefaultUdpXtreamNettyResourceFactory(new XtreamNettyResourceFactory.LoopResourcesProperty(
@@ -84,14 +94,14 @@ public class BuiltinJt808AttachmentServerUdpConfiguration {
         ));
     }
 
-    @Bean(BEAN_NAME_JT_808_UDP_XTREAM_SERVER_ATTACHMENT_SERVER)
-    @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_UDP_XTREAM_SERVER_ATTACHMENT_SERVER)
+    @Bean(BEAN_NAME_JT_808_UDP_XTREAM_SERVER_INSTRUCTION_SERVER)
+    @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_UDP_XTREAM_SERVER_INSTRUCTION_SERVER)
     UdpXtreamServer udpXtreamServer(
-            @Qualifier(BEAN_NAME_JT_808_UDP_XTREAM_NETTY_HANDLER_ADAPTER_ATTACHMENT_SERVER) UdpXtreamNettyHandlerAdapter udpXtreamNettyHandlerAdapter,
-            @Qualifier(BEAN_NAME_JT_808_UDP_XTREAM_NETTY_RESOURCE_FACTORY_ATTACHMENT_SERVER) UdpXtreamNettyResourceFactory resourceFactory,
+            @Qualifier(BEAN_NAME_JT_808_UDP_XTREAM_NETTY_HANDLER_ADAPTER_INSTRUCTION_SERVER) UdpXtreamNettyHandlerAdapter udpXtreamNettyHandlerAdapter,
+            @Qualifier(BEAN_NAME_JT_808_UDP_XTREAM_NETTY_RESOURCE_FACTORY_INSTRUCTION_SERVER) UdpXtreamNettyResourceFactory resourceFactory,
             ObjectProvider<UdpNettyServerCustomizer> customizers,
             XtreamJt808ServerProperties serverProperties) {
-        final XtreamJt808ServerProperties.UdpAttachmentServerProps udpServer = serverProperties.getUdpAttachmentServer();
+        final XtreamJt808ServerProperties.UdpServerProps udpServer = serverProperties.getUdpInstructionServer();
         return XtreamServerBuilder.newUdpServerBuilder()
                 // 默认 host和 port(用户自定义配置可以再次覆盖默认配置)
                 .addServerCustomizer(BuiltinConfigurationUtils.defaultUdpBasicConfigurer(udpServer.getHost(), udpServer.getPort()))
@@ -101,6 +111,7 @@ public class BuiltinJt808AttachmentServerUdpConfiguration {
                 .addServerCustomizer(server -> server.runOn(resourceFactory.loopResources(), resourceFactory.preferNative()))
                 // 用户自定义配置
                 .addServerCustomizers(customizers.stream().toList())
-                .build("ATTACHMENT");
+                .build("INSTRUCTION");
     }
+
 }

@@ -19,6 +19,7 @@ package io.github.hylexus.xtream.codec.ext.jt808.spec.impl;
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ServerType;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamRequestBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamRequest;
 import io.netty.buffer.ByteBuf;
@@ -32,11 +33,13 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
     protected final int originalCheckSum;
     protected final int calculatedCheckSum;
     protected final String traceId;
+    protected final Jt808ServerType serverType;
 
     /**
      * TCP
      */
     public DefaultJt808Request(
+            Jt808ServerType serverType,
             String requestId,
             String traceId,
             ByteBufAllocator allocator,
@@ -45,7 +48,9 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
             Jt808RequestHeader header,
             int originalCheckSum,
             int calculatedCheckSum) {
+
         super(requestId, allocator, nettyInbound, payload);
+        this.serverType = serverType;
         this.traceId = traceId;
         this.header = header;
         this.originalCheckSum = originalCheckSum;
@@ -56,6 +61,7 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
      * UDP
      */
     public DefaultJt808Request(
+            Jt808ServerType serverType,
             String requestId,
             String traceId,
             ByteBufAllocator allocator,
@@ -66,6 +72,7 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
             int calculatedCheckSum) {
 
         super(requestId, allocator, nettyInbound, payload, remoteAddress);
+        this.serverType = serverType;
         this.traceId = traceId;
         this.header = header;
         this.originalCheckSum = originalCheckSum;
@@ -75,6 +82,11 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
     @Override
     public String traceId() {
         return this.traceId;
+    }
+
+    @Override
+    public Jt808ServerType serverType() {
+        return null;
     }
 
     @Override
@@ -147,6 +159,7 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
         public Jt808Request build() {
             if (this.delegateRequest.type() == Type.TCP) {
                 return new DefaultJt808Request(
+                        this.delegateRequest.serverType(),
                         this.delegateRequest.requestId(),
                         this.traceId,
                         this.delegateRequest.bufferFactory(),
@@ -159,6 +172,7 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
             }
 
             return new DefaultJt808Request(
+                    this.delegateRequest.serverType(),
                     this.delegateRequest.requestId(),
                     this.traceId,
                     this.delegateRequest.bufferFactory(),

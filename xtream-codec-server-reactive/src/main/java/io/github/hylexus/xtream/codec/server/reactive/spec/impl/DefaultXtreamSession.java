@@ -22,7 +22,6 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * @author hylexus
@@ -33,17 +32,9 @@ public class DefaultXtreamSession implements XtreamSession {
     protected final XtreamRequest.Type type;
     protected final Map<String, Object> attributes = new HashMap<>();
 
-    public DefaultXtreamSession(XtreamRequest.Type type) {
-        this(generateId(), type);
-    }
-
     public DefaultXtreamSession(String id, XtreamRequest.Type type) {
         this.id = id;
         this.type = type;
-    }
-
-    private static String generateId() {
-        return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
     @Override

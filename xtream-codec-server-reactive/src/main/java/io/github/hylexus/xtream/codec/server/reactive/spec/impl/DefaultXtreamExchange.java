@@ -31,10 +31,12 @@ public class DefaultXtreamExchange implements XtreamExchange {
     protected final XtreamResponse response;
     protected final Mono<XtreamSession> sessionMono;
 
-    public DefaultXtreamExchange(XtreamSessionManager sessionManager, XtreamRequest request, XtreamResponse response) {
+    public DefaultXtreamExchange(@SuppressWarnings("rawtypes") XtreamSessionManager sessionManager, XtreamRequest request, XtreamResponse response) {
         this.request = request;
         this.response = response;
-        this.sessionMono = sessionManager.getSession(this, true);
+        @SuppressWarnings("unchecked") final Mono<XtreamSession> session = sessionManager.getSession(this, true);
+        // this.sessionMono = session.cache();
+        this.sessionMono = session;
     }
 
     @Override

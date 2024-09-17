@@ -26,17 +26,17 @@ import reactor.core.publisher.Mono;
  *
  * @author hylexus
  */
-public interface XtreamSessionManager {
+public interface XtreamSessionManager<S extends XtreamSession> {
 
-    default Mono<XtreamSession> getSession(XtreamExchange exchange, boolean createNewIfMissing) {
+    default Mono<S> getSession(XtreamExchange exchange, boolean createNewIfMissing) {
         if (createNewIfMissing) {
             return this.getSession(exchange).switchIfEmpty(Mono.defer(() -> this.createSession(exchange)));
         }
         return this.getSession(exchange);
     }
 
-    Mono<XtreamSession> getSession(XtreamExchange exchange);
+    Mono<S> getSession(XtreamExchange exchange);
 
-    Mono<XtreamSession> createSession(XtreamExchange exchange);
+    Mono<S> createSession(XtreamExchange exchange);
 
 }

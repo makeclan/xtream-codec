@@ -21,6 +21,7 @@ import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.ReferenceCounted;
 
 import java.util.Collection;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author hylexus
@@ -28,6 +29,16 @@ import java.util.Collection;
 public class XtreamBytes {
 
     private static final char[] DIGITS_HEX = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+    private static final char[] ALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
+
+    public static String randomString(int length) {
+        final ThreadLocalRandom random = ThreadLocalRandom.current();
+        final StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            sb.append(ALPHABET[random.nextInt(ALPHABET.length)]);
+        }
+        return sb.toString();
+    }
 
     public static void releaseBufList(Collection<? extends ReferenceCounted> components) {
         if (components == null || components.isEmpty()) {

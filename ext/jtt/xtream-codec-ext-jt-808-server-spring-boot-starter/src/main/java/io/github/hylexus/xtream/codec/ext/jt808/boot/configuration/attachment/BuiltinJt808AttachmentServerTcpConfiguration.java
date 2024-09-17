@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration;
+package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration.attachment;
 
 import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808AttachmentServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt808.utils.BuiltinConfigurationUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.utils.Jt808AttachmentServerTcpHandlerAdapterBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.TcpXtreamNettyHandlerAdapter;
@@ -55,6 +56,7 @@ public class BuiltinJt808AttachmentServerTcpConfiguration {
     @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_TCP_XTREAM_NETTY_HANDLER_ADAPTER_ATTACHMENT_SERVER)
     TcpXtreamNettyHandlerAdapter tcpXtreamNettyHandlerAdapter(
             BufferFactoryHolder bufferFactoryHolder,
+            Jt808AttachmentServerExchangeCreator exchangeCreator,
             List<XtreamHandlerMapping> handlerMappings,
             List<XtreamHandlerAdapter> handlerAdapters,
             List<XtreamHandlerResultHandler> handlerResultHandlers,
@@ -62,6 +64,7 @@ public class BuiltinJt808AttachmentServerTcpConfiguration {
             List<XtreamRequestExceptionHandler> exceptionHandlers) {
 
         return new Jt808AttachmentServerTcpHandlerAdapterBuilder(bufferFactoryHolder.getAllocator())
+                .setXtreamExchangeCreator(exchangeCreator)
                 .addHandlerMappings(handlerMappings)
                 .addHandlerAdapters(handlerAdapters)
                 .addHandlerResultHandlers(handlerResultHandlers)

@@ -28,9 +28,10 @@ import reactor.netty.NettyOutbound;
 import java.net.InetSocketAddress;
 
 public class DefaultXtreamExchangeCreator implements XtreamExchangeCreator {
+    @SuppressWarnings("rawtypes")
     protected final XtreamSessionManager sessionManager;
 
-    public DefaultXtreamExchangeCreator(XtreamSessionManager sessionManager) {
+    public DefaultXtreamExchangeCreator(@SuppressWarnings("rawtypes") XtreamSessionManager sessionManager) {
         this.sessionManager = sessionManager;
     }
 

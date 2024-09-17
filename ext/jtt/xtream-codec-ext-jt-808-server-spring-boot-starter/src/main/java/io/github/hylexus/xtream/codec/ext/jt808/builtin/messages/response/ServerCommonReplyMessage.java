@@ -30,14 +30,22 @@ public class ServerCommonReplyMessage extends BuiltinMessage8001 {
 
     public static ServerCommonReplyMessage success(Jt808Request request) {
         final Jt808RequestHeader header = request.header();
-        return success(header.flowId(), header.messageId());
+        return of(header.messageId(), header.flowId(), (byte) 0);
     }
 
     public static ServerCommonReplyMessage success(int clientFlowId, int clientMessageId) {
+        return of(clientMessageId, clientFlowId, (byte) 0);
+    }
+
+    public static ServerCommonReplyMessage of(Jt808Request request, byte result) {
+        return of(request.header().messageId(), request.header().flowId(), result);
+    }
+
+    public static ServerCommonReplyMessage of(int clientMessageId, int clientFlowId, byte result) {
         final ServerCommonReplyMessage message = new ServerCommonReplyMessage();
-        message.setClientFlowId(clientFlowId);
         message.setClientMessageId(clientMessageId);
-        message.setResult((short) 0);
+        message.setClientFlowId(clientFlowId);
+        message.setResult(result);
         return message;
     }
 

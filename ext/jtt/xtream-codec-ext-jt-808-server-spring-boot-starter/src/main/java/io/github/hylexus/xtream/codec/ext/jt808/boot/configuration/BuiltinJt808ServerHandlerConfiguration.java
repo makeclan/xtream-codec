@@ -17,6 +17,8 @@
 package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration;
 
 import io.github.hylexus.xtream.codec.core.EntityCodec;
+import io.github.hylexus.xtream.codec.ext.jt808.boot.configuration.attachment.BuiltinJt808AttachmentServerConfiguration;
+import io.github.hylexus.xtream.codec.ext.jt808.boot.configuration.instruction.BuiltinJt808InstructionServerConfiguration;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestCombiner;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
@@ -25,23 +27,25 @@ import io.github.hylexus.xtream.codec.ext.jt808.extensions.filter.Jt808RequestDe
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestMappingHandlerMapping;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBodyHandlerResultHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamBlockingHandlerMethodPredicate;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMethodArgumentResolver;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMethodHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.DelegateXtreamHandlerMethodArgumentResolver;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.LoggingXtreamRequestExceptionHandler;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.LoggingXtreamFilter;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.LoggingXtreamHandlerResultHandler;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.SimpleXtreamRequestHandlerHandlerAdapter;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.XtreamResponseBodyHandlerResultHandler;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 
 import java.util.List;
 
-
+@Import({
+        BuiltinJt808InstructionServerConfiguration.class,
+        BuiltinJt808AttachmentServerConfiguration.class,
+})
 public class BuiltinJt808ServerHandlerConfiguration {
 
     // region exceptionHandlers
@@ -123,4 +127,12 @@ public class BuiltinJt808ServerHandlerConfiguration {
     }
     // endregion handlerResultHandlers
 
+    // region session
+    @Bean
+    @ConditionalOnMissingBean
+    XtreamSessionIdGenerator xtreamSessionIdGenerator() {
+        return new XtreamSessionIdGenerator.DefalutXtreamSessionIdGenerator();
+    }
+
+    // endregion session
 }
