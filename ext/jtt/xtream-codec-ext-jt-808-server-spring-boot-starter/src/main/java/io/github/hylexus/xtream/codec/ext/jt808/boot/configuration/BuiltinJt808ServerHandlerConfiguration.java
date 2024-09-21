@@ -23,9 +23,12 @@ import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestCombiner;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808ResponseEncoder;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.wirter.Jt808ResponseBodyMessageWriter;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.filter.Jt808RequestDecoderFilter;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestMappingHandlerMapping;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBodyHandlerResultHandler;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamMessageWriter;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamMessageWriterRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamBlockingHandlerMethodPredicate;
@@ -33,7 +36,10 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandler
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMethodHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.DelegateXtreamHandlerMethodArgumentResolver;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.LoggingXtreamRequestExceptionHandler;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.*;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.LoggingXtreamFilter;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.LoggingXtreamHandlerResultHandler;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.SimpleXtreamRequestHandlerHandlerAdapter;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.XtreamResponseBodyHandlerResultHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -115,15 +121,26 @@ public class BuiltinJt808ServerHandlerConfiguration {
     }
 
     @Bean
-    XtreamResponseBodyHandlerResultHandler xtreamResponseBodyHandlerResultHandler(EntityCodec entityCodec) {
-        return new XtreamResponseBodyHandlerResultHandler(entityCodec);
+    Jt808ResponseBodyMessageWriter jt808ResponseBodyMessageWriter(
+            Jt808ResponseEncoder encoder,
+            Jt808RequestLifecycleListener lifecycleListener) {
+        return new Jt808ResponseBodyMessageWriter(encoder, lifecycleListener);
     }
 
     @Bean
-    Jt808ResponseBodyHandlerResultHandler jt808ResponseBodyHandlerResultHandler(
-            Jt808ResponseEncoder jt808ResponseEncoder,
-            Jt808RequestLifecycleListener lifecycleListener) {
-        return new Jt808ResponseBodyHandlerResultHandler(jt808ResponseEncoder, lifecycleListener);
+    @ConditionalOnMissingBean
+    XtreamMessageWriterRegistry xtreamMessageWriterRegistry(List<XtreamMessageWriter> writers) {
+        return new XtreamMessageWriterRegistry(writers);
+    }
+
+    @Bean
+    Jt808ResponseBodyHandlerResultHandler jt808ResponseBodyHandlerResultHandler(XtreamMessageWriterRegistry registry) {
+        return new Jt808ResponseBodyHandlerResultHandler(registry.getWriters());
+    }
+
+    @Bean
+    XtreamResponseBodyHandlerResultHandler xtreamResponseBodyHandlerResultHandler(XtreamMessageWriterRegistry registry) {
+        return new XtreamResponseBodyHandlerResultHandler(registry.getWriters());
     }
     // endregion handlerResultHandlers
 

@@ -18,10 +18,8 @@ package io.github.hylexus.xtream.codec.ext.jt808.codec.impl;
 
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.common.utils.XtreamUtils;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageEncryptionHandler;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.*;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,6 +63,6 @@ class DefaultJt808RequestDecoderTest {
 
     private Jt808Request doDecode(String hexString) {
         final ByteBuf payload = XtreamBytes.byteBufFromHexString(allocator, hexString);
-        return decoder.decode(null, allocator, nettyInbound, payload);
+        return decoder.decode(Jt808ServerType.INSTRUCTION_SERVER, null, allocator, nettyInbound, XtreamRequest.Type.TCP, payload, null);
     }
 }

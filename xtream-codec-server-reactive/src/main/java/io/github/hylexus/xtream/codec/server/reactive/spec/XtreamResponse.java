@@ -16,23 +16,9 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
-import org.reactivestreams.Publisher;
-import reactor.core.publisher.Mono;
-import reactor.netty.NettyOutbound;
-
 /**
  * @author hylexus
  */
-public interface XtreamResponse {
-
-    NettyOutbound underlyingOutbound();
-
-    ByteBufAllocator bufferFactory();
-
-    Mono<Void> writeWith(Publisher<? extends ByteBuf> body);
-
-    Mono<Void> writeAndFlushWith(Publisher<? extends Publisher<? extends ByteBuf>> publisher);
+public interface XtreamResponse extends XtreamOutbound {
 
 }

@@ -18,6 +18,9 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 
+/**
+ * @author hylexus
+ */
 public class DefaultXtreamRequestBuilder
         extends AbstractXtreamRequestBuilder<XtreamRequest.XtreamRequestBuilder, XtreamRequest> {
 
@@ -27,19 +30,11 @@ public class DefaultXtreamRequestBuilder
     }
 
     public XtreamRequest build() {
-        if (this.delegateRequest.type() == XtreamRequest.Type.TCP) {
-            return new DefaultXtreamRequest(
-                    this.delegateRequest.requestId(),
-                    this.delegateRequest.bufferFactory(),
-                    this.delegateRequest.underlyingInbound(),
-                    this.payload != null ? this.payload : this.delegateRequest.payload()
-            );
-        }
-
         return new DefaultXtreamRequest(
                 this.delegateRequest.requestId(),
                 this.delegateRequest.bufferFactory(),
                 this.delegateRequest.underlyingInbound(),
+                this.delegateRequest.type(),
                 this.payload != null ? this.payload : this.delegateRequest.payload(),
                 this.remoteAddress != null ? this.remoteAddress : this.delegateRequest.remoteAddress()
         );

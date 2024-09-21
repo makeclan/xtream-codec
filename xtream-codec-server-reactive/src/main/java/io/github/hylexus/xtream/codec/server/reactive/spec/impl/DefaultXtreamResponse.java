@@ -18,12 +18,7 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamResponse;
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import io.netty.channel.socket.DatagramPacket;
-import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 import reactor.netty.NettyOutbound;
 
 import java.net.InetSocketAddress;
@@ -31,55 +26,10 @@ import java.net.InetSocketAddress;
 /**
  * @author hylexus
  */
-public class DefaultXtreamResponse implements XtreamResponse {
-    protected final NettyOutbound delegate;
-    protected final ByteBufAllocator byteBufAllocator;
-    protected final InetSocketAddress remoteAddress;
-    protected final XtreamRequest.Type type;
+public class DefaultXtreamResponse extends AbstractXtreamOutbound implements XtreamResponse {
 
     public DefaultXtreamResponse(ByteBufAllocator byteBufAllocator, NettyOutbound delegate, XtreamRequest.Type type, InetSocketAddress remoteAddress) {
-        this.delegate = delegate;
-        this.byteBufAllocator = byteBufAllocator;
-        this.remoteAddress = remoteAddress;
-        this.type = type;
+        super(byteBufAllocator, delegate, type, remoteAddress);
     }
 
-    @Override
-    public NettyOutbound underlyingOutbound() {
-        return this.delegate;
-    }
-
-    @Override
-    public ByteBufAllocator bufferFactory() {
-        return this.byteBufAllocator;
-    }
-
-    @Override
-    public Mono<Void> writeWith(Publisher<? extends ByteBuf> body) {
-        if (this.type == XtreamRequest.Type.TCP) {
-            return this.delegate.send(body).then();
-        }
-        return this.writeWithUdp(body);
-    }
-
-    @Override
-    public Mono<Void> writeAndFlushWith(Publisher<? extends Publisher<? extends ByteBuf>> publisher) {
-        if (this.type == XtreamRequest.Type.TCP) {
-            return this.delegate.sendGroups(Flux.from(publisher)).then();
-        }
-        return this.writeAndFlushWithUdp(publisher);
-    }
-
-    public Mono<Void> writeWithUdp(Publisher<? extends ByteBuf> body) {
-        return this.underlyingOutbound()
-                .sendObject(Flux.from(body).map(byteBuf -> new DatagramPacket(byteBuf, remoteAddress)))
-                .then();
-    }
-
-    public Mono<Void> writeAndFlushWithUdp(Publisher<? extends Publisher<? extends ByteBuf>> publisher) {
-        return Flux.from(publisher)
-                .flatMap(source -> Flux.from(source).map(byteBuf -> new DatagramPacket(byteBuf, remoteAddress)))
-                .flatMap(datagramPacket -> this.underlyingOutbound().sendObject(datagramPacket))
-                .then();
-    }
 }

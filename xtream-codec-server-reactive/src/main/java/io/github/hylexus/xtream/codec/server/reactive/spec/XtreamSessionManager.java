@@ -39,4 +39,6 @@ public interface XtreamSessionManager<S extends XtreamSession> {
 
     Mono<S> createSession(XtreamExchange exchange);
 
+    Mono<S> getSessionById(String sessionId);
+
 }

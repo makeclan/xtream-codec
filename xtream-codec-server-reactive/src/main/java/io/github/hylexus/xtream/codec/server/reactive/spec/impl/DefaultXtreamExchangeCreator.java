@@ -27,6 +27,9 @@ import reactor.netty.NettyOutbound;
 
 import java.net.InetSocketAddress;
 
+/**
+ * @author hylexus
+ */
 public class DefaultXtreamExchangeCreator implements XtreamExchangeCreator {
     @SuppressWarnings("rawtypes")
     protected final XtreamSessionManager sessionManager;
@@ -36,10 +39,9 @@ public class DefaultXtreamExchangeCreator implements XtreamExchangeCreator {
     }
 
     @Override
-    public XtreamExchange createTcpExchange(ByteBufAllocator allocator, NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf byteBuf) {
+    public XtreamExchange createTcpExchange(ByteBufAllocator allocator, NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf byteBuf, InetSocketAddress remoteAddress) {
         final XtreamRequest.Type type = XtreamRequest.Type.TCP;
-        final DefaultXtreamRequest request = new DefaultXtreamRequest(this.generateRequestId(nettyInbound), allocator, nettyInbound, byteBuf);
-        final InetSocketAddress remoteAddress = request.remoteAddress();
+        final DefaultXtreamRequest request = new DefaultXtreamRequest(this.generateRequestId(nettyInbound), allocator, nettyInbound, type, byteBuf, remoteAddress);
         final DefaultXtreamResponse response = new DefaultXtreamResponse(allocator, nettyOutbound, type, remoteAddress);
 
         return new DefaultXtreamExchange(sessionManager, request, response);
@@ -48,7 +50,7 @@ public class DefaultXtreamExchangeCreator implements XtreamExchangeCreator {
     @Override
     public XtreamExchange createUdpExchange(ByteBufAllocator allocator, NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf payload, InetSocketAddress remoteAddress) {
         final XtreamRequest.Type type = XtreamRequest.Type.UDP;
-        final DefaultXtreamRequest request = new DefaultXtreamRequest(this.generateRequestId(nettyInbound), allocator, nettyInbound, payload, remoteAddress);
+        final DefaultXtreamRequest request = new DefaultXtreamRequest(this.generateRequestId(nettyInbound), allocator, nettyInbound, type, payload, remoteAddress);
         final DefaultXtreamResponse response = new DefaultXtreamResponse(allocator, nettyOutbound, type, remoteAddress);
 
         return new DefaultXtreamExchange(sessionManager, request, response);

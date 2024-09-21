@@ -42,9 +42,11 @@ public class Jt808AttachmentServerUdpHandlerAdapter extends Jt808InstructionServ
 
     @Override
     protected Mono<Void> handleRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, DatagramPacket datagramPacket) {
+        // 普通的指令消息
         if (!JtProtocolUtils.isAttachmentRequest(datagramPacket.content())) {
             return super.handleRequest(nettyInbound, nettyOutbound, datagramPacket);
         }
+        // 码流消息
         log.info("===> {}", FormatUtils.toHexString(datagramPacket.content()));
         return Mono.empty();
     }

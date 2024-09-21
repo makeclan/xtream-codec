@@ -22,20 +22,23 @@ import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808BytesProcessor;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestCombiner;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
 import io.github.hylexus.xtream.codec.ext.jt808.exception.Jt808MessageDecodeException;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageEncryptionHandler;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.*;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808MessageBodyProps;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808Request;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808RequestHeader;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808SubPackageProps;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.netty.NettyInbound;
 
+import java.net.InetSocketAddress;
+
+/**
+ * @author hylexus
+ */
 public class DefaultJt808RequestDecoder implements Jt808RequestDecoder {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultJt808RequestDecoder.class);
@@ -50,7 +53,7 @@ public class DefaultJt808RequestDecoder implements Jt808RequestDecoder {
     }
 
     @Override
-    public Jt808Request decode(String requestId, ByteBufAllocator allocator, NettyInbound nettyInbound, ByteBuf payload) {
+    public Jt808Request decode(Jt808ServerType serverType, String requestId, ByteBufAllocator allocator, NettyInbound nettyInbound, XtreamRequest.Type requestType, ByteBuf payload, InetSocketAddress remoteAddress) {
         if (log.isDebugEnabled()) {
             log.debug("- >>>>>>>>>>>>>>> : 7E{}7E", FormatUtils.toHexString(payload));
         }
@@ -82,12 +85,14 @@ public class DefaultJt808RequestDecoder implements Jt808RequestDecoder {
             }
 
             return new DefaultJt808Request(
-                    null, // todo Jt808ServerType serverType
+                    serverType,
                     requestId,
                     traceId,
                     allocator,
                     nettyInbound,
+                    requestType,
                     newBody,
+                    remoteAddress,
                     newHeader,
                     originalCheckSum,
                     calculatedCheckSum

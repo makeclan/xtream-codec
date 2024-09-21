@@ -20,12 +20,10 @@ import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import reactor.netty.Connection;
 import reactor.netty.NettyInbound;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * @author hylexus
@@ -38,29 +36,12 @@ public class DefaultXtreamRequest implements XtreamRequest {
     protected final Type type;
     protected InetSocketAddress remoteAddress;
 
-    /**
-     * TCP
-     */
-    public DefaultXtreamRequest(String requestId, ByteBufAllocator allocator, NettyInbound delegate, ByteBuf payload) {
+    public DefaultXtreamRequest(String requestId, ByteBufAllocator allocator, NettyInbound delegate, Type type, ByteBuf payload, InetSocketAddress remoteAddress) {
         this.requestId = requestId;
         this.allocator = allocator;
         this.delegate = delegate;
         this.payload = payload;
-        this.type = Type.TCP;
-        this.remoteAddress = this.initTcpRemoteAddress(delegate);
-    }
-
-    /**
-     * UDP
-     */
-    public DefaultXtreamRequest(String requestId, ByteBufAllocator allocator, NettyInbound delegate, ByteBuf payload, InetSocketAddress remoteAddress) {
-        this.requestId = requestId;
-        this.allocator = allocator;
-        this.delegate = delegate;
-        // this.payload = datagramPacket.content();
-        this.payload = payload;
-        this.type = Type.UDP;
-        // this.remoteAddress = datagramPacket.sender();
+        this.type = type;
         this.remoteAddress = remoteAddress;
     }
 
@@ -107,25 +88,11 @@ public class DefaultXtreamRequest implements XtreamRequest {
     @Override
     public String toString() {
         return "DefaultXtreamRequest{"
-                + "requestId='" + requestId() + '\''
-                + ", payload='" + (payload.refCnt() > 0 ? FormatUtils.toHexString(payload) : "<FREED>") + '\''
+                + "type=" + type()
+                + ", requestId=" + requestId()
+                + ", remoteAddress=" + remoteAddress()
+                + ", payload=" + (payload.refCnt() > 0 ? FormatUtils.toHexString(payload) : "<FREED>")
                 + '}';
     }
 
-    protected InetSocketAddress initTcpRemoteAddress(NettyInbound delegate) {
-        final AddrHolder addrHolder = new AddrHolder();
-        delegate.withConnection(addrHolder);
-        return addrHolder.remoteAddress;
-    }
-
-    protected static class AddrHolder implements Consumer<Connection> {
-        InetSocketAddress remoteAddress;
-
-        @Override
-        public void accept(Connection o) {
-            if (this.remoteAddress == null) {
-                this.remoteAddress = (InetSocketAddress) o.channel().remoteAddress();
-            }
-        }
-    }
 }

@@ -29,6 +29,9 @@ import reactor.core.publisher.Mono;
 
 import java.time.Instant;
 
+/**
+ * @author hylexus
+ */
 public class Jt808RequestDecoderFilter implements XtreamFilter {
     public static final int ORDER = -100;
     protected final Jt808RequestDecoder jt808RequestDecoder;
@@ -44,14 +47,21 @@ public class Jt808RequestDecoderFilter implements XtreamFilter {
     @Override
     public Mono<Void> filter(XtreamExchange exchange, XtreamFilterChain chain) {
         final XtreamRequest originalRequest = exchange.request();
-
-        // 将原始的 XtreamRequest 解析为 JTT/808 格式的请求
-        final Jt808Request jt808Request = this.jt808RequestDecoder.decode(originalRequest.requestId(), originalRequest.bufferFactory(), originalRequest.underlyingInbound(), originalRequest.payload());
-
-        this.lifecycleListener.afterRequestDecode(exchange, jt808Request, originalRequest);
-
         return exchange.session().flatMap(session -> {
-            this.populateSessionProperties((Jt808Session.MutableJt808Session) session, jt808Request);
+            final Jt808Session.MutableJt808Session jt808Session = (Jt808Session.MutableJt808Session) session;
+            // 将原始的 XtreamRequest 解析为 JTT/808 格式的请求
+            final Jt808Request jt808Request = this.jt808RequestDecoder.decode(
+                    jt808Session.role(),
+                    originalRequest.requestId(),
+                    originalRequest.bufferFactory(),
+                    originalRequest.underlyingInbound(),
+                    originalRequest.type(),
+                    originalRequest.payload(),
+                    originalRequest.remoteAddress()
+            );
+
+            this.lifecycleListener.afterRequestDecode(exchange, jt808Request, originalRequest);
+            this.populateSessionProperties(jt808Session, jt808Request);
             return this.doProcessJt808Request(exchange, chain, jt808Request).doFinally(signalType -> {
                 // ...
                 jt808Request.release();

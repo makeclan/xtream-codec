@@ -76,7 +76,7 @@ public class BuiltinJt808AttachmentServerTcpConfiguration {
     @Bean(BEAN_NAME_JT_808_TCP_XTREAM_NETTY_RESOURCE_FACTORY_ATTACHMENT_SERVER)
     @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_TCP_XTREAM_NETTY_RESOURCE_FACTORY_ATTACHMENT_SERVER)
     TcpXtreamNettyResourceFactory tcpXtreamNettyResourceFactory(XtreamJt808ServerProperties serverProperties) {
-        final XtreamJt808ServerProperties.TcpLoopResourcesProperty loopResources = serverProperties.getTcpInstructionServer().getLoopResources();
+        final XtreamJt808ServerProperties.TcpLoopResourcesProperty loopResources = serverProperties.getTcpAttachmentServer().getLoopResources();
         return new DefaultTcpXtreamNettyResourceFactory(new XtreamNettyResourceFactory.LoopResourcesProperty(
                 loopResources.getThreadNamePrefix(),
                 loopResources.getSelectCount(),
@@ -90,8 +90,8 @@ public class BuiltinJt808AttachmentServerTcpConfiguration {
     @Bean(BEAN_NAME_JT_808_TCP_XTREAM_SERVER_ATTACHMENT_SERVER)
     @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_TCP_XTREAM_SERVER_ATTACHMENT_SERVER)
     TcpXtreamServer tcpXtreamServer(
-            @Qualifier(BEAN_NAME_JT_808_TCP_XTREAM_NETTY_HANDLER_ADAPTER_INSTRUCTION_SERVER) TcpXtreamNettyHandlerAdapter tcpXtreamNettyHandlerAdapter,
-            @Qualifier(BEAN_NAME_JT_808_TCP_XTREAM_NETTY_RESOURCE_FACTORY_INSTRUCTION_SERVER) TcpXtreamNettyResourceFactory resourceFactory,
+            @Qualifier(BEAN_NAME_JT_808_TCP_XTREAM_NETTY_HANDLER_ADAPTER_ATTACHMENT_SERVER) TcpXtreamNettyHandlerAdapter tcpXtreamNettyHandlerAdapter,
+            @Qualifier(BEAN_NAME_JT_808_TCP_XTREAM_NETTY_RESOURCE_FACTORY_ATTACHMENT_SERVER) TcpXtreamNettyResourceFactory resourceFactory,
             ObjectProvider<TcpNettyServerCustomizer> customizers,
             XtreamJt808ServerProperties serverProperties) {
 

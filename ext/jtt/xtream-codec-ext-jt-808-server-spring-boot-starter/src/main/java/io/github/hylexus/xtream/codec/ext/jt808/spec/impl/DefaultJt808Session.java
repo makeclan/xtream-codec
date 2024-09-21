@@ -1,30 +1,51 @@
+/*
+ * Copyright 2024 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.github.hylexus.xtream.codec.ext.jt808.spec.impl;
 
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ServerType;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamOutbound;
+import io.netty.buffer.ByteBufAllocator;
+import reactor.netty.NettyOutbound;
 
+import java.net.InetSocketAddress;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DefaultJt808Session implements Jt808Session.MutableJt808Session {
+/**
+ * @author hylexus
+ */
+public class DefaultJt808Session extends AbstractXtreamOutbound implements Jt808Session.MutableJt808Session {
     private final String id;
-    private final XtreamRequest.Type type;
     private final Jt808ServerType role;
     private final Instant creationTime;
     private volatile Instant lastCommunicateTime;
     private volatile boolean verified;
     protected final Map<String, Object> attributes = new HashMap<>();
-
     // 下面几个属性只有在请求被解析之后才能确定具体值
     private Jt808ProtocolVersion protocolVersion;
     private String terminalId;
 
-    public DefaultJt808Session(String id, Jt808ServerType role, XtreamRequest.Type type) {
+    public DefaultJt808Session(String id, Jt808ServerType role, XtreamRequest.Type type, NettyOutbound outbound, InetSocketAddress remoteAddress) {
+        super(ByteBufAllocator.DEFAULT, outbound, type, remoteAddress);
         this.id = id;
-        this.type = type;
         this.role = role;
         this.creationTime = this.lastCommunicateTime = Instant.now();
         this.verified = false;
@@ -33,11 +54,6 @@ public class DefaultJt808Session implements Jt808Session.MutableJt808Session {
     @Override
     public String id() {
         return this.id;
-    }
-
-    @Override
-    public XtreamRequest.Type type() {
-        return this.type;
     }
 
     @Override

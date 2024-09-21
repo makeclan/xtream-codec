@@ -29,6 +29,8 @@ import reactor.core.publisher.Mono;
 import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
 
+import java.net.InetSocketAddress;
+
 /**
  * @author hylexus
  */
@@ -49,20 +51,20 @@ public class DefaultTcpXtreamNettyHandlerAdapter implements TcpXtreamNettyHandle
     @Override
     public Publisher<Void> apply(NettyInbound nettyInbound, NettyOutbound nettyOutbound) {
         return nettyInbound.receive().flatMap(byteBuf -> {
-            // ...
-            return this.handleSingleRequest(nettyInbound, nettyOutbound, byteBuf);
+            final InetSocketAddress remoteAddress = this.initTcpRemoteAddress(nettyInbound);
+            return this.handleSingleRequest(nettyInbound, nettyOutbound, byteBuf, remoteAddress);
         }).onErrorResume(throwable -> {
             log.error("Unexpected Error", throwable);
             return Mono.empty();
         });
     }
 
-    protected Mono<Void> handleSingleRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf payload) {
+    protected Mono<Void> handleSingleRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf payload, InetSocketAddress remoteAddress) {
         if (payload.readableBytes() <= 0) {
             return Mono.empty();
         }
 
-        final XtreamExchange exchange = this.xtreamExchangeCreator.createTcpExchange(allocator, nettyInbound, nettyOutbound, payload);
+        final XtreamExchange exchange = this.xtreamExchangeCreator.createTcpExchange(allocator, nettyInbound, nettyOutbound, payload, remoteAddress);
 
         return xtreamHandler
                 .handle(exchange)
@@ -71,4 +73,11 @@ public class DefaultTcpXtreamNettyHandlerAdapter implements TcpXtreamNettyHandle
                     log.error(throwable.getMessage(), throwable);
                 });
     }
+
+    protected InetSocketAddress initTcpRemoteAddress(NettyInbound nettyInbound) {
+        final InetSocketAddress[] remoteAddress = new InetSocketAddress[1];
+        nettyInbound.withConnection(connection -> remoteAddress[0] = (InetSocketAddress) connection.channel().remoteAddress());
+        return remoteAddress[0];
+    }
+
 }

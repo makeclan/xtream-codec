@@ -19,32 +19,29 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
+import io.netty.buffer.ByteBufAllocator;
+import reactor.netty.NettyOutbound;
 
+import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author hylexus
  */
-public class DefaultXtreamSession implements XtreamSession {
+public class DefaultXtreamSession extends AbstractXtreamOutbound implements XtreamSession {
 
     protected final String id;
-    protected final XtreamRequest.Type type;
     protected final Map<String, Object> attributes = new HashMap<>();
 
-    public DefaultXtreamSession(String id, XtreamRequest.Type type) {
+    public DefaultXtreamSession(String id, XtreamRequest.Type type, NettyOutbound outbound, InetSocketAddress remoteAddress) {
+        super(ByteBufAllocator.DEFAULT, outbound, type, remoteAddress);
         this.id = id;
-        this.type = type;
     }
 
     @Override
     public String id() {
         return this.id;
-    }
-
-    @Override
-    public XtreamRequest.Type type() {
-        return this.type;
     }
 
     @Override

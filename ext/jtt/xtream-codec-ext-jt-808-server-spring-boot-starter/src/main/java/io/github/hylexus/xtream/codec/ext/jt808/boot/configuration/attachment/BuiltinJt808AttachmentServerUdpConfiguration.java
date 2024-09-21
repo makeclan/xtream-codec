@@ -76,7 +76,7 @@ public class BuiltinJt808AttachmentServerUdpConfiguration {
     @Bean(BEAN_NAME_JT_808_UDP_XTREAM_NETTY_RESOURCE_FACTORY_ATTACHMENT_SERVER)
     @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_UDP_XTREAM_NETTY_RESOURCE_FACTORY_ATTACHMENT_SERVER)
     UdpXtreamNettyResourceFactory udpXtreamNettyResourceFactory(XtreamJt808ServerProperties serverProperties) {
-        final XtreamJt808ServerProperties.UdpLoopResourcesProperty loopResources = serverProperties.getUdpInstructionServer().getLoopResources();
+        final XtreamJt808ServerProperties.UdpLoopResourcesProperty loopResources = serverProperties.getUdpAttachmentServer().getLoopResources();
         return new DefaultUdpXtreamNettyResourceFactory(new XtreamNettyResourceFactory.LoopResourcesProperty(
                 loopResources.getThreadNamePrefix(),
                 loopResources.getSelectCount(),

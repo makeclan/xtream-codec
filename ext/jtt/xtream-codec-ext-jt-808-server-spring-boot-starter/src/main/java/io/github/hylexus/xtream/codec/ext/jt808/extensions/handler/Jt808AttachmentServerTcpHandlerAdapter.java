@@ -29,6 +29,8 @@ import reactor.core.publisher.Mono;
 import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
 
+import java.net.InetSocketAddress;
+
 /**
  * @author hylexus
  */
@@ -40,10 +42,12 @@ public class Jt808AttachmentServerTcpHandlerAdapter extends DefaultTcpXtreamNett
     }
 
     @Override
-    protected Mono<Void> handleSingleRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf payload) {
+    protected Mono<Void> handleSingleRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf payload, InetSocketAddress remoteAddress) {
+        // 普通的指令消息
         if (!JtProtocolUtils.isAttachmentRequest(payload)) {
-            return super.handleSingleRequest(nettyInbound, nettyOutbound, payload);
+            return super.handleSingleRequest(nettyInbound, nettyOutbound, payload, remoteAddress);
         }
+        // 码流消息
         log.info("===> {}", FormatUtils.toHexString(payload));
         return Mono.empty();
     }

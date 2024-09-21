@@ -26,7 +26,6 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPubl
 import io.github.hylexus.xtream.debug.ext.jt808.domain.values.DemoJt808EventPayloads;
 import io.github.hylexus.xtream.debug.ext.jt808.domain.values.DemoJt808EventType;
 import io.netty.buffer.ByteBuf;
-import reactor.util.annotation.Nullable;
 
 /**
  * @author hylexus
@@ -80,21 +79,13 @@ public class DemoJt808RequestLifecycleListener implements Jt808RequestLifecycleL
     }
 
     @Override
-    public void beforeResponseSend(@Nullable XtreamExchange exchange, ByteBuf response) {
+    public void beforeResponseSend(XtreamRequest request, ByteBuf response) {
         this.eventPublisher.publishIfNecessary(
                 DemoJt808EventType.SEND_PACKAGE,
                 () -> {
-                    final String requestId;
-                    final String traceId;
-                    if (exchange != null) {
-                        final Jt808Request request = (Jt808Request) exchange.request();
-                        requestId = request.requestId();
-                        traceId = request.traceId();
-                    } else {
-                        // todo 随机生成一个??
-                        requestId = null;
-                        traceId = null;
-                    }
+                    final Jt808Request jt808Request = (Jt808Request) request;
+                    final String requestId = jt808Request.requestId();
+                    final String traceId = jt808Request.traceId();
                     return new DemoJt808EventPayloads.SendResponse(
                             requestId, traceId,
                             0,

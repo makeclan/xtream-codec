@@ -17,9 +17,13 @@
 package io.github.hylexus.xtream.codec.ext.jt808.codec;
 
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ServerType;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import reactor.netty.NettyInbound;
+
+import java.net.InetSocketAddress;
 
 /**
  * @author hylexus
@@ -29,6 +33,6 @@ public interface Jt808RequestDecoder {
     /**
      * @see <a href="https://github.com/hylexus/jt-framework/issues/82">https://github.com/hylexus/jt-framework/issues/82</a>
      */
-    Jt808Request decode(String requestId, ByteBufAllocator allocator, NettyInbound nettyInbound, ByteBuf payload);
+    Jt808Request decode(Jt808ServerType serverType, String requestId, ByteBufAllocator allocator, NettyInbound nettyInbound, XtreamRequest.Type requestType, ByteBuf payload, InetSocketAddress remoteAddress);
 
 }

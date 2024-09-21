@@ -28,7 +28,7 @@ import java.lang.annotation.*;
  * @author hylexus
  */
 // todo 支持在实体类上标记?
-@Target({ElementType.METHOD})
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @XtreamResponseBody

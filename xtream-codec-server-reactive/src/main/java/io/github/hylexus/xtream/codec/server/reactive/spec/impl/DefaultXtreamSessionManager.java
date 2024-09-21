@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamResponse;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
 
@@ -29,6 +30,12 @@ public class DefaultXtreamSessionManager extends AbstractXtreamSessionManager<Xt
     @Override
     protected XtreamSession doCreateSession(XtreamExchange exchange) {
         final String sessionId = this.sessionIdGenerator.generateSessionId(exchange);
-        return new DefaultXtreamSession(sessionId, exchange.request().type());
+        final XtreamResponse response = exchange.response();
+        return new DefaultXtreamSession(
+                sessionId,
+                response.type(),
+                response.outbound(),
+                response.remoteAddress()
+        );
     }
 }

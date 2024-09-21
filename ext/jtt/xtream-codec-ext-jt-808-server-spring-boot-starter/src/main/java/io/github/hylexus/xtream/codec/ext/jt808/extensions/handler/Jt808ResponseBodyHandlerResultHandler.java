@@ -16,25 +16,21 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.extensions.handler;
 
-import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
-import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808ResponseEncoder;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamMessageWriter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerResult;
-import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerResultHandler;
-import io.netty.buffer.ByteBuf;
-import reactor.core.publisher.Flux;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamMessageWriterHandlerResultHandler;
 import reactor.core.publisher.Mono;
 
-public class Jt808ResponseBodyHandlerResultHandler implements XtreamHandlerResultHandler {
+import java.util.List;
 
-    protected final Jt808ResponseEncoder jt808ResponseEncoder;
-    protected final Jt808RequestLifecycleListener lifecycleListener;
+/**
+ * @author hylexus
+ */
+public class Jt808ResponseBodyHandlerResultHandler extends AbstractXtreamMessageWriterHandlerResultHandler {
 
-    public Jt808ResponseBodyHandlerResultHandler(Jt808ResponseEncoder jt808ResponseEncoder, Jt808RequestLifecycleListener lifecycleListener) {
-        this.jt808ResponseEncoder = jt808ResponseEncoder;
-        this.lifecycleListener = lifecycleListener;
+    public Jt808ResponseBodyHandlerResultHandler(List<XtreamMessageWriter> writers) {
+        super(writers);
     }
 
     @Override
@@ -43,28 +39,12 @@ public class Jt808ResponseBodyHandlerResultHandler implements XtreamHandlerResul
     }
 
     @Override
-    public Mono<Void> handleResult(XtreamExchange exchange, XtreamHandlerResult handlerResult) {
-        final Object returnValue = handlerResult.getReturnValue();
-        if (returnValue == null) {
-            return Mono.empty();
-        }
-        final Jt808ResponseBody annotation = handlerResult.getReturnType().getMethodAnnotation(Jt808ResponseBody.class);
-        final Jt808Request request = (Jt808Request) exchange.request();
-        final Jt808RequestHeader requestHeader = request.header();
-        return this.adaptReturnValue(returnValue).flatMap(body -> {
-            final ByteBuf responseBuf = this.jt808ResponseEncoder.encode(body, requestHeader.version(), requestHeader.terminalId(), annotation);
-            this.lifecycleListener.beforeResponseSend(exchange, responseBuf);
-            return exchange.response().writeWith(Mono.just(responseBuf));
-        });
+    public Mono<Void> handleResult(XtreamExchange exchange, XtreamHandlerResult result) {
+        return super.handleResult(exchange, result);
     }
 
-    protected Mono<?> adaptReturnValue(Object returnValue) {
-        return switch (returnValue) {
-            case null -> Mono.error(new IllegalArgumentException("message is null"));
-            case Mono<?> mono -> mono;
-            case Flux<?> ignored -> Mono.error(() -> new IllegalArgumentException("Flux is not supported"));
-            case Object object -> Mono.just(object);
-        };
+    @Override
+    public int order() {
+        return super.order() - 100;
     }
-
 }

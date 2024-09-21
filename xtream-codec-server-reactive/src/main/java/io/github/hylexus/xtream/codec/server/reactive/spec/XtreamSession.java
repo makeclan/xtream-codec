@@ -22,12 +22,9 @@ import java.util.Map;
 /**
  * @author hylexus
  */
-public interface XtreamSession {
+public interface XtreamSession extends XtreamOutbound {
 
     String id();
 
     Map<String, Object> attributes();
-
-    XtreamRequest.Type type();
-
 }

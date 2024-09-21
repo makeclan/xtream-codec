@@ -18,8 +18,6 @@ package io.github.hylexus.xtream.codec.server.reactive.spec;
 
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
-import reactor.netty.NettyInbound;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
@@ -27,27 +25,7 @@ import java.util.Map;
 /**
  * @author hylexus
  */
-public interface XtreamRequest {
-
-    enum Type {
-        TCP,
-        UDP
-    }
-
-    Type type();
-
-    ByteBufAllocator bufferFactory();
-
-    NettyInbound underlyingInbound();
-
-    /**
-     * 同一个 ”网络包“ 的请求和响应，该值应该确保一致（即使是在中途重新包装或修改了 {@link XtreamRequest} 对象）。
-     */
-    String requestId();
-
-    ByteBuf payload();
-
-    InetSocketAddress remoteAddress();
+public interface XtreamRequest extends XtreamInbound {
 
     Map<String, Object> attributes();
 
@@ -56,6 +34,9 @@ public interface XtreamRequest {
     }
 
     XtreamRequestBuilder mutate();
+
+    @Override
+    String toString();
 
     interface XtreamRequestBuilder {
 

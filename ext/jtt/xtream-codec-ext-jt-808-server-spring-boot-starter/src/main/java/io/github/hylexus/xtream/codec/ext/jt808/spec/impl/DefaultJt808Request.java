@@ -28,6 +28,9 @@ import reactor.netty.NettyInbound;
 
 import java.net.InetSocketAddress;
 
+/**
+ * @author hylexus
+ */
 public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Request {
     protected final Jt808RequestHeader header;
     protected final int originalCheckSum;
@@ -44,34 +47,12 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
             String traceId,
             ByteBufAllocator allocator,
             NettyInbound nettyInbound,
-            ByteBuf payload,
+            Type type, ByteBuf payload, InetSocketAddress remoteAddress,
             Jt808RequestHeader header,
             int originalCheckSum,
             int calculatedCheckSum) {
 
-        super(requestId, allocator, nettyInbound, payload);
-        this.serverType = serverType;
-        this.traceId = traceId;
-        this.header = header;
-        this.originalCheckSum = originalCheckSum;
-        this.calculatedCheckSum = calculatedCheckSum;
-    }
-
-    /**
-     * UDP
-     */
-    public DefaultJt808Request(
-            Jt808ServerType serverType,
-            String requestId,
-            String traceId,
-            ByteBufAllocator allocator,
-            NettyInbound nettyInbound,
-            ByteBuf payload, InetSocketAddress remoteAddress,
-            Jt808RequestHeader header,
-            int originalCheckSum,
-            int calculatedCheckSum) {
-
-        super(requestId, allocator, nettyInbound, payload, remoteAddress);
+        super(requestId, allocator, nettyInbound, type, payload, remoteAddress);
         this.serverType = serverType;
         this.traceId = traceId;
         this.header = header;
@@ -112,8 +93,13 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
     @Override
     public String toString() {
         return "DefaultJt808Request{"
-                + "messageId=" + header().messageId() + "(0x" + FormatUtils.toHexString(header.messageId(), 4) + ")"
-                + ", header=" + header
+                + "type=" + type()
+                + "serverType=" + serverType()
+                + ", requestId=" + requestId()
+                + ", remoteAddress=" + remoteAddress()
+                + ", messageId=" + header().messageId() + "(0x" + FormatUtils.toHexString(header.messageId(), 4) + ")"
+                + ", header=" + header()
+                + ", payload=" + (payload.refCnt() > 0 ? FormatUtils.toHexString(payload) : "<FREED>")
                 + ", checkSum=" + originalCheckSum
                 + '}';
     }
@@ -157,27 +143,13 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
 
         @Override
         public Jt808Request build() {
-            if (this.delegateRequest.type() == Type.TCP) {
-                return new DefaultJt808Request(
-                        this.delegateRequest.serverType(),
-                        this.delegateRequest.requestId(),
-                        this.traceId,
-                        this.delegateRequest.bufferFactory(),
-                        this.delegateRequest.underlyingInbound(),
-                        this.payload == null ? this.delegateRequest.payload() : this.payload,
-                        this.header != null ? this.header : this.delegateRequest.header(),
-                        this.originalCheckSum != null ? this.originalCheckSum : this.delegateRequest.originalCheckSum(),
-                        this.calculatedCheckSum != null ? this.calculatedCheckSum : this.delegateRequest.calculatedCheckSum()
-                );
-            }
-
             return new DefaultJt808Request(
                     this.delegateRequest.serverType(),
                     this.delegateRequest.requestId(),
                     this.traceId,
                     this.delegateRequest.bufferFactory(),
                     this.delegateRequest.underlyingInbound(),
-                    // this.createDatagramPacket(this.payload),
+                    this.delegateRequest.type(),
                     this.payload == null ? this.delegateRequest.payload() : this.payload,
                     this.remoteAddress != null ? this.remoteAddress : this.delegateRequest.remoteAddress(),
                     this.header != null ? this.header : this.delegateRequest.header(),

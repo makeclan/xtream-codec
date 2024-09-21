@@ -20,7 +20,6 @@ import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.netty.buffer.ByteBuf;
-import reactor.util.annotation.Nullable;
 
 /**
  * JT808 请求生命周期监听器。
@@ -63,11 +62,20 @@ public interface Jt808RequestLifecycleListener {
     /**
      * 写数据给客户端之前回调
      *
-     * @param exchange 请求上下文
+     * @param request  请求
      * @param response 给客户端回复的数据
      * @implNote 不要有阻塞操作
      */
-    default void beforeResponseSend(@Nullable XtreamExchange exchange, ByteBuf response) {
+    default void beforeResponseSend(XtreamRequest request, ByteBuf response) {
+    }
+
+    /**
+     * todo 下发指令前回调
+     *
+     * @param command 下发的指令
+     * @see io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808CommandSender
+     */
+    default void beforeCommandSend(ByteBuf command) {
     }
 
     class NoopJt808RequestLifecycleListener implements Jt808RequestLifecycleListener {
