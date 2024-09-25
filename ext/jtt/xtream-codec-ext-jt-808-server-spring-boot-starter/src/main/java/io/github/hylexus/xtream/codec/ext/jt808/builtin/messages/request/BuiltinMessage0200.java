@@ -21,6 +21,8 @@ import io.github.hylexus.xtream.codec.core.annotation.XtreamFieldMapDescriptor;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.BuiltinMessage64;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.BuiltinMessage65;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.BuiltinMessage66;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.BuiltinMessage67;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -87,8 +89,10 @@ public class BuiltinMessage0200 {
                             @XtreamFieldMapDescriptor.ValueCodecConfig(whenKeyIsU8 = 0x25, config = @XtreamField(length = 4), javaType = Long.class, desc = "扩展车辆信号状态位，定义见 表 31"),
                             @XtreamFieldMapDescriptor.ValueCodecConfig(whenKeyIsU8 = 0x30, config = @XtreamField(length = 1), javaType = Short.class, desc = "数据类型为 BYTE，无线通信网络信号强度"),
                             @XtreamFieldMapDescriptor.ValueCodecConfig(whenKeyIsU8 = 0x31, config = @XtreamField(length = 1), javaType = Short.class, desc = "数据类型为 BYTE，GNSS定位卫星数"),
-                            @XtreamFieldMapDescriptor.ValueCodecConfig(whenKeyIsU8 = 0x64, javaType = BuiltinMessage64.class, desc = "扩展车辆信号状态位，定义见 表 31"),
-                            @XtreamFieldMapDescriptor.ValueCodecConfig(whenKeyIsU8 = 0x65, javaType = BuiltinMessage65.class, desc = "扩展车辆信号状态位，定义见 表 31"),
+                            @XtreamFieldMapDescriptor.ValueCodecConfig(whenKeyIsU8 = 0x64, javaType = BuiltinMessage64.class, desc = "苏标: 高级驾驶辅助报警信息，定义见表 4-15"),
+                            @XtreamFieldMapDescriptor.ValueCodecConfig(whenKeyIsU8 = 0x65, javaType = BuiltinMessage65.class, desc = "苏标: 驾驶员状态监测系统报警信息，定义见表 4-17"),
+                            @XtreamFieldMapDescriptor.ValueCodecConfig(whenKeyIsU8 = 0x66, javaType = BuiltinMessage66.class, desc = "苏标: 胎压监测系统报警信息，定义见表 4-18"),
+                            @XtreamFieldMapDescriptor.ValueCodecConfig(whenKeyIsU8 = 0x67, javaType = BuiltinMessage67.class, desc = "苏标: 盲区监测系统报警信息，定义见表 4-20"),
                     }
             )
     )

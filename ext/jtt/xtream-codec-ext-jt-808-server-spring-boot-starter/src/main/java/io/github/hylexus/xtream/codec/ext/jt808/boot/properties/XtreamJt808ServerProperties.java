@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.boot.properties;
 
+import io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolConstant;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -69,7 +70,10 @@ public class XtreamJt808ServerProperties {
 
         @NestedConfigurationProperty
         private TcpLoopResourcesProperty loopResources = new TcpLoopResourcesProperty();
-
+        /**
+         * 指令服务器: 指令报文长度限制
+         */
+        private int maxInstructionFrameLength = JtProtocolConstant.DEFAULT_MAX_INSTRUCTION_FRAME_LENGTH;
     }
 
     @Getter
@@ -80,6 +84,15 @@ public class XtreamJt808ServerProperties {
         @NestedConfigurationProperty
         private TcpLoopResourcesProperty loopResources = new TcpLoopResourcesProperty();
 
+        /**
+         * 附件服务器: 指令报文长度限制
+         */
+        private int maxInstructionFrameLength = JtProtocolConstant.DEFAULT_MAX_INSTRUCTION_FRAME_LENGTH;
+
+        /**
+         * 附件服务器: 苏标扩展消息 0x30316364 的报文长度限制
+         */
+        private int maxStreamFrameLength = JtProtocolConstant.DEFAULT_MAX_STREAM_FRAME_LENGTH;
     }
 
     @Getter
@@ -91,7 +104,6 @@ public class XtreamJt808ServerProperties {
         private UdpLoopResourcesProperty loopResources = new UdpLoopResourcesProperty();
 
     }
-
 
     @Getter
     @Setter

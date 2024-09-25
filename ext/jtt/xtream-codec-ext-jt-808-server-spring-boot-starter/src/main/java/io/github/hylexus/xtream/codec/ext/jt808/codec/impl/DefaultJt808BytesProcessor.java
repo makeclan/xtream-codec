@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.codec.impl;
 
 
+import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808BytesProcessor;
 import io.github.hylexus.xtream.codec.ext.jt808.exception.Jt808MessageEscapeException;
@@ -56,31 +57,31 @@ public class DefaultJt808BytesProcessor implements Jt808BytesProcessor {
         final List<ByteBuf> byteBufList = new ArrayList<>();
         try {
             do {
+                if (from == 0 && indexOf > 0) {
+                    byteBufList.add(byteBuf.retainedSlice(from, indexOf));
+                }
                 final byte current = byteBuf.getByte(indexOf);
                 final byte next = byteBuf.getByte(indexOf + 1);
-                if (current == 0x7d && next == 0x01) {
-                    if (from <= indexOf) {
+                if (current == 0x7d) {
+                    if (next == 0x01) {
                         // xxx7D01xxx --> xxx7Dxxx
-                        byteBufList.add(byteBuf.retainedSlice(from, indexOf - from + 1));
-                    }
-                    // byteBufList.add(allocator.buffer().writeByte(0x7d));
-                    from = indexOf + 2;
-                } else if (current == 0x7d && next == 0x02) {
-                    if (from <= indexOf) {
+                        byteBufList.add(allocator.buffer().writeByte(0x7d));
+                        from = indexOf + 2;
+                    } else if (next == 0x02) {
                         // xxx7D02xxx --> xxx7Exxx
-                        byteBufList.add(byteBuf.retainedSlice(from, indexOf - from + 1));
+                        byteBufList.add(allocator.buffer().writeByte(0x7e));
+                        from = indexOf + 2;
+                    } else {
+                        log.warn("0x7d should be followed by 0x01 or 0x02, but 0x{}", FormatUtils.toHexString(next));
+                        byteBufList.add(allocator.buffer().writeByte(0x7d));
+                        from = indexOf + 1;
                     }
-                    // byteBuf.setByte(indexOf, 0x7E);
-                    byteBufList.add(allocator.buffer().writeByte(0x7e));
-                    from = indexOf + 2;
-                } else {
-                    log.warn("0x7d should be followed by 0x01 or 0x02, but {}", next);
-                    if (from <= indexOf) {
-                        byteBufList.add(byteBuf.retainedSlice(from, indexOf - from + 1));
-                    }
-                    from = indexOf + 1;
                 }
-            } while (from < readableBytes && (indexOf = byteBuf.indexOf(from, readableBytes, delimiter)) >= 0);
+                indexOf = byteBuf.indexOf(from, readableBytes, delimiter);
+                if (from < indexOf) {
+                    byteBufList.add(byteBuf.retainedSlice(from, indexOf - from));
+                }
+            } while (from < readableBytes && indexOf > 0);
 
             if (from < readableBytes) {
                 byteBufList.add(byteBuf.retainedSlice(from, readableBytes - from));

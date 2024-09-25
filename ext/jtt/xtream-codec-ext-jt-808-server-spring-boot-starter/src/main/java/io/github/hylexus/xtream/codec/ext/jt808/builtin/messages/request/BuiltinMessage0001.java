@@ -16,10 +16,10 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
+import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 
 /**
@@ -29,7 +29,6 @@ import lombok.experimental.Accessors;
  */
 @Getter
 @Setter
-@ToString
 @Accessors(chain = true)
 public class BuiltinMessage0001 {
     /**
@@ -48,4 +47,13 @@ public class BuiltinMessage0001 {
      */
     @Preset.JtStyle.Byte
     private short result;
+
+    @Override
+    public String toString() {
+        return "BuiltinMessage0001{"
+                + "serverFlowId=" + serverFlowId
+                + ", serverMessageId=" + serverMessageId + "(0x" + FormatUtils.toHexString(serverMessageId, 2) + ")"
+                + ", result=" + result
+                + '}';
+    }
 }

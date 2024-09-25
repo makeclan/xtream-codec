@@ -16,8 +16,11 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.extensions.handler;
 
-import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
+import io.github.hylexus.xtream.codec.ext.jt808.utils.Jt808AttachmentHandlerUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolUtils;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchangeCreator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.DefaultTcpXtreamNettyHandlerAdapter;
@@ -36,9 +39,11 @@ import java.net.InetSocketAddress;
  */
 public class Jt808AttachmentServerTcpHandlerAdapter extends DefaultTcpXtreamNettyHandlerAdapter {
     private static final Logger log = LoggerFactory.getLogger(Jt808AttachmentServerTcpHandlerAdapter.class);
+    protected final XtreamHandler attachmentHandler;
 
-    public Jt808AttachmentServerTcpHandlerAdapter(ByteBufAllocator allocator, XtreamExchangeCreator xtreamExchangeCreator, XtreamHandler xtreamHandler) {
+    public Jt808AttachmentServerTcpHandlerAdapter(ByteBufAllocator allocator, XtreamExchangeCreator xtreamExchangeCreator, XtreamHandler xtreamHandler, XtreamHandler attachmentHandler) {
         super(allocator, xtreamExchangeCreator, xtreamHandler);
+        this.attachmentHandler = attachmentHandler;
     }
 
     @Override
@@ -48,7 +53,19 @@ public class Jt808AttachmentServerTcpHandlerAdapter extends DefaultTcpXtreamNett
             return super.handleSingleRequest(nettyInbound, nettyOutbound, payload, remoteAddress);
         }
         // 码流消息
-        log.info("===> {}", FormatUtils.toHexString(payload));
-        return Mono.empty();
+        return this.handleStreamRequest(nettyInbound, nettyOutbound, payload, remoteAddress);
     }
+
+    protected Mono<Void> handleStreamRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf payload, InetSocketAddress remoteAddress) {
+        final Jt808Session session = Jt808AttachmentHandlerUtils.getAttachmentSession(nettyOutbound);
+        if (session == null) {
+            return Mono.error(new IllegalStateException("attachment session not found"));
+        }
+
+        final XtreamExchange exchange = this.xtreamExchangeCreator.createTcpExchange(allocator, nettyInbound, nettyOutbound, payload, remoteAddress);
+        final Jt808Request jt808Request = Jt808AttachmentHandlerUtils.simulateJt808Request(allocator, nettyInbound, payload, session, exchange, xtreamExchangeCreator.generateRequestId(nettyInbound));
+        final XtreamExchange simulatedExchange = exchange.mutate().request(jt808Request).build();
+        return this.attachmentHandler.handle(simulatedExchange);
+    }
+
 }

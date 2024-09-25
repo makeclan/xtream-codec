@@ -16,11 +16,15 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.extensions.handler;
 
-import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808UdpDatagramPackageSplitter;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
+import io.github.hylexus.xtream.codec.ext.jt808.utils.Jt808AttachmentHandlerUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolUtils;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchangeCreator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.socket.DatagramPacket;
 import org.slf4j.Logger;
@@ -29,15 +33,19 @@ import reactor.core.publisher.Mono;
 import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
 
+import java.net.InetSocketAddress;
+
 /**
  * @author hylexus
  */
 public class Jt808AttachmentServerUdpHandlerAdapter extends Jt808InstructionServerUdpHandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(Jt808AttachmentServerUdpHandlerAdapter.class);
+    protected final XtreamHandler attachmentHandler;
 
-    public Jt808AttachmentServerUdpHandlerAdapter(ByteBufAllocator allocator, XtreamExchangeCreator exchangeCreator, XtreamHandler xtreamHandler, Jt808UdpDatagramPackageSplitter splitter) {
+    public Jt808AttachmentServerUdpHandlerAdapter(ByteBufAllocator allocator, XtreamExchangeCreator exchangeCreator, XtreamHandler xtreamHandler, Jt808UdpDatagramPackageSplitter splitter, XtreamHandler attachmentHandler) {
         super(allocator, exchangeCreator, xtreamHandler, splitter);
+        this.attachmentHandler = attachmentHandler;
     }
 
     @Override
@@ -46,8 +54,20 @@ public class Jt808AttachmentServerUdpHandlerAdapter extends Jt808InstructionServ
         if (!JtProtocolUtils.isAttachmentRequest(datagramPacket.content())) {
             return super.handleRequest(nettyInbound, nettyOutbound, datagramPacket);
         }
+
         // 码流消息
-        log.info("===> {}", FormatUtils.toHexString(datagramPacket.content()));
-        return Mono.empty();
+        return this.handleStreamRequest(nettyInbound, nettyOutbound, datagramPacket.content(), datagramPacket.sender());
+    }
+
+    protected Mono<Void> handleStreamRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf payload, InetSocketAddress remoteAddress) {
+        final Jt808Session session = Jt808AttachmentHandlerUtils.getAttachmentSession(nettyOutbound);
+        if (session == null) {
+            return Mono.error(new IllegalStateException("attachment session not found"));
+        }
+
+        final XtreamExchange exchange = this.exchangeCreator.createTcpExchange(allocator, nettyInbound, nettyOutbound, payload, remoteAddress);
+        final Jt808Request jt808Request = Jt808AttachmentHandlerUtils.simulateJt808Request(allocator, nettyInbound, payload, session, exchange, exchangeCreator.generateRequestId(nettyInbound));
+        final XtreamExchange simulatedExchange = exchange.mutate().request(jt808Request).build();
+        return this.attachmentHandler.handle(simulatedExchange);
     }
 }

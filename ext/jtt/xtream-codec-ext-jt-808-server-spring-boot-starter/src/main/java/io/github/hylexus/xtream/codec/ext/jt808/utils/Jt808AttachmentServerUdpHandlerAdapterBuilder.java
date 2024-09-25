@@ -25,14 +25,21 @@ import io.netty.buffer.ByteBufAllocator;
  * @author hylexus
  */
 public class Jt808AttachmentServerUdpHandlerAdapterBuilder extends Jt808InstructionServerUdpHandlerAdapterBuilder {
+    protected XtreamHandler attachementdispatcherXtreamHandler;
+
     public Jt808AttachmentServerUdpHandlerAdapterBuilder(ByteBufAllocator allocator, Jt808UdpDatagramPackageSplitter udpDatagramPackageSplitter) {
         super(allocator, udpDatagramPackageSplitter);
+    }
+
+    public Jt808AttachmentServerUdpHandlerAdapterBuilder setAttachmentDispatcherHandler(XtreamHandler handler) {
+        this.attachementdispatcherXtreamHandler = handler;
+        return this;
     }
 
     @Override
     public Jt808AttachmentServerUdpHandlerAdapter build() {
         final XtreamHandler exceptionHandlingHandler = createRequestHandler();
-        return new Jt808AttachmentServerUdpHandlerAdapter(super.byteBufAllocator, super.xtreamExchangeCreator, exceptionHandlingHandler, this.udpDatagramPackageSplitter);
+        return new Jt808AttachmentServerUdpHandlerAdapter(super.byteBufAllocator, super.xtreamExchangeCreator, exceptionHandlingHandler, this.udpDatagramPackageSplitter, this.attachementdispatcherXtreamHandler);
     }
 
 }

@@ -17,8 +17,11 @@
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.annotation.JtExtension;
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import java.time.LocalDateTime;
 
 /**
  * 苏标-表-4-16 报警标识号格式
@@ -33,8 +36,8 @@ public class AlarmIdentifier {
     private String terminalId;
 
     // 时间   BCD[6]  YY-MM-DD-hh-mm-ss （GMT+8时间）
-    @Preset.JtStyle.BCD(length = 6)
-    private String time;
+    @JtExtension.BcdDateTime
+    private LocalDateTime time;
 
     // 序号   BYTE    同一时间点报警的序号，从0循环累加
     @Preset.JtStyle.Byte

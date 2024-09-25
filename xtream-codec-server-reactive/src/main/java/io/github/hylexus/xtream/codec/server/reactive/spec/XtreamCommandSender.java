@@ -22,7 +22,7 @@ import reactor.core.publisher.Mono;
 /**
  * @author hylexus
  */
-public interface XtreamCommandSender<S extends XtreamSession> extends IternalXtreamCommandSender<S> {
+public interface XtreamCommandSender<S extends XtreamSession> extends InternalXtreamCommandSender<S> {
 
     Mono<Void> sendObject(String sessionId, Publisher<Object> data);
 

@@ -17,13 +17,13 @@
 package io.github.hylexus.xtream.codec.ext.jt808.extensions;
 
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
-import io.github.hylexus.xtream.codec.server.reactive.spec.IternalXtreamCommandSender;
+import io.github.hylexus.xtream.codec.server.reactive.spec.InternalXtreamCommandSender;
 import reactor.core.publisher.Mono;
 
 /**
  * @author hylexus
  */
-public interface Jt808CommandSender extends IternalXtreamCommandSender<Jt808Session> {
+public interface Jt808CommandSender extends InternalXtreamCommandSender<Jt808Session> {
 
     Mono<Void> sendObject(String sessionId, Mono<Object> body);
 

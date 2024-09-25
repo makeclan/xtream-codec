@@ -21,10 +21,12 @@ import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
+import io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolConstant;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilterChain;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
+import io.netty.channel.Channel;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
@@ -62,11 +64,17 @@ public class Jt808RequestDecoderFilter implements XtreamFilter {
 
             this.lifecycleListener.afterRequestDecode(exchange, jt808Request, originalRequest);
             this.populateSessionProperties(jt808Session, jt808Request);
+
+            jt808Request.underlyingInbound().withConnection(connection -> {
+                final Channel channel = connection.channel();
+                channel.attr(JtProtocolConstant.NETTY_ATTR_KEY_SESSION).setIfAbsent(jt808Session);
+            });
+
             return this.doProcessJt808Request(exchange, chain, jt808Request).doFinally(signalType -> {
                 // ...
                 jt808Request.release();
             });
-        });
+        }).checkpoint("Jt808RequestDecoderFilter");
     }
 
     protected void populateSessionProperties(Jt808Session.MutableJt808Session jt808Session, Jt808Request jt808Request) {

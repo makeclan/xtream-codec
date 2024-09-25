@@ -27,6 +27,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.Server
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestBody;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestHandler;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestHandlerMapping;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ServerType;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
@@ -63,6 +64,7 @@ public class AttachmentFileHandler {
     }
 
     @Jt808RequestHandlerMapping(messageIds = 0x1210)
+    @Jt808ResponseBody(messageId = 0x8001)
     public Mono<ServerCommonReplyMessage> processMsg0x1210(Jt808Request request, Jt808Session session, @Jt808RequestBody BuiltinMessage1210 body) {
         log.info("0x1210 ==> {}", body);
         if (request.serverType() == Jt808ServerType.INSTRUCTION_SERVER) {
@@ -77,6 +79,7 @@ public class AttachmentFileHandler {
     }
 
     @Jt808RequestHandlerMapping(messageIds = 0x1211)
+    @Jt808ResponseBody(messageId = 0x8001)
     public Mono<ServerCommonReplyMessage> processMsg0x1211(Jt808Request request, @Jt808RequestBody BuiltinMessage1211 body) {
         log.info("0x1211 ==> {}", body);
         if (request.serverType() == Jt808ServerType.INSTRUCTION_SERVER) {
@@ -86,6 +89,7 @@ public class AttachmentFileHandler {
     }
 
     @Jt808RequestHandlerMapping(messageIds = 0x1212)
+    @Jt808ResponseBody(messageId = 0x9212)
     public Mono<BuiltinMessage9212> processMsg0x1212(Jt808Request request, @Jt808RequestBody BuiltinMessage1212 body) {
         log.info("0x1212 ==> {}", body);
         if (request.serverType() == Jt808ServerType.INSTRUCTION_SERVER) {
@@ -109,7 +113,7 @@ public class AttachmentFileHandler {
      */
     // 这里是对应的文件上传的码流
     @Jt808RequestHandlerMapping(messageIds = 0x30316364)
-    public void processMsg30316364(Jt808Request request, BuiltinMessage30316364 body, @Nullable Jt808Session session) {
+    public void processMsg30316364(Jt808Request request, @Jt808RequestBody BuiltinMessage30316364 body, @Nullable Jt808Session session) {
         // 这里的示例都是随便瞎写的 存储到本地磁盘了
         // 实际场景中看你自己需求  比如存储到 OSS、AWS、Minio……
         if (session == null) {

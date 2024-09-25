@@ -104,7 +104,8 @@ public class BuiltinJt808InstructionServerTcpConfiguration {
                 // 分包
                 .addServerCustomizer(server -> server.doOnChannelInit((observer, channel, remoteAddress) -> {
                     // stripDelimiter=true
-                    final DelimiterBasedFrameDecoder frameDecoder = new DelimiterBasedFrameDecoder(DEFAULT_MAX_PACKAGE_SIZE, true, Unpooled.copiedBuffer(new byte[]{PACKAGE_DELIMITER}));
+                    final int frameLength = serverProperties.getTcpInstructionServer().getMaxInstructionFrameLength();
+                    final DelimiterBasedFrameDecoder frameDecoder = new DelimiterBasedFrameDecoder(frameLength, true, Unpooled.copiedBuffer(new byte[]{PACKAGE_DELIMITER}));
                     channel.pipeline().addFirst(BEAN_NAME_CHANNEL_INBOUND_HANDLER_ADAPTER, frameDecoder);
                 }))
                 // loopResources

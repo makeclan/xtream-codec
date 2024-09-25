@@ -46,6 +46,15 @@ public class DemoJt808RequestHandler {
     }
 
     /**
+     * 终端通用应答
+     */
+    @Jt808RequestHandlerMapping(messageIds = 0x0001)
+    public Mono<Void> processMessage0001(Jt808Request request, @Jt808RequestBody BuiltinMessage0001 requestBody) {
+        log.info("receive message [0x0001]: {}", requestBody);
+        return Mono.empty();
+    }
+
+    /**
      * 终端鉴权(V2019)
      */
     @Jt808RequestHandlerMapping(messageIds = 0x0102, versions = Jt808ProtocolVersion.VERSION_2019)

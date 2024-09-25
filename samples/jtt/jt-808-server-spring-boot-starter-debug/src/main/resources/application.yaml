@@ -19,6 +19,7 @@
 ########################################################
 server:
   port: 9999
+
 ########################################################
 ### 示例项目自身的配置(和框架无关)####################
 ########################################################
@@ -28,6 +29,7 @@ demo-app-config:
     # 应该是一个公网IP(设备能访问的IP)
     server-ip: 192.168.71.54
     temporary-path: /tmp/attachment
+
 ########################################################
 ### xtream-codec-server-reactive 配置####################
 ########################################################
@@ -53,6 +55,9 @@ jt808-server:
     host: 0.0.0.0
     # TCP 服务端口
     port: 7777
+    ## 指令报文的最大长度
+    ## @see: io.netty.handler.codec.DelimiterBasedFrameDecoder.maxFrameLength
+    max-instruction-frame-length: 1024
     loop-resources:
       select-count: 1
       worker-count: 10
@@ -62,6 +67,15 @@ jt808-server:
       prefer-native: true
   # TCP 服务配置(附件服务器)
   tcp-attachment-server:
+    enabled: true
+    host: 0.0.0.0
+    port: 7778
+    ## 指令报文的最大长度
+    ## @see: io.netty.handler.codec.DelimiterBasedFrameDecoder.maxFrameLength
+    max-instruction-frame-length: 1024
+    ## 苏标扩展码流消息 0x30316364 的最大长度(66560 = 1024 * 65)
+    ## @see io.netty.handler.codec.DelimiterBasedFrameDecoder.maxFrameLength
+    max-stream-frame-length: 66560
     loop-resources:
       select-count: 1
       worker-count: 10
@@ -69,9 +83,6 @@ jt808-server:
       daemon: true
       colocate: true
       prefer-native: true
-    enabled: true
-    host: 0.0.0.0
-    port: 7778
   # UDP 服务配置(指令服务器)
   udp-instruction-server:
     # 是否启动 UDP 服务

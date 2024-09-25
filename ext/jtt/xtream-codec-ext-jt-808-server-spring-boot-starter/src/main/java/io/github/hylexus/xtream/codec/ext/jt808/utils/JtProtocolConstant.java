@@ -16,17 +16,22 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.utils;
 
-import java.nio.charset.Charset;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
+import io.netty.util.AttributeKey;
+
+import java.time.format.DateTimeFormatter;
 
 /**
  * @author hylexus
  **/
 public interface JtProtocolConstant {
-    String DEFAULT_DATE_TIME_FORMAT = "yyMMddHHmmss";
-
-    Charset JT_808_STRING_ENCODING = Charset.forName("GBK");
     int PACKAGE_DELIMITER = 0x7E;
-    int DEFAULT_MAX_PACKAGE_SIZE = 1024;
+    int DEFAULT_MAX_INSTRUCTION_FRAME_LENGTH = 1024;
+    int DEFAULT_MAX_STREAM_FRAME_LENGTH = 1024 * 65;
+
+    AttributeKey<Jt808Session> NETTY_ATTR_KEY_SESSION = AttributeKey.newInstance("jt808Session-" + Jt808Session.class.getName());
+    String DEFAULT_DATE_TIME_FORMAT = "yyMMddHHmmss";
+    DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(JtProtocolConstant.DEFAULT_DATE_TIME_FORMAT);
 
     String BEAN_NAME_CHANNEL_INBOUND_HANDLER_ADAPTER = "Jt808DelimiterBasedFrameDecoder";
 

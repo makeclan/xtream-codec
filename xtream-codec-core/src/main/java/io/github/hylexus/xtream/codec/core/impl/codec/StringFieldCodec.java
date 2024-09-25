@@ -57,7 +57,7 @@ public class StringFieldCodec implements FieldCodec<String> {
                 + '}';
     }
 
-    private FieldCodec<String> initDelegateCodec(String charset) {
+    public static FieldCodec<String> initDelegateCodec(String charset) {
         if (charset.equalsIgnoreCase("bcd_8421")) {
             return new InternalBcdFieldCodec(charset);
         }

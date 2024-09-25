@@ -18,6 +18,7 @@ package io.github.hylexus.xtream.codec.ext.jt808.utils;
 
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808AttachmentServerTcpHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DispatcherXtreamHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.TcpXtreamHandlerAdapterBuilder;
 import io.netty.buffer.ByteBufAllocator;
 
@@ -25,13 +26,20 @@ import io.netty.buffer.ByteBufAllocator;
  * @author hylexus
  */
 public class Jt808AttachmentServerTcpHandlerAdapterBuilder extends TcpXtreamHandlerAdapterBuilder {
+    protected XtreamHandler attachementdispatcherXtreamHandler;
+
     public Jt808AttachmentServerTcpHandlerAdapterBuilder(ByteBufAllocator allocator) {
         super(allocator);
+    }
+
+    public Jt808AttachmentServerTcpHandlerAdapterBuilder setAttachmentDispatcherXtreamHandler(DispatcherXtreamHandler dispatcherXtreamHandler) {
+        this.attachementdispatcherXtreamHandler = dispatcherXtreamHandler;
+        return this;
     }
 
     @Override
     public Jt808AttachmentServerTcpHandlerAdapter build() {
         final XtreamHandler exceptionHandlingHandler = createRequestHandler();
-        return new Jt808AttachmentServerTcpHandlerAdapter(super.byteBufAllocator, super.xtreamExchangeCreator, exceptionHandlingHandler);
+        return new Jt808AttachmentServerTcpHandlerAdapter(super.byteBufAllocator, super.xtreamExchangeCreator, exceptionHandlingHandler, this.attachementdispatcherXtreamHandler);
     }
 }

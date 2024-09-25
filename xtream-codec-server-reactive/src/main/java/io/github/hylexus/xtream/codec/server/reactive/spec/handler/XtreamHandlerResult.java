@@ -55,4 +55,13 @@ public class XtreamHandlerResult {
     public XtreamDispatchExceptionHandler getExceptionHandler() {
         return exceptionHandler;
     }
+
+    @Override
+    public String toString() {
+        return "XtreamHandlerResult{"
+                + "handler=" + handler
+                + ", returnValue=" + returnValue
+                + ", returnType=" + returnType
+                + '}';
+    }
 }

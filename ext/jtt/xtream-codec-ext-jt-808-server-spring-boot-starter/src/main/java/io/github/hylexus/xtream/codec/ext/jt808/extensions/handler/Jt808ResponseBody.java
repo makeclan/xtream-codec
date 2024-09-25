@@ -46,7 +46,7 @@ public @interface Jt808ResponseBody {
     /**
      * @return 单个消息包的最大字节数, 超过该值会自动分包发送
      */
-    int maxPackageSize() default JtProtocolConstant.DEFAULT_MAX_PACKAGE_SIZE;
+    int maxPackageSize() default JtProtocolConstant.DEFAULT_MAX_INSTRUCTION_FRAME_LENGTH;
 
     /**
      * @return 消息头的消息体属性字段中保留的第15个二进制位

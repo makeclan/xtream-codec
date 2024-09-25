@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.annotation.JtExtension;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -69,7 +70,7 @@ public class BuiltinMessage67 {
     private long longitude;
 
     // offset[23,29) BCD[6] 日期时间
-    @Preset.JtStyle.BCD(length = 6)
+    @JtExtension.BcdDateTime
     private LocalDateTime datetime;
 
     // offset[29,31] WORD 车辆状态

@@ -29,6 +29,7 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandler
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMapping;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerResultHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamRequestExceptionHandler;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DispatcherXtreamHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.XtreamServerBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp.UdpNettyServerCustomizer;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp.UdpXtreamServer;
@@ -63,7 +64,10 @@ public class BuiltinJt808AttachmentServerUdpConfiguration {
             List<XtreamFilter> xtreamFilters,
             List<XtreamRequestExceptionHandler> exceptionHandlers) {
 
+        final DispatcherXtreamHandler dispatcherHandler = new DispatcherXtreamHandler(handlerMappings, handlerAdapters, handlerResultHandlers);
+
         return new Jt808AttachmentServerUdpHandlerAdapterBuilder(bufferFactoryHolder.getAllocator(), udpDatagramPackageSplitter)
+                .setAttachmentDispatcherHandler(dispatcherHandler)
                 .setXtreamExchangeCreator(exchangeCreator)
                 .addHandlerMappings(handlerMappings)
                 .addHandlerAdapters(handlerAdapters)

@@ -18,6 +18,7 @@ package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration.attachment;
 
 import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.DelimiterAndLengthFieldBasedByteToMessageDecoder;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808AttachmentServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt808.utils.BuiltinConfigurationUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.utils.Jt808AttachmentServerTcpHandlerAdapterBuilder;
@@ -28,14 +29,13 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandler
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMapping;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerResultHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamRequestExceptionHandler;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DispatcherXtreamHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.XtreamServerBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.TcpNettyServerCustomizer;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.TcpXtreamServer;
 import io.github.hylexus.xtream.codec.server.reactive.spec.resources.DefaultTcpXtreamNettyResourceFactory;
 import io.github.hylexus.xtream.codec.server.reactive.spec.resources.TcpXtreamNettyResourceFactory;
 import io.github.hylexus.xtream.codec.server.reactive.spec.resources.XtreamNettyResourceFactory;
-import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -63,7 +63,10 @@ public class BuiltinJt808AttachmentServerTcpConfiguration {
             List<XtreamFilter> xtreamFilters,
             List<XtreamRequestExceptionHandler> exceptionHandlers) {
 
+        final DispatcherXtreamHandler dispatcherHandler = new DispatcherXtreamHandler(handlerMappings, handlerAdapters, handlerResultHandlers);
+
         return new Jt808AttachmentServerTcpHandlerAdapterBuilder(bufferFactoryHolder.getAllocator())
+                .setAttachmentDispatcherXtreamHandler(dispatcherHandler)
                 .setXtreamExchangeCreator(exchangeCreator)
                 .addHandlerMappings(handlerMappings)
                 .addHandlerAdapters(handlerAdapters)
@@ -104,7 +107,9 @@ public class BuiltinJt808AttachmentServerTcpConfiguration {
                 // 分包
                 .addServerCustomizer(server -> server.doOnChannelInit((observer, channel, remoteAddress) -> {
                     // stripDelimiter=true
-                    final DelimiterBasedFrameDecoder frameDecoder = new DelimiterBasedFrameDecoder(DEFAULT_MAX_PACKAGE_SIZE, true, Unpooled.copiedBuffer(new byte[]{PACKAGE_DELIMITER}));
+                    final int maxFrameLength = serverProperties.getTcpAttachmentServer().getMaxStreamFrameLength();
+                    final int instructionFrameLength = serverProperties.getTcpAttachmentServer().getMaxInstructionFrameLength();
+                    final DelimiterAndLengthFieldBasedByteToMessageDecoder frameDecoder = new DelimiterAndLengthFieldBasedByteToMessageDecoder(instructionFrameLength, maxFrameLength);
                     channel.pipeline().addFirst(BEAN_NAME_CHANNEL_INBOUND_HANDLER_ADAPTER, frameDecoder);
                 }))
                 // loopResources

@@ -46,7 +46,7 @@ public class AttachmentFileServiceImpl implements AttachmentFileService {
     @Override
     public void writeDataFragment(Jt808Session session, BuiltinMessage30316364 body, BuiltinMessage1210 group) {
         final AlarmIdentifier alarmIdentifier = group.getAlarmIdentifier();
-        final LocalDateTime localDateTime = LocalDateTime.parse(alarmIdentifier.getTime(), DateTimeFormatter.ofPattern("yyMMddHHmmss"));
+        final LocalDateTime localDateTime = alarmIdentifier.getTime();
         // 这里就瞎写了一个路径  看你需求随便改
         final String filePath = appProps.getAttachmentServer().getTemporaryPath() + File.separator
                 + DateTimeFormatter.ofPattern("yyyyMMddHH").format(localDateTime) + File.separator

@@ -19,7 +19,6 @@ package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.AlarmIdentifier;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
@@ -34,10 +33,11 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+@Accessors(chain = true)
 public class BuiltinMessage1210 {
 
     // byte[0,7)
-    @Preset.JtStyle.Bytes(length = 7)
+    @Preset.JtStyle.Str(length = 7)
     private String terminalId;
 
     // byte[7,23)
@@ -63,7 +63,6 @@ public class BuiltinMessage1210 {
     @Getter
     @Setter
     @Accessors(chain = true)
-    @NoArgsConstructor
     public static class AttachmentItem {
         @Preset.JtStyle.Byte
         private short length;
@@ -76,5 +75,14 @@ public class BuiltinMessage1210 {
 
         // 这个属性不在报文里  由外部赋值
         private BuiltinMessage1210 group;
+
+        @Override
+        public String toString() {
+            return "AttachmentItem{"
+                    + "length=" + length
+                    + ", fileName='" + fileName + '\''
+                    + ", fileSize=" + fileSize
+                    + '}';
+        }
     }
 }

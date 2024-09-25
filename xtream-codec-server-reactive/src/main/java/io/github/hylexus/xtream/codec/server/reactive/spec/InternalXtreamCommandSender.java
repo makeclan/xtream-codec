@@ -24,7 +24,7 @@ import reactor.core.publisher.Mono;
 /**
  * @author hylexus
  */
-public interface IternalXtreamCommandSender<S extends XtreamSession> {
+public interface InternalXtreamCommandSender<S extends XtreamSession> {
 
     ByteBufAllocator bufferFactory();
 
