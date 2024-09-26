@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.core.impl.codec;
 
+import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.netty.buffer.ByteBuf;
 
 public class U16FieldCodecLittleEndian extends AbstractFieldCodec<Integer> {
@@ -23,13 +24,13 @@ public class U16FieldCodecLittleEndian extends AbstractFieldCodec<Integer> {
     }
 
     @Override
-    public Integer deserialize(DeserializeContext context, ByteBuf input, int length) {
+    public Integer deserialize(BeanPropertyMetadata propertyMetadata, DeserializeContext context, ByteBuf input, int length) {
         return input.readUnsignedShortLE();
     }
 
 
     @Override
-    protected void doSerialize(SerializeContext context, ByteBuf output, Integer value) {
+    protected void doSerialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, Integer value) {
         output.writeShortLE(value);
     }
 

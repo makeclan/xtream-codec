@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 
+import io.github.hylexus.xtream.codec.common.exception.XtreamWrappedRuntimeException;
 import io.github.hylexus.xtream.codec.core.annotation.OrderedComponent;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
@@ -65,7 +66,10 @@ public class ExceptionHandlingXtreamHandler implements XtreamHandler {
         }
 
         for (XtreamRequestExceptionHandler handler : this.exceptionHandlers) {
-            completion = completion.onErrorResume(ex -> handler.handleRequestException(exchange, ex));
+            completion = completion.onErrorResume(ex -> {
+                final Throwable cause = XtreamWrappedRuntimeException.unwrapIfNecessary(ex);
+                return handler.handleRequestException(exchange, cause);
+            });
         }
 
         return completion;

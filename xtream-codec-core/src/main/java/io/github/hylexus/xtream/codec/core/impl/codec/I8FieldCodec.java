@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.core.impl.codec;
 
+import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.netty.buffer.ByteBuf;
 
 public class I8FieldCodec extends AbstractFieldCodec<Byte> {
@@ -23,12 +24,12 @@ public class I8FieldCodec extends AbstractFieldCodec<Byte> {
     }
 
     @Override
-    public Byte deserialize(DeserializeContext context, ByteBuf input, int length) {
+    public Byte deserialize(BeanPropertyMetadata propertyMetadata, DeserializeContext context, ByteBuf input, int length) {
         return input.readByte();
     }
 
     @Override
-    protected void doSerialize(SerializeContext context, ByteBuf output, Byte value) {
+    protected void doSerialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, Byte value) {
         output.writeByte(value);
     }
 

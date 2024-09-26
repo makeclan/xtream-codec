@@ -59,7 +59,7 @@ public class DemoJt808Msg0100V2019 extends BaseJt808Msg {
      * <p>
      * 提示: 最后一个 String 类型的字段可以不指定长度: 意味着长度是后续所有的字节数
      *
-     * @see io.github.hylexus.xtream.codec.core.impl.codec.StringFieldCodec#deserialize(FieldCodec.DeserializeContext, ByteBuf, int)
+     * @see FieldCodec#deserialize(io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata, FieldCodec.DeserializeContext, ByteBuf, int)
      */
     // 1. 使用 SpEL 计算消息长度(上下文中的消息体总长度减去前面消费掉的字节数)
     // @Preset.RustStyle.str(charset = "gbk", lengthExpression = "msgBodyLength() - (1 + 30 + 30 +11 +2 +2)")

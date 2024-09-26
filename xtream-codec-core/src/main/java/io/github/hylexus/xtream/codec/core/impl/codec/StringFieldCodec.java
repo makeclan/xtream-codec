@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.core.impl.codec;
 
+import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.utils.BcdOps;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.netty.buffer.ByteBuf;
@@ -29,20 +30,20 @@ public class StringFieldCodec implements FieldCodec<String> {
 
     public StringFieldCodec(String charset) {
         this.charset = charset;
-        this.delegate = initDelegateCodec(charset);
+        this.delegate = createStringCodec(charset);
     }
 
     @Override
-    public String deserialize(DeserializeContext context, ByteBuf input, int length) {
+    public String deserialize(BeanPropertyMetadata propertyMetadata, DeserializeContext context, ByteBuf input, int length) {
         final int finalLength = length < 0
                 ? input.readableBytes() // all remaining
                 : length;
-        return delegate.deserialize(context, input, finalLength);
+        return delegate.deserialize(propertyMetadata, context, input, finalLength);
     }
 
     @Override
-    public void serialize(SerializeContext context, ByteBuf output, String value) {
-        delegate.serialize(context, output, value);
+    public void serialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, String value) {
+        delegate.serialize(propertyMetadata, context, output, value);
     }
 
     @Override
@@ -57,7 +58,7 @@ public class StringFieldCodec implements FieldCodec<String> {
                 + '}';
     }
 
-    public static FieldCodec<String> initDelegateCodec(String charset) {
+    public static FieldCodec<String> createStringCodec(String charset) {
         if (charset.equalsIgnoreCase("bcd_8421")) {
             return new InternalBcdFieldCodec(charset);
         }
@@ -74,12 +75,12 @@ public class StringFieldCodec implements FieldCodec<String> {
         }
 
         @Override
-        public String deserialize(DeserializeContext context, ByteBuf input, int length) {
+        public String deserialize(BeanPropertyMetadata propertyMetadata, DeserializeContext context, ByteBuf input, int length) {
             return input.readCharSequence(length, charset).toString();
         }
 
         @Override
-        protected void doSerialize(SerializeContext context, ByteBuf output, String value) {
+        protected void doSerialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, String value) {
             output.writeCharSequence(value, charset);
         }
     }
@@ -92,12 +93,12 @@ public class StringFieldCodec implements FieldCodec<String> {
         }
 
         @Override
-        public String deserialize(DeserializeContext context, ByteBuf input, int length) {
+        public String deserialize(BeanPropertyMetadata propertyMetadata, DeserializeContext context, ByteBuf input, int length) {
             return BcdOps.decodeBcd8421AsString(input, length);
         }
 
         @Override
-        protected void doSerialize(SerializeContext context, ByteBuf output, String value) {
+        protected void doSerialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, String value) {
             BcdOps.encodeBcd8421StringIntoByteBuf(value, output);
         }
 

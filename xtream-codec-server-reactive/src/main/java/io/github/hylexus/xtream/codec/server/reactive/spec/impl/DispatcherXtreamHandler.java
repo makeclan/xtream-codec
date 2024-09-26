@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 
 
+import io.github.hylexus.xtream.codec.common.exception.XtreamWrappedRuntimeException;
 import io.github.hylexus.xtream.codec.core.annotation.OrderedComponent;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
@@ -75,17 +76,22 @@ public class DispatcherXtreamHandler implements XtreamHandler {
         if (this.handlerAdapters != null) {
             for (XtreamHandlerAdapter adapter : this.handlerAdapters) {
                 if (adapter instanceof XtreamDispatchExceptionHandler exceptionHandler) {
-                    resultMono = resultMono.onErrorResume(ex2 -> exceptionHandler.handleError(exchange, ex2));
+                    resultMono = resultMono.onErrorResume(ex2 -> {
+                        final Throwable cause = XtreamWrappedRuntimeException.unwrapIfNecessary(ex2);
+                        return exceptionHandler.handleError(exchange, cause);
+                    });
                 }
             }
         }
         return resultMono.flatMap(result -> {
             Mono<Void> voidMono = handleResult(exchange, result, "Handler " + result.getHandler());
             if (result.getExceptionHandler() != null) {
-                voidMono = voidMono.onErrorResume(ex ->
-                        result.getExceptionHandler().handleError(exchange, ex).flatMap(result2 ->
-                                handleResult(exchange, result2, "Exception handler "
-                                        + result2.getHandler() + ", error=\"" + ex.getMessage() + "\"")));
+                voidMono = voidMono.onErrorResume(ex -> {
+                    final Throwable cause = XtreamWrappedRuntimeException.unwrapIfNecessary(ex);
+                    return result.getExceptionHandler().handleError(exchange, cause).flatMap(result2 ->
+                            handleResult(exchange, result2, "Exception handler "
+                                    + result2.getHandler() + ", error=\"" + cause.getMessage() + "\""));
+                });
             }
             return voidMono;
         });

@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.debug.codec.core.democustomannotation;
 
+import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.netty.buffer.ByteBuf;
 
@@ -28,14 +29,14 @@ public class MyDateTypeFieldCodec implements FieldCodec<LocalDate> {
     final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
     @Override
-    public LocalDate deserialize(DeserializeContext context, ByteBuf input, int length) {
+    public LocalDate deserialize(BeanPropertyMetadata propertyMetadata, DeserializeContext context, ByteBuf input, int length) {
         // yyyyMMdd
         final CharSequence dateString = input.readCharSequence(8, StandardCharsets.UTF_8);
         return LocalDate.parse(dateString, formatter);
     }
 
     @Override
-    public void serialize(SerializeContext context, ByteBuf output, LocalDate value) {
+    public void serialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, LocalDate value) {
         final String dateString = value.format(formatter);
         output.writeCharSequence(dateString, StandardCharsets.UTF_8);
     }

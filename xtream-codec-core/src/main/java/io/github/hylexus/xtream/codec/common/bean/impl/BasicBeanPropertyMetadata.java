@@ -23,7 +23,6 @@ import io.github.hylexus.xtream.codec.common.utils.XtreamTypes;
 import io.github.hylexus.xtream.codec.common.utils.XtreamUtils;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
-import io.github.hylexus.xtream.codec.core.impl.codec.StringFieldCodec;
 import io.netty.buffer.ByteBuf;
 import lombok.Setter;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -69,7 +68,7 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
     }
 
     /**
-     * @see StringFieldCodec#deserialize(FieldCodec.DeserializeContext, ByteBuf, int) StringFieldCodec#deserialize
+     * @see FieldCodec#deserialize(BeanPropertyMetadata, FieldCodec.DeserializeContext, ByteBuf, int) StringFieldCodec#deserialize
      * @see SequenceBeanPropertyMetadata#decodePropertyValue(FieldCodec.DeserializeContext, ByteBuf) SequenceBeanPropertyMetadata#decodePropertyValue
      * @see NestedBeanPropertyMetadata#decodePropertyValue(FieldCodec.DeserializeContext, ByteBuf) NestedBeanPropertyMetadata#decodePropertyValue
      * @see MapBeanPropertyMetadata#decodePropertyValue(FieldCodec.DeserializeContext, ByteBuf) MapBeanPropertyMetadata#decodePropertyValue
@@ -169,13 +168,13 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
 
     public Object decodePropertyValue(FieldCodec.DeserializeContext context, ByteBuf input) {
         final int length = this.fieldLengthExtractor.extractFieldLength(context, context.evaluationContext());
-        return fieldCodec().deserialize(context, input, length);
+        return fieldCodec().deserialize(this, context, input, length);
     }
 
     @Override
     public void encodePropertyValue(FieldCodec.SerializeContext context, ByteBuf output, Object value) {
         @SuppressWarnings("unchecked") final FieldCodec<Object> codec = (FieldCodec<Object>) fieldCodec();
-        codec.serialize(context, output, value);
+        codec.serialize(this, context, output, value);
     }
 
     @Override

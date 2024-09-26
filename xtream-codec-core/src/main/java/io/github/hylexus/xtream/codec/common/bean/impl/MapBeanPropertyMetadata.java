@@ -87,14 +87,14 @@ public class MapBeanPropertyMetadata extends BasicBeanPropertyMetadata {
         @SuppressWarnings({"unchecked"}) final Map<Object, Object> map = (Map<Object, Object>) this.containerInstanceFactory().create();
         while (slice.isReadable()) {
             // 1. key(i8,u8,i16,u16,i32,u32,i64,string)
-            final Object key = this.keyFieldCodec.deserialize(context, slice, this.xtreamFieldMapDescriptor.keyDescriptor().length());
+            final Object key = this.keyFieldCodec.deserialize(this, context, slice, this.xtreamFieldMapDescriptor.keyDescriptor().length());
             if (logger.isDebugEnabled()) {
                 logger.debug("MapKeyDecoder: key={}, keyFieldCodec={}", key, keyFieldCodec);
             }
 
             // 2. valueLength(int)
             final FieldCodec<?> valueLengthFieldCodec = this.getValueLengthFieldDecoder(key);
-            final int valueLength = ((Number) valueLengthFieldCodec.deserialize(context, slice, -1)).intValue();
+            final int valueLength = ((Number) valueLengthFieldCodec.deserialize(this, context, slice, -1)).intValue();
             if (logger.isDebugEnabled()) {
                 logger.debug("MapValueLengthDecoder: key={}, keyFieldCodec={}, length={}", key, keyFieldCodec, valueLength);
             }
@@ -104,7 +104,7 @@ public class MapBeanPropertyMetadata extends BasicBeanPropertyMetadata {
             if (logger.isDebugEnabled()) {
                 logger.debug("MapValueDecoder: key={}, valueFieldCodec={}", key, valueFieldCodec);
             }
-            final Object value = valueFieldCodec.deserialize(context, byteBuf, valueLength);
+            final Object value = valueFieldCodec.deserialize(this, context, byteBuf, valueLength);
             map.put(key, value);
         }
         return map;
@@ -118,7 +118,7 @@ public class MapBeanPropertyMetadata extends BasicBeanPropertyMetadata {
             for (final Map.Entry<Object, Object> entry : map.entrySet()) {
                 // 1. key(i8,u8,i16,u16,i32,u32,i64,string)
                 final Object key = entry.getKey();
-                this.keyFieldCodec.serialize(context, output, key);
+                this.keyFieldCodec.serialize(this, context, output, key);
 
                 if (logger.isDebugEnabled()) {
                     logger.debug("MapKeyEncoder: key={}, keyFieldCodec={}, key={}", key, keyFieldCodec, key);
@@ -130,7 +130,7 @@ public class MapBeanPropertyMetadata extends BasicBeanPropertyMetadata {
                 if (logger.isDebugEnabled()) {
                     logger.debug("MapValueEncoder: key={}, valueFieldCodec={}, data={}", key, valueFieldCodec, data);
                 }
-                valueFieldCodec.serialize(context, temp, data);
+                valueFieldCodec.serialize(this, context, temp, data);
 
                 // 2. valueLength(int)
                 final int valueLength = temp.readableBytes();
@@ -138,7 +138,7 @@ public class MapBeanPropertyMetadata extends BasicBeanPropertyMetadata {
                 if (logger.isDebugEnabled()) {
                     logger.debug("MapValueLengthEncoder: key={}, LengthFieldCodec={}, length={}", key, valueLengthFieldCodec, valueLength);
                 }
-                valueLengthFieldCodec.serialize(context, output, castType(valueLengthFieldCodec.underlyingJavaType(), valueLength));
+                valueLengthFieldCodec.serialize(this, context, output, castType(valueLengthFieldCodec.underlyingJavaType(), valueLength));
                 // 3. value(dynamic)
                 output.writeBytes(temp);
                 temp.clear();

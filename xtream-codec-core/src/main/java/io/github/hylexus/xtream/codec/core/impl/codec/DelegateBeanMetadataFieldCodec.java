@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.core.impl.codec;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanMetadata;
+import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.netty.buffer.ByteBuf;
 
@@ -39,12 +40,12 @@ public class DelegateBeanMetadataFieldCodec implements FieldCodec<Object> {
     }
 
     @Override
-    public Object deserialize(DeserializeContext context, ByteBuf input, int length) {
+    public Object deserialize(BeanPropertyMetadata propertyMetadata, DeserializeContext context, ByteBuf input, int length) {
         return context.entityDecoder().decode(beanMetadata, input);
     }
 
     @Override
-    public void serialize(SerializeContext context, ByteBuf output, Object instance) {
+    public void serialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, Object instance) {
         context.entityEncoder().encode(this.beanMetadata, instance, output);
     }
 }

@@ -16,15 +16,16 @@
 
 package io.github.hylexus.xtream.codec.core;
 
+import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.exception.NotYetImplementedException;
 import io.netty.buffer.ByteBuf;
 import org.springframework.expression.EvaluationContext;
 
 public interface FieldCodec<T> {
 
-    T deserialize(DeserializeContext context, ByteBuf input, int length);
+    T deserialize(BeanPropertyMetadata propertyMetadata, DeserializeContext context, ByteBuf input, int length);
 
-    void serialize(SerializeContext context, ByteBuf output, T value);
+    void serialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, T value);
 
     default Class<?> underlyingJavaType() {
         throw new NotYetImplementedException();
@@ -51,12 +52,12 @@ public interface FieldCodec<T> {
     class Placeholder implements FieldCodec<Object> {
 
         @Override
-        public Object deserialize(DeserializeContext context, ByteBuf input, int length) {
+        public Object deserialize(BeanPropertyMetadata propertyMetadata, DeserializeContext context, ByteBuf input, int length) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public void serialize(SerializeContext context, ByteBuf output, Object value) {
+        public void serialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, Object value) {
             throw new UnsupportedOperationException();
         }
     }
