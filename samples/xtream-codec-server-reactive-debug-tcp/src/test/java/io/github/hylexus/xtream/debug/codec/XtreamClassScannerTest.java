@@ -19,18 +19,21 @@ package io.github.hylexus.xtream.debug.codec;
 import io.github.hylexus.xtream.codec.common.utils.DefaultXtreamClassScanner;
 import io.github.hylexus.xtream.codec.common.utils.XtreamClassScanner;
 import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamRequestHandlerMapping;
+import io.github.hylexus.xtream.debug.codec.server.reactive.tcp.handler.DemoTcpXtreamHandler2;
+import io.github.hylexus.xtream.debug.codec.server.reactive.tcp.handler.MyTcpRequestRouter;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
 public class XtreamClassScannerTest {
 
-    // @Test
+    @Test
     void test() {
         final String pkg = "io.github.hylexus.xtream.debug.codec.server.reactive.tcp";
         // final Class<XtreamField> annotation = XtreamField.class;
         final Class<XtreamRequestHandlerMapping> annotation = XtreamRequestHandlerMapping.class;
         final XtreamClassScanner scanner = new DefaultXtreamClassScanner();
-        System.out.println("===".repeat(10));
         final Set<Class<?>> result = scanner.scan(
                 new String[]{pkg},
                 Set.of(
@@ -39,11 +42,11 @@ public class XtreamClassScannerTest {
                         XtreamClassScanner.ScanMode.FIELD_ANNOTATION
                 ),
                 annotation, classInfo -> {
-                    System.out.println(classInfo + " __--__" + classInfo.isAnnotation());
+                    // ...
                     return classInfo.getName().startsWith(pkg) && !classInfo.isInnerClass();
                 });
-        for (final Class<?> aClass : result) {
-            System.out.println(aClass);
-        }
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertTrue(result.contains(DemoTcpXtreamHandler2.class));
+        Assertions.assertTrue(result.contains(MyTcpRequestRouter.class));
     }
 }
