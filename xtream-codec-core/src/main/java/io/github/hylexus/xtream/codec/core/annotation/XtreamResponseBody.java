@@ -19,7 +19,15 @@ package io.github.hylexus.xtream.codec.core.annotation;
 import java.lang.annotation.*;
 
 /**
+ * 默认解析顺序:
+ * <ol>
+ *     <li>处理器类上的注解</li>
+ *     <li>处理器方法上的注解</li>
+ *     <li>处理器方法返回类型上的注解</li>
+ * </ol>
+ *
  * @author hylexus
+ * @see "io.github.hylexus.xtream.codec.server.reactive.spec.impl.XtreamResponseBodyHandlerResultHandler"
  */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

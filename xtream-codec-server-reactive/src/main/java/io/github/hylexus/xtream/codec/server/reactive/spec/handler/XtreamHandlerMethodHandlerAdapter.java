@@ -50,7 +50,8 @@ public class XtreamHandlerMethodHandlerAdapter implements XtreamHandlerAdapter {
         return this.resolveArguments(exchange, handlerMethod).flatMap(args -> {
             // ...
             return handlerMethod.invoke(handlerMethod.getContainerInstance(), args);
-        }).subscribeOn(handlerMethod.getScheduler());
+        }).publishOn(handlerMethod.getScheduler());
+        // .subscribeOn(handlerMethod.getScheduler());
     }
 
     private Mono<Object[]> resolveArguments(XtreamExchange exchange, XtreamHandlerMethod handlerMethod) {

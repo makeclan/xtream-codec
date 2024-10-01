@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -83,54 +84,48 @@ public class XtreamMethodParameter {
         }
     }
 
-    public Annotation[] getParameterAnnotations() {
-        if (this.parameterAnnotations == null) {
-            synchronized (this) {
-                if (this.parameterAnnotations == null) {
-                    if (this.index >= 0) {
-                        final Annotation[][] annotations = this.method.getParameterAnnotations();
-                        this.parameterAnnotations = annotations[this.index];
-                    } else {
-                        this.parameterAnnotations = new Annotation[0];
-                    }
-                }
-            }
-        }
-        return this.parameterAnnotations;
-    }
-
-    @SuppressWarnings("unchecked")
     public <A extends Annotation> Optional<A> getParameterAnnotation(Class<A> annotationType) {
-        // todo 优化
+        if (this.index < 0) {
+            throw new IllegalStateException("index >= 0");
+        }
         return Optional.ofNullable(AnnotatedElementUtils.getMergedAnnotation(this.method.getParameters()[this.index], annotationType));
-        // final Annotation[] annotations = this.getParameterAnnotations();
-        // for (Annotation ann : annotations) {
-        //     if (annotationType.isInstance(ann)) {
-        //         return Optional.of((A) ann);
-        //     }
-        // }
-        // return Optional.empty();
     }
 
     public boolean hasMethodAnnotation(Class<? extends Annotation> annotationType) {
-        // return this.method.isAnnotationPresent(annotationType);
-        // todo 优化
         return AnnotatedElementUtils.hasAnnotation(this.method, annotationType);
     }
 
+    public <A extends Annotation> A getTypeAnnotation(Class<A> annotationType) {
+        if (this.index == -1) {
+            return AnnotatedElementUtils.getMergedAnnotation(this.parameterType, annotationType);
+        } else {
+            return this.getParameterAnnotation(annotationType).orElse(null);
+        }
+    }
+
     public <A extends Annotation> A getMethodAnnotation(Class<A> annotationType) {
-        // return this.method.isAnnotationPresent(annotationType);
-        // todo 优化
         return AnnotatedElementUtils.getMergedAnnotation(this.method, annotationType);
     }
 
-    public boolean hasReturnTypeAnnotation(Class<? extends Annotation> annotationType) {
-        // todo 优化
-        return AnnotatedElementUtils.hasAnnotation(this.method.getAnnotatedReturnType(), annotationType);
+    /**
+     * 获取泛型类型上的注解
+     *
+     * @param offset 第几个泛型参数
+     */
+    public <A extends Annotation> A getGenericTypeAnnotation(int offset, Class<A> annotationType) {
+        if (this.genericType.isEmpty() || this.genericType.size() <= offset) {
+            return null;
+        }
+        final AnnotatedElement annotatedElement = (AnnotatedElement) this.genericType.get(offset);
+        return AnnotatedElementUtils.getMergedAnnotation(annotatedElement, annotationType);
     }
 
     public List<Type> getGenericType() {
         return genericType;
+    }
+
+    public boolean hasGenericType() {
+        return !this.genericType.isEmpty();
     }
 
     public Class<?> getParameterType() {

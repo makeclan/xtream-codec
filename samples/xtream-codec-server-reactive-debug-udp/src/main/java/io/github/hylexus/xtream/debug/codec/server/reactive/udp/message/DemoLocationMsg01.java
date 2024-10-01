@@ -26,6 +26,7 @@ import java.util.List;
 @Setter
 @Getter
 @ToString
+// @XtreamResponseBody
 public class DemoLocationMsg01 {
 
     // region 消息头

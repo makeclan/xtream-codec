@@ -101,8 +101,7 @@ public abstract class AbstractXtreamHandlerAdapterBuilder<C extends AbstractXtre
     }
 
     public C enableBuiltinHandlerResultHandlers(EntityCodec codec) {
-        final List<XtreamMessageWriter> writers = new XtreamMessageWriterRegistry(List.of(new XtreamResponseBodyMessageWriter(codec))).getWriters();
-        this.addHandlerResultHandler(new XtreamResponseBodyHandlerResultHandler(writers));
+        this.addHandlerResultHandler(new XtreamResponseBodyHandlerResultHandler(codec));
         this.addHandlerResultHandler(new LoggingXtreamHandlerResultHandler());
         return self();
     }

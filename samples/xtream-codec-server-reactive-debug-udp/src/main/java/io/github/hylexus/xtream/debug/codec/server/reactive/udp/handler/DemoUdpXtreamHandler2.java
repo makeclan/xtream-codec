@@ -32,12 +32,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 
+import static io.github.hylexus.xtream.codec.common.utils.XtreamAssertions.assertNotSame;
 import static io.github.hylexus.xtream.codec.common.utils.XtreamAssertions.assertSame;
 
 /**
  * @author hylexus
  */
 @XtreamRequestHandler
+// @XtreamResponseBody
 public class DemoUdpXtreamHandler2 {
 
     private static final Logger log = LoggerFactory.getLogger(DemoUdpXtreamHandler2.class);
@@ -53,13 +55,15 @@ public class DemoUdpXtreamHandler2 {
             @XtreamRequestBody DemoLocationMsg01 msg01,
             @XtreamRequestBody DemoLocationMsg02 msg02,
             @XtreamRequestBody ByteBuf msg03,
+            @XtreamRequestBody(bufferAsSlice = false) ByteBuf msg04,
             XtreamSession session,
             XtreamRequest request,
             DefaultXtreamRequest udpRequest,
             XtreamResponse response,
             DefaultXtreamResponse udpResponse) {
 
-        assertSame(exchange.request().payload(), msg03);
+        assertNotSame(exchange.request().payload(), msg03);
+        assertSame(exchange.request().payload(), msg04);
         assertSame(exchange.request(), request);
         assertSame(exchange.request(), udpRequest);
         assertSame(exchange.response(), response);

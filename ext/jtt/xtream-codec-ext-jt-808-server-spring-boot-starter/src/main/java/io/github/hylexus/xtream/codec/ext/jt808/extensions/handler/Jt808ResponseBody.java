@@ -25,9 +25,15 @@ import java.lang.annotation.*;
 
 
 /**
+ * 默认解析顺序:
+ * <ol>
+ *     <li>处理器方法上的注解</li>
+ *     <li>处理器方法返回类型上的注解</li>
+ * </ol>
+ *
  * @author hylexus
+ * @see Jt808ResponseBodyHandlerResultHandler
  */
-// todo 支持在实体类上标记?
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

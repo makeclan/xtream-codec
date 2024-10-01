@@ -29,7 +29,7 @@ import java.lang.annotation.*;
 public @interface XtreamRequestBody {
 
     /**
-     * 仅仅适用于 {@link ByteBuf} 类型
+     * 该属性仅仅用于 {@link ByteBuf} 类型
      *
      * @return {@code true}: 如果目标对象是 {@link ByteBuf} 类型; 返回 {@link ByteBuf#slice()} 而不是 {@link ByteBuf} 本身
      */
