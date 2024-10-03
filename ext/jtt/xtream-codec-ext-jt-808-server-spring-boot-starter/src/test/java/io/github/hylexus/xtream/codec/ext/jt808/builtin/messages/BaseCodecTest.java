@@ -26,15 +26,18 @@ import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808BytesProc
 import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808RequestCombiner;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808RequestDecoder;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808ResponseEncoder;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.*;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import reactor.netty.NettyInbound;
 
 import java.time.Duration;
+import java.util.Objects;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -86,6 +89,11 @@ public class BaseCodecTest {
                 Assertions.assertEquals(0, jt808Request.payload().refCnt());
             }
         }
+    }
+
+    protected String encode(Object instance, Jt808ProtocolVersion version, String terminalId) {
+        final Jt808ResponseBody annotation = AnnotatedElementUtils.findMergedAnnotation(instance.getClass(), Jt808ResponseBody.class);
+        return this.encode(instance, version, terminalId, Objects.requireNonNull(annotation).messageId());
     }
 
     protected String encode(Object instance, Jt808ProtocolVersion version, String terminalId, int messageId) {

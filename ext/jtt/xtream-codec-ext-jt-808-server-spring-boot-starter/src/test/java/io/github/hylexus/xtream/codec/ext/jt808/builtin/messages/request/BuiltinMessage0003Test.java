@@ -21,26 +21,25 @@ import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
-class BuiltinMessage0004Test extends BaseCodecTest {
+class BuiltinMessage0003Test extends BaseCodecTest {
 
     @Test
     void testEncode() {
-        final BuiltinMessage0004 entity = new BuiltinMessage0004();
+        final BuiltinMessage0003 entity = new BuiltinMessage0003();
 
-        final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2019, terminalId2019, 0x0004);
-        assertEquals("7e0004400001000000000139123443290000317e", hex);
+        final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2019, terminalId2019, 0x0003);
+        assertEquals("7e0003400001000000000139123443290000367e", hex);
     }
 
     @Test
     void testDecode() {
-        final String hex = "000440000100000000013912344329000031";
+        final String hex = "000340000100000000013912344329000036";
         final Jt808Request jt808Request = decodeAsRequest(hex);
-        final BuiltinMessage0004 entity = decodeAsEntity(BuiltinMessage0004.class, hex);
+        final BuiltinMessage0003 entity = decodeAsEntity(BuiltinMessage0003.class, hex);
         assertNotNull(entity);
-        assertEquals(0x0004, jt808Request.header().messageId());
+        assertEquals(0x0003, jt808Request.header().messageId());
     }
 
 }

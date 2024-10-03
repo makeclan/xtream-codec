@@ -14,30 +14,28 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
+package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
-import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.experimental.Accessors;
 
-import java.time.LocalDateTime;
+public class WordWrapper {
 
-/**
- * 查询服务器时间应答 0x8004
- *
- * @author hylexus
- */
-@Getter
-@Setter
-@ToString
-@Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8004)
-public class BuiltinMessage8004 {
+    @Preset.JtStyle.Word
+    private int value;
 
-    @Preset.JtStyle.BcdDateTime
-    private LocalDateTime serverSideDateTime;
+    public WordWrapper() {
+    }
 
+    public WordWrapper(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public WordWrapper setValue(int value) {
+        this.value = value;
+        return this;
+    }
 }

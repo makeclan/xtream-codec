@@ -57,6 +57,6 @@ public class BuiltinMessage0100V2013 {
     private short color;
 
     // 7. [25,n)   String    车辆标识
-    @Preset.JtStyle.Str(lengthExpression = "#ctx.msgBodyLength() - 25")
+    @Preset.JtStyle.Str
     private String carIdentifier;
 }

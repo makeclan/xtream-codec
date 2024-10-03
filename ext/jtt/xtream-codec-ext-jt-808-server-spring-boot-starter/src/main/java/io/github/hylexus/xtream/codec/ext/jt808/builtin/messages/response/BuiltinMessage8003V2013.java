@@ -17,16 +17,17 @@
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.WordWrapper;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 /**
- * 查询服务器时间应答 0x8004
+ * 服务器补传分包请求 0x8003
  *
  * @author hylexus
  */
@@ -34,10 +35,19 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8004)
-public class BuiltinMessage8004 {
+@Jt808ResponseBody(messageId = 0x8003)
+public class BuiltinMessage8003V2013 {
 
-    @Preset.JtStyle.BcdDateTime
-    private LocalDateTime serverSideDateTime;
+    // byte[0,2)    原始消息流水号
+    @Preset.JtStyle.Word
+    private int originalMessageFlowId;
+
+    // byte[2,4)    重传包总数
+    @Preset.JtStyle.Byte
+    private short packageCount;
+
+    // byte[4, 2n)    重传包 ID 列表
+    @Preset.JtStyle.List
+    private List<WordWrapper> packageIdList;
 
 }
