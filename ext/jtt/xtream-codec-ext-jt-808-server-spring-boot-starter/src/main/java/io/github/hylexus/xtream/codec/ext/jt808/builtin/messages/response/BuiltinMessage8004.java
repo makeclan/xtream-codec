@@ -22,6 +22,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.time.LocalDateTime;
+
 /**
  * 查询服务器时间应答 0x8004
  *
@@ -33,7 +35,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class BuiltinMessage8004 {
 
-    @Preset.JtStyle.BCD(length = 6)
-    private String serverSideDateTime;
+    @Preset.JtStyle.BcdDateTime
+    private LocalDateTime serverSideDateTime;
 
 }

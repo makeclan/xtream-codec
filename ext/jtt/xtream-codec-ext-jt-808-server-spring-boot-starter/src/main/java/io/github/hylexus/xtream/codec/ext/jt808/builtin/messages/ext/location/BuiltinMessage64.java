@@ -89,7 +89,7 @@ public class BuiltinMessage64 {
     private long longitude;
 
     // offset[23,29) BCD[6] 日期时间
-    @Preset.JtStyle.BCD(length = 6)
+    @Preset.JtStyle.Bcd(length = 6)
     private String datetime;
 
     // offset[29,31] WORD 车辆状态

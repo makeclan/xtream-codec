@@ -17,7 +17,6 @@
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
-import io.github.hylexus.xtream.codec.ext.jt808.extensions.annotation.JtExtension;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -36,7 +35,7 @@ public class AlarmIdentifier {
     private String terminalId;
 
     // 时间   BCD[6]  YY-MM-DD-hh-mm-ss （GMT+8时间）
-    @JtExtension.BcdDateTime
+    @Preset.JtStyle.BcdDateTime
     // 或者
     // @XtreamDateTimeField(pattern = "yyMMddHHmmss", length = 6, charset = "bcd_8421")
     private LocalDateTime time;

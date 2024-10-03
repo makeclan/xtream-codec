@@ -43,7 +43,7 @@ public class JtStyleDebugEntity02ForEncode implements DebugEntity02ForJunitPurpo
     private byte protocolVersion;
 
     // byte[5-15)    终端手机号或设备ID bcd[10]
-    @Preset.JtStyle.BCD
+    @Preset.JtStyle.Bcd
     private String terminalId;
 
     // byte[15-17)    消息流水号 word(16)
@@ -85,7 +85,7 @@ public class JtStyleDebugEntity02ForEncode implements DebugEntity02ForJunitPurpo
     private int direction;
 
     // 时间  BCD[6] yyMMddHHmmss
-    @Preset.JtStyle.BCD
+    @Preset.JtStyle.Bcd
     private String time;
 
     @Preset.JtStyle.List

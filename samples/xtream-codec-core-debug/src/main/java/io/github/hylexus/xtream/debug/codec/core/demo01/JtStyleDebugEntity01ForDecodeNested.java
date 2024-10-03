@@ -86,7 +86,7 @@ public class JtStyleDebugEntity01ForDecodeNested {
         private String birthday;
 
         // 手机号 BCD_8421[6] "GBK"
-        @Preset.JtStyle.BCD(length = 6)
+        @Preset.JtStyle.Bcd(length = 6)
         private String phoneNumber;
 
         // 年龄 无符号数 2字节

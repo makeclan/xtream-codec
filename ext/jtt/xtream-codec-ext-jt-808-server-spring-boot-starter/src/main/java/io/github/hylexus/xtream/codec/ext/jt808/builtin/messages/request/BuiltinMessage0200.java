@@ -69,7 +69,7 @@ public class BuiltinMessage0200 {
     private int direction;
 
     // 时间  BCD[6] yyMMddHHmmss
-    @Preset.JtStyle.BCD(length = 6)
+    @Preset.JtStyle.Bcd(length = 6)
     private String time;
 
     // 长度：消息体长度减去前面的 28 字节

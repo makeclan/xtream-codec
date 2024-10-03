@@ -70,7 +70,7 @@ public class JtStyleDebugEntity01ForDecode implements DebugEntity01ForJunitPurpo
     private String birthday;
 
     // 手机号 BCD_8421[6]
-    @Preset.JtStyle.BCD(length = 6)
+    @Preset.JtStyle.Bcd(length = 6)
     private String phoneNumber;
 
     // 年龄 无符号数 2字节

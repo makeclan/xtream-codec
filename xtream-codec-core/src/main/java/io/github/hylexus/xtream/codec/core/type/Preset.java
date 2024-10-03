@@ -18,6 +18,7 @@ package io.github.hylexus.xtream.codec.core.type;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.core.ContainerInstanceFactory;
+import io.github.hylexus.xtream.codec.core.annotation.XtreamDateTimeField;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
 import org.springframework.core.annotation.AliasFor;
 
@@ -312,12 +313,11 @@ public @interface Preset {
             String condition() default "";
         }
 
-        @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, charset = "bcd_8421")
-        @interface BCD {
+        @interface Bcd {
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
 
@@ -328,6 +328,24 @@ public @interface Preset {
             String lengthExpression() default "";
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
+            String condition() default "";
+        }
+
+        @Target({ElementType.FIELD, ElementType.METHOD})
+        @Retention(RetentionPolicy.RUNTIME)
+        @Documented
+        @XtreamDateTimeField(pattern = "yyMMddHHmmss", charset = "bcd_8421")
+        @interface BcdDateTime {
+            @AliasFor(annotation = XtreamDateTimeField.class, attribute = "pattern")
+            String pattern() default "yyMMddHHmmss";
+
+            @AliasFor(annotation = XtreamDateTimeField.class, attribute = "length")
+            int length() default 6;
+
+            @AliasFor(annotation = XtreamDateTimeField.class, attribute = "order")
+            int order() default -1;
+
+            @AliasFor(annotation = XtreamDateTimeField.class, attribute = "condition")
             String condition() default "";
         }
 
