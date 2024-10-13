@@ -91,6 +91,10 @@ public interface ByteArrayContainer extends BytesContainer {
         return ofString(string, StandardCharsets.UTF_8);
     }
 
+    static ByteArrayContainer ofStringGbk(String string) {
+        return ofString(string, Charset.forName("GBK"));
+    }
+
     byte[] payload();
 
     @Override

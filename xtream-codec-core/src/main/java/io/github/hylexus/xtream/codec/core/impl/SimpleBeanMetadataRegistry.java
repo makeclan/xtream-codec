@@ -26,7 +26,9 @@ import io.github.hylexus.xtream.codec.common.bean.impl.SequenceBeanPropertyMetad
 import io.github.hylexus.xtream.codec.core.BeanMetadataRegistry;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.github.hylexus.xtream.codec.core.FieldCodecRegistry;
+import io.github.hylexus.xtream.codec.core.XtreamCacheableClassPredicate;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
+import io.github.hylexus.xtream.codec.core.impl.codec.RuntimeTypeFieldCodec;
 import io.github.hylexus.xtream.codec.core.utils.BeanUtils;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 
@@ -42,11 +44,18 @@ import java.util.function.Function;
 
 // todo 重构
 public class SimpleBeanMetadataRegistry implements BeanMetadataRegistry {
-    private final Map<Class<?>, BeanMetadata> cache = new HashMap<>();
-    private final FieldCodecRegistry fieldCodecRegistry;
+    protected final Map<Class<?>, BeanMetadata> cache = new HashMap<>();
+    protected final FieldCodecRegistry fieldCodecRegistry;
+    protected final XtreamCacheableClassPredicate cacheableClassPredicate;
 
-    public SimpleBeanMetadataRegistry() {
-        this.fieldCodecRegistry = new DefaultFieldCodecRegistry();
+    public SimpleBeanMetadataRegistry(FieldCodecRegistry fieldCodecRegistry, XtreamCacheableClassPredicate cacheableClassPredicate) {
+        this.fieldCodecRegistry = fieldCodecRegistry;
+        this.cacheableClassPredicate = cacheableClassPredicate;
+    }
+
+    @Override
+    public FieldCodecRegistry getFieldCodecRegistry() {
+        return fieldCodecRegistry;
     }
 
     @Override
@@ -56,6 +65,10 @@ public class SimpleBeanMetadataRegistry implements BeanMetadataRegistry {
 
     @Override
     public BeanMetadata getBeanMetadata(Class<?> beanClass, Function<PropertyDescriptor, BeanPropertyMetadata> creator) {
+        if (!this.cacheableClassPredicate.test(beanClass)) {
+            return this.doGetMetadata(beanClass, creator);
+        }
+
         BeanMetadata result = cache.get(beanClass);
         if (result != null) {
             return result;
@@ -65,7 +78,7 @@ public class SimpleBeanMetadataRegistry implements BeanMetadataRegistry {
             if ((result = cache.get(beanClass)) != null) {
                 return result;
             }
-            result = doGetMetadata(beanClass, creator);
+            result = this.doGetMetadata(beanClass, creator);
             cache.put(beanClass, result);
             return result;
         }
@@ -87,14 +100,14 @@ public class SimpleBeanMetadataRegistry implements BeanMetadataRegistry {
     }
 
     public BeanMetadata doGetMetadata(Class<?> beanClass, Function<PropertyDescriptor, BeanPropertyMetadata> creator) {
-        final BeanInfo beanInfo = BeanUtils.getBeanInfo(beanClass, field -> AnnotatedElementUtils.findMergedAnnotation(field, XtreamField.class) != null);
+        final BeanInfo beanInfo = BeanUtils.getBeanInfo(beanClass, this.cacheableClassPredicate, field -> AnnotatedElementUtils.findMergedAnnotation(field, XtreamField.class) != null);
         final BeanDescriptor beanDescriptor = beanInfo.getBeanDescriptor();
         final ArrayList<BeanPropertyMetadata> pdList = new ArrayList<>();
         for (final PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
             final BeanPropertyMetadata basicPropertyMetadata = creator.apply(pd);
             if (basicPropertyMetadata.dataType() == BeanPropertyMetadata.FiledDataType.basic) {
                 pdList.add(basicPropertyMetadata);
-            } else if (basicPropertyMetadata.dataType() == BeanPropertyMetadata.FiledDataType.nested) {
+            } else if (basicPropertyMetadata.dataType() == BeanPropertyMetadata.FiledDataType.struct) {
                 final BeanMetadata nestedMetadata = doGetMetadata(pd.getPropertyType(), creator);
                 final NestedBeanPropertyMetadata metadata = new NestedBeanPropertyMetadata(nestedMetadata, basicPropertyMetadata, null);
                 pdList.add(metadata);
@@ -107,6 +120,8 @@ public class SimpleBeanMetadataRegistry implements BeanMetadataRegistry {
             } else if (basicPropertyMetadata.dataType() == BeanPropertyMetadata.FiledDataType.map) {
                 final MapBeanPropertyMetadata mapMedata = new MapBeanPropertyMetadata(basicPropertyMetadata, fieldCodecRegistry, this);
                 pdList.add(mapMedata);
+            } else if (basicPropertyMetadata.dataType() == BeanPropertyMetadata.FiledDataType.dynamic) {
+                pdList.add(basicPropertyMetadata);
             } else {
                 throw new IllegalStateException("Cannot determine dataType for " + basicPropertyMetadata.field());
             }
@@ -135,7 +150,8 @@ public class SimpleBeanMetadataRegistry implements BeanMetadataRegistry {
         return this.fieldCodecRegistry.getFieldCodec(metadata).orElseGet(() -> {
             // ...
             return switch (metadata.dataType()) {
-                case nested, sequence, map -> null;
+                case struct, sequence, map -> null;
+                case dynamic -> RuntimeTypeFieldCodec.INSTANCE;
                 default -> throw new IllegalStateException("Cannot determine FieldCodec for Field [" + metadata.field() + "]");
             };
         });

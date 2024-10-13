@@ -19,6 +19,8 @@ package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages;
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.core.EntityCodec;
+import io.github.hylexus.xtream.codec.core.XtreamCacheableClassPredicate;
+import io.github.hylexus.xtream.codec.core.impl.DefaultFieldCodecRegistry;
 import io.github.hylexus.xtream.codec.core.impl.SimpleBeanMetadataRegistry;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808ResponseEncoder;
@@ -53,7 +55,10 @@ public class BaseCodecTest {
     ByteBufAllocator allocator = ByteBufAllocator.DEFAULT;
     Jt808RequestDecoder decoder = new DefaultJt808RequestDecoder(new DefaultJt808BytesProcessor(allocator), new Jt808MessageEncryptionHandler.NoOps(), new DefaultJt808RequestCombiner(allocator, 100, Duration.ofSeconds(100)));
     NettyInbound nettyInbound;
-    protected EntityCodec entityCodec = new EntityCodec(new SimpleBeanMetadataRegistry());
+    protected EntityCodec entityCodec = new EntityCodec(new SimpleBeanMetadataRegistry(
+            new DefaultFieldCodecRegistry(),
+            new XtreamCacheableClassPredicate.Default()
+    ));
     protected Jt808ResponseEncoder responseEncoder;
 
     @BeforeEach

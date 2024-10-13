@@ -21,7 +21,6 @@ import io.github.hylexus.xtream.codec.common.utils.XtreamByteReader;
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.core.BeanMetadataRegistry;
 import io.github.hylexus.xtream.codec.core.EntityDecoder;
-import io.github.hylexus.xtream.codec.core.impl.SimpleBeanMetadataRegistry;
 import io.github.hylexus.xtream.debug.codec.core.demo04.spec.BaseJt808Msg;
 import io.github.hylexus.xtream.debug.codec.core.demo04.spec.Jt808MsgHeader;
 import io.github.hylexus.xtream.debug.codec.core.demo04.spec.Jt808ProtocolVersion;
@@ -41,11 +40,8 @@ public class SimpleSubPackageEntityDecoder extends EntityDecoder {
     private final EntityDecoder delegateDecoder;
     protected final ByteBufAllocator allocator = ByteBufAllocator.DEFAULT;
 
-    public SimpleSubPackageEntityDecoder() {
-        this(new SimpleBeanMetadataRegistry());
-    }
-
     public SimpleSubPackageEntityDecoder(BeanMetadataRegistry beanMetadataRegistry) {
+        super(beanMetadataRegistry);
         this.delegateDecoder = new EntityDecoder(beanMetadataRegistry);
         this.cache = new SimpleCache();
     }

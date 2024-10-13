@@ -88,7 +88,7 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
                 .orElseGet(() -> {
                     final FiledDataType filedDataType = XtreamTypes.detectFieldDataType(this.rawClass());
                     return switch (filedDataType) {
-                        case sequence, nested, map -> new FieldLengthExtractor.ConstantFieldLengthExtractor(-2);
+                        case sequence, struct, map -> new FieldLengthExtractor.ConstantFieldLengthExtractor(-2);
                         case basic -> {
                             // String 类型: 没指定长度 ==> 读取剩余所有字节
                             if (this.rawClass() == String.class) {

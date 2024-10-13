@@ -197,8 +197,28 @@ public @interface Preset {
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
-        @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.nested)
+        @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.struct)
         @interface struct {
+
+            @AliasFor(annotation = XtreamField.class, attribute = "order")
+            int order() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "length")
+            int length() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "lengthExpression")
+            String lengthExpression() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "condition")
+            String condition() default "";
+        }
+
+        @SuppressWarnings("checkstyle:TypeName")
+        @Target({ElementType.FIELD})
+        @Retention(RetentionPolicy.RUNTIME)
+        @Documented
+        @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.dynamic)
+        @interface dyn {
 
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
@@ -404,8 +424,26 @@ public @interface Preset {
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
-        @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.nested)
+        @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.struct)
         @interface Object {
+            @AliasFor(annotation = XtreamField.class, attribute = "order")
+            int order() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "length")
+            int length() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "lengthExpression")
+            String lengthExpression() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "condition")
+            String condition() default "";
+        }
+
+        @Target({ElementType.FIELD})
+        @Retention(RetentionPolicy.RUNTIME)
+        @Documented
+        @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.dynamic)
+        @interface RuntimeType {
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
 

@@ -31,7 +31,7 @@ import lombok.ToString;
 public class RawStyleDebugEntity01ForDecodeNested {
 
     // 整个 Header 封装到一个实体类中
-    @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.nested)
+    @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.struct)
     private Header header;
 
     // 消息体长度 无符号数 2字节
@@ -39,7 +39,7 @@ public class RawStyleDebugEntity01ForDecodeNested {
     private int msgBodyLength;
 
     // 整个 Body 封装到一个实体类中
-    @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.nested)
+    @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.struct)
     private Body body;
 
     // 下面是 Header 和 Body 实体类的声明

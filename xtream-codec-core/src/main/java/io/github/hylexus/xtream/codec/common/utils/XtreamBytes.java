@@ -20,6 +20,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.ReferenceCounted;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -167,5 +168,38 @@ public class XtreamBytes {
     public static ByteBuf writeBcd(ByteBuf byteBuf, String value) {
         BcdOps.encodeBcd8421StringIntoByteBuf(value, byteBuf);
         return byteBuf;
+    }
+
+    /**
+     * 给 {@code input} 末尾填充 {@code placement} 直到长度为 {@code maxLength}
+     *
+     * @param input     待填充的字节数组
+     * @param maxLength 填充后的长度
+     * @param placement 要填充的字节
+     * @return 填充后的字节数组
+     */
+    public static byte[] appendSuffixIfNecessary(byte[] input, int maxLength, byte placement) {
+        if (input.length >= maxLength) {
+            return input;
+        }
+        final byte[] newBytes = new byte[maxLength];
+        System.arraycopy(input, 0, newBytes, 0, input.length);
+        Arrays.fill(newBytes, input.length, maxLength, placement);
+        return newBytes;
+    }
+
+    /**
+     * 移除 {@code input} 末尾的 {@code b}
+     *
+     * @param input 待处理的字符串
+     * @param b     要移除的默认字节
+     */
+    public static String trimTailing(String input, byte b) {
+        final byte[] bytes = input.getBytes();
+        int i = bytes.length - 1;
+        while (i >= 0 && bytes[i] == b) {
+            i--;
+        }
+        return input.substring(0, i + 1);
     }
 }

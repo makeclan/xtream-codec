@@ -17,7 +17,12 @@
 package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration;
 
 import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
+import io.github.hylexus.xtream.codec.core.BeanMetadataRegistry;
 import io.github.hylexus.xtream.codec.core.EntityCodec;
+import io.github.hylexus.xtream.codec.core.FieldCodecRegistry;
+import io.github.hylexus.xtream.codec.core.XtreamCacheableClassPredicate;
+import io.github.hylexus.xtream.codec.core.impl.DefaultFieldCodecRegistry;
+import io.github.hylexus.xtream.codec.core.impl.SimpleBeanMetadataRegistry;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.listener.XtreamExtJt808ServerStartupListener;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.*;
@@ -47,14 +52,33 @@ import org.springframework.context.annotation.Import;
 public class XtreamExtJt808ServerAutoConfiguration {
 
     @Bean
+    @ConditionalOnMissingBean
     BufferFactoryHolder bufferFactoryHolder() {
         return new BufferFactoryHolder(ByteBufAllocator.DEFAULT);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    EntityCodec entityCodec() {
-        return EntityCodec.DEFAULT;
+    FieldCodecRegistry fieldCodecRegistry() {
+        return new DefaultFieldCodecRegistry();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    XtreamCacheableClassPredicate xtreamCacheableClassPredicate() {
+        return new XtreamCacheableClassPredicate.Default();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    BeanMetadataRegistry beanMetadataRegistry(FieldCodecRegistry fieldCodecRegistry, XtreamCacheableClassPredicate cacheableClassPredicate) {
+        return new SimpleBeanMetadataRegistry(fieldCodecRegistry, cacheableClassPredicate);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    EntityCodec entityCodec(BeanMetadataRegistry registry) {
+        return new EntityCodec(registry);
     }
 
     @Bean

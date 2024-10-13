@@ -51,7 +51,7 @@ class DebugEntity02Test extends BaseEntityCodecTest {
 
     @BeforeEach
     void setUp() {
-        this.entityCodec = new EntityCodec();
+        this.entityCodec = EntityCodec.DEFAULT;
 
         // init-1
         this.resetEntityBasicProperties(this.rustStyleSourceEntity);

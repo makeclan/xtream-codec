@@ -16,17 +16,19 @@
 
 package io.github.hylexus.xtream.codec.core;
 
+import io.github.hylexus.xtream.codec.core.impl.DefaultFieldCodecRegistry;
 import io.github.hylexus.xtream.codec.core.impl.SimpleBeanMetadataRegistry;
 import io.netty.buffer.ByteBuf;
 
 public class EntityCodec {
     private final EntityEncoder entityEncoder;
     private final EntityDecoder entityDecoder;
-    public static EntityCodec DEFAULT = new EntityCodec();
-
-    public EntityCodec() {
-        this(new SimpleBeanMetadataRegistry());
-    }
+    public static EntityCodec DEFAULT = new EntityCodec(
+            new SimpleBeanMetadataRegistry(
+                    new DefaultFieldCodecRegistry(),
+                    new XtreamCacheableClassPredicate.Default()
+            )
+    );
 
     public EntityCodec(BeanMetadataRegistry beanMetadataRegistry) {
         this.entityEncoder = new EntityEncoder(beanMetadataRegistry);

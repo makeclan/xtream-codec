@@ -24,15 +24,6 @@ public final class JtProtocolUtils {
 
     public static final byte[] ATTACHMENT_REQUEST_PREFIX = {0x30, 0x31, 0x63, 0x64};
 
-    public static String trimTailing(String str, byte b) {
-        final byte[] bytes = str.getBytes();
-        int i = bytes.length - 1;
-        while (i >= 0 && bytes[i] == b) {
-            i--;
-        }
-        return str.substring(0, i + 1);
-    }
-
     public static boolean isAttachmentRequest(ByteBuf originalPayload) {
         if (originalPayload.readableBytes() < ATTACHMENT_REQUEST_PREFIX.length) {
             return false;

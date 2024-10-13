@@ -29,7 +29,7 @@ import java.time.LocalDate;
 
 public class CustomAnnotationTest {
 
-    final EntityCodec entityCodec = new EntityCodec();
+    final EntityCodec entityCodec = EntityCodec.DEFAULT;
 
     @Test
     void testEncode() {

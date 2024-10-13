@@ -27,4 +27,7 @@ public interface BeanMetadataRegistry {
     BeanMetadata getBeanMetadata(Class<?> beanClass);
 
     BeanMetadata getBeanMetadata(Class<?> beanClass, Function<PropertyDescriptor, BeanPropertyMetadata> creator);
+
+    FieldCodecRegistry getFieldCodecRegistry();
+
 }

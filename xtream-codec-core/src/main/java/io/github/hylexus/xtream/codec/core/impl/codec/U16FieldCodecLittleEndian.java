@@ -20,7 +20,9 @@ import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.netty.buffer.ByteBuf;
 
 public class U16FieldCodecLittleEndian extends AbstractFieldCodec<Integer> {
-    public U16FieldCodecLittleEndian() {
+    public static final U16FieldCodecLittleEndian INSTANCE = new U16FieldCodecLittleEndian();
+
+    private U16FieldCodecLittleEndian() {
     }
 
     @Override

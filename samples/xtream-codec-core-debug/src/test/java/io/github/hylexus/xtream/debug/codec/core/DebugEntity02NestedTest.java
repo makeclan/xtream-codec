@@ -38,7 +38,7 @@ class DebugEntity02NestedTest extends BaseEntityCodecTest {
 
     @BeforeEach
     void setUp() {
-        this.entityCodec = new EntityCodec();
+        this.entityCodec = EntityCodec.DEFAULT;
         this.byteBufAllocator = ByteBufAllocator.DEFAULT;
 
         // init-1

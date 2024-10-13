@@ -14,4 +14,6 @@ dependencies {
     api("org.slf4j:slf4j-api")
     api("io.github.classgraph:classgraph")
 
+    testImplementation("org.mockito:mockito-core")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

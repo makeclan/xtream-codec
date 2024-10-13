@@ -21,7 +21,9 @@ import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.netty.buffer.ByteBuf;
 
 public class ByteArrayFieldCodec extends AbstractFieldCodec<byte[]> {
-    public ByteArrayFieldCodec() {
+    public static ByteArrayFieldCodec INSTANCE = new ByteArrayFieldCodec();
+
+    private ByteArrayFieldCodec() {
     }
 
     @Override

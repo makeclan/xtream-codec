@@ -20,7 +20,9 @@ import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.netty.buffer.ByteBuf;
 
 public class F64FieldCodec extends AbstractFieldCodec<Double> {
-    public F64FieldCodec() {
+    public static final F64FieldCodec INSTANCE = new F64FieldCodec();
+
+    private F64FieldCodec() {
     }
 
     @Override

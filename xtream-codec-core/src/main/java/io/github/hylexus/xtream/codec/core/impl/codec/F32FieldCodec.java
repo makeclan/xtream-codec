@@ -20,7 +20,9 @@ import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.netty.buffer.ByteBuf;
 
 public class F32FieldCodec extends AbstractFieldCodec<Float> {
-    public F32FieldCodec() {
+    public static final F32FieldCodec INSTANCE = new F32FieldCodec();
+
+    private F32FieldCodec() {
     }
 
     @Override

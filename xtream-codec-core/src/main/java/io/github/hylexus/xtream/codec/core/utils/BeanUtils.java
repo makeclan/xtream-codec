@@ -22,6 +22,7 @@ import io.github.hylexus.xtream.codec.common.bean.impl.FiledPropertyGetter;
 import io.github.hylexus.xtream.codec.common.bean.impl.MethodPropertyGetter;
 import io.github.hylexus.xtream.codec.common.bean.impl.MethodPropertySetter;
 import io.github.hylexus.xtream.codec.common.exception.BeanIntrospectionException;
+import io.github.hylexus.xtream.codec.core.XtreamCacheableClassPredicate;
 import lombok.Getter;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
@@ -41,7 +42,7 @@ public class BeanUtils {
 
     private static final Map<Class<?>, BeanInfo> CACHE = new HashMap<>();
 
-    public static BeanInfo getBeanInfo(Class<?> beanClass, Predicate<Field> fieldPredicate) throws BeanIntrospectionException {
+    public static BeanInfo getBeanInfo(Class<?> beanClass, XtreamCacheableClassPredicate cacheableClassPredicate, Predicate<Field> fieldPredicate) throws BeanIntrospectionException {
 
         BeanInfo beanInfo;
         if ((beanInfo = CACHE.get(beanClass)) != null) {
@@ -68,7 +69,9 @@ public class BeanUtils {
 
         };
 
-        CACHE.put(beanClass, beanInfo);
+        if (cacheableClassPredicate.test(beanClass)) {
+            CACHE.put(beanClass, beanInfo);
+        }
         return beanInfo;
     }
 

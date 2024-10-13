@@ -20,7 +20,9 @@ import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.netty.buffer.ByteBuf;
 
 public class F64FieldCodecLittleEndian extends AbstractFieldCodec<Double> {
-    public F64FieldCodecLittleEndian() {
+    public static final F64FieldCodecLittleEndian INSTANCE = new F64FieldCodecLittleEndian();
+
+    private F64FieldCodecLittleEndian() {
     }
 
     @Override

@@ -7,6 +7,11 @@
 - **xtream-codec-server-reactive**: 和具体协议格式无关的 **纯异步**、**非阻塞** 的服务端
 - **xtream-codec-ext-jt-808-server-spring-boot-starter**: 基于 **xtream-codec-server-reactive** 实现的 **JT/T 808** 服务端扩展
 
+### ⚠️ Breaking Changes
+
+- `FiledDataType.nested` 重命名为 `FiledDataType.struct`
+- `@Preset.JtStyle.BCD` 重命名为 `@Preset.JtStyle.Bcd`
+
 ### &copy; LICENSE
 
 从 **MulanPSL2** 改为 **Apache License 2.0**。

@@ -18,6 +18,9 @@ package io.github.hylexus.xtream.codec.common.utils;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
+import io.github.hylexus.xtream.codec.core.type.ByteArrayContainer;
+import io.github.hylexus.xtream.codec.core.type.BytesContainer;
+import io.github.hylexus.xtream.codec.core.type.wrapper.DataWrapper;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -44,6 +47,9 @@ public class XtreamTypes {
         DEFAULT_SIZE_MAPPING.put(Long.class, 8);
         DEFAULT_SIZE_MAPPING.put(double.class, 8);
         DEFAULT_SIZE_MAPPING.put(Double.class, 8);
+        DEFAULT_SIZE_MAPPING.put(BytesContainer.class, -1);
+        DEFAULT_SIZE_MAPPING.put(ByteArrayContainer.class, -1);
+        DEFAULT_SIZE_MAPPING.put(DataWrapper.class, -1);
     }
 
     public static boolean isNumberType(Class<?> targetType) {
@@ -75,7 +81,7 @@ public class XtreamTypes {
                     if (Map.class.isAssignableFrom(type)) {
                         return BeanPropertyMetadata.FiledDataType.map;
                     }
-                    return BeanPropertyMetadata.FiledDataType.nested;
+                    return BeanPropertyMetadata.FiledDataType.struct;
                 });
     }
 
@@ -93,7 +99,7 @@ public class XtreamTypes {
                     if (Map.class.isAssignableFrom(field.getType())) {
                         return BeanPropertyMetadata.FiledDataType.map;
                     }
-                    return BeanPropertyMetadata.FiledDataType.nested;
+                    return BeanPropertyMetadata.FiledDataType.struct;
                 });
     }
 

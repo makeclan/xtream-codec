@@ -18,6 +18,8 @@ package io.github.hylexus.xtream.debug.codec.core.demo04;
 
 import io.github.hylexus.xtream.codec.core.BeanMetadataRegistry;
 import io.github.hylexus.xtream.codec.core.EntityCodec;
+import io.github.hylexus.xtream.codec.core.XtreamCacheableClassPredicate;
+import io.github.hylexus.xtream.codec.core.impl.DefaultFieldCodecRegistry;
 import io.github.hylexus.xtream.codec.core.impl.SimpleBeanMetadataRegistry;
 import io.netty.buffer.ByteBuf;
 
@@ -26,10 +28,14 @@ public class SimpleSubPackageEntityCodec extends EntityCodec {
     final SimpleSubPackageEntityDecoder decoder;
 
     public SimpleSubPackageEntityCodec() {
-        this(new SimpleBeanMetadataRegistry());
+        this(new SimpleBeanMetadataRegistry(
+                new DefaultFieldCodecRegistry(),
+                new XtreamCacheableClassPredicate.Default()
+        ));
     }
 
     public SimpleSubPackageEntityCodec(BeanMetadataRegistry beanMetadataRegistry) {
+        super(beanMetadataRegistry);
         this.decoder = new SimpleSubPackageEntityDecoder(beanMetadataRegistry);
     }
 

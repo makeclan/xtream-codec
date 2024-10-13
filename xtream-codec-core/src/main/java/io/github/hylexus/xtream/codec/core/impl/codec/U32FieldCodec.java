@@ -20,7 +20,9 @@ import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.netty.buffer.ByteBuf;
 
 public class U32FieldCodec extends AbstractFieldCodec<Long> {
-    public U32FieldCodec() {
+    public static final U32FieldCodec INSTANCE = new U32FieldCodec();
+
+    private U32FieldCodec() {
     }
 
     @Override

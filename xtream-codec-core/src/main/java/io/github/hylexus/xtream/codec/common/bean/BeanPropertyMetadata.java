@@ -72,10 +72,29 @@ public interface BeanPropertyMetadata {
     }
 
     enum FiledDataType {
+        /**
+         * 基础类型: int, long, double, float, boolean, char, byte, short, String, ...
+         */
         basic,
-        nested,
+        /**
+         * 结构体/实体类/POJO类
+         */
+        struct,
+        /**
+         * 运行时才能确定的类型
+         */
+        dynamic,
+        /**
+         * list
+         */
         sequence,
+        /**
+         * map
+         */
         map,
+        /**
+         * 仅仅用于占位符或默认值
+         */
         unknown
     }
 

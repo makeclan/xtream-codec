@@ -16,8 +16,8 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
+import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.core.type.Preset;
-import io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -37,13 +37,13 @@ public class BuiltinMessage0102V2019 {
      * byte[0,1)    BYTE    鉴权码长度
      */
     @Preset.JtStyle.Byte
-    private short authCodeLength;
+    private short authenticationCodeLength;
 
     /**
      * byte[1,n)    STRING  鉴权码内容
      */
-    @Preset.JtStyle.Str(lengthExpression = "getAuthCodeLength()")
-    private String authCode;
+    @Preset.JtStyle.Str(lengthExpression = "getAuthenticationCodeLength()")
+    private String authenticationCode;
 
     /**
      * byte[n+1,n+1+15)     BYTE[]  IMEI
@@ -65,15 +65,15 @@ public class BuiltinMessage0102V2019 {
      * 该方法在表达式中用到了，所以这里单独列出来，方便调试
      */
     @SuppressWarnings("lombok")
-    public short getAuthCodeLength() {
-        return authCodeLength;
+    public short getAuthenticationCodeLength() {
+        return authenticationCodeLength;
     }
 
     /**
      * @return 去掉可能存在的后补 `0x00` 的字符串
      */
     public String getFormatedSoftwareVersion() {
-        return JtProtocolUtils.trimTailing(this.getSoftwareVersion(), (byte) 0x00);
+        return XtreamBytes.trimTailing(this.getSoftwareVersion(), (byte) 0x00);
     }
 
 }

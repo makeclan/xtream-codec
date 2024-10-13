@@ -19,18 +19,15 @@ package io.github.hylexus.xtream.codec.core;
 import io.github.hylexus.xtream.codec.common.bean.BeanMetadata;
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.core.impl.DefaultDeserializeContext;
-import io.github.hylexus.xtream.codec.core.impl.SimpleBeanMetadataRegistry;
 import io.netty.buffer.ByteBuf;
 
 public class EntityDecoder {
     protected final BeanMetadataRegistry beanMetadataRegistry;
-
-    public EntityDecoder() {
-        this(new SimpleBeanMetadataRegistry());
-    }
+    private final FieldCodecRegistry fieldCodecRegistry;
 
     public EntityDecoder(BeanMetadataRegistry beanMetadataRegistry) {
         this.beanMetadataRegistry = beanMetadataRegistry;
+        this.fieldCodecRegistry = beanMetadataRegistry.getFieldCodecRegistry();
     }
 
     public <T> T decode(Class<T> entityClass, ByteBuf source) {
@@ -59,5 +56,13 @@ public class EntityDecoder {
         }
         @SuppressWarnings("unchecked") final T instance1 = (T) containerInstance;
         return instance1;
+    }
+
+    public BeanMetadataRegistry getBeanMetadataRegistry() {
+        return beanMetadataRegistry;
+    }
+
+    public FieldCodecRegistry getFieldCodecRegistry() {
+        return fieldCodecRegistry;
     }
 }

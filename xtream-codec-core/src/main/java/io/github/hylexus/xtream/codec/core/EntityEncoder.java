@@ -19,19 +19,16 @@ package io.github.hylexus.xtream.codec.core;
 import io.github.hylexus.xtream.codec.common.bean.BeanMetadata;
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.core.impl.DefaultSerializeContext;
-import io.github.hylexus.xtream.codec.core.impl.SimpleBeanMetadataRegistry;
 import io.netty.buffer.ByteBuf;
 
 public class EntityEncoder {
 
     private final BeanMetadataRegistry beanMetadataRegistry;
-
-    public EntityEncoder() {
-        this(new SimpleBeanMetadataRegistry());
-    }
+    private final FieldCodecRegistry fieldCodecRegistry;
 
     public EntityEncoder(BeanMetadataRegistry beanMetadataRegistry) {
         this.beanMetadataRegistry = beanMetadataRegistry;
+        this.fieldCodecRegistry = beanMetadataRegistry.getFieldCodecRegistry();
     }
 
     public void encode(Object instance, ByteBuf target) {
@@ -57,5 +54,13 @@ public class EntityEncoder {
                 propertyMetadata.encodePropertyValue(context, target, value);
             }
         }
+    }
+
+    public BeanMetadataRegistry getBeanMetadataRegistry() {
+        return beanMetadataRegistry;
+    }
+
+    public FieldCodecRegistry getFieldCodecRegistry() {
+        return fieldCodecRegistry;
     }
 }

@@ -31,11 +31,11 @@ import java.util.List;
 public class RawStyleDebugEntity02ForDecodeNested {
 
     // 消息头
-    @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.nested)
+    @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.struct)
     private Header header;
 
     // 消息体
-    @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.nested, lengthExpression = "header.msgBodyLength()")
+    @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.struct, lengthExpression = "header.msgBodyLength()")
     private Body body;
 
     // 校验码

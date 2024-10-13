@@ -18,6 +18,7 @@ package io.github.hylexus.xtream.codec.core.type;
 
 
 import io.github.hylexus.xtream.codec.common.utils.BcdOps;
+import io.netty.buffer.ByteBuf;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -28,6 +29,10 @@ import java.nio.charset.StandardCharsets;
  * @author hylexus
  */
 public interface BytesContainer {
+
+    default void writeTo(ByteBuf output) {
+        output.writeBytes(this.asBytes());
+    }
 
     int length();
 

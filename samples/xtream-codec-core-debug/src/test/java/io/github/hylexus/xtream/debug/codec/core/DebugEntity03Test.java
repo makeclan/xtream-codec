@@ -32,7 +32,7 @@ class DebugEntity03Test extends BaseEntityCodecTest {
 
     @BeforeEach
     void setUp() {
-        this.entityCodec = new EntityCodec();
+        this.entityCodec = EntityCodec.DEFAULT;
     }
 
     @Test
