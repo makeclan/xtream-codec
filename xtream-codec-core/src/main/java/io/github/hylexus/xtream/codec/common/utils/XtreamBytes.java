@@ -20,6 +20,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.ReferenceCounted;
 
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.ThreadLocalRandom;
@@ -147,6 +148,11 @@ public class XtreamBytes {
     public static String getBcd(ByteBuf byteBuf, int startIndex, int length) {
         final byte[] bytes = getBytes(byteBuf, startIndex, length);
         return BcdOps.bcd2StringV2(bytes);
+    }
+
+    public static String getString(ByteBuf byteBuf, int length, Charset charset) {
+        final CharSequence charSequence = byteBuf.getCharSequence(0, length, charset);
+        return charSequence.toString();
     }
 
     public static short readU8(ByteBuf readable) {

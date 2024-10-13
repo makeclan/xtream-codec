@@ -19,6 +19,7 @@ package io.github.hylexus.xtream.codec.common.utils;
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
 import io.github.hylexus.xtream.codec.core.type.ByteArrayContainer;
+import io.github.hylexus.xtream.codec.core.type.ByteBufContainer;
 import io.github.hylexus.xtream.codec.core.type.BytesContainer;
 import io.github.hylexus.xtream.codec.core.type.wrapper.DataWrapper;
 
@@ -29,42 +30,48 @@ import java.util.*;
  * @author hylexus
  */
 public class XtreamTypes {
-    static final Map<Class<?>, Integer> DEFAULT_SIZE_MAPPING = new HashMap<>();
-    static final Set<Class<?>> BASIC_TYPES = Collections.unmodifiableSet(DEFAULT_SIZE_MAPPING.keySet());
+    static final Map<Class<?>, Integer> NUMBER_SIZE_MAPPING = new HashMap<>();
+    static final Map<Class<?>, Integer> BASIC_SIZE_MAPPING = new HashMap<>();
+
+    static final Set<Class<?>> NUMBER_TYPES = Collections.unmodifiableSet(NUMBER_SIZE_MAPPING.keySet());
+    static final Set<Class<?>> BASIC_TYPES = Collections.unmodifiableSet(BASIC_SIZE_MAPPING.keySet());
 
     static {
-        DEFAULT_SIZE_MAPPING.put(byte.class, 1);
-        DEFAULT_SIZE_MAPPING.put(Byte.class, 1);
-        DEFAULT_SIZE_MAPPING.put(char.class, 1);
-        DEFAULT_SIZE_MAPPING.put(Character.class, 1);
-        DEFAULT_SIZE_MAPPING.put(short.class, 2);
-        DEFAULT_SIZE_MAPPING.put(Short.class, 2);
-        DEFAULT_SIZE_MAPPING.put(int.class, 4);
-        DEFAULT_SIZE_MAPPING.put(Integer.class, 4);
-        DEFAULT_SIZE_MAPPING.put(float.class, 4);
-        DEFAULT_SIZE_MAPPING.put(Float.class, 4);
-        DEFAULT_SIZE_MAPPING.put(long.class, 8);
-        DEFAULT_SIZE_MAPPING.put(Long.class, 8);
-        DEFAULT_SIZE_MAPPING.put(double.class, 8);
-        DEFAULT_SIZE_MAPPING.put(Double.class, 8);
-        DEFAULT_SIZE_MAPPING.put(BytesContainer.class, -1);
-        DEFAULT_SIZE_MAPPING.put(ByteArrayContainer.class, -1);
-        DEFAULT_SIZE_MAPPING.put(DataWrapper.class, -1);
+        NUMBER_SIZE_MAPPING.put(byte.class, 1);
+        NUMBER_SIZE_MAPPING.put(Byte.class, 1);
+        NUMBER_SIZE_MAPPING.put(char.class, 1);
+        NUMBER_SIZE_MAPPING.put(Character.class, 1);
+        NUMBER_SIZE_MAPPING.put(short.class, 2);
+        NUMBER_SIZE_MAPPING.put(Short.class, 2);
+        NUMBER_SIZE_MAPPING.put(int.class, 4);
+        NUMBER_SIZE_MAPPING.put(Integer.class, 4);
+        NUMBER_SIZE_MAPPING.put(float.class, 4);
+        NUMBER_SIZE_MAPPING.put(Float.class, 4);
+        NUMBER_SIZE_MAPPING.put(long.class, 8);
+        NUMBER_SIZE_MAPPING.put(Long.class, 8);
+        NUMBER_SIZE_MAPPING.put(double.class, 8);
+        NUMBER_SIZE_MAPPING.put(Double.class, 8);
+
+        BASIC_SIZE_MAPPING.putAll(NUMBER_SIZE_MAPPING);
+        BASIC_SIZE_MAPPING.put(BytesContainer.class, -1);
+        BASIC_SIZE_MAPPING.put(ByteArrayContainer.class, -1);
+        BASIC_SIZE_MAPPING.put(ByteBufContainer.class, -1);
+        BASIC_SIZE_MAPPING.put(DataWrapper.class, -1);
     }
 
     public static boolean isNumberType(Class<?> targetType) {
-        return BASIC_TYPES.contains(targetType);
+        return NUMBER_TYPES.contains(targetType);
     }
 
     public static boolean isBasicType(Class<?> targetType) {
-        return isNumberType(targetType)
+        return BASIC_TYPES.contains(targetType)
                 || String.class == targetType
                 || byte[].class == targetType
                 || Byte[].class == targetType;
     }
 
     public static Optional<Integer> getDefaultSizeInBytes(Class<?> cls) {
-        return Optional.ofNullable(DEFAULT_SIZE_MAPPING.get(cls));
+        return Optional.ofNullable(BASIC_SIZE_MAPPING.get(cls));
     }
 
     public static BeanPropertyMetadata.FiledDataType detectFieldDataType(Class<?> type) {

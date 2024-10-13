@@ -67,7 +67,7 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
 
     @Override
     public Jt808ServerType serverType() {
-        return null;
+        return this.serverType;
     }
 
     @Override
@@ -94,7 +94,7 @@ public class DefaultJt808Request extends DefaultXtreamRequest implements Jt808Re
     public String toString() {
         return "DefaultJt808Request{"
                 + "type=" + type()
-                + "serverType=" + serverType()
+                + ", serverType=" + serverType()
                 + ", requestId=" + requestId()
                 + ", remoteAddress=" + remoteAddress()
                 + ", messageId=" + header().messageId() + "(0x" + FormatUtils.toHexString(header.messageId(), 4) + ")"

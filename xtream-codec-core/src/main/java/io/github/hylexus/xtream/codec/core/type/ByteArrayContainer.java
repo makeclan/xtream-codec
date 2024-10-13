@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
  * Copied from jt-framework.
  *
  * @author hylexus
+ * @see io.github.hylexus.xtream.codec.core.impl.codec.BytesContainerFieldCodec
  */
 public interface ByteArrayContainer extends BytesContainer {
 
@@ -130,5 +131,10 @@ public interface ByteArrayContainer extends BytesContainer {
                 ((bytes[2] & MASK) << 8)
                 |
                 ((bytes[3] & MASK));
+    }
+
+    @Override
+    default void release() {
+        // do nothing
     }
 }

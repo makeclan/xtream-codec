@@ -19,6 +19,7 @@ package io.github.hylexus.xtream.codec.core.impl.codec;
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.core.type.ByteArrayContainer;
+import io.github.hylexus.xtream.codec.core.type.ByteBufContainer;
 import io.github.hylexus.xtream.codec.core.type.BytesContainer;
 import io.netty.buffer.ByteBuf;
 
@@ -30,14 +31,18 @@ public class BytesContainerFieldCodec extends AbstractFieldCodec<BytesContainer>
 
     @Override
     protected void doSerialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, BytesContainer value) {
-        // todo 优化：直接写入 BytesContainer
-        final byte[] bytes = value.asBytes();
-        output.writeBytes(bytes);
+        value.writeTo(output);
     }
 
     @Override
     public BytesContainer deserialize(BeanPropertyMetadata propertyMetadata, DeserializeContext context, ByteBuf input, int length) {
-        final byte[] bytes = XtreamBytes.readBytes(input, length);
-        return ByteArrayContainer.ofBytes(bytes);
+        if (propertyMetadata.rawClass().isAssignableFrom(ByteArrayContainer.class)) {
+            // 这里必须立即读取: 不要返回Lambda(Lazy)
+            final byte[] bytes = XtreamBytes.readBytes(input, length);
+            return ByteArrayContainer.ofBytes(bytes);
+        }
+        // 这里没有 retain: 随着 input.release() 一起释放掉
+        final ByteBuf content = input.readSlice(length);
+        return ByteBufContainer.ofBytes(content);
     }
 }

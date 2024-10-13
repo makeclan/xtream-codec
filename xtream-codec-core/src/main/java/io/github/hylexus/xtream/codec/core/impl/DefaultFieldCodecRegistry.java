@@ -24,6 +24,7 @@ import io.github.hylexus.xtream.codec.core.FieldCodecRegistry;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
 import io.github.hylexus.xtream.codec.core.impl.codec.*;
 import io.github.hylexus.xtream.codec.core.type.ByteArrayContainer;
+import io.github.hylexus.xtream.codec.core.type.ByteBufContainer;
 import io.github.hylexus.xtream.codec.core.type.BytesContainer;
 import io.github.hylexus.xtream.codec.core.type.XtreamDataType;
 import io.github.hylexus.xtream.codec.core.type.wrapper.DataWrapper;
@@ -101,6 +102,7 @@ public class DefaultFieldCodecRegistry implements FieldCodecRegistry {
 
         registry.register(BytesContainerFieldCodec.INSTANCE, BytesContainer.class, -1, "", false);
         registry.register(BytesContainerFieldCodec.INSTANCE, ByteArrayContainer.class, -1, "", false);
+        registry.register(BytesContainerFieldCodec.INSTANCE, ByteBufContainer.class, -1, "", false);
         registry.register(DataWrapperFieldCodec.INSTANCE, DataWrapper.class, -1, "", false);
 
         registerDefaultStringCodec(registry);

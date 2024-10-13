@@ -78,4 +78,5 @@ public interface BytesContainer {
         return this.asString(StandardCharsets.UTF_8);
     }
 
+    void release();
 }
