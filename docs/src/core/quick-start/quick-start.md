@@ -54,7 +54,7 @@ public class DebugMsg04ForDecode {
     private byte version;
 
     // byte[5,15) 终端手机号 BCD[10]
-    @Preset.JtStyle.BCD(length = 10)
+    @Preset.JtStyle.Bcd(length = 10)
     private String terminalPhoneNumber;
 
     // byte[15,17) 消息流水号 WORD
@@ -106,8 +106,11 @@ public class DebugMsg04ForDecode {
     private int direction;
 
     // body-byte[22,28) 时间 BCD[6]
-    @Preset.JtStyle.BCD(length = 6)
+    @Preset.JtStyle.Bcd(length = 6)
     private String time;
+    // 或者 @Preset.JtStyle.BcdDateTime
+    // 或者 @XtreamDateTimeField(pattern = "yyMMddHHmmss", length = 6, charset = "bcd_8421")
+    // private LocalDateTime time;
 
     // bit[0-9] 0000,0011,1111,1111(3FF)(消息体长度)
     public int msgBodyLength() {

@@ -21,6 +21,7 @@ export const zhNavbar = navbar([
         text: '致谢',
         icon: 'share',
         children: [
+            {text: 'Reactor Netty', link: 'https://projectreactor.io', icon: 'leaf'},
             {text: 'Netty', link: 'https://github.com/netty/netty', icon: 'leaf'},
             {text: 'Spring', icon: 'leaf', link: 'https://github.com/spring-projects'},
             {

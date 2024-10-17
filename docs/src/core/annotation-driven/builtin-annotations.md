@@ -92,13 +92,19 @@ tag:
 ### 嵌套类型
 
 - `@Preset.RustStyle.struct`
-    - 结构体、Object、内嵌对象
+    - 结构体、内嵌对象
     - **JavaType**: 自定义实体类
 
 ### 列表类型
 
 - `@Preset.RustStyle.list`
     - **JavaType**: `java.util.List`
+
+### 动态类型
+
+- `@Preset.RustStyle.dyn`
+    - **JavaType**: `Object`
+    - 运行时才能确定具体类型
 
 ## JT/T 808 风格内置注解
 
@@ -110,7 +116,7 @@ tag:
 
 - 对于数字类型而言，都是无符号数
     - 然而 **Java** 本身没有无符号数的概念
-    - 所以在隐射到 **Java** 数据类型时，往往需要将数据类型的范围扩大一倍，以避免溢出的风险
+    - 所以在映射到 **Java** 数据类型时，往往需要将数据类型的范围扩大一倍，以避免溢出的风险
         - 以 `BYTE` 类型为例: `JT/T 808` 协议中指的是 **1** 字节的 *无* 符号整数
         - 虽然 **Java** 的 `byte/Byte` 也是 **1** 字节
         - 但是 **Java** 的 `byte/Byte` 是 _有_ 符号数
@@ -151,16 +157,36 @@ tag:
     - 字符串
     - 编码: 默认 `GBK`
     - **JavaType**: `java.lang.String`
-- `@Preset.RustStyle.BCD`
+- `@Preset.RustStyle.Bcd`
     - 字符串
     - 编码固定为: `BCD_8421`
     - **JavaType**: `java.lang.String`
+
+### 嵌套类型
+
+- `@Preset.JtStyle.Object`
+    - 结构体、内嵌对象
+    - **JavaType**: 自定义实体类
+
+### 列表类型
+
+- `@Preset.JtStyle.List`
+    - **JavaType**: `java.util.List`
+
+### 动态类型
+
+- `@Preset.JtStyle.RuntimeType`
+    - **JavaType**: `Object`
+    - 运行时才能确定具体类型
 
 ### 其他
 
 - `@Preset.RustStyle.Bytes`
     - **N 字节**
     - **JavaType**: `byte[]`
+- `@Preset.RustStyle.BcdDateTime`
+    - **N 字节**
+    - **JavaType**: `java.time.LocalDateTime/java.util.Date/String`
 
 ## 内置类型对比
 
@@ -187,11 +213,12 @@ tag:
 | `@Preset.RustStyle.u32`                     | `@Preset.JtStyle.Dword`                | `long/Long`      |
 | `@Preset.RustStyle.u32_le`                  | -                                      | `long/Long`      |
 | `@Preset.RustStyle.str(charset="GBK")`      | `@Preset.JtStyle.Str`                  | `String`         |
-| `@Preset.RustStyle.str(charset="bcd_8421")` | `@Preset.JtStyle.BCD`                  | `String`         |
+| `@Preset.RustStyle.str(charset="bcd_8421")` | `@Preset.JtStyle.Bcd`                  | `String`         |
 | `@Preset.RustStyle.str(charset="UTF-8")`    | `@Preset.JtStyle.Str(charset="UTF-8")` | `String`         |
 | `@Preset.RustStyle.str(charset="xxx")`      | `@Preset.JtStyle.Str(charset="xxx")`   | `String`         |
 | `@Preset.RustStyle.struct`                  | `@Preset.JtStyle.Object`               | 自定义实体类           |
 | `@Preset.RustStyle.list`                    | `@Preset.JtStyle.List`                 | `java.util.List` |
+| `@Preset.RustStyle.dyn`                     | `@Preset.JtStyle.RuntimeType`          | `Object`         |
 
 ### **`Rust风格`** **VS `@XtreamField`风格**
 
@@ -209,7 +236,8 @@ tag:
 | `@Preset.RustStyle.u32_le`                  | `@XtreamField(length = 4, littleEndian = true)` | `long/Long`      |
 | `@Preset.RustStyle.str(charset="UTF-8")`    | `@XtreamField(charset="UTF-8")`                 | `String`         |
 | `@Preset.RustStyle.str(charset="GBK")`      | `@XtreamField(charset="GBK")`                   | `String`         |
-| `@Preset.RustStyle.str(charset="bcd_8421")` | `@@XtreamField(charset="bcd_8421")`             | `String`         |
-| `@Preset.RustStyle.str(charset="xxx")`      | `@@XtreamField(charset="xxx")`                  | `String`         |
-| `@Preset.RustStyle.struct`                  | `@Preset.JtStyle.Object`                        | 自定义实体类           |
-| `@Preset.RustStyle.list`                    | `@Preset.JtStyle.List`                          | `java.util.List` |
+| `@Preset.RustStyle.str(charset="bcd_8421")` | `@XtreamField(charset="bcd_8421")`              | `String`         |
+| `@Preset.RustStyle.str(charset="xxx")`      | `@XtreamField(charset="xxx")`                   | `String`         |
+| `@Preset.RustStyle.struct`                  | `@XtreamField(dataType=struct)`                 | 自定义实体类           |
+| `@Preset.RustStyle.list`                    | `@XtreamField(dataType=sequence)`               | `java.util.List` |
+| `@Preset.RustStyle.dyn`                     | `@XtreamField(dataType=dynamic)`                | `Object`         |
