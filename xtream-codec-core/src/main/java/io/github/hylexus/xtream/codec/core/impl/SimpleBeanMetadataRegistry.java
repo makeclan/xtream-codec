@@ -105,6 +105,11 @@ public class SimpleBeanMetadataRegistry implements BeanMetadataRegistry {
         final ArrayList<BeanPropertyMetadata> pdList = new ArrayList<>();
         for (final PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
             final BeanPropertyMetadata basicPropertyMetadata = creator.apply(pd);
+            if (basicPropertyMetadata.fieldCodec() != null) {
+                // 用户自定义 FieldCodec
+                pdList.add(basicPropertyMetadata);
+                continue;
+            }
             if (basicPropertyMetadata.dataType() == BeanPropertyMetadata.FiledDataType.basic) {
                 pdList.add(basicPropertyMetadata);
             } else if (basicPropertyMetadata.dataType() == BeanPropertyMetadata.FiledDataType.struct) {

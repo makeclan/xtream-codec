@@ -16,8 +16,7 @@
 
 package io.github.hylexus.xtream.codec.core.type.wrapper;
 
-import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
-import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.netty.buffer.ByteBuf;
 
 import java.nio.charset.Charset;
@@ -27,12 +26,8 @@ public class StringWrapperUtf8 implements DataWrapper<String> {
 
     public static final Charset UTF_8 = StandardCharsets.UTF_8;
 
-    @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, charset = "UTF-8")
-    protected String value;
-    protected int length;
-
-    public StringWrapperUtf8() {
-    }
+    protected final String value;
+    protected final int length;
 
     public StringWrapperUtf8(String value) {
         this.value = value;
@@ -45,23 +40,32 @@ public class StringWrapperUtf8 implements DataWrapper<String> {
     }
 
     @Override
-    public String value() {
-        return this.value;
-    }
-
-    @Override
-    public void value(String value) {
-        this.value = value;
-        this.length = value.getBytes(UTF_8).length;
-    }
-
-    @Override
     public int length() {
         return this.length;
     }
 
     @Override
-    public void length(int length) {
-        this.length = length;
+    public byte[] asBytes() {
+        return value.getBytes(XtreamConstants.CHARSET_UTF8);
+    }
+
+    @Override
+    public byte asI8() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public short asI16() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int asI32() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String asString() {
+        return value;
     }
 }

@@ -18,53 +18,60 @@ package io.github.hylexus.xtream.codec.core.type.wrapper;
 
 import io.netty.buffer.ByteBuf;
 
-public class U32Wrapper implements DataWrapper<Long> {
+import java.nio.charset.Charset;
+
+public class BytesDataWrapper implements DataWrapper<byte[]> {
     static final int MASK = 0xFF;
 
-    private final Long value;
+    private final byte[] value;
 
-    public U32Wrapper(Long value) {
+    public BytesDataWrapper(byte[] value) {
         this.value = value;
     }
 
     @Override
     public void writeTo(ByteBuf output) {
-        output.writeInt(value.intValue());
+        output.writeBytes(value);
     }
 
     @Override
     public int length() {
-        return 4;
+        return value.length;
     }
 
     @Override
     public byte[] asBytes() {
-        return new byte[]{
-                (byte) ((value >>> 24) & MASK),
-                (byte) ((value >>> 16) & MASK),
-                (byte) ((value >>> 8) & MASK),
-                (byte) (value & MASK)
-        };
+        return value;
     }
 
     @Override
     public byte asI8() {
-        return value.byteValue();
+        return value[0];
     }
 
     @Override
     public short asI16() {
-        return value.shortValue();
+        return (short) ((value[0] & 0xff) << 8 | value[1] & 0xff);
     }
 
     @Override
     public int asI32() {
-        return value.intValue();
+        return ((value[0] & MASK) << 24)
+                |
+                ((value[1] & MASK) << 16)
+                |
+                ((value[2] & MASK) << 8)
+                |
+                ((value[3] & MASK));
     }
 
     @Override
     public String asString() {
-        return String.valueOf(value);
+        return new String(value);
     }
 
+    @Override
+    public String asString(Charset charset) {
+        return new String(value, charset);
+    }
 }

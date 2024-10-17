@@ -130,6 +130,11 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
     }
 
     @Override
+    public XtreamField xtreamFieldAnnotation() {
+        return this.xtreamField;
+    }
+
+    @Override
     public PropertyGetter propertyGetter() {
         return this.propertyGetter;
     }

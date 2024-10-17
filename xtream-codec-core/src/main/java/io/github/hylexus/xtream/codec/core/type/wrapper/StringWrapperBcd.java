@@ -16,55 +16,56 @@
 
 package io.github.hylexus.xtream.codec.core.type.wrapper;
 
+import io.github.hylexus.xtream.codec.common.utils.BcdOps;
 import io.netty.buffer.ByteBuf;
 
-public class U32Wrapper implements DataWrapper<Long> {
-    static final int MASK = 0xFF;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
-    private final Long value;
+public class StringWrapperBcd implements DataWrapper<String> {
 
-    public U32Wrapper(Long value) {
+    public static final Charset UTF_8 = StandardCharsets.UTF_8;
+
+    protected final String value;
+    protected final int length;
+
+    public StringWrapperBcd(String value) {
         this.value = value;
+        this.length = BcdOps.encodeBcd8421AsBytes(value).length;
     }
 
     @Override
     public void writeTo(ByteBuf output) {
-        output.writeInt(value.intValue());
+        BcdOps.encodeBcd8421StringIntoByteBuf(value, output);
     }
 
     @Override
     public int length() {
-        return 4;
+        return this.length;
     }
 
     @Override
     public byte[] asBytes() {
-        return new byte[]{
-                (byte) ((value >>> 24) & MASK),
-                (byte) ((value >>> 16) & MASK),
-                (byte) ((value >>> 8) & MASK),
-                (byte) (value & MASK)
-        };
+        return BcdOps.encodeBcd8421AsBytes(value);
     }
 
     @Override
     public byte asI8() {
-        return value.byteValue();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public short asI16() {
-        return value.shortValue();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public int asI32() {
-        return value.intValue();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public String asString() {
-        return String.valueOf(value);
+        return value;
     }
-
 }

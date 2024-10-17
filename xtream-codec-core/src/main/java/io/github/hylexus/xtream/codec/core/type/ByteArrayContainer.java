@@ -18,6 +18,8 @@ package io.github.hylexus.xtream.codec.core.type;
 
 
 import io.github.hylexus.xtream.codec.common.utils.BcdOps;
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
+import io.github.hylexus.xtream.codec.core.impl.codec.ByteArrayContainerFieldCodec;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -26,7 +28,7 @@ import java.nio.charset.StandardCharsets;
  * Copied from jt-framework.
  *
  * @author hylexus
- * @see io.github.hylexus.xtream.codec.core.impl.codec.BytesContainerFieldCodec
+ * @see ByteArrayContainerFieldCodec
  */
 public interface ByteArrayContainer extends BytesContainer {
 
@@ -93,7 +95,7 @@ public interface ByteArrayContainer extends BytesContainer {
     }
 
     static ByteArrayContainer ofStringGbk(String string) {
-        return ofString(string, Charset.forName("GBK"));
+        return ofString(string, XtreamConstants.CHARSET_GBK);
     }
 
     byte[] payload();

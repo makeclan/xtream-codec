@@ -16,7 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
-import io.github.hylexus.xtream.codec.core.type.BytesContainer;
+import io.github.hylexus.xtream.codec.core.type.ByteArrayContainer;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.github.hylexus.xtream.codec.core.type.wrapper.DataWrapper;
 import lombok.Getter;
@@ -68,7 +68,7 @@ public class BuiltinMessage8103Sample3 {
             this.parameterValue = parameterValue;
         }
 
-        public ParameterItem(long parameterId, BytesContainer container) {
+        public ParameterItem(long parameterId, ByteArrayContainer container) {
             this.parameterId = parameterId;
             this.parameterLength = (short) container.length();
             this.parameterValue = container;

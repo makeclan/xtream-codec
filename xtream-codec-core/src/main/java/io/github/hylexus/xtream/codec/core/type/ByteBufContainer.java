@@ -17,6 +17,8 @@
 package io.github.hylexus.xtream.codec.core.type;
 
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
+import io.github.hylexus.xtream.codec.core.impl.codec.ByteArrayContainerFieldCodec;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 
@@ -27,7 +29,7 @@ import java.nio.charset.StandardCharsets;
  * @author hylexus
  * @apiNote 注意 {@link #release()} 方法
  * @see #release()
- * @see io.github.hylexus.xtream.codec.core.impl.codec.BytesContainerFieldCodec
+ * @see ByteArrayContainerFieldCodec
  */
 public interface ByteBufContainer extends BytesContainer {
 
@@ -78,7 +80,7 @@ public interface ByteBufContainer extends BytesContainer {
     }
 
     static ByteBufContainer ofStringGbk(String string) {
-        return ofString(string, Charset.forName("GBK"));
+        return ofString(string, XtreamConstants.CHARSET_GBK);
     }
 
     ByteBuf payload();

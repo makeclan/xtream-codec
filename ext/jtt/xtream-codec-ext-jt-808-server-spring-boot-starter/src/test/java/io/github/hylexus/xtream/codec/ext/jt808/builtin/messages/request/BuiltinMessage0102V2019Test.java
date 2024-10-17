@@ -17,11 +17,10 @@
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.BaseCodecTest;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import org.junit.jupiter.api.Test;
-
-import java.nio.charset.Charset;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -32,16 +31,16 @@ class BuiltinMessage0102V2019Test extends BaseCodecTest {
 
         final BuiltinMessage0102V2019 entity = new BuiltinMessage0102V2019();
         final String authCode = "这是鉴权码111";
-        final int length = authCode.getBytes(Charset.forName("gbk")).length;
+        final int length = authCode.getBytes(XtreamConstants.CHARSET_GBK).length;
         entity.setAuthenticationCodeLength((short) length);
         entity.setAuthenticationCode(authCode);
         entity.setImei("111111111111111");
         final byte[] bytes = XtreamBytes.appendSuffixIfNecessary(
-                "1.2.3010".getBytes(Charset.forName("gbk")),
+                "1.2.3010".getBytes(XtreamConstants.CHARSET_GBK),
                 20,
                 (byte) 0x00
         );
-        entity.setSoftwareVersion(new String(bytes, Charset.forName("gbk")));
+        entity.setSoftwareVersion(new String(bytes, XtreamConstants.CHARSET_GBK));
 
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2019, terminalId2019, 0x0102);
         assertEquals("7e01024031010000000001391234432900000dd5e2cac7bcf8c8a8c2eb313131313131313131313131313131313131312e322e333031300000000000000000000000003c7e", hex);
@@ -52,7 +51,7 @@ class BuiltinMessage0102V2019Test extends BaseCodecTest {
         final BuiltinMessage0102V2019 entity = decodeAsEntity(BuiltinMessage0102V2019.class, "01024031010000000001391234432900000dd5e2cac7bcf8c8a8c2eb313131313131313131313131313131313131312e322e333031300000000000000000000000003c");
 
         final String authCode = "这是鉴权码111";
-        final int length = authCode.getBytes(Charset.forName("gbk")).length;
+        final int length = authCode.getBytes(XtreamConstants.CHARSET_GBK).length;
         assertEquals(length, entity.getAuthenticationCodeLength());
         assertEquals(authCode, entity.getAuthenticationCode());
         assertEquals("111111111111111", entity.getImei());

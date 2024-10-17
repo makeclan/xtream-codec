@@ -16,25 +16,60 @@
 
 package io.github.hylexus.xtream.codec.core.type.wrapper;
 
+import io.github.hylexus.xtream.codec.common.utils.BcdOps;
 import io.netty.buffer.ByteBuf;
 
+import java.nio.charset.Charset;
+
 /**
- * TODO 优化
- *
  * @author hylexus
  */
 public interface DataWrapper<T> {
 
     void writeTo(ByteBuf output);
 
-    T value();
-
-    void value(T value);
-
     int length();
 
-    default void length(int length) {
-        throw new UnsupportedOperationException("length is immutable");
+    byte[] asBytes();
+
+    byte asI8();
+
+    default short asU8() {
+        return (short) (this.asI8() & 0xFF);
+    }
+
+    default short asByte() {
+        return asU8();
+    }
+
+    short asI16();
+
+    default int asU16() {
+        return this.asI16() & 0xFFFF;
+    }
+
+    default int asWord() {
+        return asU16();
+    }
+
+    int asI32();
+
+    default long asDword() {
+        return asU32();
+    }
+
+    default long asU32() {
+        return this.asI32() & 0xFFFFFFFFL;
+    }
+
+    default String asBcd() {
+        return BcdOps.decodeBcd8421AsString(this.asBytes(), 0, this.length());
+    }
+
+    String asString();
+
+    default String asString(Charset charset) {
+        return asString();
     }
 
 }

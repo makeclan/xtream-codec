@@ -18,32 +18,29 @@ package io.github.hylexus.xtream.codec.core.type.wrapper;
 
 import io.netty.buffer.ByteBuf;
 
-public class U32Wrapper implements DataWrapper<Long> {
-    static final int MASK = 0xFF;
+public class I16Wrapper implements DataWrapper<Short> {
 
-    private final Long value;
+    private final Short value;
 
-    public U32Wrapper(Long value) {
+    public I16Wrapper(Short value) {
         this.value = value;
     }
 
     @Override
     public void writeTo(ByteBuf output) {
-        output.writeInt(value.intValue());
+        output.writeShort(value);
     }
 
     @Override
     public int length() {
-        return 4;
+        return 2;
     }
 
     @Override
     public byte[] asBytes() {
         return new byte[]{
-                (byte) ((value >>> 24) & MASK),
-                (byte) ((value >>> 16) & MASK),
-                (byte) ((value >>> 8) & MASK),
-                (byte) (value & MASK)
+                (byte) (value >>> 8),
+                value.byteValue()
         };
     }
 
@@ -54,12 +51,12 @@ public class U32Wrapper implements DataWrapper<Long> {
 
     @Override
     public short asI16() {
-        return value.shortValue();
+        return value;
     }
 
     @Override
     public int asI32() {
-        return value.intValue();
+        return value;
     }
 
     @Override

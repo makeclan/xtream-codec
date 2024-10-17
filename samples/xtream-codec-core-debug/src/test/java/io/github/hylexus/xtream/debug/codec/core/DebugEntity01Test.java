@@ -16,13 +16,13 @@
 
 package io.github.hylexus.xtream.debug.codec.core;
 
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.core.EntityCodec;
 import io.github.hylexus.xtream.debug.codec.core.demo01.*;
 import io.github.hylexus.xtream.debug.codec.core.utilsforunittest.DebugEntity01ForJunitPurpose;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -141,7 +141,7 @@ class DebugEntity01Test extends BaseEntityCodecTest {
 
         final String password = "xtream-codec.密码";
         entity.setPassword(password);
-        entity.setPasswordLength(password.getBytes(Charset.forName("GBK")).length);
+        entity.setPasswordLength(password.getBytes(XtreamConstants.CHARSET_GBK).length);
         msgBodyLength += entity.getPasswordLength() + 2;
 
         entity.setBirthday("20210203");

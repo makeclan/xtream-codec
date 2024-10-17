@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.core.type;
 
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import org.junit.jupiter.api.Test;
@@ -69,7 +70,7 @@ class ByteArrayContainerTest {
         final String utf82 = ByteArrayContainer.ofString("HelloWorld UTF 编码", StandardCharsets.UTF_8).asString();
         assertEquals("HelloWorld UTF 编码", utf82);
 
-        final Charset gbk = Charset.forName("GBK");
+        final Charset gbk = XtreamConstants.CHARSET_GBK;
         assertEquals("HelloWorld GBK 编码", ByteArrayContainer.ofString("HelloWorld GBK 编码", gbk).asString(gbk));
     }
 

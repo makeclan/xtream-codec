@@ -18,6 +18,7 @@ package io.github.hylexus.xtream.codec.common.bean;
 
 import io.github.hylexus.xtream.codec.core.ContainerInstanceFactory;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
+import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
 import io.netty.buffer.ByteBuf;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 
@@ -42,6 +43,8 @@ public interface BeanPropertyMetadata {
     FiledDataType dataType();
 
     Field field();
+
+    XtreamField xtreamFieldAnnotation();
 
     default ContainerInstanceFactory containerInstanceFactory() {
         return ContainerInstanceFactory.PLACEHOLDER;

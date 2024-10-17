@@ -24,7 +24,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler.Parall
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler.SchedulerType;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler.SingleProperties;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
-import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamConstants;
+import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamServerConstants;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamBlockingHandlerMethodPredicate;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.DefaultXtreamBlockingHandlerMethodPredicate;
 import io.github.hylexus.xtream.codec.server.reactive.spec.resources.DefaultXtreamSchedulerRegistry;
@@ -49,21 +49,21 @@ public class BuiltinReactorSchedulerConfiguration {
     @Bean
     @ConditionalOnMissingBean
     XtreamSchedulerRegistry xtreamSchedulerRegistry(
-            @Qualifier(XtreamConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER) Scheduler nonBlockingScheduler,
-            @Qualifier(XtreamConstants.BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER) Scheduler blockingScheduler) {
+            @Qualifier(XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER) Scheduler nonBlockingScheduler,
+            @Qualifier(XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER) Scheduler blockingScheduler) {
         return new DefaultXtreamSchedulerRegistry(nonBlockingScheduler, blockingScheduler);
     }
 
-    @Bean(name = XtreamConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER)
-    @ConditionalOnMissingBean(name = XtreamConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER)
+    @Bean(name = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER)
+    @ConditionalOnMissingBean(name = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER)
     @ConditionalOnMissingCustomizedScheduler(type = ConditionalOnMissingCustomizedScheduler.Type.NON_BLOCKING)
     Scheduler nonBlockingScheduler(XtreamJt808ServerProperties serverProperties) {
         final XtreamServerSchedulerProperties property = serverProperties.getHandlerSchedulers().getNonBlockingScheduler();
         return this.createScheduler(property);
     }
 
-    @Bean(name = XtreamConstants.BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER)
-    @ConditionalOnMissingBean(name = XtreamConstants.BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER)
+    @Bean(name = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER)
+    @ConditionalOnMissingBean(name = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER)
     @ConditionalOnMissingCustomizedScheduler(type = ConditionalOnMissingCustomizedScheduler.Type.BLOCKING)
     Scheduler blockingScheduler(XtreamJt808ServerProperties serverProperties) {
         final XtreamServerSchedulerProperties property = serverProperties.getHandlerSchedulers().getBlockingScheduler();

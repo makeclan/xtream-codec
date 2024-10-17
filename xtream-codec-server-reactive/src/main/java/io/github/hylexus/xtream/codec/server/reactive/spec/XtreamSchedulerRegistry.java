@@ -16,7 +16,7 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec;
 
-import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamConstants;
+import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamServerConstants;
 import reactor.core.scheduler.Scheduler;
 
 import java.util.Map;
@@ -26,8 +26,8 @@ import java.util.Optional;
  * @author hylexus
  */
 public interface XtreamSchedulerRegistry {
-    String SCHEDULER_NAME_NON_BLOCKING = XtreamConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER;
-    String SCHEDULER_NAME_BLOCKING = XtreamConstants.BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER;
+    String SCHEDULER_NAME_NON_BLOCKING = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER;
+    String SCHEDULER_NAME_BLOCKING = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER;
 
     default Scheduler defaultNonBlockingScheduler() {
         return this.getScheduler(SCHEDULER_NAME_NON_BLOCKING).orElseThrow();

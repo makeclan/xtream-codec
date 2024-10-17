@@ -28,7 +28,7 @@ import java.nio.charset.StandardCharsets;
  *
  * @author hylexus
  */
-public interface BytesContainer {
+interface BytesContainer {
 
     default void writeTo(ByteBuf output) {
         output.writeBytes(this.asBytes());

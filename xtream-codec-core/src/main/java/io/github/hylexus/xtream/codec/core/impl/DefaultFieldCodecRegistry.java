@@ -17,17 +17,18 @@
 package io.github.hylexus.xtream.codec.core.impl;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.common.utils.XtreamTypes;
 import io.github.hylexus.xtream.codec.common.utils.XtreamUtils;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.github.hylexus.xtream.codec.core.FieldCodecRegistry;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
 import io.github.hylexus.xtream.codec.core.impl.codec.*;
+import io.github.hylexus.xtream.codec.core.impl.codec.wrapper.*;
 import io.github.hylexus.xtream.codec.core.type.ByteArrayContainer;
 import io.github.hylexus.xtream.codec.core.type.ByteBufContainer;
-import io.github.hylexus.xtream.codec.core.type.BytesContainer;
 import io.github.hylexus.xtream.codec.core.type.XtreamDataType;
-import io.github.hylexus.xtream.codec.core.type.wrapper.DataWrapper;
+import io.github.hylexus.xtream.codec.core.type.wrapper.*;
 import io.github.hylexus.xtream.codec.core.utils.BeanUtils;
 
 import java.nio.charset.Charset;
@@ -100,17 +101,28 @@ public class DefaultFieldCodecRegistry implements FieldCodecRegistry {
         registry.register(ByteArrayFieldCodec.INSTANCE, byte[].class, -1, "", false);
         registry.register(ByteBoxArrayFieldCodec.INSTANCE, Byte[].class, -1, "", false);
 
-        registry.register(BytesContainerFieldCodec.INSTANCE, BytesContainer.class, -1, "", false);
-        registry.register(BytesContainerFieldCodec.INSTANCE, ByteArrayContainer.class, -1, "", false);
-        registry.register(BytesContainerFieldCodec.INSTANCE, ByteBufContainer.class, -1, "", false);
+        registry.register(ByteArrayContainerFieldCodec.INSTANCE, ByteArrayContainer.class, -1, "", false);
+        registry.register(ByteBufContainerFieldCodec.INSTANCE, ByteBufContainer.class, -1, "", false);
+
         registry.register(DataWrapperFieldCodec.INSTANCE, DataWrapper.class, -1, "", false);
+        registry.register(DataWrapperFieldCodec.INSTANCE, BytesDataWrapper.class, -1, "", false);
+
+        registry.register(I8WrapperFieldCodec.INSTANCE, I8Wrapper.class, -1, "", false);
+        registry.register(U8WrapperFieldCodec.INSTANCE, U8Wrapper.class, -1, "", false);
+        registry.register(I16WrapperFieldCodec.INSTANCE, I16Wrapper.class, -1, "", false);
+        registry.register(U16WrapperFieldCodec.INSTANCE, U16Wrapper.class, -1, "", false);
+        registry.register(I32WrapperFieldCodec.INSTANCE, I32Wrapper.class, -1, "", false);
+        registry.register(U32WrapperFieldCodec.INSTANCE, U32Wrapper.class, -1, "", false);
+        registry.register(StringWrapperUtf8FieldCodec.INSTANCE, StringWrapperUtf8.class, -1, "", false);
+        registry.register(StringWrapperGbkFieldCodec.INSTANCE, StringWrapperGbk.class, -1, "", false);
+        registry.register(StringWrapperBcdFieldCodec.INSTANCE, StringWrapperBcd.class, -1, "", false);
 
         registerDefaultStringCodec(registry);
     }
 
     private static void registerDefaultStringCodec(DefaultFieldCodecRegistry registry) {
         Arrays.asList(
-                Charset.forName("gbk"),
+                XtreamConstants.CHARSET_GBK,
                 Charset.forName("gb2312"),
                 StandardCharsets.UTF_8,
                 StandardCharsets.US_ASCII,

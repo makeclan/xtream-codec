@@ -16,42 +16,22 @@
 
 package io.github.hylexus.xtream.codec.core.type.wrapper;
 
-import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
-import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.netty.buffer.ByteBuf;
-
-import java.nio.charset.Charset;
 
 public class StringWrapperGbk implements DataWrapper<String> {
 
-    public static final Charset GBK = Charset.forName("GBK");
-
-    @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, charset = "GBK")
-    protected String value;
-    protected int length;
-
-    public StringWrapperGbk() {
-    }
+    protected final String value;
+    protected final int length;
 
     public StringWrapperGbk(String value) {
         this.value = value;
-        this.length = value.getBytes(GBK).length;
+        this.length = value.getBytes(XtreamConstants.CHARSET_GBK).length;
     }
 
     @Override
     public void writeTo(ByteBuf output) {
-        output.writeCharSequence(value, GBK);
-    }
-
-    @Override
-    public String value() {
-        return this.value;
-    }
-
-    @Override
-    public void value(String value) {
-        this.value = value;
-        this.length = value.getBytes(GBK).length;
+        output.writeCharSequence(value, XtreamConstants.CHARSET_GBK);
     }
 
     @Override
@@ -60,7 +40,27 @@ public class StringWrapperGbk implements DataWrapper<String> {
     }
 
     @Override
-    public void length(int length) {
-        this.length = length;
+    public byte[] asBytes() {
+        return value.getBytes(XtreamConstants.CHARSET_GBK);
+    }
+
+    @Override
+    public byte asI8() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public short asI16() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int asI32() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String asString() {
+        return value;
     }
 }

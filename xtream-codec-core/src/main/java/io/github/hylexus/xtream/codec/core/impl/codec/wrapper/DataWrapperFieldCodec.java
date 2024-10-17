@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.core.impl.codec;
+package io.github.hylexus.xtream.codec.core.impl.codec.wrapper;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
+import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
+import io.github.hylexus.xtream.codec.core.impl.codec.AbstractFieldCodec;
+import io.github.hylexus.xtream.codec.core.type.wrapper.BytesDataWrapper;
 import io.github.hylexus.xtream.codec.core.type.wrapper.DataWrapper;
 import io.netty.buffer.ByteBuf;
 
 /**
- * todo 优化
- *
  * @author hylexus
  */
-public class DataWrapperFieldCodec extends AbstractFieldCodec<DataWrapper<Object>> {
+@SuppressWarnings("rawtypes")
+public class DataWrapperFieldCodec extends AbstractFieldCodec<DataWrapper> {
 
     public static final DataWrapperFieldCodec INSTANCE = new DataWrapperFieldCodec();
 
@@ -33,12 +35,13 @@ public class DataWrapperFieldCodec extends AbstractFieldCodec<DataWrapper<Object
     }
 
     @Override
-    protected void doSerialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, DataWrapper<Object> value) {
+    protected void doSerialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, DataWrapper value) {
         value.writeTo(output);
     }
 
     @Override
-    public DataWrapper<Object> deserialize(BeanPropertyMetadata propertyMetadata, DeserializeContext context, ByteBuf input, int length) {
-        throw new UnsupportedOperationException();
+    public DataWrapper deserialize(BeanPropertyMetadata propertyMetadata, DeserializeContext context, ByteBuf input, int length) {
+        final byte[] bytes = XtreamBytes.readBytes(input, length);
+        return new BytesDataWrapper(bytes);
     }
 }

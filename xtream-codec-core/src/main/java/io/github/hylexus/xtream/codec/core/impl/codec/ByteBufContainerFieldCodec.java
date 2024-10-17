@@ -17,30 +17,22 @@
 package io.github.hylexus.xtream.codec.core.impl.codec;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
-import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
-import io.github.hylexus.xtream.codec.core.type.ByteArrayContainer;
 import io.github.hylexus.xtream.codec.core.type.ByteBufContainer;
-import io.github.hylexus.xtream.codec.core.type.BytesContainer;
 import io.netty.buffer.ByteBuf;
 
-public class BytesContainerFieldCodec extends AbstractFieldCodec<BytesContainer> {
-    public static final BytesContainerFieldCodec INSTANCE = new BytesContainerFieldCodec();
+public class ByteBufContainerFieldCodec extends AbstractFieldCodec<ByteBufContainer> {
+    public static final ByteBufContainerFieldCodec INSTANCE = new ByteBufContainerFieldCodec();
 
-    private BytesContainerFieldCodec() {
+    private ByteBufContainerFieldCodec() {
     }
 
     @Override
-    protected void doSerialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, BytesContainer value) {
+    protected void doSerialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, ByteBufContainer value) {
         value.writeTo(output);
     }
 
     @Override
-    public BytesContainer deserialize(BeanPropertyMetadata propertyMetadata, DeserializeContext context, ByteBuf input, int length) {
-        if (propertyMetadata.rawClass().isAssignableFrom(ByteArrayContainer.class)) {
-            // 这里必须立即读取: 不要返回Lambda(Lazy)
-            final byte[] bytes = XtreamBytes.readBytes(input, length);
-            return ByteArrayContainer.ofBytes(bytes);
-        }
+    public ByteBufContainer deserialize(BeanPropertyMetadata propertyMetadata, DeserializeContext context, ByteBuf input, int length) {
         // 这里没有 retain: 随着 input.release() 一起释放掉
         final ByteBuf content = input.readSlice(length);
         return ByteBufContainer.ofBytes(content);

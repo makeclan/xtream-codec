@@ -18,18 +18,17 @@ package io.github.hylexus.xtream.codec.core.type.wrapper;
 
 import io.netty.buffer.ByteBuf;
 
-public class U32Wrapper implements DataWrapper<Long> {
+public class I32Wrapper implements DataWrapper<Integer> {
     static final int MASK = 0xFF;
+    private final Integer value;
 
-    private final Long value;
-
-    public U32Wrapper(Long value) {
+    public I32Wrapper(Integer value) {
         this.value = value;
     }
 
     @Override
     public void writeTo(ByteBuf output) {
-        output.writeInt(value.intValue());
+        output.writeInt(value);
     }
 
     @Override
@@ -59,7 +58,7 @@ public class U32Wrapper implements DataWrapper<Long> {
 
     @Override
     public int asI32() {
-        return value.intValue();
+        return value;
     }
 
     @Override

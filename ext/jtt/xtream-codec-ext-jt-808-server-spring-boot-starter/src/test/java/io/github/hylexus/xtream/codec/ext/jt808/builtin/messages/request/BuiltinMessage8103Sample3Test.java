@@ -77,7 +77,23 @@ class BuiltinMessage8103Sample3Test extends BaseCodecTest {
         // 由于这里是个 Map, 所以 相同 ID 只会保留最后一个
         assertEquals("13900003333", extraItems.get(0x0040L));
         assertEquals(62, extraItems.get(0x0081L));
-        assertEquals(103, extraItems.get(0x0082L));
+
+        // 0x0082L示例 1：解析为 ByteArrayContainer
+        // ByteArrayContainer item0082 = (ByteArrayContainer) extraItems.get(0x0082L);
+        // assertEquals(103, item0082.asU16());
+
+        // 0x0082L示例 2：解析为 DataWrapper
+        // DataWrapper item0082 = (DataWrapper) extraItems.get(0x0082L);
+        // assertEquals(103, item0082.asU16());
+
+        // 0x0082L示例 3：解析为 U16Wrapper
+        U16Wrapper item0082 = (U16Wrapper) extraItems.get(0x0082L);
+        assertEquals(103, item0082.asU16());
+
+        // 0x0082L示例 4：解析为 Integer
+        // assertEquals(103, extraItems.get(0x0082L));
+
+        // 0x0084L 解析为 Short
         assertEquals((short) 1, extraItems.get(0x0084L));
     }
 
@@ -100,7 +116,11 @@ class BuiltinMessage8103Sample3Test extends BaseCodecTest {
                                 // 由于这里是个 Map, 所以多个相同 ID 的配置项会被覆盖(只剩下最后一个)
                                 @XtreamFieldMapDescriptor.ValueCodecConfig(whenKeyIsU32 = 0x0040, javaType = String.class, config = @XtreamField(charset = "GBK"), desc = "监控平台电话号码"),
                                 @XtreamFieldMapDescriptor.ValueCodecConfig(whenKeyIsU32 = 0x0081, config = @XtreamField(length = 2), javaType = Integer.class, desc = "车辆所在省域 ID"),
-                                @XtreamFieldMapDescriptor.ValueCodecConfig(whenKeyIsU32 = 0x0082, config = @XtreamField(length = 2), javaType = Integer.class, desc = "车辆所在市域 ID"),
+                                // 和 0x0081 一样，0x0082 可以解析为 Integer、ByteArrayContainer、ByteBufContainer、U16Wrapper、DataWrapper 等类型
+                                // @XtreamFieldMapDescriptor.ValueCodecConfig(whenKeyIsU32 = 0x0082, config = @XtreamField, javaType = ByteArrayContainer.class, desc = "车辆所在市域 ID"),
+                                // @XtreamFieldMapDescriptor.ValueCodecConfig(whenKeyIsU32 = 0x0082, javaType = DataWrapper.class, desc = "车辆所在市域 ID"),
+                                @XtreamFieldMapDescriptor.ValueCodecConfig(whenKeyIsU32 = 0x0082, javaType = U16Wrapper.class, desc = "车辆所在市域 ID"),
+                                // @XtreamFieldMapDescriptor.ValueCodecConfig(whenKeyIsU32 = 0x0082, config = @XtreamField(length = 2), javaType = Integer.class, desc = "车辆所在市域 ID"),
                                 @XtreamFieldMapDescriptor.ValueCodecConfig(whenKeyIsU32 = 0x0084, config = @XtreamField(length = 1), javaType = Short.class, desc = "车牌颜色"),
                         }
                 )

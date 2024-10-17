@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.server.reactive.spec.common;
+package io.github.hylexus.xtream.codec.core.impl.codec.wrapper;
 
-public final class XtreamConstants {
-    private XtreamConstants() {
+import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
+import io.github.hylexus.xtream.codec.core.FieldCodec;
+import io.github.hylexus.xtream.codec.core.type.wrapper.DataWrapper;
+import io.netty.buffer.ByteBuf;
+
+public abstract class BaseDataWrapperFieldCodec<T extends DataWrapper<?>> implements FieldCodec<T> {
+
+    @Override
+    public void serialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, T value) {
+        if (value != null) {
+            value.writeTo(output);
+        }
     }
-
-    public static final String BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER = "xtreamHandlerAdapterNonBlockingScheduler";
-    public static final String BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER = "xtreamHandlerAdapterBlockingScheduler";
 
 }

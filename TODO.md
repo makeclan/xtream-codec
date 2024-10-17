@@ -1,13 +1,12 @@
 ## TODO
 
-- [ ] 6: 术语重命名为 `Jt808` 标准中出现的单词
+- [ ] 5: 术语重命名为 `Jt808` 标准中出现的单词
     - 模块: jt-808 扩展
-- [ ] 5: **UDP** 会话管理
+- [ ] 4: **UDP** 会话管理
     - 模块: **xtream-codec-server-reactive**
-- [x] 4: `XtreamResponseBodyHandlerResultHandler` 支持从实体类上读取 `@XtreamResponseBody`
+    - 模块: jt-808 扩展、指令服务器 + 附件服务器
+- [x] 3: `XtreamResponseBodyHandlerResultHandler` 支持从实体类上读取 `@XtreamResponseBody`
     - 模块: **xtream-codec-server-reactive**
-- [ ] 3: **UDP** 会话管理: 附件服务器
-    - 模块: jt-808 扩展
 - [x] 2: `Jt808ResponseBodyHandlerResultHandler` 支持从实体类上读取 `@XtreamResponseBody`
     - 模块: jt-808 扩展
 - [x] 1: `FieldCodec` 的序列化方法完善

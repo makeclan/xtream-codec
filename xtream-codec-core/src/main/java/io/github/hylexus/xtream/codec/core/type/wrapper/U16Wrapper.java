@@ -16,17 +16,11 @@
 
 package io.github.hylexus.xtream.codec.core.type.wrapper;
 
-import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
-import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
 import io.netty.buffer.ByteBuf;
 
 public class U16Wrapper implements DataWrapper<Integer> {
 
-    @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, length = 2)
-    private Integer value;
-
-    public U16Wrapper() {
-    }
+    private final Integer value;
 
     public U16Wrapper(Integer value) {
         this.value = value;
@@ -38,18 +32,36 @@ public class U16Wrapper implements DataWrapper<Integer> {
     }
 
     @Override
-    public Integer value() {
-        return this.value;
-    }
-
-    @Override
-    public void value(Integer value) {
-        this.value = value;
-    }
-
-    @Override
     public int length() {
         return 2;
+    }
+
+    @Override
+    public byte[] asBytes() {
+        return new byte[]{
+                (byte) (value >>> 8),
+                value.byteValue()
+        };
+    }
+
+    @Override
+    public byte asI8() {
+        return value.byteValue();
+    }
+
+    @Override
+    public short asI16() {
+        return value.shortValue();
+    }
+
+    @Override
+    public int asI32() {
+        return value;
+    }
+
+    @Override
+    public String asString() {
+        return String.valueOf(value);
     }
 
 }
