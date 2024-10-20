@@ -18,23 +18,11 @@
     </a>
 </p>
 
-## Docs
+## Intro
 
-- Github: https://hylexus.github.io/xtream-codec/
-- Gitee: https://hylexus.gitee.io/xtream-codec/
+该项目是一个基于 [projectreactor](https://projectreactor.io/) 的、和具体协议无关的、异步的、非阻塞的、TCP/UDP 服务端实现。
 
-## QuickStart
-
-- **自定义** 协议示例
-    - Github: https://hylexus.github.io/xtream-codec/core/samples/custom-protocol-sample-01/
-    - Gitee: https://hylexus.gitee.io/xtream-codec/core/samples/custom-protocol-sample-01/
-- **JT/T 808** 协议示例
-    - Github: https://hylexus.github.io/xtream-codec/core/samples/custom-protocol-sample-02/
-    - Gitee: https://hylexus.gitee.io/xtream-codec/core/samples/custom-protocol-sample-02/
-
-## License
-
-`xtream-codec` 使用 [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)。 详情见 [LICENSE](LICENSE) 文件。
+同时提供了一个基于 [xtream-codec-server-reactive](xtream-codec-server-reactive) 的 [JT/T 808 协议](ext/jtt/xtream-codec-ext-jt-808-server-spring-boot-starter) 服务端实现。
 
 ## Modules
 
@@ -54,3 +42,22 @@
 ├── xtream-codec-core                                   ## xtream-codec-core 核心编解码模块
 └── xtream-codec-server-reactive                        ## 异步非阻塞的 TCP/UDP 服务端实现
 ```
+
+## Docs
+
+- Github: https://hylexus.github.io/xtream-codec/
+- Gitee: https://hylexus.gitee.io/xtream-codec/
+
+## QuickStart
+
+- **自定义** 协议示例
+    - Github: https://hylexus.github.io/xtream-codec/core/samples/custom-protocol-sample-01/
+    - Gitee: https://hylexus.gitee.io/xtream-codec/core/samples/custom-protocol-sample-01/
+- **JT/T 808** 协议示例
+    - Github: https://hylexus.github.io/xtream-codec/core/samples/custom-protocol-sample-02/
+    - Gitee: https://hylexus.gitee.io/xtream-codec/core/samples/custom-protocol-sample-02/
+
+## License
+
+`xtream-codec` 使用 [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)。 详情见 [LICENSE](LICENSE) 文件。
+
