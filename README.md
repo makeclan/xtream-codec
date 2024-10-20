@@ -35,3 +35,22 @@
 ## License
 
 `xtream-codec` 使用 [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)。 详情见 [LICENSE](LICENSE) 文件。
+
+## Modules
+
+```shell
+.
+├── build-script  ## 构建脚本
+├── docs          ## 文档
+├── ext           ## 扩展模块
+│     └── jtt     ## JT/T 扩展
+│         └── xtream-codec-ext-jt-808-server-spring-boot-starter  ## JT/T 808 扩展
+├── samples       ## 示例模块
+│     ├── jtt     ## JT/T 示例
+│     │   └── jt-808-server-spring-boot-starter-debug   ## JT/T 808 服务端调试
+│     ├── xtream-codec-core-debug                       ## xtream-codec-core 模块调试
+│     ├── xtream-codec-server-reactive-debug-tcp        ## xtream-codec-server-reactive TCP 调试
+│     └── xtream-codec-server-reactive-debug-udp        ## xtream-codec-server-reactive UDP 调试
+├── xtream-codec-core                                   ## xtream-codec-core 核心编解码模块
+└── xtream-codec-server-reactive                        ## 异步非阻塞的 TCP/UDP 服务端实现
+```
