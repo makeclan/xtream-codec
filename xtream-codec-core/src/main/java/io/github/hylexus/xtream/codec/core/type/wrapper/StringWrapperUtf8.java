@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.core.type.wrapper;
 
 import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
+import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.netty.buffer.ByteBuf;
 
 import java.nio.charset.Charset;
@@ -26,8 +27,12 @@ public class StringWrapperUtf8 implements DataWrapper<String> {
 
     public static final Charset UTF_8 = StandardCharsets.UTF_8;
 
-    protected final String value;
-    protected final int length;
+    @Preset.RustStyle.str
+    protected String value;
+    protected int length;
+
+    public StringWrapperUtf8() {
+    }
 
     public StringWrapperUtf8(String value) {
         this.value = value;
@@ -67,5 +72,11 @@ public class StringWrapperUtf8 implements DataWrapper<String> {
     @Override
     public String asString() {
         return value;
+    }
+
+    public StringWrapperUtf8 setValue(String value) {
+        this.value = value;
+        this.length = value.getBytes(UTF_8).length;
+        return this;
     }
 }

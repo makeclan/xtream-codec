@@ -16,32 +16,37 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
+import io.github.hylexus.xtream.codec.core.type.wrapper.DwordWrapper;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.BaseCodecTest;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class BuiltinMessage8100Test extends BaseCodecTest {
+class BuiltinMessage8106Test extends BaseCodecTest {
 
     @Test
     void testEncode() {
-        final BuiltinMessage8100 entity = new BuiltinMessage8100()
-                .setClientFlowId(111)
-                .setResult((short) 0)
-                .setAuthCode("ok..ok..ok");
+        final BuiltinMessage8106 entity = new BuiltinMessage8106();
+        entity.setParameterIdList(List.of(
+                new DwordWrapper(0x0001L),
+                new DwordWrapper(0x0002L)
+        ));
+        entity.setParameterCount((short) entity.getParameterIdList().size());
 
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2019, terminalId2019);
-        assertEquals("7e8100400d01000000000139123443290000006f006f6b2e2e6f6b2e2e6f6bd27e", hex);
+        assertEquals("7e8106400901000000000139123443290000020000000100000002ba7e", hex);
     }
 
     @Test
     void testDecode() {
-        final BuiltinMessage8100 entity = decodeAsEntity(BuiltinMessage8100.class, "8100400d01000000000139123443290000006f006f6b2e2e6f6b2e2e6f6bd2");
-
-        assertEquals(111, entity.getClientFlowId());
-        assertEquals(0, entity.getResult());
-        assertEquals("ok..ok..ok", entity.getAuthCode());
+        final BuiltinMessage8106 entity = decodeAsEntity(BuiltinMessage8106.class, "8106400901000000000139123443290000020000000100000002ba");
+        assertEquals(2, entity.getParameterCount());
+        assertEquals(entity.getParameterCount(), entity.getParameterIdList().size());
+        assertEquals(0x0001L, entity.getParameterIdList().getFirst().asU32());
+        assertEquals(0x0002L, entity.getParameterIdList().getLast().asU32());
     }
 
 }

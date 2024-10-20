@@ -70,6 +70,9 @@ public class XtreamTypes {
         BASIC_SIZE_MAPPING.put(StringWrapperUtf8.class, -1);
         BASIC_SIZE_MAPPING.put(StringWrapperGbk.class, -1);
         BASIC_SIZE_MAPPING.put(StringWrapperBcd.class, -1);
+
+        BASIC_SIZE_MAPPING.put(DwordWrapper.class, -1);
+        BASIC_SIZE_MAPPING.put(WordWrapper.class, -1);
     }
 
     public static boolean isNumberType(Class<?> targetType) {

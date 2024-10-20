@@ -17,12 +17,17 @@
 package io.github.hylexus.xtream.codec.core.type.wrapper;
 
 import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
+import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.netty.buffer.ByteBuf;
 
 public class StringWrapperGbk implements DataWrapper<String> {
 
-    protected final String value;
-    protected final int length;
+    @Preset.RustStyle.str(charset = "gbk")
+    protected String value;
+    protected int length;
+
+    public StringWrapperGbk() {
+    }
 
     public StringWrapperGbk(String value) {
         this.value = value;
@@ -62,5 +67,11 @@ public class StringWrapperGbk implements DataWrapper<String> {
     @Override
     public String asString() {
         return value;
+    }
+
+    public StringWrapperGbk setValue(String value) {
+        this.value = value;
+        this.length = value.getBytes(XtreamConstants.CHARSET_GBK).length;
+        return this;
     }
 }

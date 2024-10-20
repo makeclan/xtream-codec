@@ -113,6 +113,8 @@ public class DefaultFieldCodecRegistry implements FieldCodecRegistry {
         registry.register(U16WrapperFieldCodec.INSTANCE, U16Wrapper.class, -1, "", false);
         registry.register(I32WrapperFieldCodec.INSTANCE, I32Wrapper.class, -1, "", false);
         registry.register(U32WrapperFieldCodec.INSTANCE, U32Wrapper.class, -1, "", false);
+        registry.register(DwordWrapperFieldCodec.INSTANCE, DwordWrapper.class, -1, "", false);
+        registry.register(WordWrapperFieldCodec.INSTANCE, WordWrapper.class, -1, "", false);
         registry.register(StringWrapperUtf8FieldCodec.INSTANCE, StringWrapperUtf8.class, -1, "", false);
         registry.register(StringWrapperGbkFieldCodec.INSTANCE, StringWrapperGbk.class, -1, "", false);
         registry.register(StringWrapperBcdFieldCodec.INSTANCE, StringWrapperBcd.class, -1, "", false);

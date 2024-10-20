@@ -18,6 +18,7 @@ package io.github.hylexus.xtream.codec.core.type;
 
 
 import io.github.hylexus.xtream.codec.common.utils.BcdOps;
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.netty.buffer.ByteBuf;
 
 import java.nio.charset.Charset;
@@ -76,6 +77,14 @@ interface BytesContainer {
 
     default String asString() {
         return this.asString(StandardCharsets.UTF_8);
+    }
+
+    default String asStringUtf8() {
+        return this.asString(StandardCharsets.UTF_8);
+    }
+
+    default String asStringGbk() {
+        return this.asString(XtreamConstants.CHARSET_GBK);
     }
 
     void release();

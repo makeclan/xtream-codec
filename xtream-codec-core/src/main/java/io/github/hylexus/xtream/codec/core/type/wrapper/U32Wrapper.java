@@ -16,12 +16,19 @@
 
 package io.github.hylexus.xtream.codec.core.type.wrapper;
 
+import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.netty.buffer.ByteBuf;
+
+import java.util.StringJoiner;
 
 public class U32Wrapper implements DataWrapper<Long> {
     static final int MASK = 0xFF;
 
-    private final Long value;
+    @Preset.RustStyle.u32
+    private Long value;
+
+    public U32Wrapper() {
+    }
 
     public U32Wrapper(Long value) {
         this.value = value;
@@ -67,4 +74,15 @@ public class U32Wrapper implements DataWrapper<Long> {
         return String.valueOf(value);
     }
 
+    public U32Wrapper setValue(Long value) {
+        this.value = value;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", U32Wrapper.class.getSimpleName() + "[", "]")
+                .add("value=" + value)
+                .toString();
+    }
 }

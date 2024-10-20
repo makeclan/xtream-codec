@@ -16,6 +16,8 @@
 
 package io.github.hylexus.xtream.codec.common.utils;
 
+import java.util.function.Predicate;
+
 /**
  * @author hylexus
  */
@@ -54,5 +56,18 @@ public abstract class XtreamAssertions {
         if (expected == actual) {
             throw new AssertionError(message);
         }
+    }
+
+    public static void assertThat(boolean condition, String msg) {
+        if (!condition) {
+            throw new IllegalArgumentException(msg);
+        }
+    }
+
+    public static <T> T assertThat(T t, Predicate<T> predicate, String msg) {
+        if (!predicate.test(t)) {
+            throw new IllegalArgumentException(msg);
+        }
+        return t;
     }
 }

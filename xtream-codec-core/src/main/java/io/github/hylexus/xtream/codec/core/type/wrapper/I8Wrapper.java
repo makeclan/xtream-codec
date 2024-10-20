@@ -16,11 +16,16 @@
 
 package io.github.hylexus.xtream.codec.core.type.wrapper;
 
+import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.netty.buffer.ByteBuf;
 
 public class I8Wrapper implements DataWrapper<Byte> {
 
-    private final Byte value;
+    @Preset.RustStyle.i8
+    private Byte value;
+
+    public I8Wrapper() {
+    }
 
     public I8Wrapper(Byte value) {
         this.value = value;
@@ -61,4 +66,8 @@ public class I8Wrapper implements DataWrapper<Byte> {
         return String.valueOf(value);
     }
 
+    public I8Wrapper setValue(Byte value) {
+        this.value = value;
+        return this;
+    }
 }

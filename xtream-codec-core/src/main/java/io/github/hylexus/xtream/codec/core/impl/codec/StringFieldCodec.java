@@ -38,12 +38,17 @@ public class StringFieldCodec implements FieldCodec<String> {
         final int finalLength = length < 0
                 ? input.readableBytes() // all remaining
                 : length;
+        if (finalLength <= 0) {
+            return null;
+        }
         return delegate.deserialize(propertyMetadata, context, input, finalLength);
     }
 
     @Override
     public void serialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, String value) {
-        delegate.serialize(propertyMetadata, context, output, value);
+        if (value != null) {
+            delegate.serialize(propertyMetadata, context, output, value);
+        }
     }
 
     @Override

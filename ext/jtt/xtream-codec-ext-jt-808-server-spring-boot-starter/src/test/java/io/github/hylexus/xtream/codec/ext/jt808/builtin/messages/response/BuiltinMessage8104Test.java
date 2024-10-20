@@ -18,30 +18,28 @@ package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.BaseCodecTest;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class BuiltinMessage8100Test extends BaseCodecTest {
+class BuiltinMessage8104Test extends BaseCodecTest {
 
     @Test
     void testEncode() {
-        final BuiltinMessage8100 entity = new BuiltinMessage8100()
-                .setClientFlowId(111)
-                .setResult((short) 0)
-                .setAuthCode("ok..ok..ok");
+        final BuiltinMessage8104 entity = new BuiltinMessage8104();
 
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2019, terminalId2019);
-        assertEquals("7e8100400d01000000000139123443290000006f006f6b2e2e6f6b2e2e6f6bd27e", hex);
+        assertEquals("7e8104400001000000000139123443290000b07e", hex);
     }
 
     @Test
     void testDecode() {
-        final BuiltinMessage8100 entity = decodeAsEntity(BuiltinMessage8100.class, "8100400d01000000000139123443290000006f006f6b2e2e6f6b2e2e6f6bd2");
-
-        assertEquals(111, entity.getClientFlowId());
-        assertEquals(0, entity.getResult());
-        assertEquals("ok..ok..ok", entity.getAuthCode());
+        final Jt808Request jt808Request = decodeAsRequest("8104400001000000000139123443290000b0");
+        assertEquals(0x8104, jt808Request.header().messageId());
+        final BuiltinMessage8104 entity = decodeAsEntity(BuiltinMessage8104.class, "8100400d01000000000139123443290000006f006f6b2e2e6f6b2e2e6f6bd2");
+        assertNotNull(entity);
+        jt808Request.release();
     }
-
 }

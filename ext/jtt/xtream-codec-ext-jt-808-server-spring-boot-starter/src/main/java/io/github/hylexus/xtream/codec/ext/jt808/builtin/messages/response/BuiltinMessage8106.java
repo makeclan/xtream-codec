@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
+package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.WordWrapper;
+import io.github.hylexus.xtream.codec.core.type.wrapper.DwordWrapper;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -26,7 +27,7 @@ import lombok.experimental.Accessors;
 import java.util.List;
 
 /**
- * 终端补传分包请求 0x0005
+ * 查询终端参数
  *
  * @author hylexus
  */
@@ -34,18 +35,12 @@ import java.util.List;
 @Setter
 @ToString
 @Accessors(chain = true)
-public class BuiltinMessage0005 {
+@Jt808ResponseBody(messageId = 0x8106)
+public class BuiltinMessage8106 {
 
-    // byte[0,2)    原始消息流水号
-    @Preset.JtStyle.Word
-    private int originalMessageFlowId;
+    @Preset.JtStyle.Byte
+    private short parameterCount;
 
-    // byte[2,4)    重传包总数
-    @Preset.JtStyle.Word
-    private int packageCount;
-
-    // byte[4, 2n)    重传包 ID 列表
     @Preset.JtStyle.List
-    private List<WordWrapper> packageIdList;
-
+    private List<DwordWrapper> parameterIdList;
 }
