@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
+package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
 import io.github.hylexus.xtream.codec.core.type.ByteArrayContainer;
 import io.github.hylexus.xtream.codec.core.type.Preset;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.BuiltinMessage8103Sample1;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.BuiltinMessage8103Sample2;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.BuiltinMessage8103Sample3;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.BuiltinMessage8103Sample4;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -29,42 +26,19 @@ import lombok.experimental.Accessors;
 
 import java.util.List;
 
-/**
- * 查询终端参数应答 0x0104
- *
- * @author hylexus
- */
 @Getter
 @Setter
+@ToString
 @Accessors(chain = true)
-public class BuiltinMessage0104 {
-    /**
-     * 对应的终端参数查询消息的流水号
-     */
-    @Preset.JtStyle.Word
-    private int flowId;
+@Jt808ResponseBody(messageId = 0x8103)
+public class BuiltinMessage8103Sample1 {
 
-    /**
-     * 应答参数个数
-     */
     @Preset.JtStyle.Byte
     private short parameterCount;
 
-    /**
-     * 参数项列表: 见表 10
-     */
     @Preset.JtStyle.List
-    private List<ParameterItem> parameterItems;
+    private List<ParameterItem> parameterItemList;
 
-    /**
-     * 其他写法参考：
-     * <ol>
-     * <li>{@link BuiltinMessage8103Sample1}</li>
-     * <li>{@link BuiltinMessage8103Sample2}</li>
-     * <li>{@link BuiltinMessage8103Sample3}</li>
-     * <li>{@link BuiltinMessage8103Sample4}</li>
-     * </ol>
-     */
     @Getter
     @Setter
     @ToString
@@ -77,7 +51,7 @@ public class BuiltinMessage0104 {
         @Preset.JtStyle.Byte
         private short parameterLength;
 
-        @Preset.JtStyle.Bytes(lengthExpression = "getParameterLength()")
+        @Preset.JtStyle.Bytes
         private ByteArrayContainer parameterValue;
 
         public ParameterItem() {
@@ -87,11 +61,6 @@ public class BuiltinMessage0104 {
             this.parameterId = parameterId;
             this.parameterLength = (short) container.length();
             this.parameterValue = container;
-        }
-
-        @SuppressWarnings("lombok")
-        public short getParameterLength() {
-            return parameterLength;
         }
     }
 }

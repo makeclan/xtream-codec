@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
+package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.BaseCodecTest;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.codec.ParameterItem;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import org.junit.jupiter.api.Test;
 
@@ -30,19 +31,19 @@ class BuiltinMessage8103Sample4Test extends BaseCodecTest {
     @Test
     void testEncode() {
         final BuiltinMessage8103Sample4 entity = new BuiltinMessage8103Sample4();
-        final List<BuiltinMessage8103Sample4.ParameterItem> parameterItemList = new ArrayList<>();
+        final List<ParameterItem> parameterItemList = new ArrayList<>();
         // 终端心跳发送间隔,单位为秒
-        parameterItemList.add(new BuiltinMessage8103Sample4.ParameterItem(0x0001L, (short) 4, 111L));
+        parameterItemList.add(new ParameterItem(0x0001L, (short) 4, 111L));
         // 多个相同 ID 的配置项(监控平台电话号码)
-        parameterItemList.add(new BuiltinMessage8103Sample4.ParameterItem(0x0040L, (short) 11, "13900001111"));
-        parameterItemList.add(new BuiltinMessage8103Sample4.ParameterItem(0x0040L, (short) 11, "13900002222"));
-        parameterItemList.add(new BuiltinMessage8103Sample4.ParameterItem(0x0040L, (short) 11, ("13900003333")));
+        parameterItemList.add(new ParameterItem(0x0040L, (short) 11, "13900001111"));
+        parameterItemList.add(new ParameterItem(0x0040L, (short) 11, "13900002222"));
+        parameterItemList.add(new ParameterItem(0x0040L, (short) 11, ("13900003333")));
         // 车辆所在省域 ID
-        parameterItemList.add(new BuiltinMessage8103Sample4.ParameterItem(0x0081L, (short) 2, 62));
+        parameterItemList.add(new ParameterItem(0x0081L, (short) 2, 62));
         // 车辆所在市域 ID
-        parameterItemList.add(new BuiltinMessage8103Sample4.ParameterItem(0x0082L, (short) 2, 103));
+        parameterItemList.add(new ParameterItem(0x0082L, (short) 2, 103));
         // 车牌颜色
-        parameterItemList.add(new BuiltinMessage8103Sample4.ParameterItem(0x0084L, (short) 1, (short) 1));
+        parameterItemList.add(new ParameterItem(0x0084L, (short) 1, (short) 1));
 
         entity.setParameterCount((short) parameterItemList.size());
         entity.setParameterItemList(parameterItemList);
@@ -57,18 +58,18 @@ class BuiltinMessage8103Sample4Test extends BaseCodecTest {
         final BuiltinMessage8103Sample4 entity = decodeAsEntity(BuiltinMessage8103Sample4.class, hex);
         assertEquals(7, entity.getParameterCount());
 
-        final List<BuiltinMessage8103Sample4.ParameterItem> parameterItemList = entity.getParameterItemList();
+        final List<ParameterItem> parameterItemList = entity.getParameterItemList();
         assertEquals(7, parameterItemList.size());
-        assertParameterItemEquals(new BuiltinMessage8103Sample4.ParameterItem(0x0001L, (short) 4, 111L), parameterItemList.getFirst());
-        assertParameterItemEquals(new BuiltinMessage8103Sample4.ParameterItem(0x0040L, (short) 11, "13900001111"), parameterItemList.get(1));
-        assertParameterItemEquals(new BuiltinMessage8103Sample4.ParameterItem(0x0040L, (short) 11, "13900002222"), parameterItemList.get(2));
-        assertParameterItemEquals(new BuiltinMessage8103Sample4.ParameterItem(0x0040L, (short) 11, "13900003333"), parameterItemList.get(3));
-        assertParameterItemEquals(new BuiltinMessage8103Sample4.ParameterItem(0x0081L, (short) 2, 62), parameterItemList.get(4));
-        assertParameterItemEquals(new BuiltinMessage8103Sample4.ParameterItem(0x0082L, (short) 2, 103), parameterItemList.get(5));
-        assertParameterItemEquals(new BuiltinMessage8103Sample4.ParameterItem(0x0084L, (short) 1, (short) 1), parameterItemList.get(6));
+        assertParameterItemEquals(new ParameterItem(0x0001L, (short) 4, 111L), parameterItemList.getFirst());
+        assertParameterItemEquals(new ParameterItem(0x0040L, (short) 11, "13900001111"), parameterItemList.get(1));
+        assertParameterItemEquals(new ParameterItem(0x0040L, (short) 11, "13900002222"), parameterItemList.get(2));
+        assertParameterItemEquals(new ParameterItem(0x0040L, (short) 11, "13900003333"), parameterItemList.get(3));
+        assertParameterItemEquals(new ParameterItem(0x0081L, (short) 2, 62), parameterItemList.get(4));
+        assertParameterItemEquals(new ParameterItem(0x0082L, (short) 2, 103), parameterItemList.get(5));
+        assertParameterItemEquals(new ParameterItem(0x0084L, (short) 1, (short) 1), parameterItemList.get(6));
     }
 
-    void assertParameterItemEquals(BuiltinMessage8103Sample4.ParameterItem expected, BuiltinMessage8103Sample4.ParameterItem actual) {
+    void assertParameterItemEquals(ParameterItem expected, ParameterItem actual) {
         assertEquals(expected.getParameterId(), actual.getParameterId());
         assertEquals(expected.getParameterLength(), actual.getParameterLength());
         assertEquals(expected.getParameterValue(), actual.getParameterValue());

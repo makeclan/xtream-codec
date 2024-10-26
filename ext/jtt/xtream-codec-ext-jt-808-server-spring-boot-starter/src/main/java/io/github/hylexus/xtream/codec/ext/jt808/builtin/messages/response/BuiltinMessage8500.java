@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location;
+package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-import java.time.LocalDateTime;
-
 /**
- * 苏标-表-4-16 报警标识号格式
+ * 车辆控制
  *
  * @author hylexus
  */
@@ -33,26 +32,15 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Accessors(chain = true)
-public class AlarmIdentifier {
-    // 终端ID BYTE[7] 7个字节，由大写字母和数字组成
-    @Preset.JtStyle.Str(length = 7)
-    private String terminalId;
+@Jt808ResponseBody(messageId = 0x8500)
+public class BuiltinMessage8500 {
 
-    // 时间   BCD[6]  YY-MM-DD-hh-mm-ss （GMT+8时间）
-    @Preset.JtStyle.BcdDateTime
-    // 或者
-    // @XtreamDateTimeField(pattern = "yyMMddHHmmss", length = 6, charset = "bcd_8421")
-    private LocalDateTime time;
-
-    // 序号   BYTE    同一时间点报警的序号，从0循环累加
+    /**
+     * 控制标志
+     * <li>bit[0] -- 0：车门解锁；1：车门加锁</li>
+     * <li>bit[1~7] -- 保留</li>
+     */
     @Preset.JtStyle.Byte
-    private short sequence;
+    private short type;
 
-    // 附件数量 BYTE    表示该报警对应的附件数量
-    @Preset.JtStyle.Byte
-    private short attachmentCount;
-
-    // 预留 BYTE
-    @Preset.JtStyle.Byte
-    private short reserved = 0;
 }

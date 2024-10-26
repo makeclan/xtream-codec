@@ -107,4 +107,9 @@ public @interface XtreamField {
      */
     Class<? extends ContainerInstanceFactory> containerInstanceFactory() default ContainerInstanceFactory.PlaceholderContainerInstanceFactory.class;
 
+    /**
+     * 描述字段；和 jt-framework 保持一致，没有特殊作用。
+     */
+    String desc() default "";
+
 }

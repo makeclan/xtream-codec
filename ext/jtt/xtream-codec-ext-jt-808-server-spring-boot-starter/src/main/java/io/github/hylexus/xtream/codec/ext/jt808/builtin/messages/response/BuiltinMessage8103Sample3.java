@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
+package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
 import io.github.hylexus.xtream.codec.core.type.ByteArrayContainer;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.github.hylexus.xtream.codec.core.type.wrapper.DataWrapper;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -30,6 +31,7 @@ import java.util.List;
 @Setter
 @ToString
 @Accessors(chain = true)
+@Jt808ResponseBody(messageId = 0x8103)
 public class BuiltinMessage8103Sample3 {
 
     @Preset.JtStyle.Byte

@@ -20,6 +20,9 @@ import io.github.hylexus.xtream.codec.core.type.Preset;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
+
+import java.time.LocalDateTime;
 
 /**
  * 苏标-表-4-15 高级驾驶辅助报警信息数据格式
@@ -29,6 +32,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@Accessors(chain = true)
 public class BuiltinMessage64 {
 
     // offset[0,4) DWORD 报警 ID: 按照报警先后，从0开始循环累加，不区分报警类型。
@@ -89,8 +93,8 @@ public class BuiltinMessage64 {
     private long longitude;
 
     // offset[23,29) BCD[6] 日期时间
-    @Preset.JtStyle.Bcd(length = 6)
-    private String datetime;
+    @Preset.JtStyle.BcdDateTime
+    private LocalDateTime datetime;
 
     // offset[29,31] WORD 车辆状态
     @Preset.JtStyle.Word

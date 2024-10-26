@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location;
+package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-import java.time.LocalDateTime;
-
 /**
- * 苏标-表-4-16 报警标识号格式
+ * 信息服务
  *
  * @author hylexus
  */
@@ -33,26 +32,25 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Accessors(chain = true)
-public class AlarmIdentifier {
-    // 终端ID BYTE[7] 7个字节，由大写字母和数字组成
-    @Preset.JtStyle.Str(length = 7)
-    private String terminalId;
+@Jt808ResponseBody(messageId = 0x8304)
+public class BuiltinMessage8304 {
 
-    // 时间   BCD[6]  YY-MM-DD-hh-mm-ss （GMT+8时间）
-    @Preset.JtStyle.BcdDateTime
-    // 或者
-    // @XtreamDateTimeField(pattern = "yyMMddHHmmss", length = 6, charset = "bcd_8421")
-    private LocalDateTime time;
-
-    // 序号   BYTE    同一时间点报警的序号，从0循环累加
+    /**
+     * 信息类型
+     */
     @Preset.JtStyle.Byte
-    private short sequence;
+    private short type;
 
-    // 附件数量 BYTE    表示该报警对应的附件数量
-    @Preset.JtStyle.Byte
-    private short attachmentCount;
+    /**
+     * 信息长度
+     */
+    @Preset.JtStyle.Word
+    private int length;
 
-    // 预留 BYTE
-    @Preset.JtStyle.Byte
-    private short reserved = 0;
+    /**
+     * 信息内容
+     */
+    @Preset.JtStyle.Str
+    private String content;
+
 }

@@ -69,6 +69,9 @@ public class NestedBeanPropertyMetadata extends BasicBeanPropertyMetadata {
     public void encodePropertyValue(FieldCodec.SerializeContext context, ByteBuf output, Object value) {
         final DefaultSerializeContext serializeContext = new DefaultSerializeContext(context.entityEncoder(), value);
         for (final BeanPropertyMetadata pm : this.nestedBeanMetadata.getPropertyMetadataList()) {
+            if (!pm.conditionEvaluator().evaluate(serializeContext)) {
+                continue;
+            }
             final Object nestedValue = pm.getProperty(value);
             pm.encodePropertyValue(serializeContext, output, nestedValue);
         }

@@ -17,48 +17,35 @@
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
-import io.github.hylexus.xtream.codec.core.type.wrapper.DataWrapper;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-import java.util.List;
-
+/**
+ * 车辆控制应答
+ *
+ * @author hylexus
+ */
 @Getter
 @Setter
 @ToString
 @Accessors(chain = true)
-public class BuiltinMessage8103Sample2 {
+public class BuiltinMessage0500 {
 
-    @Preset.JtStyle.Byte
-    private short parameterCount;
+    /**
+     * 应答流水号
+     * <p>
+     * 对应的车辆控制消息的流水号
+     */
+    @Preset.JtStyle.Word
+    private short flowId;
 
-    @Preset.JtStyle.List
-    private List<ParameterItem> parameterItemList;
-
-    @Getter
-    @Setter
-    @ToString
-    @Accessors(chain = true)
-    public static class ParameterItem {
-
-        @Preset.JtStyle.Dword
-        private long parameterId;
-
-        @Preset.JtStyle.Byte
-        private short parameterLength;
-
-        @Preset.JtStyle.Bytes
-        private DataWrapper<?> parameterValue;
-
-        public ParameterItem() {
-        }
-
-        public ParameterItem(long parameterId, DataWrapper<?> container) {
-            this.parameterId = parameterId;
-            this.parameterLength = (short) container.length();
-            this.parameterValue = container;
-        }
-    }
+    /**
+     * 位置信息汇报消息体
+     * <p>
+     * 根据对应的状态位判断控制成功与否
+     */
+    @Preset.JtStyle.Object
+    private BuiltinMessage0200 location;
 }

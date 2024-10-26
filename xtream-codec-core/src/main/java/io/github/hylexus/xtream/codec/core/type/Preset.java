@@ -18,6 +18,7 @@ package io.github.hylexus.xtream.codec.core.type;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.core.ContainerInstanceFactory;
+import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamDateTimeField;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
 import org.springframework.core.annotation.AliasFor;
@@ -191,6 +192,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
+            Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
         }
 
         @SuppressWarnings("checkstyle:TypeName")
@@ -211,6 +215,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
+            Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
         }
 
         @SuppressWarnings("checkstyle:TypeName")
@@ -231,6 +238,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
+            Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
         }
 
         @SuppressWarnings("checkstyle:TypeName")
@@ -251,6 +261,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
+            Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
 
             @AliasFor(annotation = XtreamField.class, attribute = "containerInstanceFactory")
             Class<? extends ContainerInstanceFactory> containerInstanceFactory() default ContainerInstanceFactory.ArrayListContainerInstanceFactory.class;
@@ -275,6 +288,9 @@ public @interface Preset {
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
 
+            @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
+            Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
+
             @AliasFor(annotation = XtreamField.class, attribute = "containerInstanceFactory")
             Class<? extends ContainerInstanceFactory> containerInstanceFactory() default ContainerInstanceFactory.LinkedHashMapContainerInstanceFactory.class;
         }
@@ -297,6 +313,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
+            Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
         }
     }
 
@@ -349,6 +368,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
+            Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
         }
 
         @Target({ElementType.FIELD, ElementType.METHOD})
@@ -397,6 +419,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
+            Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
         }
 
         @SuppressWarnings("checkstyle:TypeName")
@@ -419,6 +444,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
+            Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
         }
 
         @Target({ElementType.FIELD})
@@ -437,6 +465,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
+            Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
         }
 
         @Target({ElementType.FIELD})
@@ -455,6 +486,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
+            Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
         }
 
         @Target({ElementType.FIELD})
@@ -473,6 +507,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
+            Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
 
             @AliasFor(annotation = XtreamField.class, attribute = "containerInstanceFactory")
             Class<? extends ContainerInstanceFactory> containerInstanceFactory() default ContainerInstanceFactory.ArrayListContainerInstanceFactory.class;
@@ -495,6 +532,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
+            Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
 
             @AliasFor(annotation = XtreamField.class, attribute = "containerInstanceFactory")
             Class<? extends ContainerInstanceFactory> containerInstanceFactory() default ContainerInstanceFactory.LinkedHashMapContainerInstanceFactory.class;

@@ -16,49 +16,32 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
-import io.github.hylexus.xtream.codec.core.type.ByteArrayContainer;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-import java.util.List;
-
+/**
+ * 位置信息查询应答 0x0201
+ *
+ * @author hylexus
+ */
 @Getter
 @Setter
 @ToString
 @Accessors(chain = true)
-public class BuiltinMessage8103Sample1 {
+public class BuiltinMessage0201 {
 
-    @Preset.JtStyle.Byte
-    private short parameterCount;
+    /**
+     * 应答流水号
+     */
+    @Preset.JtStyle.Word
+    private int flowId;
 
-    @Preset.JtStyle.List
-    private List<ParameterItem> parameterItemList;
-
-    @Getter
-    @Setter
-    @ToString
-    @Accessors(chain = true)
-    public static class ParameterItem {
-
-        @Preset.JtStyle.Dword
-        private long parameterId;
-
-        @Preset.JtStyle.Byte
-        private short parameterLength;
-
-        @Preset.JtStyle.Bytes
-        private ByteArrayContainer parameterValue;
-
-        public ParameterItem() {
-        }
-
-        public ParameterItem(long parameterId, ByteArrayContainer container) {
-            this.parameterId = parameterId;
-            this.parameterLength = (short) container.length();
-            this.parameterValue = container;
-        }
-    }
+    /**
+     * 位置汇报信息: 和 0x0200 消息格式一致
+     */
+    @Preset.JtStyle.Object
+    private BuiltinMessage0200 locationMessage;
 }

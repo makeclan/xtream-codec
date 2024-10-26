@@ -24,7 +24,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 /**
- * 下发终端升级包
+ * 人工确认报警消息 0x8203
  *
  * @author hylexus
  */
@@ -32,48 +32,32 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8108)
-public class BuiltinMessage8108V2019 {
+@Jt808ResponseBody(messageId = 0x8203)
+public class BuiltinMessage8203 {
+
     /**
-     * 升级类型
+     * 报警消息流水号;
      * <p>
-     * 0：终端，12：道路运输证 IC 卡读卡器，52：北斗卫星定位模块
+     * 需人工确认的报警消息流水号，0 表示该报警类型所有消息
      */
-    @Preset.JtStyle.Byte
-    private short type;
+    @Preset.JtStyle.Word
+    private int flowId;
 
     /**
-     * 制造商 ID
-     */
-    @Preset.JtStyle.Bytes(length = 11)
-    private String manufacturerId;
-
-    /**
-     * 版本号长度
-     */
-    @Preset.JtStyle.Byte
-    private short versionLength;
-
-    /**
-     * 版本号
-     */
-    @Preset.JtStyle.Str(lengthExpression = "getVersionLength()")
-    private String version;
-
-    /**
-     * 升级数据包长度
+     * 人工确认报警类型
+     * <li>bi[0] - 1：确认紧急报警</li>
+     * <li>bi[1~2] - 保留</li>
+     * <li>bi[3] - 1：确认危险预警</li>
+     * <li>bi[4~19] - 保留</li>
+     * <li>bi[20] - 1：确认进出区域报警</li>
+     * <li>bi[21] - 1：确认进出路线报警</li>
+     * <li>bi[22] - 1：确认路段行驶时间不足/过长报警</li>
+     * <li>bi[23~26] - 保留</li>
+     * <li>bi[27] - 1：确认车辆非法点火报警</li>
+     * <li>bi[28] - 1：确认车辆非法位移报警；</li>
+     * <li>bi[29~31] - 保留</li>
      */
     @Preset.JtStyle.Dword
-    private long dataSize;
+    private long alarmType;
 
-    /**
-     * 升级数据包
-     */
-    @Preset.JtStyle.Bytes
-    private byte[] data;
-
-    @SuppressWarnings("lombok")
-    public short getVersionLength() {
-        return versionLength;
-    }
 }

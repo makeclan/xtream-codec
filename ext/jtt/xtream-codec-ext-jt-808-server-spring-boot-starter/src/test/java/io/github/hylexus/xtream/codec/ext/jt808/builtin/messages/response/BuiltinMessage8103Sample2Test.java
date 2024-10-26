@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
+package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
 import io.github.hylexus.xtream.codec.core.type.wrapper.StringWrapperGbk;
 import io.github.hylexus.xtream.codec.core.type.wrapper.U16Wrapper;

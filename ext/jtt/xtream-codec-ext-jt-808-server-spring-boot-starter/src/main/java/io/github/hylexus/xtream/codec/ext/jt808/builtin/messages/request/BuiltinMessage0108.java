@@ -14,45 +14,36 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location;
+package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 
-import java.time.LocalDateTime;
-
 /**
- * 苏标-表-4-16 报警标识号格式
+ * 查询终端参数应答 0x0108
  *
  * @author hylexus
  */
 @Getter
 @Setter
-@ToString
 @Accessors(chain = true)
-public class AlarmIdentifier {
-    // 终端ID BYTE[7] 7个字节，由大写字母和数字组成
-    @Preset.JtStyle.Str(length = 7)
-    private String terminalId;
-
-    // 时间   BCD[6]  YY-MM-DD-hh-mm-ss （GMT+8时间）
-    @Preset.JtStyle.BcdDateTime
-    // 或者
-    // @XtreamDateTimeField(pattern = "yyMMddHHmmss", length = 6, charset = "bcd_8421")
-    private LocalDateTime time;
-
-    // 序号   BYTE    同一时间点报警的序号，从0循环累加
+public class BuiltinMessage0108 {
+    /**
+     * 升级类型
+     * <p>
+     * 0：终端，12：道路运输证 IC 卡读卡器，52：北斗卫星定位模块
+     */
     @Preset.JtStyle.Byte
-    private short sequence;
+    private short type;
 
-    // 附件数量 BYTE    表示该报警对应的附件数量
+    /**
+     * 升级结果
+     * <p>
+     * 0：成功，1：失败，2：取消
+     */
     @Preset.JtStyle.Byte
-    private short attachmentCount;
+    private short result;
 
-    // 预留 BYTE
-    @Preset.JtStyle.Byte
-    private short reserved = 0;
 }
