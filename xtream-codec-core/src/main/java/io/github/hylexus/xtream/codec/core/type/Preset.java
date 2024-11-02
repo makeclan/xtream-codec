@@ -19,6 +19,7 @@ package io.github.hylexus.xtream.codec.core.type;
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.core.ContainerInstanceFactory;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
+import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamDateTimeField;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
 import org.springframework.core.annotation.AliasFor;
@@ -190,6 +191,12 @@ public @interface Preset {
             @AliasFor(annotation = XtreamField.class, attribute = "charset")
             String charset() default "utf-8";
 
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldLength")
+            int prependLengthFieldLength() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldType")
+            PrependLengthFieldType prependLengthFieldType() default PrependLengthFieldType.none;
+
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
 
@@ -212,6 +219,12 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "lengthExpression")
             String lengthExpression() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldLength")
+            int prependLengthFieldLength() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldType")
+            PrependLengthFieldType prependLengthFieldType() default PrependLengthFieldType.none;
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
@@ -236,6 +249,12 @@ public @interface Preset {
             @AliasFor(annotation = XtreamField.class, attribute = "lengthExpression")
             String lengthExpression() default "";
 
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldLength")
+            int prependLengthFieldLength() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldType")
+            PrependLengthFieldType prependLengthFieldType() default PrependLengthFieldType.none;
+
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
 
@@ -258,6 +277,12 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "lengthExpression")
             String lengthExpression() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldLength")
+            int prependLengthFieldLength() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldType")
+            PrependLengthFieldType prependLengthFieldType() default PrependLengthFieldType.none;
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
@@ -285,6 +310,12 @@ public @interface Preset {
             @AliasFor(annotation = XtreamField.class, attribute = "lengthExpression")
             String lengthExpression() default "";
 
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldLength")
+            int prependLengthFieldLength() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldType")
+            PrependLengthFieldType prependLengthFieldType() default PrependLengthFieldType.none;
+
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
 
@@ -310,6 +341,12 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "lengthExpression")
             String lengthExpression() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldLength")
+            int prependLengthFieldLength() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldType")
+            PrependLengthFieldType prependLengthFieldType() default PrependLengthFieldType.none;
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
@@ -366,6 +403,12 @@ public @interface Preset {
             @AliasFor(annotation = XtreamField.class, attribute = "lengthExpression")
             String lengthExpression() default "";
 
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldLength")
+            int prependLengthFieldLength() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldType")
+            PrependLengthFieldType prependLengthFieldType() default PrependLengthFieldType.none;
+
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
 
@@ -383,6 +426,12 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamDateTimeField.class, attribute = "length")
             int length() default 6;
+
+            @AliasFor(annotation = XtreamDateTimeField.class, attribute = "prependLengthFieldLength")
+            int prependLengthFieldLength() default -1;
+
+            @AliasFor(annotation = XtreamDateTimeField.class, attribute = "prependLengthFieldType")
+            PrependLengthFieldType prependLengthFieldType() default PrependLengthFieldType.none;
 
             @AliasFor(annotation = XtreamDateTimeField.class, attribute = "order")
             int order() default -1;
@@ -417,6 +466,12 @@ public @interface Preset {
             @AliasFor(annotation = XtreamField.class, attribute = "lengthExpression")
             String lengthExpression() default "";
 
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldLength")
+            int prependLengthFieldLength() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldType")
+            PrependLengthFieldType prependLengthFieldType() default PrependLengthFieldType.none;
+
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
 
@@ -442,6 +497,12 @@ public @interface Preset {
             @AliasFor(annotation = XtreamField.class, attribute = "charset")
             String charset() default "GBK";
 
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldLength")
+            int prependLengthFieldLength() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldType")
+            PrependLengthFieldType prependLengthFieldType() default PrependLengthFieldType.none;
+
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
 
@@ -466,6 +527,12 @@ public @interface Preset {
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
 
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldLength")
+            int prependLengthFieldLength() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldType")
+            PrependLengthFieldType prependLengthFieldType() default PrependLengthFieldType.none;
+
             @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
             Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
         }
@@ -483,6 +550,12 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "lengthExpression")
             String lengthExpression() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldLength")
+            int prependLengthFieldLength() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldType")
+            PrependLengthFieldType prependLengthFieldType() default PrependLengthFieldType.none;
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
@@ -504,6 +577,18 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "lengthExpression")
             String lengthExpression() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "iterationTimes")
+            int iterationTimes() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "iterationTimesExpression")
+            String iterationTimesExpression() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldLength")
+            int prependLengthFieldLength() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldType")
+            PrependLengthFieldType prependLengthFieldType() default PrependLengthFieldType.none;
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
@@ -529,6 +614,12 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "lengthExpression")
             String lengthExpression() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldLength")
+            int prependLengthFieldLength() default -1;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldType")
+            PrependLengthFieldType prependLengthFieldType() default PrependLengthFieldType.none;
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";

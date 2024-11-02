@@ -75,11 +75,49 @@ public @interface XtreamField {
     String charset() default "GBK";
 
     /**
+     * 编码时: 自动给当前字段前面写入 N 字节, 表示当前字段的长度
+     * <p>
+     * 解码时: 自动读取 N 字节, 作为当前字段的长度
+     *
+     * @see #prependLengthFieldLength()
+     */
+    PrependLengthFieldType prependLengthFieldType() default PrependLengthFieldType.none;
+
+    /**
+     * 含义和 {@link #prependLengthFieldType()} 相同；
+     * <p>
+     * 取值只支持 {@code 1}、{@code 2}、{@code 4}
+     *
+     * @see #prependLengthFieldType()
+     */
+    int prependLengthFieldLength() default -1;
+
+    /**
      * 是否是小端序。
      *
      * @see XtreamTypes#isNumberType(Class)
      */
     boolean littleEndian() default false;
+
+    /**
+     * List 类型的最大迭代次数
+     * <li>反序列化才会用到；序列化用不到</li>
+     * <li>只有 {@link java.util.List} 类型有效</li>
+     */
+    int iterationTimes() default -1;
+
+    /**
+     * List 类型的最大迭代次数表达式
+     * <p>
+     * 目前仅仅支持 <a href="https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/expressions.html">SpEL</a> 语法。
+     *
+     * <li>反序列化才会用到；序列化用不到</li>
+     * <li>只有 {@link java.util.List} 类型有效</li>
+     *
+     * @see #iterationTimes()
+     * @see <a href="https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/expressions.html">SpEL 官方文档</a>
+     */
+    String iterationTimesExpression() default "";
 
     /**
      * 当且仅当 {@code condition} 为 {@code true} 时，当前属性才会被序列化/反序列化。

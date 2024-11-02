@@ -49,6 +49,7 @@ import static org.mockito.Mockito.when;
  * @author hylexus
  */
 public class BaseCodecTest {
+    protected String terminalId2011 = "013912344321";
     protected String terminalId2013 = "013912344323";
     protected String terminalId2019 = "00000000013912344329";
 

@@ -56,14 +56,14 @@ public class BuiltinMessage8600V2019 {
     @Preset.JtStyle.Byte
     private short areaCount;
 
-    @Preset.JtStyle.List
-    private List<Area> areaList;
+    @Preset.JtStyle.List(iterationTimesExpression = "getAreaCount()")
+    private List<CircularArea> areaList;
 
     @Getter
     @Setter
     @Accessors(chain = true)
     @ToString
-    public static class Area {
+    public static class CircularArea {
         /**
          * 区域ID
          */
@@ -167,7 +167,12 @@ public class BuiltinMessage8600V2019 {
         /**
          * 区域名称
          */
-        @Preset.JtStyle.Str
+        @Preset.JtStyle.Str(lengthExpression = "getAreaNameLength()")
         private String areaName;
+
+        @SuppressWarnings("lombok")
+        public int getAreaNameLength() {
+            return areaNameLength;
+        }
     }
 }

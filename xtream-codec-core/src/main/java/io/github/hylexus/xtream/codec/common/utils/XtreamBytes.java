@@ -208,4 +208,8 @@ public class XtreamBytes {
         }
         return input.substring(0, i + 1);
     }
+
+    public static int gbkByteCount(String str) {
+        return str.getBytes(XtreamConstants.CHARSET_GBK).length;
+    }
 }

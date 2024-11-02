@@ -33,6 +33,10 @@ public class ByteArrayFieldCodec extends AbstractFieldCodec<byte[]> {
 
     @Override
     public byte[] deserialize(BeanPropertyMetadata propertyMetadata, DeserializeContext context, ByteBuf input, int length) {
+        if (length < 0) {
+            // all remaining
+            return XtreamBytes.readBytes(input, input.readableBytes());
+        }
         return XtreamBytes.readBytes(input, length);
     }
 }

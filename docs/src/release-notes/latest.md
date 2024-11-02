@@ -4,6 +4,21 @@ article: false
 
 # 发版记录
 
+## 0.0.1-beta.4(2024-11-02)
+
+### ⭐ New Features
+
+- 新增 **JT/T 808** 部分消息映射示例实体类
+- `@XtreamField` 注解新增属性:
+    - `prependLengthFieldType()`
+    - `prependLengthFieldLength()`
+    - `iterationTimes()`
+    - `iterationTimesExpression()`
+
+### 🐞 Bug Fixes
+
+- 修复 `NestedBeanPropertyMetadata` 没有调用 `FieldConditionEvaluator` 的问题
+
 ## 0.0.1-beta.3(2024-10-20)
 
 ### ⭐ New Features

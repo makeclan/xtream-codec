@@ -58,6 +58,10 @@ public interface BeanPropertyMetadata {
 
     FieldLengthExtractor fieldLengthExtractor();
 
+    default IterationTimesExtractor iterationTimesExtractor() {
+        throw new UnsupportedOperationException();
+    }
+
     FieldConditionEvaluator conditionEvaluator();
 
     int order();

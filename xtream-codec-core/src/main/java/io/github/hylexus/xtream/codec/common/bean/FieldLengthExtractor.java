@@ -17,7 +17,9 @@
 package io.github.hylexus.xtream.codec.common.bean;
 
 import io.github.hylexus.xtream.codec.core.FieldCodec;
+import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
+import io.netty.buffer.ByteBuf;
 import lombok.ToString;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
@@ -25,7 +27,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 
 public interface FieldLengthExtractor {
 
-    int extractFieldLength(FieldCodec.DeserializeContext context, EvaluationContext evaluationContext);
+    int extractFieldLength(FieldCodec.DeserializeContext context, EvaluationContext evaluationContext, ByteBuf input);
 
     @ToString
     class ConstantFieldLengthExtractor implements FieldLengthExtractor {
@@ -36,8 +38,25 @@ public interface FieldLengthExtractor {
         }
 
         @Override
-        public int extractFieldLength(FieldCodec.DeserializeContext context, EvaluationContext evaluationContext) {
+        public int extractFieldLength(FieldCodec.DeserializeContext context, EvaluationContext evaluationContext, ByteBuf input) {
             return this.length;
+        }
+    }
+
+    class PrependFieldLengthExtractor implements FieldLengthExtractor {
+        private final PrependLengthFieldType prependLengthFieldType;
+
+        public PrependFieldLengthExtractor(PrependLengthFieldType prependLengthFieldType) {
+            this.prependLengthFieldType = prependLengthFieldType;
+        }
+
+        public PrependFieldLengthExtractor(int length) {
+            this.prependLengthFieldType = PrependLengthFieldType.from(length);
+        }
+
+        @Override
+        public int extractFieldLength(FieldCodec.DeserializeContext context, EvaluationContext evaluationContext, ByteBuf input) {
+            return this.prependLengthFieldType.readFrom(input);
         }
     }
 
@@ -52,7 +71,7 @@ public interface FieldLengthExtractor {
         }
 
         @Override
-        public int extractFieldLength(FieldCodec.DeserializeContext context, EvaluationContext evaluationContext) {
+        public int extractFieldLength(FieldCodec.DeserializeContext context, EvaluationContext evaluationContext, ByteBuf input) {
             final Number number = expression.getValue(evaluationContext, Number.class);
             if (number == null) {
                 throw new IllegalArgumentException("Can not determine field length with Expression[" + expressionString + "]");
@@ -69,7 +88,7 @@ public interface FieldLengthExtractor {
         }
 
         @Override
-        public int extractFieldLength(FieldCodec.DeserializeContext context, EvaluationContext evaluationContext) {
+        public int extractFieldLength(FieldCodec.DeserializeContext context, EvaluationContext evaluationContext, ByteBuf input) {
             throw new IllegalArgumentException(msg);
         }
     }

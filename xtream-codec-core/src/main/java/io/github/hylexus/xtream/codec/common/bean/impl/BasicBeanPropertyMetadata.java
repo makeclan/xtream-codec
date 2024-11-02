@@ -22,6 +22,7 @@ import io.github.hylexus.xtream.codec.common.bean.FieldLengthExtractor;
 import io.github.hylexus.xtream.codec.common.utils.XtreamTypes;
 import io.github.hylexus.xtream.codec.common.utils.XtreamUtils;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
+import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
 import io.netty.buffer.ByteBuf;
 import lombok.Setter;
@@ -44,6 +45,8 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
     private final FieldLengthExtractor fieldLengthExtractor;
     private final FieldConditionEvaluator fieldConditionEvaluator;
     protected final XtreamField xtreamField;
+    protected final int prependLengthFieldByteCounts;
+    protected final PrependLengthFieldType prependLengthFieldType;
     @Setter
     private FieldCodec<?> fieldCodec;
 
@@ -58,6 +61,15 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
         this.xtreamField = findAnnotation(XtreamField.class).orElseThrow();
         this.fieldLengthExtractor = detectFieldLengthExtractor(this.xtreamField);
         this.fieldConditionEvaluator = detectFieldConditionalEvaluator(this.xtreamField);
+        this.prependLengthFieldByteCounts = this.detectPrependLengthFieldByteCounts(xtreamField);
+        this.prependLengthFieldType = PrependLengthFieldType.from(this.prependLengthFieldByteCounts);
+    }
+
+    protected int detectPrependLengthFieldByteCounts(XtreamField xtreamField) {
+        if (xtreamField.prependLengthFieldType() != PrependLengthFieldType.none) {
+            return xtreamField.prependLengthFieldType().getByteCounts();
+        }
+        return xtreamField.prependLengthFieldLength();
     }
 
     private FieldConditionEvaluator detectFieldConditionalEvaluator(XtreamField xtreamField) {
@@ -74,6 +86,14 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
      * @see MapBeanPropertyMetadata#decodePropertyValue(FieldCodec.DeserializeContext, ByteBuf) MapBeanPropertyMetadata#decodePropertyValue
      */
     protected FieldLengthExtractor detectFieldLengthExtractor(XtreamField xtreamField) {
+        if (xtreamField.prependLengthFieldType() != PrependLengthFieldType.none) {
+            return new FieldLengthExtractor.PrependFieldLengthExtractor(xtreamField.prependLengthFieldType());
+        }
+
+        if (xtreamField.prependLengthFieldLength() > 0) {
+            return new FieldLengthExtractor.PrependFieldLengthExtractor(xtreamField.prependLengthFieldLength());
+        }
+
         if (xtreamField.length() > 0) {
             return new FieldLengthExtractor.ConstantFieldLengthExtractor(xtreamField.length());
         }
@@ -172,30 +192,51 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
     }
 
     public Object decodePropertyValue(FieldCodec.DeserializeContext context, ByteBuf input) {
-        final int length = this.fieldLengthExtractor.extractFieldLength(context, context.evaluationContext());
+        final int length = this.fieldLengthExtractor.extractFieldLength(context, context.evaluationContext(), input);
         return fieldCodec().deserialize(this, context, input, length);
     }
 
     @Override
     public void encodePropertyValue(FieldCodec.SerializeContext context, ByteBuf output, Object value) {
+        if (this.prependLengthFieldByteCounts <= 0) {
+            this.doEncode(context, output, value);
+        } else {
+            final int lengthFieldWriterIndex = output.writerIndex();
+            // 写入长度字段占位符
+            prependLengthFieldType.writeTo(output, 0);
+            final int beforeEncode = output.writerIndex();
+
+            this.doEncode(context, output, value);
+
+            final int afterEncode = output.writerIndex();
+            final int byteCounts = afterEncode - beforeEncode;
+
+            output.writerIndex(lengthFieldWriterIndex);
+            // 写入长度字段
+            prependLengthFieldType.writeTo(output, byteCounts);
+            output.writerIndex(afterEncode);
+        }
+    }
+
+    protected void doEncode(FieldCodec.SerializeContext serializeContext, ByteBuf output, Object value) {
         @SuppressWarnings("unchecked") final FieldCodec<Object> codec = (FieldCodec<Object>) fieldCodec();
-        codec.serialize(this, context, output, value);
+        codec.serialize(this, serializeContext, output, value);
     }
 
     @Override
     public String toString() {
         return "SimpleBeanPropertyMetadata{"
-                + "name='" + name + '\''
-                + ", type=" + type
-                + ", filedValueType=" + filedValueType
-                + ", field=" + field
-                + ", fieldCodec=" + fieldCodec
-                + ", propertyGetter=" + propertyGetter
-                + ", propertySetter=" + propertySetter
-                + ", order=" + order
-                + ", fieldLengthExtractor=" + fieldLengthExtractor
-                + ", xtreamField=" + xtreamField
-                + '}';
+               + "name='" + name + '\''
+               + ", type=" + type
+               + ", filedValueType=" + filedValueType
+               + ", field=" + field
+               + ", fieldCodec=" + fieldCodec
+               + ", propertyGetter=" + propertyGetter
+               + ", propertySetter=" + propertySetter
+               + ", order=" + order
+               + ", fieldLengthExtractor=" + fieldLengthExtractor
+               + ", xtreamField=" + xtreamField
+               + '}';
     }
 
 }

@@ -45,6 +45,12 @@ public @interface XtreamDateTimeField {
     @AliasFor(annotation = XtreamField.class, attribute = "lengthExpression")
     String lengthExpression() default "";
 
+    @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldLength")
+    int prependLengthFieldLength() default -1;
+
+    @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldType")
+    PrependLengthFieldType prependLengthFieldType() default PrependLengthFieldType.none;
+
     @AliasFor(annotation = XtreamField.class, attribute = "condition")
     String condition() default "";
 

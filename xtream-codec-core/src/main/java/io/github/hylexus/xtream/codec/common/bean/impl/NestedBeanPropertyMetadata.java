@@ -48,7 +48,7 @@ public class NestedBeanPropertyMetadata extends BasicBeanPropertyMetadata {
     public Object decodePropertyValue(FieldCodec.DeserializeContext context, ByteBuf input) {
         final Object instance = BeanUtils.createNewInstance(nestedBeanMetadata.getConstructor());
         // final Object instance = this.containerInstanceFactory().create();
-        final int length = this.fieldLengthExtractor().extractFieldLength(context, context.evaluationContext());
+        final int length = this.fieldLengthExtractor().extractFieldLength(context, context.evaluationContext(), input);
 
         final ByteBuf slice = length < 0
                 ? input // all remaining
@@ -66,7 +66,7 @@ public class NestedBeanPropertyMetadata extends BasicBeanPropertyMetadata {
     }
 
     @Override
-    public void encodePropertyValue(FieldCodec.SerializeContext context, ByteBuf output, Object value) {
+    public void doEncode(FieldCodec.SerializeContext context, ByteBuf output, Object value) {
         final DefaultSerializeContext serializeContext = new DefaultSerializeContext(context.entityEncoder(), value);
         for (final BeanPropertyMetadata pm : this.nestedBeanMetadata.getPropertyMetadataList()) {
             if (!pm.conditionEvaluator().evaluate(serializeContext)) {

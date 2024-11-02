@@ -32,11 +32,19 @@ import java.util.function.Supplier;
  */
 public interface XtreamBitOperator {
 
+    static XtreamBitOperator immutable() {
+        return immutable(0);
+    }
+
     /**
      * 返回不可变对象(每个操作都 {@code new} 一个新实例)
      */
     static XtreamBitOperator immutable(long value) {
         return () -> value;
+    }
+
+    static XtreamBitOperator mutable() {
+        return mutable(0);
     }
 
     /**

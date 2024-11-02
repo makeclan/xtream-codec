@@ -24,7 +24,9 @@ import io.netty.buffer.ByteBuf;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
@@ -35,6 +37,8 @@ public class XtreamDateTimeFieldCodec extends AbstractFieldCodec<Object> {
         final XtreamDateTimeField annotation = propertyMetadata.findAnnotation(XtreamDateTimeField.class).orElseThrow();
         final String bcdString = switch (value) {
             case LocalDateTime localDateTime -> DateTimeFormatter.ofPattern(annotation.pattern()).format(localDateTime);
+            case LocalDate localDate -> DateTimeFormatter.ofPattern(annotation.pattern()).format(localDate);
+            case LocalTime localTime -> DateTimeFormatter.ofPattern(annotation.pattern()).format(localTime);
             case Date date -> new SimpleDateFormat(annotation.pattern()).format(date);
             case String string -> string;
             default -> throw new IllegalArgumentException("Unsupported value type: " + value.getClass());
@@ -53,6 +57,10 @@ public class XtreamDateTimeFieldCodec extends AbstractFieldCodec<Object> {
         final Class<?> targetType = propertyMetadata.rawClass();
         if (targetType.equals(LocalDateTime.class)) {
             return LocalDateTime.parse(dateString, DateTimeFormatter.ofPattern(annotation.pattern()));
+        } else if (targetType.equals(LocalDate.class)) {
+            return LocalDate.parse(dateString, DateTimeFormatter.ofPattern(annotation.pattern()));
+        } else if (targetType.equals(LocalTime.class)) {
+            return LocalTime.parse(dateString, DateTimeFormatter.ofPattern(annotation.pattern()));
         } else if (targetType.equals(Date.class)) {
             try {
                 return new SimpleDateFormat(annotation.pattern()).parse(dateString);

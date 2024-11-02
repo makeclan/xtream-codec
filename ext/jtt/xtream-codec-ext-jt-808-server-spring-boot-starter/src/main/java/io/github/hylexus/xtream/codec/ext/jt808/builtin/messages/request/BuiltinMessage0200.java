@@ -74,7 +74,6 @@ public class BuiltinMessage0200 {
     private LocalDateTime time;
 
     // 长度：消息体长度减去前面的 28 字节
-
     @Preset.JtStyle.Map
     @XtreamFieldMapDescriptor(
             keyDescriptor = @XtreamFieldMapDescriptor.KeyDescriptor(type = XtreamFieldMapDescriptor.KeyType.u8),

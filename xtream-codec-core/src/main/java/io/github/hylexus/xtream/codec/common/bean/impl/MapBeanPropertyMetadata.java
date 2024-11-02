@@ -80,7 +80,7 @@ public class MapBeanPropertyMetadata extends BasicBeanPropertyMetadata {
 
     @Override
     public Object decodePropertyValue(FieldCodec.DeserializeContext context, ByteBuf input) {
-        final int length = delegate.fieldLengthExtractor().extractFieldLength(context, context.evaluationContext());
+        final int length = delegate.fieldLengthExtractor().extractFieldLength(context, context.evaluationContext(), input);
         final ByteBuf slice = length < 0
                 ? input // all remaining
                 : input.readSlice(length);
@@ -111,7 +111,10 @@ public class MapBeanPropertyMetadata extends BasicBeanPropertyMetadata {
     }
 
     @Override
-    public void encodePropertyValue(FieldCodec.SerializeContext context, ByteBuf output, Object value) {
+    public void doEncode(FieldCodec.SerializeContext context, ByteBuf output, Object value) {
+        if (value == null) {
+            return;
+        }
         final ByteBuf temp = ByteBufAllocator.DEFAULT.buffer();
         try {
             @SuppressWarnings("unchecked") final Map<Object, Object> map = (Map<Object, Object>) value;
