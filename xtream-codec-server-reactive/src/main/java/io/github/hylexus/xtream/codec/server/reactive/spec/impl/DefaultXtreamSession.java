@@ -19,24 +19,31 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionManager;
 import io.netty.buffer.ByteBufAllocator;
 import reactor.netty.NettyOutbound;
 
 import java.net.InetSocketAddress;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 
 /**
  * @author hylexus
  */
 public class DefaultXtreamSession extends AbstractXtreamOutbound implements XtreamSession {
-
+    protected final XtreamSessionManager<XtreamSession> sessionManager;
     protected final String id;
     protected final Map<String, Object> attributes = new HashMap<>();
+    private final Instant creationTime;
+    private volatile Instant lastCommunicateTime;
 
-    public DefaultXtreamSession(String id, XtreamRequest.Type type, NettyOutbound outbound, InetSocketAddress remoteAddress) {
+    public DefaultXtreamSession(String id, XtreamRequest.Type type, NettyOutbound outbound, InetSocketAddress remoteAddress, XtreamSessionManager<XtreamSession> sessionManager) {
         super(ByteBufAllocator.DEFAULT, outbound, type, remoteAddress);
         this.id = id;
+        this.sessionManager = sessionManager;
+        this.creationTime = this.lastCommunicateTime = Instant.now();
     }
 
     @Override
@@ -47,5 +54,36 @@ public class DefaultXtreamSession extends AbstractXtreamOutbound implements Xtre
     @Override
     public Map<String, Object> attributes() {
         return this.attributes;
+    }
+
+    @Override
+    public Instant creationTime() {
+        return this.creationTime;
+    }
+
+    @Override
+    public Instant lastCommunicateTime() {
+        return this.lastCommunicateTime;
+    }
+
+    @Override
+    public XtreamSession lastCommunicateTime(Instant current) {
+        this.lastCommunicateTime = creationTime;
+        return this;
+    }
+
+    @Override
+    public void invalidate() {
+        this.attributes().clear();
+        this.sessionManager.closeSessionById(this.id);
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", DefaultXtreamSession.class.getSimpleName() + "[", "]")
+                .add("id='" + id + "'")
+                .add("type=" + type)
+                .add("remoteAddress=" + remoteAddress)
+                .toString();
     }
 }

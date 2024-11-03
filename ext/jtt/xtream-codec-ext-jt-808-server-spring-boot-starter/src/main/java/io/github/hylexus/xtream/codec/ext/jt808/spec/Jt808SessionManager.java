@@ -18,6 +18,27 @@ package io.github.hylexus.xtream.codec.ext.jt808.spec;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionManager;
 
+import java.util.Comparator;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
 public interface Jt808SessionManager extends XtreamSessionManager<Jt808Session> {
+
+    default Stream<Jt808Session> list(int page, int pageSize, Predicate<Jt808Session> filter) {
+        return this.list().filter(filter).sorted(Comparator.comparing(Jt808Session::terminalId)).skip((long) (page - 1) * pageSize).limit(pageSize);
+    }
+
+    default Stream<Jt808Session> list(int page, int pageSize) {
+        return this.list().sorted(Comparator.comparing(Jt808Session::terminalId)).skip((long) (page - 1) * pageSize).limit(pageSize);
+    }
+
+    default <T> Stream<T> list(int page, int pageSize, Predicate<Jt808Session> filter, Function<Jt808Session, T> converter) {
+        return this.list().filter(filter).sorted(Comparator.comparing(Jt808Session::terminalId)).skip((long) (page - 1) * pageSize).limit(pageSize).map(converter);
+    }
+
+    default <T> Stream<T> list(int page, int pageSize, Function<Jt808Session, T> converter) {
+        return this.list().sorted(Comparator.comparing(Jt808Session::terminalId)).skip((long) (page - 1) * pageSize).map(converter).limit(pageSize);
+    }
 
 }

@@ -16,11 +16,13 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration.attachment;
 
+import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808AttachmentServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.impl.BuiltinJt808AttachmentServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808AttachmentSessionManager;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808AttachmentSessionManager;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -29,12 +31,13 @@ import org.springframework.context.annotation.Import;
         BuiltinJt808AttachmentServerTcpConfiguration.class,
         BuiltinJt808AttachmentServerUdpConfiguration.class,
 })
+@ConditionalOnExpression("${jt808-server.udp-attachment-server.enabled:true} || ${jt808-server.tcp-attachment-server.enabled:true}")
 public class BuiltinJt808AttachmentServerConfiguration {
 
-    @Bean
+    @Bean(destroyMethod = "shutdown")
     @ConditionalOnMissingBean
-    Jt808AttachmentSessionManager jt808AttachmentSessionManager(XtreamSessionIdGenerator idGenerator) {
-        return new DefaultJt808AttachmentSessionManager(idGenerator);
+    Jt808AttachmentSessionManager jt808AttachmentSessionManager(XtreamSessionIdGenerator idGenerator, XtreamJt808ServerProperties serverProperties) {
+        return new DefaultJt808AttachmentSessionManager(idGenerator, serverProperties.getAttachmentServerSessionIdleStateChecker());
     }
 
     @Bean

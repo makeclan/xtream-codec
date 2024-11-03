@@ -33,6 +33,7 @@ import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
 
 import java.net.InetSocketAddress;
+import java.time.Instant;
 
 /**
  * @author hylexus
@@ -61,6 +62,8 @@ public class Jt808AttachmentServerTcpHandlerAdapter extends DefaultTcpXtreamNett
         if (session == null) {
             return Mono.error(new IllegalStateException("attachment session not found"));
         }
+
+        session.lastCommunicateTime(Instant.now());
 
         final XtreamExchange exchange = this.xtreamExchangeCreator.createTcpExchange(allocator, nettyInbound, nettyOutbound, payload, remoteAddress);
         final Jt808Request jt808Request = Jt808AttachmentHandlerUtils.simulateJt808Request(allocator, nettyInbound, payload, session, exchange, xtreamExchangeCreator.generateRequestId(nettyInbound));

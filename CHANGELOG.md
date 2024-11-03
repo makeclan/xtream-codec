@@ -1,3 +1,9 @@
+## 0.0.1-beta.5
+
+### ⭐ New Features
+
+- 优化会话管理
+
 ## 0.0.1-beta.4
 
 ### ⭐ New Features

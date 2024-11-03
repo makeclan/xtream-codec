@@ -19,6 +19,7 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 import io.github.hylexus.xtream.codec.core.EntityCodec;
 import io.github.hylexus.xtream.codec.core.annotation.OrderedComponent;
 import io.github.hylexus.xtream.codec.server.reactive.spec.*;
+import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.SessionIdleStateCheckerProps;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.*;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.DelegateXtreamHandlerMethodArgumentResolver;
 import io.netty.buffer.ByteBufAllocator;
@@ -181,7 +182,10 @@ public abstract class AbstractXtreamHandlerAdapterBuilder<C extends AbstractXtre
 
     protected XtreamHandler createRequestHandler() {
         if (this.xtreamExchangeCreator == null) {
-            this.xtreamExchangeCreator = new DefaultXtreamExchangeCreator(new DefaultXtreamSessionManager(new XtreamSessionIdGenerator.DefalutXtreamSessionIdGenerator()));
+            // todo 优化
+            this.xtreamExchangeCreator = new DefaultXtreamExchangeCreator(
+                    new DefaultXtreamSessionManager(new XtreamSessionIdGenerator.DefalutXtreamSessionIdGenerator(), new SessionIdleStateCheckerProps())
+            );
         }
         if (this.handlerMappings.isEmpty()) {
             throw new IllegalStateException("No [" + XtreamHandlerMapping.class.getSimpleName() + "] instance configured.");

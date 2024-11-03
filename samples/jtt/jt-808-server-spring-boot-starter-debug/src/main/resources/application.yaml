@@ -47,6 +47,16 @@ jt808-server:
   request-sub-package-storage:
     maximum-size: 1024
     ttl: 45s
+  instruction-server-session-idle-state-checker:
+    enabled: true
+    max-idle-time: 30s
+    check-interval: 10s
+    check-backoff-time: 10s
+  attachment-server-session-idle-state-checker:
+    enabled: true
+    max-idle-time: 30s
+    check-interval: 10s
+    check-backoff-time: 10s
   # TCP 服务配置(指令服务器)
   tcp-instruction-server:
     # 是否启动 TCP 服务
@@ -151,3 +161,7 @@ jt808-server:
         daemon: true
         reject-blocking-task: true
         thread-name-prefix: blocking-single
+logging:
+  level:
+    root: info
+    io.netty.handler.logging.LoggingHandler: debug

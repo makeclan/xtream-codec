@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.server.reactive.spec;
 
 
+import io.netty.channel.Channel;
 import reactor.netty.Connection;
 
 import java.util.function.Consumer;
@@ -26,25 +27,29 @@ import java.util.function.Consumer;
  */
 public interface XtreamSessionIdGenerator {
 
-    String generateSessionId(XtreamExchange exchange);
+    default String generateSessionId(XtreamExchange exchange) {
+        final Holder holder = new Holder();
+        exchange.request().underlyingInbound().withConnection(holder);
+        return generateSessionId(holder.channel);
+    }
+
+    String generateSessionId(Channel channel);
 
     class DefalutXtreamSessionIdGenerator implements XtreamSessionIdGenerator {
 
         @Override
-        public String generateSessionId(XtreamExchange exchange) {
-            final Holder holder = new Holder();
-            exchange.request().underlyingInbound().withConnection(holder);
-            return holder.id;
+        public String generateSessionId(Channel channel) {
+            return channel.id().asLongText();
         }
     }
 
     class Holder implements Consumer<Connection> {
-        private String id;
+        private Channel channel;
 
         @Override
         public void accept(Connection connection) {
-            if (this.id == null) {
-                this.id = connection.channel().id().asLongText();
+            if (this.channel == null) {
+                this.channel = connection.channel();
             }
         }
     }

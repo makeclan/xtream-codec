@@ -29,8 +29,6 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.netty.channel.Channel;
 import reactor.core.publisher.Mono;
 
-import java.time.Instant;
-
 /**
  * @author hylexus
  */
@@ -78,7 +76,6 @@ public class Jt808RequestDecoderFilter implements XtreamFilter {
     }
 
     protected void populateSessionProperties(Jt808Session.MutableJt808Session jt808Session, Jt808Request jt808Request) {
-        jt808Session.lastCommunicateTime(Instant.now());
         if (jt808Session.terminalId() == null) {
             jt808Session.terminalId(jt808Request.header().terminalId());
         }

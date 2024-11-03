@@ -22,6 +22,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamResponse;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
+import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.SessionIdleStateCheckerProps;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamSessionManager;
 
 /**
@@ -30,8 +31,8 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamSe
 public class DefaultJt808SessionManager extends AbstractXtreamSessionManager<Jt808Session>
         implements Jt808SessionManager {
 
-    public DefaultJt808SessionManager(XtreamSessionIdGenerator idGenerator) {
-        super(idGenerator);
+    public DefaultJt808SessionManager(XtreamSessionIdGenerator idGenerator, SessionIdleStateCheckerProps instructionServerSessionIdleStateChecker) {
+        super(idGenerator, instructionServerSessionIdleStateChecker);
     }
 
     @Override
@@ -43,7 +44,20 @@ public class DefaultJt808SessionManager extends AbstractXtreamSessionManager<Jt8
                 Jt808ServerType.INSTRUCTION_SERVER,
                 response.type(),
                 response.outbound(),
-                response.remoteAddress()
+                response.remoteAddress(),
+                this
         );
+    }
+
+    @Override
+    public void closeSessionById(String sessionId) {
+        final Jt808Session jt808Session = this.sessions.remove(sessionId);
+        if (jt808Session != null) {
+            jt808Session.outbound().withConnection(connection -> {
+                // ...
+                connection.channel().close();
+            });
+            // this.mapping.remove(jt808Session.terminalId());
+        }
     }
 }

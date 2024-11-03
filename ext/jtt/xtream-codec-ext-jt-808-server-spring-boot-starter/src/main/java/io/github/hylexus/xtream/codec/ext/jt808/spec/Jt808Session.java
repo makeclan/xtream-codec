@@ -32,18 +32,11 @@ public sealed interface Jt808Session extends XtreamSession
 
     Jt808ServerType role();
 
-    Instant creationTime();
-
-    /**
-     * @return 上次通信时间
-     */
-    Instant lastCommunicateTime();
-
-    Jt808Session lastCommunicateTime(Instant current);
-
     boolean verified();
 
     Jt808Session verified(boolean verified);
+
+    Jt808Session lastCommunicateTime(Instant current);
 
     // 下面几个属性在请求真正被解码之后才有值
     String terminalId();

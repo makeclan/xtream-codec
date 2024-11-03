@@ -30,6 +30,7 @@ import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
 
 import java.net.InetSocketAddress;
+import java.time.Instant;
 
 /**
  * @author hylexus
@@ -65,13 +66,15 @@ public class DefaultTcpXtreamNettyHandlerAdapter implements TcpXtreamNettyHandle
         }
 
         final XtreamExchange exchange = this.xtreamExchangeCreator.createTcpExchange(allocator, nettyInbound, nettyOutbound, payload, remoteAddress);
-
-        return xtreamHandler
-                .handle(exchange)
-                .doOnError(Throwable.class, throwable -> {
-                    // ...
-                    log.error(throwable.getMessage(), throwable);
-                });
+        return exchange.session().flatMap(session -> {
+            session.lastCommunicateTime(Instant.now());
+            return xtreamHandler
+                    .handle(exchange)
+                    .doOnError(Throwable.class, throwable -> {
+                        // ...
+                        log.error(throwable.getMessage(), throwable);
+                    });
+        });
     }
 
     protected InetSocketAddress initTcpRemoteAddress(NettyInbound nettyInbound) {

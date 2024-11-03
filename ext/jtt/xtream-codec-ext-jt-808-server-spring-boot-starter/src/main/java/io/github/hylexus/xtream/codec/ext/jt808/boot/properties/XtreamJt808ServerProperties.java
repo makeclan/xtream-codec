@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.boot.properties;
 
 import io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolConstant;
+import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.SessionIdleStateCheckerProps;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -62,6 +63,12 @@ public class XtreamJt808ServerProperties {
         private String host;
         private int port = 6666;
     }
+
+    @NestedConfigurationProperty
+    private SessionIdleStateCheckerProps instructionServerSessionIdleStateChecker = new SessionIdleStateCheckerProps();
+
+    @NestedConfigurationProperty
+    private SessionIdleStateCheckerProps attachmentServerSessionIdleStateChecker = new SessionIdleStateCheckerProps();
 
     @Getter
     @Setter

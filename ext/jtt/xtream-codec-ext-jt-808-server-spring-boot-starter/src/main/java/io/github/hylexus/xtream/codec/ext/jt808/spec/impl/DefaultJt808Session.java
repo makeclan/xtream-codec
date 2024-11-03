@@ -20,6 +20,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ServerType;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionManager;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamOutbound;
 import io.netty.buffer.ByteBufAllocator;
 import reactor.netty.NettyOutbound;
@@ -28,11 +29,14 @@ import java.net.InetSocketAddress;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 
 /**
  * @author hylexus
  */
 public class DefaultJt808Session extends AbstractXtreamOutbound implements Jt808Session.MutableJt808Session {
+    private final XtreamSessionManager<Jt808Session> sessionManager;
+
     private final String id;
     private final Jt808ServerType role;
     private final Instant creationTime;
@@ -43,10 +47,11 @@ public class DefaultJt808Session extends AbstractXtreamOutbound implements Jt808
     private Jt808ProtocolVersion protocolVersion;
     private String terminalId;
 
-    public DefaultJt808Session(String id, Jt808ServerType role, XtreamRequest.Type type, NettyOutbound outbound, InetSocketAddress remoteAddress) {
+    public DefaultJt808Session(String id, Jt808ServerType role, XtreamRequest.Type type, NettyOutbound outbound, InetSocketAddress remoteAddress, XtreamSessionManager<Jt808Session> sessionManager) {
         super(ByteBufAllocator.DEFAULT, outbound, type, remoteAddress);
         this.id = id;
         this.role = role;
+        this.sessionManager = sessionManager;
         this.creationTime = this.lastCommunicateTime = Instant.now();
         this.verified = false;
     }
@@ -113,5 +118,23 @@ public class DefaultJt808Session extends AbstractXtreamOutbound implements Jt808
     public Jt808Session verified(boolean verified) {
         this.verified = verified;
         return this;
+    }
+
+    @Override
+    public void invalidate() {
+        this.attributes().clear();
+        this.sessionManager.closeSessionById(this.id);
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", DefaultJt808Session.class.getSimpleName() + "[", "]")
+                .add("id='" + id + "'")
+                .add("type=" + type)
+                .add("role=" + role)
+                .add("protocolVersion=" + protocolVersion)
+                .add("terminalId='" + terminalId + "'")
+                .add("remoteAddress='" + remoteAddress() + "'")
+                .toString();
     }
 }

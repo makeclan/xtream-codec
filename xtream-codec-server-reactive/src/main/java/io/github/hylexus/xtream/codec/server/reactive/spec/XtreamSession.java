@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.server.reactive.spec;
 
 
+import java.time.Instant;
 import java.util.Map;
 
 /**
@@ -27,4 +28,16 @@ public interface XtreamSession extends XtreamOutbound {
     String id();
 
     Map<String, Object> attributes();
+
+    Instant creationTime();
+
+    /**
+     * @return 上次通信时间
+     */
+    Instant lastCommunicateTime();
+
+    XtreamSession lastCommunicateTime(Instant current);
+
+    void invalidate();
+
 }
