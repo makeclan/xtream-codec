@@ -43,8 +43,8 @@ public class XtreamExtJt808ServerStartupListener implements ApplicationListener<
 
     @Override
     public void onApplicationEvent(@NonNull ContextRefreshedEvent event) {
-        final boolean tcpServerEnabled = serverProps.getTcpInstructionServer().isEnabled() || serverProps.getTcpAttachmentServer().isEnabled();
-        final boolean udpServerEnabled = serverProps.getUdpInstructionServer().isEnabled() || serverProps.getUdpAttachmentServer().isEnabled();
+        final boolean tcpServerEnabled = serverProps.getInstructionServer().getTcpServer().isEnabled() || serverProps.getAttachmentServer().getTcpServer().isEnabled();
+        final boolean udpServerEnabled = serverProps.getInstructionServer().getUdpServer().isEnabled() || serverProps.getAttachmentServer().getUdpServer().isEnabled();
 
         if (!tcpServerEnabled && !udpServerEnabled) {
             log.error("Both tcpServer and udpServer are disabled, please enable one of them.");

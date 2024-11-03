@@ -47,81 +47,85 @@ jt808-server:
   request-sub-package-storage:
     maximum-size: 1024
     ttl: 45s
-  instruction-server-session-idle-state-checker:
-    enabled: true
-    max-idle-time: 30s
-    check-interval: 10s
-    check-backoff-time: 10s
-  attachment-server-session-idle-state-checker:
-    enabled: true
-    max-idle-time: 30s
-    check-interval: 10s
-    check-backoff-time: 10s
-  # TCP 服务配置(指令服务器)
-  tcp-instruction-server:
-    # 是否启动 TCP 服务
-    enabled: true
-    # 绑定所有网卡
-    host: 0.0.0.0
-    # TCP 服务端口
-    port: 7777
-    ## 指令报文的最大长度
-    ## @see: io.netty.handler.codec.DelimiterBasedFrameDecoder.maxFrameLength
-    max-instruction-frame-length: 1024
-    loop-resources:
-      select-count: 1
-      worker-count: 10
-      thread-name-prefix: xtream-tcp
-      daemon: true
-      colocate: true
-      prefer-native: true
-  # TCP 服务配置(附件服务器)
-  tcp-attachment-server:
-    enabled: true
-    host: 0.0.0.0
-    port: 7778
-    ## 指令报文的最大长度
-    ## @see: io.netty.handler.codec.DelimiterBasedFrameDecoder.maxFrameLength
-    max-instruction-frame-length: 1024
-    ## 苏标扩展码流消息 0x30316364 的最大长度(66560 = 1024 * 65)
-    ## @see io.netty.handler.codec.DelimiterBasedFrameDecoder.maxFrameLength
-    max-stream-frame-length: 66560
-    loop-resources:
-      select-count: 1
-      worker-count: 10
-      thread-name-prefix: xtream-tcp
-      daemon: true
-      colocate: true
-      prefer-native: true
-  # UDP 服务配置(指令服务器)
-  udp-instruction-server:
-    # 是否启动 UDP 服务
-    enabled: true
-    # 绑定所有网卡
-    host: 0.0.0.0
-    # UDP 服务端口
-    port: 8888
-    loop-resources:
-      select-count: 1
-      worker-count: 10
-      thread-name-prefix: xtream-udp
-      daemon: true
-      colocate: true
-      prefer-native: true
-  # UDP 服务配置(附件服务器)
-  udp-attachment-server:
-    enabled: true
-    # 绑定所有网卡
-    host: 0.0.0.0
-    # UDP 服务端口
-    port: 8889
-    loop-resources:
-      select-count: 1
-      worker-count: 10
-      thread-name-prefix: xtream-udp
-      daemon: true
-      colocate: true
-      prefer-native: true
+  ## 指令服务器
+  instruction-server:
+    session-idle-state-checker:
+      enabled: true
+      max-idle-time: 30s
+      check-interval: 10s
+      check-backoff-time: 10s
+    # TCP 服务配置(指令服务器)
+    tcp-server:
+      # 是否启动 TCP 服务
+      enabled: true
+      # 绑定所有网卡
+      host: 0.0.0.0
+      # TCP 服务端口
+      port: 7777
+      ## 指令报文的最大长度
+      ## @see: io.netty.handler.codec.DelimiterBasedFrameDecoder.maxFrameLength
+      max-instruction-frame-length: 1024
+      loop-resources:
+        select-count: 1
+        worker-count: 10
+        thread-name-prefix: xtream-tcp
+        daemon: true
+        colocate: true
+        prefer-native: true
+    # UDP 服务配置(指令服务器)
+    udp-server:
+      # 是否启动 UDP 服务
+      enabled: true
+      # 绑定所有网卡
+      host: 0.0.0.0
+      # UDP 服务端口
+      port: 8888
+      loop-resources:
+        select-count: 1
+        worker-count: 10
+        thread-name-prefix: xtream-udp
+        daemon: true
+        colocate: true
+        prefer-native: true
+  ## 附件服务器
+  attachment-server:
+    session-idle-state-checker:
+      enabled: true
+      max-idle-time: 30s
+      check-interval: 10s
+      check-backoff-time: 10s
+    # TCP 服务配置(附件服务器)
+    tcp-server:
+      enabled: true
+      host: 0.0.0.0
+      port: 7778
+      ## 指令报文的最大长度
+      ## @see: io.netty.handler.codec.DelimiterBasedFrameDecoder.maxFrameLength
+      max-instruction-frame-length: 1024
+      ## 苏标扩展码流消息 0x30316364 的最大长度(66560 = 1024 * 65)
+      ## @see io.netty.handler.codec.DelimiterBasedFrameDecoder.maxFrameLength
+      max-stream-frame-length: 66560
+      loop-resources:
+        select-count: 1
+        worker-count: 10
+        thread-name-prefix: xtream-tcp
+        daemon: true
+        colocate: true
+        prefer-native: true
+    # UDP 服务配置(附件服务器)
+    udp-server:
+      enabled: true
+      # 绑定所有网卡
+      host: 0.0.0.0
+      # UDP 服务端口
+      port: 8889
+      loop-resources:
+        select-count: 1
+        worker-count: 10
+        thread-name-prefix: xtream-udp
+        daemon: true
+        colocate: true
+        prefer-native: true
   handler-schedulers:
     ## [非阻塞型]处理器的调度器
     non-blocking-scheduler:

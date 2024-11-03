@@ -79,7 +79,7 @@ public class BuiltinJt808AttachmentServerTcpConfiguration {
     @Bean(BEAN_NAME_JT_808_TCP_XTREAM_NETTY_RESOURCE_FACTORY_ATTACHMENT_SERVER)
     @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_TCP_XTREAM_NETTY_RESOURCE_FACTORY_ATTACHMENT_SERVER)
     TcpXtreamNettyResourceFactory tcpXtreamNettyResourceFactory(XtreamJt808ServerProperties serverProperties) {
-        final XtreamJt808ServerProperties.TcpLoopResourcesProperty loopResources = serverProperties.getTcpAttachmentServer().getLoopResources();
+        final XtreamJt808ServerProperties.TcpLoopResourcesProperty loopResources = serverProperties.getAttachmentServer().getTcpServer().getLoopResources();
         return new DefaultTcpXtreamNettyResourceFactory(new XtreamNettyResourceFactory.LoopResourcesProperty(
                 loopResources.getThreadNamePrefix(),
                 loopResources.getSelectCount(),
@@ -98,7 +98,7 @@ public class BuiltinJt808AttachmentServerTcpConfiguration {
             ObjectProvider<TcpNettyServerCustomizer> customizers,
             XtreamJt808ServerProperties serverProperties) {
 
-        final XtreamJt808ServerProperties.TcpAttachmentServerProps tcpServer = serverProperties.getTcpAttachmentServer();
+        final XtreamJt808ServerProperties.TcpAttachmentServerProps tcpServer = serverProperties.getAttachmentServer().getTcpServer();
         return XtreamServerBuilder.newTcpServerBuilder()
                 // 默认 host和 port(用户自定义配置可以再次覆盖默认配置)
                 .addServerCustomizer(BuiltinConfigurationUtils.defaultTcpBasicConfigurer(tcpServer.getHost(), tcpServer.getPort()))
@@ -107,8 +107,8 @@ public class BuiltinJt808AttachmentServerTcpConfiguration {
                 // 分包
                 .addServerCustomizer(server -> server.doOnChannelInit((observer, channel, remoteAddress) -> {
                     // stripDelimiter=true
-                    final int maxFrameLength = serverProperties.getTcpAttachmentServer().getMaxStreamFrameLength();
-                    final int instructionFrameLength = serverProperties.getTcpAttachmentServer().getMaxInstructionFrameLength();
+                    final int maxFrameLength = serverProperties.getAttachmentServer().getTcpServer().getMaxStreamFrameLength();
+                    final int instructionFrameLength = serverProperties.getAttachmentServer().getTcpServer().getMaxInstructionFrameLength();
                     final DelimiterAndLengthFieldBasedByteToMessageDecoder frameDecoder = new DelimiterAndLengthFieldBasedByteToMessageDecoder(instructionFrameLength, maxFrameLength);
                     channel.pipeline().addFirst(BEAN_NAME_CHANNEL_INBOUND_HANDLER_ADAPTER, frameDecoder);
                 }))

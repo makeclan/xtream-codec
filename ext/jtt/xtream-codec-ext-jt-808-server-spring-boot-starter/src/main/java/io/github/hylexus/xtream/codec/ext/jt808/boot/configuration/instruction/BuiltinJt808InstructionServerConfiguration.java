@@ -35,13 +35,13 @@ import org.springframework.context.annotation.Import;
         BuiltinJt808InstructionServerTcpConfiguration.class,
         BuiltinJt808InstructionServerUdpConfiguration.class,
 })
-@ConditionalOnExpression("${jt808-server.udp-instruction-server.enabled:true} || ${jt808-server.tcp-instruction-server.enabled:true}")
+@ConditionalOnExpression("${jt808-server.instruction-server.tcp-server.enabled:true} || ${jt808-server.instruction-server.udp-server.enabled:true}")
 public class BuiltinJt808InstructionServerConfiguration {
 
     @Bean(destroyMethod = "shutdown")
     @ConditionalOnMissingBean
     Jt808SessionManager jt808SessionManager(XtreamSessionIdGenerator idGenerator, XtreamJt808ServerProperties serverProperties) {
-        return new DefaultJt808SessionManager(idGenerator, serverProperties.getInstructionServerSessionIdleStateChecker());
+        return new DefaultJt808SessionManager(idGenerator, serverProperties.getInstructionServer().getSessionIdleStateChecker());
     }
 
     @Bean

@@ -83,7 +83,7 @@ public class BuiltinJt808InstructionServerUdpConfiguration {
     @Bean(BEAN_NAME_JT_808_UDP_XTREAM_NETTY_RESOURCE_FACTORY_INSTRUCTION_SERVER)
     @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_UDP_XTREAM_NETTY_RESOURCE_FACTORY_INSTRUCTION_SERVER)
     UdpXtreamNettyResourceFactory udpXtreamNettyResourceFactory(XtreamJt808ServerProperties serverProperties) {
-        final XtreamJt808ServerProperties.UdpLoopResourcesProperty loopResources = serverProperties.getUdpInstructionServer().getLoopResources();
+        final XtreamJt808ServerProperties.UdpLoopResourcesProperty loopResources = serverProperties.getInstructionServer().getUdpServer().getLoopResources();
         return new DefaultUdpXtreamNettyResourceFactory(new XtreamNettyResourceFactory.LoopResourcesProperty(
                 loopResources.getThreadNamePrefix(),
                 loopResources.getSelectCount(),
@@ -101,7 +101,7 @@ public class BuiltinJt808InstructionServerUdpConfiguration {
             @Qualifier(BEAN_NAME_JT_808_UDP_XTREAM_NETTY_RESOURCE_FACTORY_INSTRUCTION_SERVER) UdpXtreamNettyResourceFactory resourceFactory,
             ObjectProvider<UdpNettyServerCustomizer> customizers,
             XtreamJt808ServerProperties serverProperties) {
-        final XtreamJt808ServerProperties.UdpServerProps udpServer = serverProperties.getUdpInstructionServer();
+        final XtreamJt808ServerProperties.UdpServerProps udpServer = serverProperties.getInstructionServer().getUdpServer();
         return XtreamServerBuilder.newUdpServerBuilder()
                 // 默认 host和 port(用户自定义配置可以再次覆盖默认配置)
                 .addServerCustomizer(BuiltinConfigurationUtils.defaultUdpBasicConfigurer(udpServer.getHost(), udpServer.getPort()))

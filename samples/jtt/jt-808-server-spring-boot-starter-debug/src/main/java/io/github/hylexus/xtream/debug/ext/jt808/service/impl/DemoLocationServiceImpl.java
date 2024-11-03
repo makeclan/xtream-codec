@@ -117,8 +117,8 @@ public class DemoLocationServiceImpl implements DemoLocationService {
         final String serverIp = demoAppConfigProperties.getAttachmentServer().getServerIp();
         msg9208.setAttachmentServerIp(serverIp);
         msg9208.setAttachmentServerIpLength((short) serverIp.length());
-        msg9208.setAttachmentServerPortTcp(serverProperties.getTcpAttachmentServer().getPort());
-        msg9208.setAttachmentServerPortUdp(serverProperties.getUdpAttachmentServer().getPort());
+        msg9208.setAttachmentServerPortTcp(serverProperties.getAttachmentServer().getTcpServer().getPort());
+        msg9208.setAttachmentServerPortUdp(serverProperties.getAttachmentServer().getUdpServer().getPort());
         msg9208.setAlarmIdentifier(alarmIdentifier);
         msg9208.setAlarmNo(XtreamBytes.randomString(32));
         msg9208.setReservedByte16("0000000000000000");

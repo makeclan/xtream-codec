@@ -31,13 +31,13 @@ import org.springframework.context.annotation.Import;
         BuiltinJt808AttachmentServerTcpConfiguration.class,
         BuiltinJt808AttachmentServerUdpConfiguration.class,
 })
-@ConditionalOnExpression("${jt808-server.udp-attachment-server.enabled:true} || ${jt808-server.tcp-attachment-server.enabled:true}")
+@ConditionalOnExpression("${jt808-server.attachment-server.tcp-server.enabled:true} || ${jt808-server.attachment-server.udp-server.enabled:true}")
 public class BuiltinJt808AttachmentServerConfiguration {
 
     @Bean(destroyMethod = "shutdown")
     @ConditionalOnMissingBean
     Jt808AttachmentSessionManager jt808AttachmentSessionManager(XtreamSessionIdGenerator idGenerator, XtreamJt808ServerProperties serverProperties) {
-        return new DefaultJt808AttachmentSessionManager(idGenerator, serverProperties.getAttachmentServerSessionIdleStateChecker());
+        return new DefaultJt808AttachmentSessionManager(idGenerator, serverProperties.getAttachmentServer().getSessionIdleStateChecker());
     }
 
     @Bean

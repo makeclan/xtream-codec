@@ -76,7 +76,7 @@ public class BuiltinJt808InstructionServerTcpConfiguration {
     @Bean(BEAN_NAME_JT_808_TCP_XTREAM_NETTY_RESOURCE_FACTORY_INSTRUCTION_SERVER)
     @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_TCP_XTREAM_NETTY_RESOURCE_FACTORY_INSTRUCTION_SERVER)
     TcpXtreamNettyResourceFactory tcpXtreamNettyResourceFactory(XtreamJt808ServerProperties serverProperties) {
-        final XtreamJt808ServerProperties.TcpLoopResourcesProperty loopResources = serverProperties.getTcpInstructionServer().getLoopResources();
+        final XtreamJt808ServerProperties.TcpLoopResourcesProperty loopResources = serverProperties.getInstructionServer().getTcpServer().getLoopResources();
         return new DefaultTcpXtreamNettyResourceFactory(new XtreamNettyResourceFactory.LoopResourcesProperty(
                 loopResources.getThreadNamePrefix(),
                 loopResources.getSelectCount(),
@@ -95,7 +95,7 @@ public class BuiltinJt808InstructionServerTcpConfiguration {
             ObjectProvider<TcpNettyServerCustomizer> customizers,
             XtreamJt808ServerProperties serverProperties) {
 
-        final XtreamJt808ServerProperties.TcpServerProps tcpServer = serverProperties.getTcpInstructionServer();
+        final XtreamJt808ServerProperties.TcpServerProps tcpServer = serverProperties.getInstructionServer().getTcpServer();
         return XtreamServerBuilder.newTcpServerBuilder()
                 // 默认 host和 port(用户自定义配置可以再次覆盖默认配置)
                 .addServerCustomizer(BuiltinConfigurationUtils.defaultTcpBasicConfigurer(tcpServer.getHost(), tcpServer.getPort()))
@@ -104,7 +104,7 @@ public class BuiltinJt808InstructionServerTcpConfiguration {
                 // 分包
                 .addServerCustomizer(server -> server.doOnChannelInit((observer, channel, remoteAddress) -> {
                     // stripDelimiter=true
-                    final int frameLength = serverProperties.getTcpInstructionServer().getMaxInstructionFrameLength();
+                    final int frameLength = serverProperties.getInstructionServer().getTcpServer().getMaxInstructionFrameLength();
                     final DelimiterBasedFrameDecoder frameDecoder = new DelimiterBasedFrameDecoder(frameLength, true, Unpooled.copiedBuffer(new byte[]{PACKAGE_DELIMITER}));
                     channel.pipeline().addFirst(BEAN_NAME_CHANNEL_INBOUND_HANDLER_ADAPTER, frameDecoder);
                 }))

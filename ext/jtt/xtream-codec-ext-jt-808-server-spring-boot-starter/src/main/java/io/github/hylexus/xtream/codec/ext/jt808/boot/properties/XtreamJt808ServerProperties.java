@@ -41,19 +41,43 @@ public class XtreamJt808ServerProperties {
     private RequestSubPackageStorage requestSubPackageStorage = new RequestSubPackageStorage();
 
     @NestedConfigurationProperty
-    private TcpServerProps tcpInstructionServer = new TcpServerProps();
+    private InstructionServerProps instructionServer = new InstructionServerProps();
 
     @NestedConfigurationProperty
-    private TcpAttachmentServerProps tcpAttachmentServer = new TcpAttachmentServerProps();
-
-    @NestedConfigurationProperty
-    private UdpServerProps udpInstructionServer = new UdpServerProps();
-
-    @NestedConfigurationProperty
-    private UdpAttachmentServerProps udpAttachmentServer = new UdpAttachmentServerProps();
+    private AttachmentServerProps attachmentServer = new AttachmentServerProps();
 
     @NestedConfigurationProperty
     private HandlerMethodSchedulerProperties handlerSchedulers = new HandlerMethodSchedulerProperties();
+
+    @Getter
+    @Setter
+    @ToString
+    public static class InstructionServerProps {
+
+        @NestedConfigurationProperty
+        private SessionIdleStateCheckerProps sessionIdleStateChecker = new SessionIdleStateCheckerProps();
+
+        @NestedConfigurationProperty
+        private TcpServerProps tcpServer = new TcpServerProps();
+
+        @NestedConfigurationProperty
+        private UdpServerProps udpServer = new UdpServerProps();
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class AttachmentServerProps {
+
+        @NestedConfigurationProperty
+        private SessionIdleStateCheckerProps sessionIdleStateChecker = new SessionIdleStateCheckerProps();
+
+        @NestedConfigurationProperty
+        private TcpAttachmentServerProps tcpServer = new TcpAttachmentServerProps();
+
+        @NestedConfigurationProperty
+        private UdpAttachmentServerProps udpServer = new UdpAttachmentServerProps();
+    }
 
     @Getter
     @Setter
@@ -63,12 +87,6 @@ public class XtreamJt808ServerProperties {
         private String host;
         private int port = 6666;
     }
-
-    @NestedConfigurationProperty
-    private SessionIdleStateCheckerProps instructionServerSessionIdleStateChecker = new SessionIdleStateCheckerProps();
-
-    @NestedConfigurationProperty
-    private SessionIdleStateCheckerProps attachmentServerSessionIdleStateChecker = new SessionIdleStateCheckerProps();
 
     @Getter
     @Setter
