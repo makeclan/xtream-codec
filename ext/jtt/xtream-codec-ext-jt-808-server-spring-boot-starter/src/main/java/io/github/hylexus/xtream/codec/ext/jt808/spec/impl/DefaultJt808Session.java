@@ -20,6 +20,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ServerType;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionEventListener;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionManager;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamOutbound;
 import io.netty.buffer.ByteBufAllocator;
@@ -121,9 +122,9 @@ public class DefaultJt808Session extends AbstractXtreamOutbound implements Jt808
     }
 
     @Override
-    public void invalidate() {
+    public void invalidate(XtreamSessionEventListener.SessionCloseReason reason) {
         this.attributes().clear();
-        this.sessionManager.closeSessionById(this.id);
+        this.sessionManager.closeSessionById(this.id, reason);
     }
 
     @Override

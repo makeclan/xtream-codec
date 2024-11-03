@@ -19,6 +19,7 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionEventListener;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionManager;
 import io.netty.buffer.ByteBufAllocator;
 import reactor.netty.NettyOutbound;
@@ -73,9 +74,9 @@ public class DefaultXtreamSession extends AbstractXtreamOutbound implements Xtre
     }
 
     @Override
-    public void invalidate() {
+    public void invalidate(XtreamSessionEventListener.SessionCloseReason reason) {
         this.attributes().clear();
-        this.sessionManager.closeSessionById(this.id);
+        this.sessionManager.closeSessionById(this.id, reason);
     }
 
     @Override

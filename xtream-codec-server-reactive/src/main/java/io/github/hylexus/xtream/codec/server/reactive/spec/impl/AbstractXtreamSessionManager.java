@@ -16,10 +16,7 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionManager;
+import io.github.hylexus.xtream.codec.server.reactive.spec.*;
 import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamIntervalChecker;
 import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.SessionIdleStateCheckerProps;
 import org.slf4j.Logger;
@@ -30,11 +27,14 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
@@ -48,6 +48,7 @@ public abstract class AbstractXtreamSessionManager<S extends XtreamSession> impl
     private final Duration maxIdleTime;
     private final Clock clock = Clock.system(ZoneId.of("Asia/Shanghai"));
     private final Lock lock = new ReentrantLock();
+    protected final List<XtreamSessionEventListener> listenerList = new ArrayList<>();
 
     public AbstractXtreamSessionManager(XtreamSessionIdGenerator idGenerator, SessionIdleStateCheckerProps checkerProps) {
         this.sessionIdGenerator = idGenerator;
@@ -69,6 +70,11 @@ public abstract class AbstractXtreamSessionManager<S extends XtreamSession> impl
         this.maxIdleTime = checkerProps.getMaxIdleTime();
     }
 
+    @Override
+    public void addListener(XtreamSessionEventListener listener) {
+        this.listenerList.add(listener);
+    }
+
     void doCheckStatus() {
         if (sessions.isEmpty()) {
             return;
@@ -83,7 +89,7 @@ public abstract class AbstractXtreamSessionManager<S extends XtreamSession> impl
                     final S session = iterator.next();
                     if (isExpired(session, now)) {
                         log.info("Session expired, remove it: {}", session);
-                        session.invalidate();
+                        session.invalidate(XtreamSessionEventListener.DefaultSessionCloseReason.EXPIRED);
                     }
                 }
             } finally {
@@ -110,7 +116,20 @@ public abstract class AbstractXtreamSessionManager<S extends XtreamSession> impl
         final String sessionId = this.sessionIdGenerator.generateSessionId(exchange);
         final S session = this.doCreateSession(exchange);
         this.sessions.put(sessionId, session);
+
+        this.invokeListener(listener -> listener.afterSessionCreate(session));
+
         return Mono.just(session);
+    }
+
+    protected void invokeListener(Consumer<XtreamSessionEventListener> action) {
+        for (XtreamSessionEventListener xtreamSessionEventListener : this.listenerList) {
+            try {
+                action.accept(xtreamSessionEventListener);
+            } catch (Exception e) {
+                log.error("Error occurred while invoke listener", e);
+            }
+        }
     }
 
     protected abstract S doCreateSession(XtreamExchange exchange);

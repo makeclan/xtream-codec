@@ -38,6 +38,10 @@ public interface XtreamSession extends XtreamOutbound {
 
     XtreamSession lastCommunicateTime(Instant current);
 
-    void invalidate();
+    void invalidate(XtreamSessionEventListener.SessionCloseReason reason);
+
+    default void invalidate() {
+        invalidate(XtreamSessionEventListener.DefaultSessionCloseReason.MANUAL_CLOSED);
+    }
 
 }

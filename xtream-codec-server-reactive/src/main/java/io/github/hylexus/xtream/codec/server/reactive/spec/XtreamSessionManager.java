@@ -46,7 +46,9 @@ public interface XtreamSessionManager<S extends XtreamSession> {
 
     Mono<S> getSessionById(String sessionId);
 
-    void closeSessionById(String sessionId);
+    void closeSessionById(String sessionId, XtreamSessionEventListener.SessionCloseReason reason);
+
+    void addListener(XtreamSessionEventListener listener);
 
     void shutdown();
 

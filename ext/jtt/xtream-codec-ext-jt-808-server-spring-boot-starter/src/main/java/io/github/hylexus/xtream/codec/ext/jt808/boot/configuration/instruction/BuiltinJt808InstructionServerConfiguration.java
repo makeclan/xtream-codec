@@ -25,7 +25,9 @@ import io.github.hylexus.xtream.codec.ext.jt808.extensions.impl.BuiltinJt808Inst
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.impl.DefaultJt808XtreamCommandSender;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808SessionManager;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionEventListener;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -40,8 +42,14 @@ public class BuiltinJt808InstructionServerConfiguration {
 
     @Bean(destroyMethod = "shutdown")
     @ConditionalOnMissingBean
-    Jt808SessionManager jt808SessionManager(XtreamSessionIdGenerator idGenerator, XtreamJt808ServerProperties serverProperties) {
-        return new DefaultJt808SessionManager(idGenerator, serverProperties.getInstructionServer().getSessionIdleStateChecker());
+    Jt808SessionManager jt808SessionManager(
+            XtreamSessionIdGenerator idGenerator,
+            XtreamJt808ServerProperties serverProperties,
+            ObjectProvider<XtreamSessionEventListener> listeners) {
+
+        final DefaultJt808SessionManager sessionManager = new DefaultJt808SessionManager(idGenerator, serverProperties.getInstructionServer().getSessionIdleStateChecker());
+        listeners.orderedStream().forEach(sessionManager::addListener);
+        return sessionManager;
     }
 
     @Bean
