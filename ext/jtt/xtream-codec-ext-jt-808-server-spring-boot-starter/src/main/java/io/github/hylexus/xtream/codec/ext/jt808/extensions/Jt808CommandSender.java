@@ -18,7 +18,12 @@ package io.github.hylexus.xtream.codec.ext.jt808.extensions;
 
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.codec.server.reactive.spec.InternalXtreamCommandSender;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
 import reactor.core.publisher.Mono;
+
+import java.util.Objects;
+import java.util.Optional;
+import java.util.StringJoiner;
 
 /**
  * @author hylexus
@@ -26,5 +31,107 @@ import reactor.core.publisher.Mono;
 public interface Jt808CommandSender extends InternalXtreamCommandSender<Jt808Session> {
 
     Mono<Void> sendObject(String sessionId, Mono<Object> body);
+
+    /**
+     * @param sessionId {@link XtreamSession#id()}
+     * @param body      要下发的指令
+     * @param messageId 客户端对该条指令的回复消息的 ID
+     * @see #setClientResponse(Jt808CommandKey, Object)
+     */
+    Mono<Object> sendObjectAndWaitingResponse(String sessionId, Mono<Object> body, int messageId);
+
+    /**
+     * 设置客户端的回复结果
+     *
+     * @see #sendObjectAndWaitingResponse(String, Mono, int)
+     */
+    void setClientResponse(Jt808CommandKey commandKey, Object clientResponse);
+
+    interface Jt808CommandKey {
+
+        String terminalId();
+
+        int responseMessageId();
+
+        Optional<Integer> serverFlowId();
+
+        @Override
+        int hashCode();
+
+        @Override
+        boolean equals(Object obj);
+
+        static Jt808CommandKey of(String terminalId, int responseMessageId) {
+            return new DefaultJt808CommandKey(terminalId, responseMessageId);
+        }
+
+        static Jt808CommandKey of(String terminalId, int responseMessageId, Integer serverFlowId) {
+            return new DefaultJt808CommandKey(terminalId, responseMessageId, serverFlowId);
+        }
+
+    }
+
+    class DefaultJt808CommandKey implements Jt808CommandKey {
+        private final String terminalId;
+        private final int responseMessageId;
+        private final Integer serverFlowId;
+
+        public DefaultJt808CommandKey(String terminalId, int responseMessageId) {
+            this(terminalId, responseMessageId, null);
+        }
+
+        public DefaultJt808CommandKey(String terminalId, int responseMessageId, Integer serverFlowId) {
+            this.terminalId = terminalId;
+            this.responseMessageId = responseMessageId;
+            this.serverFlowId = serverFlowId;
+        }
+
+        @Override
+        public String terminalId() {
+            return this.terminalId;
+        }
+
+        @Override
+        public int responseMessageId() {
+            return this.responseMessageId;
+        }
+
+        @Override
+        public Optional<Integer> serverFlowId() {
+            return Optional.ofNullable(this.serverFlowId);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            final DefaultJt808CommandKey that = (DefaultJt808CommandKey) o;
+            return responseMessageId == that.responseMessageId
+                   && terminalId.equals(that.terminalId)
+                   && Objects.equals(serverFlowId, that.serverFlowId);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = terminalId.hashCode();
+            result = 31 * result + responseMessageId;
+            result = 31 * result + Objects.hashCode(serverFlowId);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return new StringJoiner(", ", DefaultJt808CommandKey.class.getSimpleName() + "[", "]")
+                    .add("terminalId='" + terminalId + "'")
+                    .add("responseMessageId=" + responseMessageId)
+                    .add("serverFlowId=" + serverFlowId)
+                    .toString();
+        }
+    }
 
 }

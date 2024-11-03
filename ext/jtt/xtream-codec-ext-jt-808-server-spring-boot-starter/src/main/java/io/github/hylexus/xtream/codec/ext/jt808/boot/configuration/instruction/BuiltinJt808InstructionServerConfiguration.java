@@ -23,6 +23,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808CommandSender;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808InstructionServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.impl.BuiltinJt808InstructionServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.impl.DefaultJt808XtreamCommandSender;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808FlowIdGenerator;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808SessionManager;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionEventListener;
@@ -60,7 +61,7 @@ public class BuiltinJt808InstructionServerConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    Jt808CommandSender jt808CommandSender(BufferFactoryHolder holder, Jt808SessionManager sessionManager, Jt808ResponseEncoder encoder) {
-        return new DefaultJt808XtreamCommandSender(holder.getAllocator(), sessionManager, encoder);
+    Jt808CommandSender jt808CommandSender(BufferFactoryHolder holder, Jt808SessionManager sessionManager, Jt808ResponseEncoder encoder, Jt808FlowIdGenerator flowIdGenerator) {
+        return new DefaultJt808XtreamCommandSender(holder.getAllocator(), sessionManager, encoder, flowIdGenerator);
     }
 }

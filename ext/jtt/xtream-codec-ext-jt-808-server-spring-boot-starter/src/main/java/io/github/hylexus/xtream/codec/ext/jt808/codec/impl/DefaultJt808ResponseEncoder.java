@@ -49,8 +49,14 @@ public class DefaultJt808ResponseEncoder implements Jt808ResponseEncoder {
     }
 
     @Override
+    public ByteBuf encode(Object body, Jt808ProtocolVersion version, String terminalId, int flowId, Jt808ResponseBody annotation) {
+        final Jt808MessageDescriber describer = this.createDescriber(version, terminalId, flowId, annotation);
+        return this.encode(body, describer);
+    }
+
+    @Override
     public ByteBuf encode(Object body, Jt808ProtocolVersion version, String terminalId, Jt808ResponseBody annotation) {
-        final Jt808MessageDescriber describer = this.createDescriber(version, terminalId, annotation);
+        final Jt808MessageDescriber describer = this.createDescriber(version, terminalId, -1, annotation);
         return this.encode(body, describer);
     }
 
@@ -63,12 +69,16 @@ public class DefaultJt808ResponseEncoder implements Jt808ResponseEncoder {
         return this.doBuild(describer, bodyBuf);
     }
 
-    protected Jt808MessageDescriber createDescriber(Jt808ProtocolVersion version, String terminalId, Jt808ResponseBody annotation) {
-        return new Jt808MessageDescriber(version, terminalId)
+    protected Jt808MessageDescriber createDescriber(Jt808ProtocolVersion version, String terminalId, int flowId, Jt808ResponseBody annotation) {
+        final Jt808MessageDescriber describer = new Jt808MessageDescriber(version, terminalId)
                 .messageId(annotation.messageId())
                 .maxPackageSize(annotation.maxPackageSize())
                 .reversedBit15InHeader(annotation.reversedBit15InHeader())
                 .encryptionType(annotation.encryptionType());
+        if (flowId >= 0) {
+            describer.flowId(flowId);
+        }
+        return describer;
     }
 
     protected ByteBuf doBuild(Jt808MessageDescriber describer, ByteBuf body) {

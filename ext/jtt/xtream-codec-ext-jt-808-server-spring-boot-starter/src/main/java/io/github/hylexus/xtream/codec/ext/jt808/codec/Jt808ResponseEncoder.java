@@ -23,6 +23,8 @@ import io.netty.buffer.ByteBuf;
 
 public interface Jt808ResponseEncoder {
 
+    ByteBuf encode(Object body, Jt808ProtocolVersion version, String terminalId, int flowId, Jt808ResponseBody annotation);
+
     ByteBuf encode(Object body, Jt808ProtocolVersion version, String terminalId, Jt808ResponseBody annotation);
 
     ByteBuf encode(Object body, Jt808MessageDescriber describer);
