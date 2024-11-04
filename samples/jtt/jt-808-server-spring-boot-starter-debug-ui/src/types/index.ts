@@ -13,3 +13,13 @@ export type Session = {
   creationTime: string;
   lastCommunicateTime: string;
 };
+
+export type Event = {
+  requestId: string;
+  traceId: string;
+  version: string;
+  isSubPackage: string;
+  messageId: string;
+  rawHexString: string;
+  escapedHexString: string;
+};
