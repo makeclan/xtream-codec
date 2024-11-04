@@ -27,9 +27,9 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 @Component
-public class GlobalExceptionHandler implements XtreamRequestExceptionHandler {
+public class GlobalXtreamServerExceptionHandler implements XtreamRequestExceptionHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(GlobalXtreamServerExceptionHandler.class);
 
     @Override
     public Mono<Void> handleRequestException(XtreamExchange exchange, @NonNull Throwable ex) {
