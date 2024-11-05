@@ -23,6 +23,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestCombiner;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808ResponseEncoder;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.Jt808RequestLifecycleListenerComposite;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.filter.Jt808RequestDecoderFilter;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestMappingHandlerMapping;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBodyHandlerResultHandler;
@@ -48,6 +49,7 @@ import java.util.List;
 @Import({
         BuiltinJt808InstructionServerConfiguration.class,
         BuiltinJt808AttachmentServerConfiguration.class,
+        BuiltinJt808ServerActuatorConfiguration.class,
 })
 public class BuiltinJt808ServerHandlerConfiguration {
 
@@ -115,6 +117,12 @@ public class BuiltinJt808ServerHandlerConfiguration {
     @Bean
     LoggingXtreamHandlerResultHandler loggingXtreamHandlerResultHandler() {
         return new LoggingXtreamHandlerResultHandler();
+    }
+
+    @Bean
+    @Primary
+    Jt808RequestLifecycleListener jt808RequestLifecycleListenerComposite(List<Jt808RequestLifecycleListener> listeners) {
+        return new Jt808RequestLifecycleListenerComposite(listeners);
     }
 
     @Bean

@@ -165,7 +165,28 @@ jt808-server:
         daemon: true
         reject-blocking-task: true
         thread-name-prefix: blocking-single
+
 logging:
   level:
     root: info
     io.netty.handler.logging.LoggingHandler: debug
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-components: always
+    sessions:
+      enabled: true
+    jt808-simple-metrics:
+      enabled: true
+  info:
+    java:
+      enabled: true
+    os:
+      enabled: true
+    build:
+      enabled: true

@@ -45,7 +45,7 @@ public class DemoConfiguration {
     }
 
     @Bean
-    Jt808RequestLifecycleListener jt808RequestLifecycleListener(XtreamEventPublisher eventPublisher) {
+    Jt808RequestLifecycleListener demoJt808RequestLifecycleListener(XtreamEventPublisher eventPublisher) {
         return new DemoJt808RequestLifecycleListener(eventPublisher);
     }
 
