@@ -16,6 +16,9 @@ dependencies {
     api("com.github.ben-manes.caffeine:caffeine")
     api("org.springframework.boot:spring-boot-starter")
     api("org.springframework.boot:spring-boot-starter-actuator")
+
+    compileOnly("org.springframework.boot:spring-boot-starter-web")
+    compileOnly("org.springframework.boot:spring-boot-starter-validation")
     compileOnly("org.bouncycastle:bcprov-jdk18on")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")

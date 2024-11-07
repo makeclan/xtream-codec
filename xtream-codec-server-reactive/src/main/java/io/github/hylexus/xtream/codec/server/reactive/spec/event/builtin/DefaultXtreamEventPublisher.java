@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec.event.builtin;
 
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEvent;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventSubscriberInfo;
@@ -23,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
-import reactor.core.scheduler.Schedulers;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -37,9 +37,11 @@ public class DefaultXtreamEventPublisher implements XtreamEventPublisher {
     private static final Logger log = LoggerFactory.getLogger(DefaultXtreamEventPublisher.class);
     private final ConcurrentMap<String, XtreamEventSubscriberInfo> subscribers = new ConcurrentHashMap<>();
     private final Sinks.Many<XtreamEvent> sink;
+    private final XtreamSchedulerRegistry schedulerRegistry;
 
-    public DefaultXtreamEventPublisher() {
-        this.sink = Sinks.many().multicast().onBackpressureBuffer();
+    public DefaultXtreamEventPublisher(XtreamSchedulerRegistry schedulerRegistry) {
+        this.schedulerRegistry = schedulerRegistry;
+        this.sink = Sinks.many().multicast().onBackpressureBuffer(1, false);
     }
 
     @Override
@@ -64,14 +66,18 @@ public class DefaultXtreamEventPublisher implements XtreamEventPublisher {
             if (old != null) {
                 return Flux.error(new IllegalStateException("Subscriber already exists: " + old));
             }
-            this.subscribers.put(id, info);
+
             return sink.asFlux()
-                    .publishOn(Schedulers.newBoundedElastic(1, 1, "haha"))
+                    .publishOn(this.schedulerRegistry.eventPublisherScheduler())
                     .doOnError(error -> {
                         // ...
                         log.error("Error occurred", error);
                     })
-                    .doOnCancel(() -> {
+                    .doOnTerminate(() -> {
+                        // ...
+                        this.subscribers.remove(id);
+                    })
+                    .doFinally(signalType -> {
                         // ...
                         this.subscribers.remove(id);
                     });
@@ -90,4 +96,10 @@ public class DefaultXtreamEventPublisher implements XtreamEventPublisher {
     public Stream<XtreamEventSubscriberInfo> subscriberView() {
         return this.subscribers.values().stream();
     }
+
+    @Override
+    public int subscriberCount() {
+        return this.subscribers.size();
+    }
+
 }

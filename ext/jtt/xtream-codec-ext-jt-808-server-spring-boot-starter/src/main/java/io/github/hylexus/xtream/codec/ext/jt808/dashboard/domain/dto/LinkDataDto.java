@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.server.reactive.spec.common;
+package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto;
 
-public final class XtreamServerConstants {
-    private XtreamServerConstants() {
-    }
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-    public static final String BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER = "xtreamHandlerAdapterNonBlockingScheduler";
-    public static final String BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER = "xtreamHandlerAdapterBlockingScheduler";
-    public static final String BEAN_NAME_EVENT_PUBLISHER_SCHEDULER = "xtreamEventPublisherScheduler";
+import java.util.Set;
 
+@Getter
+@Setter
+@ToString
+public class LinkDataDto {
+    private Set<LinkDataType> type;
+    @NotNull(message = "terminalId is missing")
+    @NotEmpty(message = "terminalId is empty")
+    private String terminalId;
 }

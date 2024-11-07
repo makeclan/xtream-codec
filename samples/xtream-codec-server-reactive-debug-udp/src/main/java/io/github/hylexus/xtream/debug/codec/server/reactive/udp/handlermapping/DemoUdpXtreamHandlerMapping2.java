@@ -39,7 +39,7 @@ public class DemoUdpXtreamHandlerMapping2 extends AbstractSimpleXtreamRequestMap
     public DemoUdpXtreamHandlerMapping2(String[] basePackages, Function<Class<?>, Object> instanceFactory) {
         // todo 优化
         super(
-                new DefaultXtreamSchedulerRegistry(Schedulers.parallel(), Schedulers.boundedElastic()),
+                new DefaultXtreamSchedulerRegistry(Schedulers.parallel(), Schedulers.boundedElastic(), Schedulers.boundedElastic()),
                 new DefaultXtreamBlockingHandlerMethodPredicate(),
                 basePackages, instanceFactory
         );

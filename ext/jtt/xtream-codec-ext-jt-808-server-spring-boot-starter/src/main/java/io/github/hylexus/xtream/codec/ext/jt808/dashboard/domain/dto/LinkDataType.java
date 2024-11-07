@@ -14,14 +14,27 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.server.reactive.spec.common;
+package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto;
 
-public final class XtreamServerConstants {
-    private XtreamServerConstants() {
-    }
-
-    public static final String BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER = "xtreamHandlerAdapterNonBlockingScheduler";
-    public static final String BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER = "xtreamHandlerAdapterBlockingScheduler";
-    public static final String BEAN_NAME_EVENT_PUBLISHER_SCHEDULER = "xtreamEventPublisherScheduler";
-
+public enum LinkDataType {
+    /**
+     * 上行(完整包 或 子包)
+     */
+    REQUEST,
+    /**
+     * 上行(子包合并之后)
+     */
+    MERGED_REQUEST,
+    /**
+     * 响应
+     */
+    RESPONSE,
+    /**
+     * 指令(主动下发)
+     */
+    COMMAND,
+    /**
+     * 所有
+     */
+    ALL,
 }

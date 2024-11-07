@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.server.reactive.spec.common;
+package io.github.hylexus.xtream.codec.ext.jt808.exception;
 
-public final class XtreamServerConstants {
-    private XtreamServerConstants() {
+import io.github.hylexus.xtream.codec.ext.jt808.domain.DefaultRespCode;
+
+public class ClientParamException extends XtreamHttpException {
+    public ClientParamException() {
+        super(DefaultRespCode.BAD_REQUEST);
     }
 
-    public static final String BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER = "xtreamHandlerAdapterNonBlockingScheduler";
-    public static final String BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER = "xtreamHandlerAdapterBlockingScheduler";
-    public static final String BEAN_NAME_EVENT_PUBLISHER_SCHEDULER = "xtreamEventPublisherScheduler";
-
+    public ClientParamException(String message) {
+        super(message, DefaultRespCode.BAD_REQUEST);
+    }
 }

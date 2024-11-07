@@ -1,0 +1,63 @@
+/*
+ * Copyright 2024 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.github.hylexus.xtream.codec.ext.jt808.boot.actuator.handler;
+
+import io.github.hylexus.xtream.codec.ext.jt808.boot.actuator.Jt808MessageDescriptor;
+import io.github.hylexus.xtream.codec.ext.jt808.boot.actuator.values.Jt808ServerSimpleMetricsHolder;
+import io.github.hylexus.xtream.codec.ext.jt808.boot.actuator.values.SimpleTypes;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
+
+import java.util.concurrent.atomic.LongAdder;
+
+public class RequestInfoCollector implements Jt808RequestLifecycleListener {
+    private final Jt808ServerSimpleMetricsHolder metricsHolder;
+    private final Jt808MessageDescriptor messageDescriptor;
+
+    public RequestInfoCollector(Jt808ServerSimpleMetricsHolder metricsHolder, Jt808MessageDescriptor messageDescriptor) {
+        this.metricsHolder = metricsHolder;
+        this.messageDescriptor = messageDescriptor;
+    }
+
+    @Override
+    public void afterRequestDecode(XtreamExchange exchange, Jt808Request jt808Request, XtreamRequest originalRequest) {
+
+        final SimpleTypes.RequestInfo requestInfo = switch (jt808Request.type()) {
+            case TCP -> switch (jt808Request.serverType()) {
+                case INSTRUCTION_SERVER -> this.metricsHolder.getTcpInstructionRequest();
+                case ATTACHMENT_SERVER -> this.metricsHolder.getTcpAttachmentRequest();
+            };
+            case UDP -> switch (jt808Request.serverType()) {
+                case INSTRUCTION_SERVER -> this.metricsHolder.getUdpInstructionRequest();
+                case ATTACHMENT_SERVER -> this.metricsHolder.getUdpAttachmentRequest();
+            };
+        };
+
+        final int messageId = jt808Request.header().messageId();
+        requestInfo.incrementTotal();
+        requestInfo
+                .details()
+                .computeIfAbsent("message_" + messageId, k -> {
+                    final String description = this.messageDescriptor.getDescription(messageId);
+                    return new SimpleTypes.RequestDetail(messageId, new LongAdder(), description == null ? "Unknown" : description);
+                })
+                .incrementCount();
+    }
+
+}

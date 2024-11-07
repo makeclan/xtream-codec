@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.debug.ext.jt808.config;
 
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.builtin.DefaultXtreamEventPublisher;
 import io.github.hylexus.xtream.debug.ext.jt808.domain.properties.DemoAppConfigProperties;
@@ -40,11 +41,11 @@ public class DemoConfiguration {
     private static final Logger log = LoggerFactory.getLogger(DemoConfiguration.class);
 
     @Bean
-    XtreamEventPublisher eventPublisher() {
-        return new DefaultXtreamEventPublisher();
+    XtreamEventPublisher eventPublisher(XtreamSchedulerRegistry schedulerRegistry) {
+        return new DefaultXtreamEventPublisher(schedulerRegistry);
     }
 
-    @Bean
+    // @Bean
     Jt808RequestLifecycleListener demoJt808RequestLifecycleListener(XtreamEventPublisher eventPublisher) {
         return new DemoJt808RequestLifecycleListener(eventPublisher);
     }

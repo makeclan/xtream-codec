@@ -50,8 +50,9 @@ public class BuiltinReactorSchedulerConfiguration {
     @ConditionalOnMissingBean
     XtreamSchedulerRegistry xtreamSchedulerRegistry(
             @Qualifier(XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER) Scheduler nonBlockingScheduler,
-            @Qualifier(XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER) Scheduler blockingScheduler) {
-        return new DefaultXtreamSchedulerRegistry(nonBlockingScheduler, blockingScheduler);
+            @Qualifier(XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER) Scheduler blockingScheduler,
+            @Qualifier(XtreamServerConstants.BEAN_NAME_EVENT_PUBLISHER_SCHEDULER) Scheduler eventPublisherScheduler) {
+        return new DefaultXtreamSchedulerRegistry(nonBlockingScheduler, blockingScheduler, eventPublisherScheduler);
     }
 
     @Bean(name = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER)
@@ -67,6 +68,13 @@ public class BuiltinReactorSchedulerConfiguration {
     @ConditionalOnMissingCustomizedScheduler(type = ConditionalOnMissingCustomizedScheduler.Type.BLOCKING)
     Scheduler blockingScheduler(XtreamJt808ServerProperties serverProperties) {
         final XtreamServerSchedulerProperties property = serverProperties.getHandlerSchedulers().getBlockingScheduler();
+        return this.createScheduler(property);
+    }
+
+    @Bean(name = XtreamServerConstants.BEAN_NAME_EVENT_PUBLISHER_SCHEDULER)
+    @ConditionalOnMissingBean(name = XtreamServerConstants.BEAN_NAME_EVENT_PUBLISHER_SCHEDULER)
+    Scheduler eventPublisherScheduler(XtreamJt808ServerProperties serverProperties) {
+        final XtreamServerSchedulerProperties property = serverProperties.getHandlerSchedulers().getEventPublisherScheduler();
         return this.createScheduler(property);
     }
 

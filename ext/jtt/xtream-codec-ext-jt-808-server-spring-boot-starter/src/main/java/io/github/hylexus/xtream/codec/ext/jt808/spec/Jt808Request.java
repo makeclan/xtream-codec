@@ -32,6 +32,14 @@ public interface Jt808Request extends XtreamRequest {
 
     Jt808RequestHeader header();
 
+    default int messageId() {
+        return this.header().messageId();
+    }
+
+    default String terminalId() {
+        return this.header().terminalId();
+    }
+
     default ByteBuf body() {
         return this.payload();
     }

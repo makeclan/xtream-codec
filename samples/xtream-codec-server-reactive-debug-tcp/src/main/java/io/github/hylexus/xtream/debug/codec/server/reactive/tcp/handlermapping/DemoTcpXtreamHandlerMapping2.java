@@ -38,7 +38,7 @@ public class DemoTcpXtreamHandlerMapping2 extends AbstractSimpleXtreamRequestMap
 
     public DemoTcpXtreamHandlerMapping2(String[] basePackages, Function<Class<?>, Object> instanceFactory) {
         super(
-                new DefaultXtreamSchedulerRegistry(Schedulers.parallel(), Schedulers.boundedElastic()),
+                new DefaultXtreamSchedulerRegistry(Schedulers.parallel(), Schedulers.boundedElastic(), Schedulers.boundedElastic()),
                 new DefaultXtreamBlockingHandlerMethodPredicate(),
                 basePackages, instanceFactory
         );

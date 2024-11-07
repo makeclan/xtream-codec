@@ -21,7 +21,6 @@ import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamResponse;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionEventListener;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.SessionIdleStateCheckerProps;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamSessionManager;
@@ -50,15 +49,4 @@ public class DefaultJt808SessionManager extends AbstractXtreamSessionManager<Jt8
         );
     }
 
-    @Override
-    public void closeSessionById(String sessionId, XtreamSessionEventListener.SessionCloseReason reason) {
-        final Jt808Session jt808Session = this.sessions.remove(sessionId);
-        if (jt808Session != null) {
-            invokeListener(listener -> listener.beforeSessionClose(jt808Session, reason));
-            jt808Session.outbound().withConnection(connection -> {
-                // ...
-                connection.channel().close();
-            });
-        }
-    }
 }

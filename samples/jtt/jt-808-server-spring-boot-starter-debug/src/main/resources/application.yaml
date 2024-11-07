@@ -165,6 +165,25 @@ jt808-server:
         daemon: true
         reject-blocking-task: true
         thread-name-prefix: blocking-single
+    ## [事件发布器]的调度器
+    event-publisher-scheduler:
+      type: bounded_elastic
+      bounded-elastic:
+        thread-name-prefix: event-publisher1
+        thread-capacity: 10
+        queued-task-capacity: 1024
+        reject-blocking-task: true
+        daemon: true
+        ttl: 1m
+      parallel:
+        thread-name-prefix: event-publisher1
+        parallelism: 10
+        daemon: true
+        reject-blocking-task: true
+      single:
+        daemon: true
+        reject-blocking-task: true
+        thread-name-prefix: event-publisher1
 
 logging:
   level:

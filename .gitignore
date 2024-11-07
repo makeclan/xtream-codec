@@ -48,3 +48,4 @@ docs/src/.vuepress/dist
 logs/
 
 node_modules/
+/samples/jtt/jt-808-server-spring-boot-starter-debug-ui/.idea/

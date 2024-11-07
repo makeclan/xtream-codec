@@ -16,20 +16,26 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.boot.actuator;
 
-import io.github.hylexus.xtream.codec.ext.jt808.boot.actuator.values.Jt808ServerSimpleMetricsHolder;
-import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
-import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import java.util.HashMap;
+import java.util.Map;
 
-@Endpoint(id = "jt808SimpleMetrics")
-public class Jt808ServerSimpleMetricsEndpoint {
-    private final Jt808ServerSimpleMetricsHolder collector;
+public interface Jt808MessageDescriptor {
 
-    public Jt808ServerSimpleMetricsEndpoint(Jt808ServerSimpleMetricsHolder collector) {
-        this.collector = collector;
-    }
+    String getDescription(int messageId);
 
-    @ReadOperation
-    public Jt808ServerSimpleMetricsHolder all() {
-        return collector;
+    class Default implements Jt808MessageDescriptor {
+        public static final Map<Integer, String> MESSAGE_ID_DESC_MAPPING;
+
+        static {
+            MESSAGE_ID_DESC_MAPPING = new HashMap<>();
+            MESSAGE_ID_DESC_MAPPING.put(0x0100, "终端心跳");
+            MESSAGE_ID_DESC_MAPPING.put(0x0102, "终端注销");
+            MESSAGE_ID_DESC_MAPPING.put(0x0200, "定位数据上报");
+        }
+
+        @Override
+        public String getDescription(int messageId) {
+            return MESSAGE_ID_DESC_MAPPING.get(messageId);
+        }
     }
 }

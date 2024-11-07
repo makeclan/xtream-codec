@@ -22,6 +22,7 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.Session
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
+import reactor.netty.DisposableChannel;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -138,6 +139,17 @@ public abstract class AbstractXtreamSessionManager<S extends XtreamSession> impl
     public Mono<S> getSessionById(String sessionId) {
         final S s = this.sessions.get(sessionId);
         return Mono.justOrEmpty(s);
+    }
+
+    @Override
+    public void closeSessionById(String sessionId, XtreamSessionEventListener.SessionCloseReason reason) {
+        final S session = sessions.remove(sessionId);
+        if (session != null) {
+            invokeListener(listener -> listener.beforeSessionClose(session, reason));
+            if (session.type() == XtreamInbound.Type.TCP) {
+                session.outbound().withConnection(DisposableChannel::dispose);
+            }
+        }
     }
 
     @Override

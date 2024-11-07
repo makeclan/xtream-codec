@@ -16,7 +16,10 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 
-import io.github.hylexus.xtream.codec.server.reactive.spec.*;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamResponse;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.SessionIdleStateCheckerProps;
 
 public class DefaultXtreamSessionManager extends AbstractXtreamSessionManager<XtreamSession> {
@@ -38,15 +41,4 @@ public class DefaultXtreamSessionManager extends AbstractXtreamSessionManager<Xt
         );
     }
 
-    @Override
-    public void closeSessionById(String sessionId, XtreamSessionEventListener.SessionCloseReason reason) {
-        final XtreamSession session = sessions.remove(sessionId);
-        if (session != null) {
-            invokeListener(listener -> listener.beforeSessionClose(session, reason));
-            session.outbound().withConnection(connection -> {
-                // ...
-                connection.channel().close();
-            });
-        }
-    }
 }

@@ -39,19 +39,19 @@ class DefaultXtreamSchedulerRegistryTest {
     void setUp() {
         defaultBlockingScheduler = Schedulers.parallel();
         defaultNonBlockingScheduler = Schedulers.single();
-        registry = new DefaultXtreamSchedulerRegistry(defaultNonBlockingScheduler, defaultBlockingScheduler);
+        registry = new DefaultXtreamSchedulerRegistry(defaultNonBlockingScheduler, defaultBlockingScheduler, Schedulers.boundedElastic());
     }
 
     @Test
     void testGetSchedulerShouldReturnDefaultNonBlockingScheduler() {
         assertSame(defaultNonBlockingScheduler, registry.defaultNonBlockingScheduler());
-        assertEquals(2, registry.asMapView().size());
+        assertEquals(3, registry.asMapView().size());
     }
 
     @Test
     void testGetSchedulerShouldReturnDefaultBlockingScheduler() {
         assertSame(defaultBlockingScheduler, registry.defaultBlockingScheduler());
-        assertEquals(2, registry.asMapView().size());
+        assertEquals(3, registry.asMapView().size());
     }
 
     @Test
@@ -59,7 +59,7 @@ class DefaultXtreamSchedulerRegistryTest {
         assertEquals(Optional.empty(), registry.getScheduler("nonExistentScheduler"));
         assertEquals(Optional.empty(), registry.getScheduler("nonExistentScheduler2"));
         assertEquals(Optional.empty(), registry.getScheduler("nonExistentScheduler3"));
-        assertEquals(2, registry.asMapView().size());
+        assertEquals(3, registry.asMapView().size());
     }
 
     @Test
@@ -70,14 +70,14 @@ class DefaultXtreamSchedulerRegistryTest {
         assertTrue(registry.registerScheduler(schedulerName, scheduler));
         assertFalse(registry.registerScheduler(schedulerName, scheduler2));
         assertEquals(Optional.of(scheduler), registry.getScheduler(schedulerName));
-        assertEquals(3, registry.asMapView().size());
+        assertEquals(4, registry.asMapView().size());
     }
 
     @Test
     void testAsMapViewShouldReturnUnmodifiableMapView() {
         Map<String, Scheduler> view = registry.asMapView();
         assertThrows(UnsupportedOperationException.class, () -> view.put("test", Schedulers.parallel()));
-        assertEquals(2, view.size());
+        assertEquals(3, view.size());
     }
 
 
@@ -88,7 +88,7 @@ class DefaultXtreamSchedulerRegistryTest {
         assertTrue(registry.registerScheduler("testScheduler2", Schedulers.single()));
         assertFalse(registry.registerScheduler("testScheduler2", Schedulers.single()));
         Map<String, Scheduler> view = registry.asMapView();
-        assertEquals(4, view.size());
+        assertEquals(5, view.size());
         assertTrue(view.containsKey("testScheduler1"));
         assertTrue(view.containsKey("testScheduler2"));
     }
@@ -124,19 +124,19 @@ class DefaultXtreamSchedulerRegistryTest {
     @Test
     void testRemoveScheduler() {
         assertTrue(registry.registerScheduler("testScheduler", Schedulers.parallel()));
-        assertEquals(3, registry.asMapView().size());
+        assertEquals(4, registry.asMapView().size());
 
         assertTrue(registry.removeScheduler("testScheduler"));
-        assertEquals(2, registry.asMapView().size());
+        assertEquals(3, registry.asMapView().size());
 
         assertFalse(registry.removeScheduler("testScheduler"));
-        assertEquals(2, registry.asMapView().size());
+        assertEquals(3, registry.asMapView().size());
 
         assertFalse(registry.getScheduler("testScheduler").isPresent());
 
         assertThrows(UnsupportedOperationException.class, () -> registry.removeScheduler(SCHEDULER_NAME_BLOCKING));
         assertThrows(UnsupportedOperationException.class, () -> registry.removeScheduler(SCHEDULER_NAME_NON_BLOCKING));
-        assertEquals(2, registry.asMapView().size());
+        assertEquals(3, registry.asMapView().size());
     }
 
     private void assertEventuallyTrue(AtomicBoolean executed) {

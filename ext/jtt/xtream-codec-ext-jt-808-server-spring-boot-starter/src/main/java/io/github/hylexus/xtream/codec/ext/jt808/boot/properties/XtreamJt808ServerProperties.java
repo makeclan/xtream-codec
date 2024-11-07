@@ -149,6 +149,10 @@ public class XtreamJt808ServerProperties {
 
         @NestedConfigurationProperty
         private XtreamServerSchedulerProperties blockingScheduler = new XtreamServerSchedulerProperties();
+
+        // todo 这个移到到其他分组下 (用户自定义调度器分组)
+        @NestedConfigurationProperty
+        private XtreamServerSchedulerProperties eventPublisherScheduler = new XtreamServerSchedulerProperties();
     }
 
     @Getter

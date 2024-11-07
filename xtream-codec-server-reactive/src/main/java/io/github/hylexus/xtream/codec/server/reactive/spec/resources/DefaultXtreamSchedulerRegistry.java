@@ -31,13 +31,16 @@ public class DefaultXtreamSchedulerRegistry implements XtreamSchedulerRegistry {
 
     protected final Scheduler defaultNonBlockingScheduler;
     protected final Scheduler defaultBlockingScheduler;
+    protected final Scheduler eventPublisherScheduler;
     protected final ConcurrentHashMap<String, Scheduler> schedulerMap = new ConcurrentHashMap<>();
 
-    public DefaultXtreamSchedulerRegistry(Scheduler defaultNonBlockingScheduler, Scheduler defaultBlockingScheduler) {
+    public DefaultXtreamSchedulerRegistry(Scheduler defaultNonBlockingScheduler, Scheduler defaultBlockingScheduler, Scheduler eventPublisherScheduler) {
         this.defaultNonBlockingScheduler = defaultNonBlockingScheduler;
         this.defaultBlockingScheduler = defaultBlockingScheduler;
+        this.eventPublisherScheduler = eventPublisherScheduler;
         this.registerScheduler(SCHEDULER_NAME_BLOCKING, defaultBlockingScheduler);
         this.registerScheduler(SCHEDULER_NAME_NON_BLOCKING, defaultNonBlockingScheduler);
+        this.registerScheduler(SCHEDULER_NAME_EVENT_PUBLISHER, eventPublisherScheduler);
     }
 
     @Override
@@ -48,6 +51,11 @@ public class DefaultXtreamSchedulerRegistry implements XtreamSchedulerRegistry {
     @Override
     public Scheduler defaultBlockingScheduler() {
         return this.defaultBlockingScheduler;
+    }
+
+    @Override
+    public Scheduler eventPublisherScheduler() {
+        return this.eventPublisherScheduler;
     }
 
     @Override

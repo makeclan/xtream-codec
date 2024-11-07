@@ -28,6 +28,7 @@ import java.util.Optional;
 public interface XtreamSchedulerRegistry {
     String SCHEDULER_NAME_NON_BLOCKING = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER;
     String SCHEDULER_NAME_BLOCKING = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER;
+    String SCHEDULER_NAME_EVENT_PUBLISHER = XtreamServerConstants.BEAN_NAME_EVENT_PUBLISHER_SCHEDULER;
 
     default Scheduler defaultNonBlockingScheduler() {
         return this.getScheduler(SCHEDULER_NAME_NON_BLOCKING).orElseThrow();
@@ -35,6 +36,10 @@ public interface XtreamSchedulerRegistry {
 
     default Scheduler defaultBlockingScheduler() {
         return this.getScheduler(SCHEDULER_NAME_BLOCKING).orElseThrow();
+    }
+
+    default Scheduler eventPublisherScheduler() {
+        return this.getScheduler(SCHEDULER_NAME_EVENT_PUBLISHER).orElseThrow();
     }
 
     /**
