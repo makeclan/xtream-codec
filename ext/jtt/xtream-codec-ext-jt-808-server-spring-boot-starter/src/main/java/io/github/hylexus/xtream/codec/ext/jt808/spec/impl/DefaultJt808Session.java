@@ -124,7 +124,7 @@ public class DefaultJt808Session extends AbstractXtreamOutbound implements Jt808
     @Override
     public void invalidate(XtreamSessionEventListener.SessionCloseReason reason) {
         this.attributes().clear();
-        this.sessionManager.closeSessionById(this.id, reason);
+        this.sessionManager.closeSession(this, reason);
     }
 
     @Override

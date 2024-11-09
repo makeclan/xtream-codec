@@ -24,6 +24,8 @@ import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808ResponseEncoder;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.Jt808RequestLifecycleListenerComposite;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.filter.Jt808RequestDecoderFilter;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestMappingHandlerMapping;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBodyHandlerResultHandler;
@@ -38,18 +40,23 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.impl.LoggingXtreamFil
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.LoggingXtreamHandlerResultHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.SimpleXtreamRequestHandlerHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.XtreamResponseBodyHandlerResultHandler;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.LongAdder;
 
 @Import({
         BuiltinJt808InstructionServerConfiguration.class,
         BuiltinJt808AttachmentServerConfiguration.class,
+        BuiltinJt808ServerHandlerConfiguration.BuiltinJt808DashboardAndActuatorConfiguration.class,
         BuiltinJt808ServerActuatorConfiguration.class,
+        BuiltinJt808DashboardConfiguration.class,
 })
 public class BuiltinJt808ServerHandlerConfiguration {
 
@@ -142,6 +149,22 @@ public class BuiltinJt808ServerHandlerConfiguration {
     XtreamSessionIdGenerator xtreamSessionIdGenerator() {
         return new XtreamSessionIdGenerator.DefalutXtreamSessionIdGenerator();
     }
-
     // endregion session
+
+    @ConditionalOnExpression("${jt808-server.dashboard.enabled:true} || ${management.endpoint.jt808.enabled:false}")
+    static class BuiltinJt808DashboardAndActuatorConfiguration {
+        @Bean
+        Jt808ServerSimpleMetricsHolder metricsHolder() {
+            return new Jt808ServerSimpleMetricsHolder(
+                    new SimpleTypes.SessionInfo(),
+                    new SimpleTypes.SessionInfo(),
+                    new SimpleTypes.SessionInfo(),
+                    new SimpleTypes.SessionInfo(),
+                    new SimpleTypes.RequestInfo(new LongAdder(), new HashMap<>()),
+                    new SimpleTypes.RequestInfo(new LongAdder(), new HashMap<>()),
+                    new SimpleTypes.RequestInfo(new LongAdder(), new HashMap<>()),
+                    new SimpleTypes.RequestInfo(new LongAdder(), new HashMap<>())
+            );
+        }
+    }
 }

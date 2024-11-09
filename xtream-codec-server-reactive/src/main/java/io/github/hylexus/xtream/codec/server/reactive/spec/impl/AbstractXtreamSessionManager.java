@@ -22,7 +22,7 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.Session
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
-import reactor.netty.DisposableChannel;
+import reactor.netty.Connection;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -60,7 +60,7 @@ public abstract class AbstractXtreamSessionManager<S extends XtreamSession> impl
                     checkerProps.getCheckBackoffTime(),
                     (name, interval) -> {
                         log.debug("{} interval: {}", name, interval);
-                        this.doCheckStatus();
+                        this.doCheckUdpSessionStatus();
                         return Mono.empty();
                     }
             );
@@ -72,11 +72,16 @@ public abstract class AbstractXtreamSessionManager<S extends XtreamSession> impl
     }
 
     @Override
+    public XtreamSessionIdGenerator sessionIdGenerator() {
+        return this.sessionIdGenerator;
+    }
+
+    @Override
     public void addListener(XtreamSessionEventListener listener) {
         this.listenerList.add(listener);
     }
 
-    void doCheckStatus() {
+    void doCheckUdpSessionStatus() {
         if (sessions.isEmpty()) {
             return;
         }
@@ -88,9 +93,13 @@ public abstract class AbstractXtreamSessionManager<S extends XtreamSession> impl
                 final Instant now = this.clock.instant();
                 while (iterator.hasNext()) {
                     final S session = iterator.next();
-                    if (isExpired(session, now)) {
-                        log.info("Session expired, remove it: {}", session);
-                        session.invalidate(XtreamSessionEventListener.DefaultSessionCloseReason.EXPIRED);
+                    // TCP 连接由 IdleStateHandler 处理
+                    // @see io.github.hylexus.xtream.codec.ext.jt808.spec.XtreamTcpHeatBeatHandler
+                    if (session.type() == XtreamInbound.Type.UDP) {
+                        if (isExpired(session, now)) {
+                            log.info("Session expired, remove it: {}", session);
+                            session.invalidate(XtreamSessionEventListener.DefaultSessionCloseReason.EXPIRED);
+                        }
                     }
                 }
             } finally {
@@ -142,14 +151,35 @@ public abstract class AbstractXtreamSessionManager<S extends XtreamSession> impl
     }
 
     @Override
-    public void closeSessionById(String sessionId, XtreamSessionEventListener.SessionCloseReason reason) {
+    public void closeSession(S session, XtreamSessionEventListener.SessionCloseReason reason) {
+        this.sessions.remove(session.id());
+        this.doClose(session, reason);
+    }
+
+    @Override
+    public boolean closeSessionById(String sessionId, XtreamSessionEventListener.SessionCloseReason reason) {
         final S session = sessions.remove(sessionId);
         if (session != null) {
-            invokeListener(listener -> listener.beforeSessionClose(session, reason));
-            if (session.type() == XtreamInbound.Type.TCP) {
-                session.outbound().withConnection(DisposableChannel::dispose);
-            }
+            this.doClose(session, reason);
+            return true;
         }
+        return false;
+    }
+
+    protected void doClose(S session, XtreamSessionEventListener.SessionCloseReason reason) {
+        invokeListener(listener -> listener.beforeSessionClose(session, reason));
+        session.outbound().withConnection(connection -> {
+            try {
+                this.beforeConnectionClose(connection, session);
+            } finally {
+                if (session.type() == XtreamInbound.Type.TCP) {
+                    connection.dispose();
+                }
+            }
+        });
+    }
+
+    protected void beforeConnectionClose(Connection connection, S session) {
     }
 
     @Override

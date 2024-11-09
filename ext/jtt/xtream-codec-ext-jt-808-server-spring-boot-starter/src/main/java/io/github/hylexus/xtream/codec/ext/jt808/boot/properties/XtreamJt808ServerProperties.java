@@ -26,6 +26,8 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import reactor.netty.resources.LoopResources;
 
 import java.time.Duration;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -33,6 +35,9 @@ import java.time.Duration;
 @ConfigurationProperties(prefix = "jt808-server")
 public class XtreamJt808ServerProperties {
     private boolean enabled = true;
+
+    @NestedConfigurationProperty
+    public FeatureProps dashboard = new FeatureProps();
 
     @NestedConfigurationProperty
     private BuiltinFilters builtinFilters = new BuiltinFilters();
@@ -47,7 +52,7 @@ public class XtreamJt808ServerProperties {
     private AttachmentServerProps attachmentServer = new AttachmentServerProps();
 
     @NestedConfigurationProperty
-    private HandlerMethodSchedulerProperties handlerSchedulers = new HandlerMethodSchedulerProperties();
+    private SchedulerProperties schedulers = new SchedulerProperties();
 
     @Getter
     @Setter
@@ -143,16 +148,24 @@ public class XtreamJt808ServerProperties {
     @Getter
     @Setter
     @ToString
-    public static class HandlerMethodSchedulerProperties {
+    public static class SchedulerProperties {
         @NestedConfigurationProperty
-        private XtreamServerSchedulerProperties nonBlockingScheduler = new XtreamServerSchedulerProperties();
+        private XtreamServerSchedulerProperties nonBlockingHandler = new XtreamServerSchedulerProperties();
 
         @NestedConfigurationProperty
-        private XtreamServerSchedulerProperties blockingScheduler = new XtreamServerSchedulerProperties();
+        private XtreamServerSchedulerProperties blockingHandler = new XtreamServerSchedulerProperties();
 
-        // todo 这个移到到其他分组下 (用户自定义调度器分组)
         @NestedConfigurationProperty
-        private XtreamServerSchedulerProperties eventPublisherScheduler = new XtreamServerSchedulerProperties();
+        private XtreamServerSchedulerProperties eventPublisher = new XtreamServerSchedulerProperties();
+
+        private Map<String, CustomXtreamServerSchedulerProperties> customSchedulers = new LinkedHashMap<>();
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class CustomXtreamServerSchedulerProperties extends XtreamServerSchedulerProperties {
+        private String name;
     }
 
     @Getter
@@ -199,6 +212,16 @@ public class XtreamJt808ServerProperties {
     public static class BuiltinFilters {
         private BaseFilterProps requestLogger = new BaseFilterProps();
         private BaseFilterProps requestDecoder = new BaseFilterProps();
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class FeatureProps {
+        /**
+         * 是否启用 dashboard
+         */
+        private boolean enabled = true;
     }
 
     @Getter

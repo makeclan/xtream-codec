@@ -14,25 +14,6 @@
 # limitations under the License.
 #
 
-########################################################
-### SpringBoot 配置######################################
-########################################################
-server:
-  port: 9999
-
-########################################################
-### 示例项目自身的配置(和框架无关)####################
-########################################################
-demo-app-config:
-  attachment-server:
-    # 附件服务器的IP
-    # 应该是一个公网IP(设备能访问的IP)
-    server-ip: 192.168.71.54
-    temporary-path: /tmp/attachment
-
-########################################################
-### xtream-codec-server-reactive 配置####################
-########################################################
 jt808-server:
   # false: 不会进行任何自动配置
   enabled: true
@@ -53,7 +34,7 @@ jt808-server:
   instruction-server:
     session-idle-state-checker:
       enabled: true
-      max-idle-time: 10s
+      max-idle-time: 30m
       check-interval: 10s
       check-backoff-time: 10s
     # TCP 服务配置(指令服务器)
@@ -93,7 +74,7 @@ jt808-server:
   attachment-server:
     session-idle-state-checker:
       enabled: true
-      max-idle-time: 10s
+      max-idle-time: 30m
       check-interval: 10s
       check-backoff-time: 10s
     # TCP 服务配置(附件服务器)
@@ -187,42 +168,4 @@ jt808-server:
         daemon: true
         reject-blocking-task: true
         thread-name-prefix: event-publisher1
-    # 上面 3 个 Scheduler 是必须的
-    # 下面 是自定义 Scheduler 的初始化(非必须)
-    custom-schedulers:
-      my-scheduler-1:
-        # name可以不配置(默认使用 Key)
-        # name: my-scheduler-1
-        type: parallel
-        parallel:
-          daemon: true
-      my-scheduler-2:
-        name: my-scheduler-2
-        type: bounded_elastic
-        bounded-elastic:
-          thread-name-prefix: my-scheduler-2
-
-logging:
-  level:
-    root: info
-    io.netty.handler.logging.LoggingHandler: debug
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    health:
-      show-components: always
-    sessions:
-      enabled: true
-    jt808:
-      enabled: true
-  info:
-    java:
-      enabled: true
-    os:
-      enabled: true
-    build:
-      enabled: true
+    custom-schedulers: { }

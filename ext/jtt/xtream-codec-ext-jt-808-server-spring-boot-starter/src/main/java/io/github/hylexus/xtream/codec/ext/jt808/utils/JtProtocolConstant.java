@@ -19,34 +19,51 @@ package io.github.hylexus.xtream.codec.ext.jt808.utils;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.netty.util.AttributeKey;
 
+import java.net.InetSocketAddress;
 import java.time.format.DateTimeFormatter;
 
 /**
  * @author hylexus
  **/
-public interface JtProtocolConstant {
-    int PACKAGE_DELIMITER = 0x7E;
-    int DEFAULT_MAX_INSTRUCTION_FRAME_LENGTH = 1024;
-    int DEFAULT_MAX_STREAM_FRAME_LENGTH = 1024 * 65;
+public final class JtProtocolConstant {
+    private JtProtocolConstant() {
+    }
 
-    AttributeKey<Jt808Session> NETTY_ATTR_KEY_SESSION = AttributeKey.newInstance("jt808Session-" + Jt808Session.class.getName());
-    String DEFAULT_DATE_TIME_FORMAT = "yyMMddHHmmss";
-    DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(JtProtocolConstant.DEFAULT_DATE_TIME_FORMAT);
+    public static final int PACKAGE_DELIMITER = 0x7E;
+    public static final int DEFAULT_MAX_INSTRUCTION_FRAME_LENGTH = 1024;
+    public static final int DEFAULT_MAX_STREAM_FRAME_LENGTH = 1024 * 65;
 
-    String BEAN_NAME_CHANNEL_INBOUND_HANDLER_ADAPTER = "Jt808DelimiterBasedFrameDecoder";
 
-    String BEAN_NAME_JT_808_TCP_XTREAM_NETTY_HANDLER_ADAPTER_INSTRUCTION_SERVER = "jt808TcpXtreamNettyHandlerAdapterInstructionServer";
-    String BEAN_NAME_JT_808_TCP_XTREAM_NETTY_HANDLER_ADAPTER_ATTACHMENT_SERVER = "jt808TcpXtreamNettyHandlerAdapterAttachmentServer";
-    String BEAN_NAME_JT_808_UDP_XTREAM_NETTY_HANDLER_ADAPTER_INSTRUCTION_SERVER = "jt808UdpXtreamNettyHandlerAdapterInstructionServer";
-    String BEAN_NAME_JT_808_UDP_XTREAM_NETTY_HANDLER_ADAPTER_ATTACHMENT_SERVER = "jt808UdpXtreamNettyHandlerAdapterAttachmentServer";
+    public static final String DEFAULT_DATE_TIME_FORMAT = "yyMMddHHmmss";
+    public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(JtProtocolConstant.DEFAULT_DATE_TIME_FORMAT);
 
-    String BEAN_NAME_JT_808_TCP_XTREAM_NETTY_RESOURCE_FACTORY_INSTRUCTION_SERVER = "jt808TcpXtreamNettyResourceFactoryInstructionServer";
-    String BEAN_NAME_JT_808_TCP_XTREAM_NETTY_RESOURCE_FACTORY_ATTACHMENT_SERVER = "jt808TcpXtreamNettyResourceFactoryAttachmentServer";
-    String BEAN_NAME_JT_808_UDP_XTREAM_NETTY_RESOURCE_FACTORY_INSTRUCTION_SERVER = "jt808UdpXtreamNettyResourceFactoryInstructionServer";
-    String BEAN_NAME_JT_808_UDP_XTREAM_NETTY_RESOURCE_FACTORY_ATTACHMENT_SERVER = "jt808UdpXtreamNettyResourceFactoryAttachmentServer";
+    public static final String BEAN_NAME_CHANNEL_INBOUND_HANDLER_ADAPTER = "Jt808DelimiterBasedFrameDecoder";
+    public static final String BEAN_NAME_CHANNEL_INBOUND_IDLE_STATE_HANDLER = "xtreamTcpIdleStateHandler";
+    public static final String BEAN_NAME_CHANNEL_INBOUND_IDLE_STATE_HANDLER_CALLBACK = "xtreamTcpIdleStateHandlerCallback";
 
-    String BEAN_NAME_JT_808_TCP_XTREAM_SERVER_INSTRUCTION_SERVER = "jt808TcpXtreamServerInstructionServer";
-    String BEAN_NAME_JT_808_TCP_XTREAM_SERVER_ATTACHMENT_SERVER = "jt808TcpXtreamServerAttachmentServer";
-    String BEAN_NAME_JT_808_UDP_XTREAM_SERVER_INSTRUCTION_SERVER = "jt808UdpXtreamServerInstructionServer";
-    String BEAN_NAME_JT_808_UDP_XTREAM_SERVER_ATTACHMENT_SERVER = "jt808UdpXtreamServerAttachmentServer";
+    public static final String BEAN_NAME_JT_808_TCP_XTREAM_NETTY_HANDLER_ADAPTER_INSTRUCTION_SERVER = "jt808TcpXtreamNettyHandlerAdapterInstructionServer";
+    public static final String BEAN_NAME_JT_808_TCP_XTREAM_NETTY_HANDLER_ADAPTER_ATTACHMENT_SERVER = "jt808TcpXtreamNettyHandlerAdapterAttachmentServer";
+    public static final String BEAN_NAME_JT_808_UDP_XTREAM_NETTY_HANDLER_ADAPTER_INSTRUCTION_SERVER = "jt808UdpXtreamNettyHandlerAdapterInstructionServer";
+    public static final String BEAN_NAME_JT_808_UDP_XTREAM_NETTY_HANDLER_ADAPTER_ATTACHMENT_SERVER = "jt808UdpXtreamNettyHandlerAdapterAttachmentServer";
+
+    public static final String BEAN_NAME_JT_808_TCP_XTREAM_NETTY_RESOURCE_FACTORY_INSTRUCTION_SERVER = "jt808TcpXtreamNettyResourceFactoryInstructionServer";
+    public static final String BEAN_NAME_JT_808_TCP_XTREAM_NETTY_RESOURCE_FACTORY_ATTACHMENT_SERVER = "jt808TcpXtreamNettyResourceFactoryAttachmentServer";
+    public static final String BEAN_NAME_JT_808_UDP_XTREAM_NETTY_RESOURCE_FACTORY_INSTRUCTION_SERVER = "jt808UdpXtreamNettyResourceFactoryInstructionServer";
+    public static final String BEAN_NAME_JT_808_UDP_XTREAM_NETTY_RESOURCE_FACTORY_ATTACHMENT_SERVER = "jt808UdpXtreamNettyResourceFactoryAttachmentServer";
+
+    public static final String BEAN_NAME_JT_808_TCP_XTREAM_SERVER_INSTRUCTION_SERVER = "jt808TcpXtreamServerInstructionServer";
+    public static final String BEAN_NAME_JT_808_TCP_XTREAM_SERVER_ATTACHMENT_SERVER = "jt808TcpXtreamServerAttachmentServer";
+    public static final String BEAN_NAME_JT_808_UDP_XTREAM_SERVER_INSTRUCTION_SERVER = "jt808UdpXtreamServerInstructionServer";
+    public static final String BEAN_NAME_JT_808_UDP_XTREAM_SERVER_ATTACHMENT_SERVER = "jt808UdpXtreamServerAttachmentServer";
+
+    private static final AttributeKey<Jt808Session> NETTY_ATTR_KEY_TCP_ATTACHMENT_SESSION = AttributeKey.newInstance("jt808/attachment/tcp/" + Jt808Session.class.getName());
+
+    public static AttributeKey<Jt808Session> udpSessionKey(InetSocketAddress remoteAddress) {
+        return AttributeKey.valueOf("jt808/attachment/udp/" + remoteAddress.toString());
+    }
+
+    public static AttributeKey<Jt808Session> tcpSessionKey() {
+        return NETTY_ATTR_KEY_TCP_ATTACHMENT_SESSION;
+    }
+
 }

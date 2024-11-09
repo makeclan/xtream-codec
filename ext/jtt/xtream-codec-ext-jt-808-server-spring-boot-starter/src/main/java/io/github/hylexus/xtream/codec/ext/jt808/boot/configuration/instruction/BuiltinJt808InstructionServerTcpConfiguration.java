@@ -19,6 +19,7 @@ package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration.instruction;
 import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808InstructionServerExchangeCreator;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
 import io.github.hylexus.xtream.codec.ext.jt808.utils.BuiltinConfigurationUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.utils.Jt808InstructionServerTcpHandlerAdapterBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.TcpXtreamNettyHandlerAdapter;
@@ -93,6 +94,7 @@ public class BuiltinJt808InstructionServerTcpConfiguration {
             @Qualifier(BEAN_NAME_JT_808_TCP_XTREAM_NETTY_HANDLER_ADAPTER_INSTRUCTION_SERVER) TcpXtreamNettyHandlerAdapter tcpXtreamNettyHandlerAdapter,
             @Qualifier(BEAN_NAME_JT_808_TCP_XTREAM_NETTY_RESOURCE_FACTORY_INSTRUCTION_SERVER) TcpXtreamNettyResourceFactory resourceFactory,
             ObjectProvider<TcpNettyServerCustomizer> customizers,
+            Jt808SessionManager sessionManager,
             XtreamJt808ServerProperties serverProperties) {
 
         final XtreamJt808ServerProperties.TcpServerProps tcpServer = serverProperties.getInstructionServer().getTcpServer();
@@ -101,12 +103,20 @@ public class BuiltinJt808InstructionServerTcpConfiguration {
                 .addServerCustomizer(BuiltinConfigurationUtils.defaultTcpBasicConfigurer(tcpServer.getHost(), tcpServer.getPort()))
                 // handler
                 .addServerCustomizer(server -> server.handle(tcpXtreamNettyHandlerAdapter))
-                // 分包
-                .addServerCustomizer(server -> server.doOnChannelInit((observer, channel, remoteAddress) -> {
+                // 分包 + 空闲检测
+                .addServerCustomizer(server -> server.doOnConnection(connection -> {
+                    // 空闲检测
+                    BuiltinConfigurationUtils.addIdleStateHandler(
+                            serverProperties.getAttachmentServer().getSessionIdleStateChecker(),
+                            sessionManager,
+                            null,
+                            connection
+                    );
+                    // 分包
                     // stripDelimiter=true
                     final int frameLength = serverProperties.getInstructionServer().getTcpServer().getMaxInstructionFrameLength();
                     final DelimiterBasedFrameDecoder frameDecoder = new DelimiterBasedFrameDecoder(frameLength, true, Unpooled.copiedBuffer(new byte[]{PACKAGE_DELIMITER}));
-                    channel.pipeline().addFirst(BEAN_NAME_CHANNEL_INBOUND_HANDLER_ADAPTER, frameDecoder);
+                    connection.addHandlerFirst(BEAN_NAME_CHANNEL_INBOUND_HANDLER_ADAPTER, frameDecoder);
                 }))
                 // loopResources
                 .addServerCustomizer(server -> server.runOn(resourceFactory.loopResources(), resourceFactory.preferNative()))

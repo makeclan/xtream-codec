@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.boot.actuator;
+package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -20,13 +20,13 @@ import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestCombiner;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ServerType;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolConstant;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilterChain;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
-import io.netty.channel.Channel;
 import reactor.core.publisher.Mono;
 
 /**
@@ -63,10 +63,22 @@ public class Jt808RequestDecoderFilter implements XtreamFilter {
             this.lifecycleListener.afterRequestDecode(exchange, jt808Request, originalRequest);
             this.populateSessionProperties(jt808Session, jt808Request);
 
-            jt808Request.underlyingInbound().withConnection(connection -> {
-                final Channel channel = connection.channel();
-                channel.attr(JtProtocolConstant.NETTY_ATTR_KEY_SESSION).setIfAbsent(jt808Session);
-            });
+            // 附件服务器，将 Session 存储到 Channel 上
+            // @see Jt808AttachmentHandlerUtils.getAttachmentSessionUdp
+            // @see Jt808AttachmentHandlerUtils.getAttachmentSessionTcp
+            // DefaultJt808AttachmentSessionManager.beforeConnectionClose()
+            if (jt808Request.serverType() == Jt808ServerType.ATTACHMENT_SERVER) {
+                switch (jt808Request.type()) {
+                    case TCP -> jt808Request.underlyingChannel().attr(JtProtocolConstant.tcpSessionKey()).setIfAbsent(jt808Session);
+                    case UDP -> jt808Request.underlyingChannel().attr(JtProtocolConstant.udpSessionKey(jt808Request.remoteAddress())).setIfAbsent(jt808Session);
+                    default -> {
+                        return Mono.defer(() -> {
+                            final IllegalArgumentException error = new IllegalArgumentException("Unsupported request type: " + jt808Request.type());
+                            return Mono.error(error);
+                        });
+                    }
+                }
+            }
 
             return this.doProcessJt808Request(exchange, chain, jt808Request).doFinally(signalType -> {
                 // ...

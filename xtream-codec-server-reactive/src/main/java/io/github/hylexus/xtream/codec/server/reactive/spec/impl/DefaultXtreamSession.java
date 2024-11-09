@@ -76,7 +76,7 @@ public class DefaultXtreamSession extends AbstractXtreamOutbound implements Xtre
     @Override
     public void invalidate(XtreamSessionEventListener.SessionCloseReason reason) {
         this.attributes().clear();
-        this.sessionManager.closeSessionById(this.id, reason);
+        this.sessionManager.closeSession(this, reason);
     }
 
     @Override

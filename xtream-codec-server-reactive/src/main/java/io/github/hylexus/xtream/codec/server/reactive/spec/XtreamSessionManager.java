@@ -33,6 +33,8 @@ import java.util.stream.Stream;
  */
 public interface XtreamSessionManager<S extends XtreamSession> {
 
+    XtreamSessionIdGenerator sessionIdGenerator();
+
     default Mono<S> getSession(XtreamExchange exchange, boolean createNewIfMissing) {
         if (createNewIfMissing) {
             return this.getSession(exchange).switchIfEmpty(Mono.defer(() -> this.createSession(exchange)));
@@ -46,7 +48,13 @@ public interface XtreamSessionManager<S extends XtreamSession> {
 
     Mono<S> getSessionById(String sessionId);
 
-    void closeSessionById(String sessionId, XtreamSessionEventListener.SessionCloseReason reason);
+    boolean closeSessionById(String sessionId, XtreamSessionEventListener.SessionCloseReason reason);
+
+    /**
+     * @see XtreamSession#invalidate()
+     * @see XtreamSession#invalidate(XtreamSessionEventListener.SessionCloseReason)
+     */
+    void closeSession(S session, XtreamSessionEventListener.SessionCloseReason reason);
 
     void addListener(XtreamSessionEventListener listener);
 

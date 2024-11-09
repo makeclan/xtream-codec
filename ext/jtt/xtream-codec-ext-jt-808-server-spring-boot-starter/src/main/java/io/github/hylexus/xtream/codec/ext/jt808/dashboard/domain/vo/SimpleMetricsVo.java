@@ -16,7 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo;
 
-import io.github.hylexus.xtream.codec.ext.jt808.boot.actuator.values.Jt808ServerSimpleMetricsHolder;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
 
 public class SimpleMetricsVo extends Jt808ServerSimpleMetricsHolder {
     private EventPublisherMetrics eventPublisher;

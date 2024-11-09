@@ -74,6 +74,10 @@ configure(subprojects) {
         useJUnitPlatform()
     }
 
+    tasks.withType<JavaCompile> {
+        options.compilerArgs.add("-parameters")
+    }
+
     apply(plugin = "checkstyle")
     checkstyle {
         toolVersion = "10.9.1"
@@ -183,7 +187,7 @@ configure(subprojects) {
         options.encoding = "UTF-8"
         options.memberLevel = JavadocMemberLevel.PROTECTED
         options.header = project.name
-        options.source= "21"
+        options.source = "21"
 
         val docletOptions = options as StandardJavadocDocletOptions
         docletOptions.addBooleanOption("html5", true)

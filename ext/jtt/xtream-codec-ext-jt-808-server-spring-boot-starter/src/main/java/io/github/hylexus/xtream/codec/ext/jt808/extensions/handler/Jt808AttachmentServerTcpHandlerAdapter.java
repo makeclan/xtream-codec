@@ -58,7 +58,7 @@ public class Jt808AttachmentServerTcpHandlerAdapter extends DefaultTcpXtreamNett
     }
 
     protected Mono<Void> handleStreamRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf payload, InetSocketAddress remoteAddress) {
-        final Jt808Session session = Jt808AttachmentHandlerUtils.getAttachmentSession(nettyOutbound);
+        final Jt808Session session = Jt808AttachmentHandlerUtils.getAttachmentSessionTcp(nettyOutbound);
         if (session == null) {
             return Mono.error(new IllegalStateException("attachment session not found"));
         }

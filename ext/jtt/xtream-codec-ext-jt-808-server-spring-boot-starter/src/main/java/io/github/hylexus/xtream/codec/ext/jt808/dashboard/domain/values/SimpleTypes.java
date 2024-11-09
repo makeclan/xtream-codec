@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.boot.actuator.values;
+package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values;
 
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 

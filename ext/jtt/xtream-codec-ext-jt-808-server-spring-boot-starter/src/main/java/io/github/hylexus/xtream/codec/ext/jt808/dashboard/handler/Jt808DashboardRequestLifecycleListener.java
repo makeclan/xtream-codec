@@ -18,8 +18,8 @@ package io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler;
 
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808DashboardEventPayloads;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808DashboardEventType;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.events.Jt808DashboardEventPayloads;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.events.Jt808DashboardEventType;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;

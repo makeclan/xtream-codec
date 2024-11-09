@@ -18,6 +18,7 @@ package io.github.hylexus.xtream.codec.server.reactive.spec;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import io.netty.channel.Channel;
 import reactor.netty.NettyInbound;
 
 import java.net.InetSocketAddress;
@@ -37,6 +38,8 @@ public interface XtreamInbound {
     ByteBufAllocator bufferFactory();
 
     NettyInbound underlyingInbound();
+
+    Channel underlyingChannel();
 
     /**
      * 同一个 ”网络包“ 的请求和响应，该值应该确保一致（即使是在中途重新包装或修改了 {@link XtreamRequest} 对象）。

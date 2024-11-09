@@ -23,6 +23,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler.Bounde
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler.ParallelProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler.SchedulerType;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler.SingleProperties;
+import io.github.hylexus.xtream.codec.ext.jt808.processor.BuiltinJt808ServerCustomSchedulerRegistrar;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamServerConstants;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamBlockingHandlerMethodPredicate;
@@ -32,13 +33,14 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.resources.XtreamReact
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.concurrent.Executors;
 
-
-public class BuiltinReactorSchedulerConfiguration {
+@Import(BuiltinJt808ServerCustomSchedulerRegistrar.class)
+public class BuiltinJt808ServerSchedulerConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
@@ -59,39 +61,39 @@ public class BuiltinReactorSchedulerConfiguration {
     @ConditionalOnMissingBean(name = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER)
     @ConditionalOnMissingCustomizedScheduler(type = ConditionalOnMissingCustomizedScheduler.Type.NON_BLOCKING)
     Scheduler nonBlockingScheduler(XtreamJt808ServerProperties serverProperties) {
-        final XtreamServerSchedulerProperties property = serverProperties.getHandlerSchedulers().getNonBlockingScheduler();
-        return this.createScheduler(property);
+        final XtreamServerSchedulerProperties property = serverProperties.getSchedulers().getNonBlockingHandler();
+        return createScheduler(property);
     }
 
     @Bean(name = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER)
     @ConditionalOnMissingBean(name = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER)
     @ConditionalOnMissingCustomizedScheduler(type = ConditionalOnMissingCustomizedScheduler.Type.BLOCKING)
     Scheduler blockingScheduler(XtreamJt808ServerProperties serverProperties) {
-        final XtreamServerSchedulerProperties property = serverProperties.getHandlerSchedulers().getBlockingScheduler();
-        return this.createScheduler(property);
+        final XtreamServerSchedulerProperties property = serverProperties.getSchedulers().getBlockingHandler();
+        return createScheduler(property);
     }
 
     @Bean(name = XtreamServerConstants.BEAN_NAME_EVENT_PUBLISHER_SCHEDULER)
     @ConditionalOnMissingBean(name = XtreamServerConstants.BEAN_NAME_EVENT_PUBLISHER_SCHEDULER)
     Scheduler eventPublisherScheduler(XtreamJt808ServerProperties serverProperties) {
-        final XtreamServerSchedulerProperties property = serverProperties.getHandlerSchedulers().getEventPublisherScheduler();
-        return this.createScheduler(property);
+        final XtreamServerSchedulerProperties property = serverProperties.getSchedulers().getEventPublisher();
+        return createScheduler(property);
     }
 
     @SuppressWarnings("deprecation")
-    private Scheduler createScheduler(XtreamServerSchedulerProperties property) {
+    public static Scheduler createScheduler(XtreamServerSchedulerProperties property) {
         final SchedulerType schedulerType = property.getType();
         return switch (schedulerType) {
-            case BOUNDED_ELASTIC -> this.newBoundedElastic(property.getBoundedElastic());
-            case PARALLEL -> this.newParallel(property.getParallel());
+            case BOUNDED_ELASTIC -> newBoundedElastic(property.getBoundedElastic());
+            case PARALLEL -> newParallel(property.getParallel());
             case VIRTUAL -> Schedulers.fromExecutorService(Executors.newVirtualThreadPerTaskExecutor());
-            case SINGLE -> this.newSingle(property.getSingle());
+            case SINGLE -> newSingle(property.getSingle());
             case IMMEDIATE -> Schedulers.immediate();
             default -> throw new IllegalArgumentException("Unsupported SchedulerType: " + schedulerType);
         };
     }
 
-    private Scheduler newSingle(SingleProperties single) {
+    private static Scheduler newSingle(SingleProperties single) {
         return Schedulers.newSingle(
                 new XtreamReactorThreadFactory(
                         single.getThreadNamePrefix(),
@@ -101,7 +103,7 @@ public class BuiltinReactorSchedulerConfiguration {
         );
     }
 
-    private Scheduler newParallel(ParallelProperties properties) {
+    private static Scheduler newParallel(ParallelProperties properties) {
         return Schedulers.newParallel(
                 properties.getParallelism(),
                 new XtreamReactorThreadFactory(
@@ -112,7 +114,7 @@ public class BuiltinReactorSchedulerConfiguration {
         );
     }
 
-    private Scheduler newBoundedElastic(BoundedElasticProperties properties) {
+    private static Scheduler newBoundedElastic(BoundedElasticProperties properties) {
         return Schedulers.newBoundedElastic(
                 properties.getThreadCapacity(),
                 properties.getQueuedTaskCapacity(),

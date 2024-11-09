@@ -16,83 +16,21 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration;
 
-import io.github.hylexus.xtream.codec.ext.jt808.boot.actuator.Jt808MessageDescriptor;
-import io.github.hylexus.xtream.codec.ext.jt808.boot.actuator.Jt808ServerSimpleMetricsEndpoint;
-import io.github.hylexus.xtream.codec.ext.jt808.boot.actuator.handler.RequestInfoCollector;
-import io.github.hylexus.xtream.codec.ext.jt808.boot.actuator.handler.SessionInfoCollector;
-import io.github.hylexus.xtream.codec.ext.jt808.boot.actuator.values.Jt808ServerSimpleMetricsHolder;
-import io.github.hylexus.xtream.codec.ext.jt808.boot.actuator.values.SimpleTypes;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.BuiltinJt808DashboardEventController;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.BuiltinJt808DashboardMetricsController;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.Jt808DashboardRequestLifecycleListener;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
-import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
+import io.github.hylexus.xtream.codec.ext.jt808.boot.actuator.BuiltinJt808ServerEndpoint;
+import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 
-import java.util.HashMap;
-import java.util.concurrent.atomic.LongAdder;
-
-// todo 配置开关
-
-@ConditionalOnAvailableEndpoint(endpoint = Jt808ServerSimpleMetricsEndpoint.class)
+/**
+ * @author hylexus
+ */
+@ConditionalOnAvailableEndpoint(endpoint = BuiltinJt808ServerEndpoint.class)
 public class BuiltinJt808ServerActuatorConfiguration {
 
     @Bean
-    Jt808ServerSimpleMetricsHolder metricsHolder() {
-        return new Jt808ServerSimpleMetricsHolder(
-                new SimpleTypes.SessionInfo(),
-                new SimpleTypes.SessionInfo(),
-                new SimpleTypes.SessionInfo(),
-                new SimpleTypes.SessionInfo(),
-                new SimpleTypes.RequestInfo(new LongAdder(), new HashMap<>()),
-                new SimpleTypes.RequestInfo(new LongAdder(), new HashMap<>()),
-                new SimpleTypes.RequestInfo(new LongAdder(), new HashMap<>()),
-                new SimpleTypes.RequestInfo(new LongAdder(), new HashMap<>())
-        );
+    BuiltinJt808ServerEndpoint builtinJt808ServerEndpoint(XtreamJt808ServerProperties serverProperties, Jt808ServerSimpleMetricsHolder holder) {
+        return new BuiltinJt808ServerEndpoint(serverProperties, holder);
     }
 
-    @Bean
-    @ConditionalOnBean(Jt808SessionManager.class)
-    SessionInfoCollector sessionManager(Jt808ServerSimpleMetricsHolder serverSimpleMetricsHolder, Jt808SessionManager sessionManager) {
-        return new SessionInfoCollector(serverSimpleMetricsHolder, sessionManager);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    Jt808MessageDescriptor jt808MessageDescriptor() {
-        return new Jt808MessageDescriptor.Default();
-    }
-
-    @Bean
-    RequestInfoCollector requestInfoCollector(Jt808ServerSimpleMetricsHolder metricsHolder, Jt808MessageDescriptor descriptor) {
-        return new RequestInfoCollector(metricsHolder, descriptor);
-    }
-
-    @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE + 100)
-    public Jt808ServerSimpleMetricsEndpoint jt808ServerInfoContributor(Jt808ServerSimpleMetricsHolder metricsHolder) {
-        return new Jt808ServerSimpleMetricsEndpoint(metricsHolder);
-    }
-
-    @Bean
-    BuiltinJt808DashboardEventController builtinJt808DashboardEventController(XtreamEventPublisher eventPublisher) {
-        return new BuiltinJt808DashboardEventController(eventPublisher);
-    }
-
-    @Bean
-    BuiltinJt808DashboardMetricsController builtinJt808DashboardMetricsController(
-            XtreamEventPublisher eventPublisher,
-            Jt808ServerSimpleMetricsHolder metricsHolder) {
-        return new BuiltinJt808DashboardMetricsController(eventPublisher, metricsHolder);
-    }
-
-    @Bean
-    Jt808DashboardRequestLifecycleListener jt808DashboardRequestLifecycleListener(XtreamEventPublisher eventPublisher) {
-        return new Jt808DashboardRequestLifecycleListener(eventPublisher);
-    }
 }

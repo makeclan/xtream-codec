@@ -43,7 +43,7 @@ import org.springframework.context.annotation.Import;
 @AutoConfiguration
 @Import({
         BuiltinJt808ServerHandlerConfiguration.class,
-        BuiltinReactorSchedulerConfiguration.class,
+        BuiltinJt808ServerSchedulerConfiguration.class,
 })
 @EnableConfigurationProperties({
         XtreamJt808ServerProperties.class,

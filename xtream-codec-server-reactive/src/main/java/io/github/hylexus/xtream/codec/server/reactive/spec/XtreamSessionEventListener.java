@@ -20,6 +20,7 @@ package io.github.hylexus.xtream.codec.server.reactive.spec;
  * @author hylexus
  * @see XtreamSessionManager#addListener(XtreamSessionEventListener)
  * @see XtreamSessionManager#closeSessionById(String, SessionCloseReason)
+ * @see XtreamSessionManager#closeSession(XtreamSession, SessionCloseReason)
  */
 public interface XtreamSessionEventListener {
 

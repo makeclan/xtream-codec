@@ -20,6 +20,7 @@ import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import io.netty.channel.Channel;
 import reactor.netty.NettyInbound;
 
 import java.net.InetSocketAddress;
@@ -35,6 +36,7 @@ public class DefaultXtreamRequest implements XtreamRequest {
     protected String requestId;
     protected final Type type;
     protected InetSocketAddress remoteAddress;
+    protected final Channel channel;
 
     public DefaultXtreamRequest(String requestId, ByteBufAllocator allocator, NettyInbound delegate, Type type, ByteBuf payload, InetSocketAddress remoteAddress) {
         this.requestId = requestId;
@@ -43,6 +45,10 @@ public class DefaultXtreamRequest implements XtreamRequest {
         this.payload = payload;
         this.type = type;
         this.remoteAddress = remoteAddress;
+
+        final Channel[] channels = new Channel[1];
+        delegate.withConnection(connection -> channels[0] = connection.channel());
+        this.channel = channels[0];
     }
 
     @Override
@@ -58,6 +64,11 @@ public class DefaultXtreamRequest implements XtreamRequest {
     @Override
     public NettyInbound underlyingInbound() {
         return this.delegate;
+    }
+
+    @Override
+    public Channel underlyingChannel() {
+        return this.channel;
     }
 
     @Override
@@ -88,11 +99,11 @@ public class DefaultXtreamRequest implements XtreamRequest {
     @Override
     public String toString() {
         return "DefaultXtreamRequest{"
-                + "type=" + type()
-                + ", requestId=" + requestId()
-                + ", remoteAddress=" + remoteAddress()
-                + ", payload=" + (payload.refCnt() > 0 ? FormatUtils.toHexString(payload) : "<FREED>")
-                + '}';
+               + "type=" + type()
+               + ", requestId=" + requestId()
+               + ", remoteAddress=" + remoteAddress()
+               + ", payload=" + (payload.refCnt() > 0 ? FormatUtils.toHexString(payload) : "<FREED>")
+               + '}';
     }
 
 }

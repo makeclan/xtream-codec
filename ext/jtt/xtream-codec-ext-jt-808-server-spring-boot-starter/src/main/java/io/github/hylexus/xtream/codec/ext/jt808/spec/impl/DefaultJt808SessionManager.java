@@ -19,11 +19,13 @@ package io.github.hylexus.xtream.codec.ext.jt808.spec.impl;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ServerType;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
+import io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolConstant;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamResponse;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.SessionIdleStateCheckerProps;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamSessionManager;
+import reactor.netty.Connection;
 
 /**
  * @author hylexus
@@ -47,6 +49,17 @@ public class DefaultJt808SessionManager extends AbstractXtreamSessionManager<Jt8
                 response.remoteAddress(),
                 this
         );
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    protected void beforeConnectionClose(Connection connection, Jt808Session session) {
+        switch (session.type()) {
+            case TCP -> connection.channel().attr(JtProtocolConstant.tcpSessionKey()).remove();
+            case UDP -> connection.channel().attr(JtProtocolConstant.udpSessionKey(session.remoteAddress())).remove();
+            default -> throw new IllegalArgumentException("Unsupported session type: " + session.type());
+        }
+        // connection.channel().attr(JtProtocolConstant.NETTY_ATTR_KEY_SESSION).set(null);
     }
 
 }

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.dashboard;
+package io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller;
 
-import io.github.hylexus.xtream.codec.ext.jt808.boot.actuator.values.Jt808ServerSimpleMetricsHolder;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.SimpleMetricsVo;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 import jakarta.validation.constraints.Max;
@@ -35,7 +35,7 @@ import java.time.Duration;
 import java.util.function.Supplier;
 
 @RestController
-@RequestMapping("/api/v1/jt808-dashboard/metrics")
+@RequestMapping("/dashboard-api/v1/metrics")
 public class BuiltinJt808DashboardMetricsController {
     private static final Logger log = LoggerFactory.getLogger(BuiltinJt808DashboardMetricsController.class);
     private final XtreamEventPublisher eventPublisher;

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.dashboard;
+package io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller;
 
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.LinkDataDto;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.LinkDataType;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808DashboardEventPayloads;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808DashboardEventType;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.events.Jt808DashboardEventPayloads;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.events.Jt808DashboardEventType;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEvent;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 import org.slf4j.Logger;
@@ -37,7 +37,7 @@ import java.util.function.Predicate;
  * @author hylexus
  */
 @RestController
-@RequestMapping("/api/v1/jt808-dashboard/event")
+@RequestMapping("/dashboard-api/v1/event")
 public class BuiltinJt808DashboardEventController {
     private static final Logger log = LoggerFactory.getLogger(BuiltinJt808DashboardEventController.class);
     private final XtreamEventPublisher eventPublisher;

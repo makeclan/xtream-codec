@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values;
+package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.events;
 
 /**
  * @author hylexus

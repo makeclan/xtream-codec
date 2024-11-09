@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.boot.actuator.handler;
+package io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler;
 
-import io.github.hylexus.xtream.codec.ext.jt808.boot.actuator.values.Jt808ServerSimpleMetricsHolder;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamInbound;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;

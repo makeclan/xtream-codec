@@ -26,8 +26,11 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import io.netty.util.AttributeKey;
 import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
+
+import java.net.InetSocketAddress;
 
 /**
  * @author hylexus
@@ -36,10 +39,21 @@ public final class Jt808AttachmentHandlerUtils {
     private Jt808AttachmentHandlerUtils() {
     }
 
-    public static Jt808Session getAttachmentSession(NettyOutbound inbound) {
+    public static Jt808Session getAttachmentSessionUdp(NettyOutbound outbound, InetSocketAddress remoteAddress) {
         final Jt808Session[] sessionHolder = new Jt808Session[1];
-        inbound.withConnection(connection -> {
-            final Jt808Session jt808Session = connection.channel().attr(JtProtocolConstant.NETTY_ATTR_KEY_SESSION).get();
+        outbound.withConnection(connection -> {
+            final AttributeKey<Jt808Session> key = JtProtocolConstant.udpSessionKey(remoteAddress);
+            final Jt808Session jt808Session = connection.channel().attr(key).get();
+            sessionHolder[0] = jt808Session;
+        });
+        return sessionHolder[0];
+    }
+
+    public static Jt808Session getAttachmentSessionTcp(NettyOutbound outbound) {
+        final Jt808Session[] sessionHolder = new Jt808Session[1];
+        outbound.withConnection(connection -> {
+            final AttributeKey<Jt808Session> key = JtProtocolConstant.tcpSessionKey();
+            final Jt808Session jt808Session = connection.channel().attr(key).get();
             sessionHolder[0] = jt808Session;
         });
         return sessionHolder[0];
