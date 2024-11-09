@@ -57,7 +57,7 @@ public class XtreamIntervalChecker {
     }
 
     public void start() {
-        this.scheduler = Schedulers.newSingle(this.name + "-check");
+        this.scheduler = Schedulers.newSingle(this.name);
         this.subscription = Flux.interval(this.interval)
                 .doOnSubscribe((s) -> log.debug("Scheduled {}-check every {}", this.name, this.interval))
                 .log(log.getName(), Level.FINEST)

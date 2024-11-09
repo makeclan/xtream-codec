@@ -21,26 +21,16 @@ import java.time.Duration;
 import java.util.StringJoiner;
 
 @SuppressWarnings("all")
-public class SessionIdleStateCheckerProps {
-    private boolean enabled = true;
-    private Duration maxIdleTime = Duration.ofMinutes(10);
-    private Duration checkInterval = Duration.ofSeconds(60);
+public class UdpSessionIdleStateCheckerProps {
+    private Duration maxIdleTime = Duration.ofMinutes(20);
+    private Duration checkInterval = Duration.ofSeconds(10);
     private Duration checkBackoffTime = Duration.ofSeconds(10);
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public SessionIdleStateCheckerProps setEnabled(boolean enabled) {
-        this.enabled = enabled;
-        return this;
-    }
 
     public Duration getMaxIdleTime() {
         return maxIdleTime;
     }
 
-    public SessionIdleStateCheckerProps setMaxIdleTime(Duration maxIdleTime) {
+    public UdpSessionIdleStateCheckerProps setMaxIdleTime(Duration maxIdleTime) {
         this.maxIdleTime = maxIdleTime;
         return this;
     }
@@ -49,7 +39,7 @@ public class SessionIdleStateCheckerProps {
         return checkInterval;
     }
 
-    public SessionIdleStateCheckerProps setCheckInterval(Duration checkInterval) {
+    public UdpSessionIdleStateCheckerProps setCheckInterval(Duration checkInterval) {
         this.checkInterval = checkInterval;
         return this;
     }
@@ -58,15 +48,14 @@ public class SessionIdleStateCheckerProps {
         return checkBackoffTime;
     }
 
-    public SessionIdleStateCheckerProps setCheckBackoffTime(Duration checkBackoffTime) {
+    public UdpSessionIdleStateCheckerProps setCheckBackoffTime(Duration checkBackoffTime) {
         this.checkBackoffTime = checkBackoffTime;
         return this;
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", SessionIdleStateCheckerProps.class.getSimpleName() + "[", "]")
-                .add("enabled=" + enabled)
+        return new StringJoiner(", ", UdpSessionIdleStateCheckerProps.class.getSimpleName() + "[", "]")
                 .add("maxIdleTime=" + maxIdleTime)
                 .add("checkInterval=" + checkInterval)
                 .add("checkBackoffTime=" + checkBackoffTime)

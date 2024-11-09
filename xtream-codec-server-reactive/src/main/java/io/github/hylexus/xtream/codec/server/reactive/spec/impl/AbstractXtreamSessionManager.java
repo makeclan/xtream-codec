@@ -18,7 +18,7 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.*;
 import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamIntervalChecker;
-import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.SessionIdleStateCheckerProps;
+import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.UdpSessionIdleStateCheckerProps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
@@ -51,9 +51,13 @@ public abstract class AbstractXtreamSessionManager<S extends XtreamSession> impl
     private final Lock lock = new ReentrantLock();
     protected final List<XtreamSessionEventListener> listenerList = new ArrayList<>();
 
-    public AbstractXtreamSessionManager(XtreamSessionIdGenerator idGenerator, SessionIdleStateCheckerProps checkerProps) {
+    public AbstractXtreamSessionManager(
+            boolean udpSessionIdleStateCheckerEnabled,
+            UdpSessionIdleStateCheckerProps checkerProps,
+            XtreamSessionIdGenerator idGenerator) {
+
         this.sessionIdGenerator = idGenerator;
-        if (checkerProps.isEnabled()) {
+        if (udpSessionIdleStateCheckerEnabled) {
             this.checker = new XtreamIntervalChecker(
                     "session-checker",
                     checkerProps.getCheckInterval(),

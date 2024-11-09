@@ -107,7 +107,7 @@ public class BuiltinJt808InstructionServerTcpConfiguration {
                 .addServerCustomizer(server -> server.doOnConnection(connection -> {
                     // 空闲检测
                     BuiltinConfigurationUtils.addIdleStateHandler(
-                            serverProperties.getAttachmentServer().getSessionIdleStateChecker(),
+                            serverProperties.getInstructionServer().getTcpServer().getSessionIdleStateChecker(),
                             sessionManager,
                             null,
                             connection

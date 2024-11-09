@@ -23,7 +23,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolConstant;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamResponse;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
-import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.SessionIdleStateCheckerProps;
+import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.UdpSessionIdleStateCheckerProps;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamSessionManager;
 import reactor.netty.Connection;
 
@@ -33,8 +33,8 @@ import reactor.netty.Connection;
 public class DefaultJt808AttachmentSessionManager extends AbstractXtreamSessionManager<Jt808Session>
         implements Jt808AttachmentSessionManager {
 
-    public DefaultJt808AttachmentSessionManager(XtreamSessionIdGenerator idGenerator, SessionIdleStateCheckerProps attachmentServerSessionIdleStateChecker) {
-        super(idGenerator, attachmentServerSessionIdleStateChecker);
+    public DefaultJt808AttachmentSessionManager(boolean udpSessionIdleStateCheckerEnabled, UdpSessionIdleStateCheckerProps attachmentServerSessionIdleStateChecker, XtreamSessionIdGenerator idGenerator) {
+        super(udpSessionIdleStateCheckerEnabled, attachmentServerSessionIdleStateChecker, idGenerator);
     }
 
     @Override

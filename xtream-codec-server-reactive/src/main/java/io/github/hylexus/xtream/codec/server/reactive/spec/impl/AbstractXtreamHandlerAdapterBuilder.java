@@ -19,7 +19,7 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 import io.github.hylexus.xtream.codec.core.EntityCodec;
 import io.github.hylexus.xtream.codec.core.annotation.OrderedComponent;
 import io.github.hylexus.xtream.codec.server.reactive.spec.*;
-import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.SessionIdleStateCheckerProps;
+import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.UdpSessionIdleStateCheckerProps;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.*;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.DelegateXtreamHandlerMethodArgumentResolver;
 import io.netty.buffer.ByteBufAllocator;
@@ -184,7 +184,7 @@ public abstract class AbstractXtreamHandlerAdapterBuilder<C extends AbstractXtre
         if (this.xtreamExchangeCreator == null) {
             // todo 优化
             this.xtreamExchangeCreator = new DefaultXtreamExchangeCreator(
-                    new DefaultXtreamSessionManager(new XtreamSessionIdGenerator.DefalutXtreamSessionIdGenerator(), new SessionIdleStateCheckerProps())
+                    new DefaultXtreamSessionManager(true, new UdpSessionIdleStateCheckerProps(), new XtreamSessionIdGenerator.DefalutXtreamSessionIdGenerator())
             );
         }
         if (this.handlerMappings.isEmpty()) {

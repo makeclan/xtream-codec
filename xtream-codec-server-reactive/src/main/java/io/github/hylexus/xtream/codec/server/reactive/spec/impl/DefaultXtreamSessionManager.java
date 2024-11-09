@@ -20,12 +20,12 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamResponse;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
-import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.SessionIdleStateCheckerProps;
+import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.UdpSessionIdleStateCheckerProps;
 
 public class DefaultXtreamSessionManager extends AbstractXtreamSessionManager<XtreamSession> {
 
-    public DefaultXtreamSessionManager(XtreamSessionIdGenerator idGenerator, SessionIdleStateCheckerProps sessionIdleStateCheckerProps) {
-        super(idGenerator, sessionIdleStateCheckerProps);
+    public DefaultXtreamSessionManager(boolean udpSessionIdleStateCheckerEnabled, UdpSessionIdleStateCheckerProps udpSessionIdleStateCheckerProps, XtreamSessionIdGenerator idGenerator) {
+        super(udpSessionIdleStateCheckerEnabled, udpSessionIdleStateCheckerProps, idGenerator);
     }
 
     @Override

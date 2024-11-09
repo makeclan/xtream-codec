@@ -17,7 +17,8 @@
 package io.github.hylexus.xtream.codec.ext.jt808.boot.properties;
 
 import io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolConstant;
-import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.SessionIdleStateCheckerProps;
+import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.TcpSessionIdleStateCheckerProps;
+import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.UdpSessionIdleStateCheckerProps;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -60,9 +61,6 @@ public class XtreamJt808ServerProperties {
     public static class InstructionServerProps {
 
         @NestedConfigurationProperty
-        private SessionIdleStateCheckerProps sessionIdleStateChecker = new SessionIdleStateCheckerProps();
-
-        @NestedConfigurationProperty
         private TcpServerProps tcpServer = new TcpServerProps();
 
         @NestedConfigurationProperty
@@ -73,9 +71,6 @@ public class XtreamJt808ServerProperties {
     @Setter
     @ToString
     public static class AttachmentServerProps {
-
-        @NestedConfigurationProperty
-        private SessionIdleStateCheckerProps sessionIdleStateChecker = new SessionIdleStateCheckerProps();
 
         @NestedConfigurationProperty
         private TcpAttachmentServerProps tcpServer = new TcpAttachmentServerProps();
@@ -99,6 +94,9 @@ public class XtreamJt808ServerProperties {
     public static class TcpServerProps extends BaseServerProps {
 
         @NestedConfigurationProperty
+        private TcpSessionIdleStateCheckerProps sessionIdleStateChecker = new TcpSessionIdleStateCheckerProps();
+
+        @NestedConfigurationProperty
         private TcpLoopResourcesProperty loopResources = new TcpLoopResourcesProperty();
         /**
          * 指令服务器: 指令报文长度限制
@@ -110,6 +108,9 @@ public class XtreamJt808ServerProperties {
     @Setter
     @ToString
     public static class TcpAttachmentServerProps extends BaseServerProps {
+
+        @NestedConfigurationProperty
+        private TcpSessionIdleStateCheckerProps sessionIdleStateChecker = new TcpSessionIdleStateCheckerProps();
 
         @NestedConfigurationProperty
         private TcpLoopResourcesProperty loopResources = new TcpLoopResourcesProperty();
@@ -131,6 +132,9 @@ public class XtreamJt808ServerProperties {
     public static class UdpServerProps extends BaseServerProps {
 
         @NestedConfigurationProperty
+        private UdpSessionIdleStateCheckerProps sessionIdleStateChecker = new UdpSessionIdleStateCheckerProps();
+
+        @NestedConfigurationProperty
         private UdpLoopResourcesProperty loopResources = new UdpLoopResourcesProperty();
 
     }
@@ -139,6 +143,9 @@ public class XtreamJt808ServerProperties {
     @Setter
     @ToString
     public static class UdpAttachmentServerProps extends BaseServerProps {
+
+        @NestedConfigurationProperty
+        private UdpSessionIdleStateCheckerProps sessionIdleStateChecker = new UdpSessionIdleStateCheckerProps();
 
         @NestedConfigurationProperty
         private UdpLoopResourcesProperty loopResources = new UdpLoopResourcesProperty();

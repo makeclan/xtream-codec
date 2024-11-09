@@ -19,7 +19,7 @@ package io.github.hylexus.xtream.codec.ext.jt808.utils;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808AttachmentSessionManager;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.XtreamTcpHeatBeatHandler;
-import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.SessionIdleStateCheckerProps;
+import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.TcpSessionIdleStateCheckerProps;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.TcpNettyServerCustomizer;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp.UdpNettyServerCustomizer;
 import io.netty.handler.timeout.IdleStateHandler;
@@ -53,10 +53,15 @@ public final class BuiltinConfigurationUtils {
         };
     }
 
-    public static void addIdleStateHandler(SessionIdleStateCheckerProps props, Jt808SessionManager sessionManager, Jt808AttachmentSessionManager attachmentSessionManager, Connection connection) {
+    public static void addIdleStateHandler(TcpSessionIdleStateCheckerProps props, Jt808SessionManager sessionManager, Jt808AttachmentSessionManager attachmentSessionManager, Connection connection) {
         connection.addHandlerLast(
                 BEAN_NAME_CHANNEL_INBOUND_IDLE_STATE_HANDLER,
-                new IdleStateHandler(0, 0, props.getMaxIdleTime().toMillis(), TimeUnit.MILLISECONDS)
+                new IdleStateHandler(
+                        props.getReaderIdleTime().toMillis(),
+                        props.getWriterIdleTime().toMillis(),
+                        props.getAllIdleTime().toMillis(),
+                        TimeUnit.MILLISECONDS
+                )
         );
         connection.addHandlerLast(
                 BEAN_NAME_CHANNEL_INBOUND_IDLE_STATE_HANDLER_CALLBACK,

@@ -28,6 +28,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808SessionManager;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionEventListener;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
+import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.UdpSessionIdleStateCheckerProps;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -45,7 +46,11 @@ public class BuiltinJt808InstructionServerConfiguration {
     @Bean(destroyMethod = "shutdown")
     @ConditionalOnMissingBean
     Jt808SessionManager jt808SessionManager(XtreamSessionIdGenerator idGenerator, XtreamJt808ServerProperties serverProperties) {
-        return new DefaultJt808SessionManager(idGenerator, serverProperties.getInstructionServer().getSessionIdleStateChecker());
+        final UdpSessionIdleStateCheckerProps idleStateChecker = serverProperties.getInstructionServer().getUdpServer().getSessionIdleStateChecker();
+        return new DefaultJt808SessionManager(
+                serverProperties.getInstructionServer().getUdpServer().isEnabled(),
+                idleStateChecker, idGenerator
+        );
     }
 
     @Bean

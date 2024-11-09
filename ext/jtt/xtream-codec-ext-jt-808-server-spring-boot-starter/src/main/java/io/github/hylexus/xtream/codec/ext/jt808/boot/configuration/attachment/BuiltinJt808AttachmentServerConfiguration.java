@@ -23,6 +23,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808AttachmentSessionManag
 import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808AttachmentSessionManager;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionEventListener;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
+import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.UdpSessionIdleStateCheckerProps;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -43,7 +44,11 @@ public class BuiltinJt808AttachmentServerConfiguration {
             XtreamJt808ServerProperties serverProperties,
             ObjectProvider<XtreamSessionEventListener> listeners) {
 
-        final DefaultJt808AttachmentSessionManager sessionManager = new DefaultJt808AttachmentSessionManager(idGenerator, serverProperties.getAttachmentServer().getSessionIdleStateChecker());
+        final UdpSessionIdleStateCheckerProps idleStateChecker = serverProperties.getAttachmentServer().getUdpServer().getSessionIdleStateChecker();
+        final DefaultJt808AttachmentSessionManager sessionManager = new DefaultJt808AttachmentSessionManager(
+                serverProperties.getAttachmentServer().getUdpServer().isEnabled(),
+                idleStateChecker, idGenerator
+        );
         listeners.orderedStream().forEach(sessionManager::addListener);
         return sessionManager;
     }

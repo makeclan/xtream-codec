@@ -110,7 +110,7 @@ public class BuiltinJt808AttachmentServerTcpConfiguration {
                 .addServerCustomizer(server -> server.doOnConnection(connection -> {
                     // 空闲检测
                     BuiltinConfigurationUtils.addIdleStateHandler(
-                            serverProperties.getAttachmentServer().getSessionIdleStateChecker(),
+                            serverProperties.getAttachmentServer().getTcpServer().getSessionIdleStateChecker(),
                             null,
                             attachmentSessionManager,
                             connection
