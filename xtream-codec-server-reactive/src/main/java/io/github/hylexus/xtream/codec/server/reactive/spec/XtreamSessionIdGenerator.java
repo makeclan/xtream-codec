@@ -19,6 +19,8 @@ package io.github.hylexus.xtream.codec.server.reactive.spec;
 
 import io.netty.channel.Channel;
 
+import java.net.InetSocketAddress;
+
 /**
  * @author hylexus
  */
@@ -27,13 +29,13 @@ public interface XtreamSessionIdGenerator {
     default String generateSessionId(XtreamExchange exchange) {
         final XtreamRequest request = exchange.request();
         return switch (request.type()) {
-            case UDP -> this.generateUdpSessionId(request);
+            case UDP -> this.generateUdpSessionId(request.remoteAddress());
             case TCP -> this.generateTcpSessionId(request.underlyingChannel());
         };
     }
 
-    default String generateUdpSessionId(XtreamRequest request) {
-        return request.remoteAddress().toString();
+    default String generateUdpSessionId(InetSocketAddress remoteAddress) {
+        return remoteAddress.toString();
     }
 
     String generateTcpSessionId(Channel channel);

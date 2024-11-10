@@ -49,7 +49,8 @@ public interface XtreamSessionEventListener {
 
     enum DefaultSessionCloseReason implements SessionCloseReason {
         EXPIRED("EXPIRED"),
-        MANUAL_CLOSED("MANUAL_CLOSED"),
+        CLOSED_BY_USER("CLOSED_BY_USER"),
+        CLOSED_BY_CLIENT("CLOSED_BY_CLIENT"),
         ;
         private final String reason;
 

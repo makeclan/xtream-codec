@@ -16,10 +16,7 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl;
 
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchangeCreator;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionManager;
+import io.github.hylexus.xtream.codec.server.reactive.spec.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import reactor.netty.NettyInbound;
@@ -36,6 +33,12 @@ public class DefaultXtreamExchangeCreator implements XtreamExchangeCreator {
 
     public DefaultXtreamExchangeCreator(@SuppressWarnings("rawtypes") XtreamSessionManager sessionManager) {
         this.sessionManager = sessionManager;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public XtreamSessionManager<? extends XtreamSession> sessionManager() {
+        return this.sessionManager;
     }
 
     @Override

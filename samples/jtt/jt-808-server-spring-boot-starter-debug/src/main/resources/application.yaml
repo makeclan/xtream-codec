@@ -64,9 +64,9 @@ jt808-server:
       max-instruction-frame-length: 1024
       ## 指令服务器的会话空闲状态检查器(TCP)
       session-idle-state-checker:
-        reader-idle-time: 10s
-        writer-idle-time: 10s
-        all-idle-time: 10s
+        reader-idle-time: 0s
+        writer-idle-time: 0s
+        all-idle-time: 10m
       ## 请求处理线程
       loop-resources:
         select-count: 1
@@ -85,7 +85,7 @@ jt808-server:
       port: 8888
       ## 指令服务器的会话空闲状态检查器(UDP)
       session-idle-state-checker:
-        max-idle-time: 10s
+        max-idle-time: 10m
         check-interval: 10s
         check-backoff-time: 10s
       ## 请求处理线程
@@ -111,9 +111,9 @@ jt808-server:
       max-stream-frame-length: 66560
       ## 附件务器的会话空闲状态检查器(TCP)
       session-idle-state-checker:
-        reader-idle-time: 10s
-        writer-idle-time: 10s
-        all-idle-time: 10s
+        reader-idle-time: 0s
+        writer-idle-time: 0s
+        all-idle-time: 10m
       ## 请求处理线程
       loop-resources:
         select-count: 1
@@ -131,7 +131,7 @@ jt808-server:
       port: 8889
       ## 附件服务器的会话空闲状态检查器(UDP)
       session-idle-state-checker:
-        max-idle-time: 10s
+        max-idle-time: 10m
         check-interval: 10s
         check-backoff-time: 10s
       ## 请求处理线程

@@ -29,8 +29,7 @@ public class DefaultXtreamSessionManager extends AbstractXtreamSessionManager<Xt
     }
 
     @Override
-    protected XtreamSession doCreateSession(XtreamExchange exchange) {
-        final String sessionId = this.sessionIdGenerator.generateSessionId(exchange);
+    protected XtreamSession doCreateSession(String sessionId, XtreamExchange exchange) {
         final XtreamResponse response = exchange.response();
         return new DefaultXtreamSession(
                 sessionId,

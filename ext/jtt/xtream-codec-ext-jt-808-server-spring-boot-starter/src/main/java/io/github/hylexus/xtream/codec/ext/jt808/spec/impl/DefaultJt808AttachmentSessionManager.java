@@ -38,8 +38,7 @@ public class DefaultJt808AttachmentSessionManager extends AbstractXtreamSessionM
     }
 
     @Override
-    protected Jt808Session doCreateSession(XtreamExchange exchange) {
-        final String sessionId = this.sessionIdGenerator.generateSessionId(exchange);
+    protected Jt808Session doCreateSession(String sessionId, XtreamExchange exchange) {
         final XtreamResponse response = exchange.response();
         return new DefaultJt808Session(
                 sessionId,
@@ -52,13 +51,13 @@ public class DefaultJt808AttachmentSessionManager extends AbstractXtreamSessionM
     }
 
     @Override
-    @SuppressWarnings("deprecation")
+    // @SuppressWarnings("deprecation")
     protected void beforeConnectionClose(Connection connection, Jt808Session session) {
-        switch (session.type()) {
-            case TCP -> connection.channel().attr(JtProtocolConstant.tcpSessionKey()).remove();
-            case UDP -> connection.channel().attr(JtProtocolConstant.udpSessionKey(session.remoteAddress())).remove();
-            default -> throw new IllegalArgumentException("Unsupported session type: " + session.type());
-        }
+        // switch (session.type()) {
+        //     case TCP -> connection.channel().attr(JtProtocolConstant.tcpSessionKey()).remove();
+        //     case UDP -> connection.channel().attr(JtProtocolConstant.udpSessionKey(session.remoteAddress())).remove();
+        //     default -> throw new IllegalArgumentException("Unsupported session type: " + session.type());
+        // }
         // connection.channel().attr(JtProtocolConstant.NETTY_ATTR_KEY_SESSION).set(null);
     }
 

@@ -16,10 +16,7 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp;
 
-import io.github.hylexus.xtream.codec.server.reactive.spec.UdpXtreamNettyHandlerAdapter;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchangeCreator;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
+import io.github.hylexus.xtream.codec.server.reactive.spec.*;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.socket.DatagramPacket;
 import org.reactivestreams.Publisher;
@@ -40,11 +37,13 @@ public class DefaultUdpXtreamNettyHandlerAdapter implements UdpXtreamNettyHandle
     protected final XtreamHandler xtreamHandler;
     protected final ByteBufAllocator allocator;
     protected final XtreamExchangeCreator exchangeCreator;
+    protected final XtreamSessionManager<? extends XtreamSession> sessionManager;
 
     public DefaultUdpXtreamNettyHandlerAdapter(ByteBufAllocator allocator, XtreamExchangeCreator exchangeCreator, XtreamHandler xtreamHandler) {
         this.xtreamHandler = xtreamHandler;
         this.allocator = allocator;
         this.exchangeCreator = exchangeCreator;
+        this.sessionManager = exchangeCreator.sessionManager();
         log.info("DefaultUdpXtreamNettyHandlerAdapter initialized");
     }
 

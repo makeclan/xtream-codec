@@ -16,10 +16,7 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp;
 
-import io.github.hylexus.xtream.codec.server.reactive.spec.TcpXtreamNettyHandlerAdapter;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchangeCreator;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
+import io.github.hylexus.xtream.codec.server.reactive.spec.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import org.reactivestreams.Publisher;
@@ -41,11 +38,13 @@ public class DefaultTcpXtreamNettyHandlerAdapter implements TcpXtreamNettyHandle
     protected final XtreamHandler xtreamHandler;
     protected final ByteBufAllocator allocator;
     protected final XtreamExchangeCreator xtreamExchangeCreator;
+    protected final XtreamSessionManager<? extends XtreamSession> sessionManager;
 
     public DefaultTcpXtreamNettyHandlerAdapter(ByteBufAllocator allocator, XtreamExchangeCreator xtreamExchangeCreator, XtreamHandler xtreamHandler) {
         this.xtreamHandler = xtreamHandler;
         this.allocator = allocator;
         this.xtreamExchangeCreator = xtreamExchangeCreator;
+        this.sessionManager = xtreamExchangeCreator.sessionManager();
         log.info("DefaultTcpXtreamNettyHandlerAdapter initialized");
     }
 

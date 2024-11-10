@@ -27,6 +27,8 @@ import java.util.UUID;
 
 public interface XtreamExchangeCreator {
 
+    XtreamSessionManager<? extends XtreamSession> sessionManager();
+
     default XtreamExchange createTcpExchange(ByteBufAllocator allocator, NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf byteBuf, InetSocketAddress remoteAddress) {
         throw new NotYetImplementedException();
     }

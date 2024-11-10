@@ -67,18 +67,18 @@ public class Jt808RequestDecoderFilter implements XtreamFilter {
             // @see Jt808AttachmentHandlerUtils.getAttachmentSessionUdp
             // @see Jt808AttachmentHandlerUtils.getAttachmentSessionTcp
             // DefaultJt808AttachmentSessionManager.beforeConnectionClose()
-            if (jt808Request.serverType() == Jt808ServerType.ATTACHMENT_SERVER) {
-                switch (jt808Request.type()) {
-                    case TCP -> jt808Request.underlyingChannel().attr(JtProtocolConstant.tcpSessionKey()).setIfAbsent(jt808Session);
-                    case UDP -> jt808Request.underlyingChannel().attr(JtProtocolConstant.udpSessionKey(jt808Request.remoteAddress())).setIfAbsent(jt808Session);
-                    default -> {
-                        return Mono.defer(() -> {
-                            final IllegalArgumentException error = new IllegalArgumentException("Unsupported request type: " + jt808Request.type());
-                            return Mono.error(error);
-                        });
-                    }
-                }
-            }
+            // if (jt808Request.serverType() == Jt808ServerType.ATTACHMENT_SERVER) {
+            //     switch (jt808Request.type()) {
+            //         case TCP -> jt808Request.underlyingChannel().attr(JtProtocolConstant.tcpSessionKey()).setIfAbsent(jt808Session);
+            //         case UDP -> jt808Request.underlyingChannel().attr(JtProtocolConstant.udpSessionKey(jt808Request.remoteAddress())).setIfAbsent(jt808Session);
+            //         default -> {
+            //             return Mono.defer(() -> {
+            //                 final IllegalArgumentException error = new IllegalArgumentException("Unsupported request type: " + jt808Request.type());
+            //                 return Mono.error(error);
+            //             });
+            //         }
+            //     }
+            // }
 
             return this.doProcessJt808Request(exchange, chain, jt808Request).doFinally(signalType -> {
                 // ...

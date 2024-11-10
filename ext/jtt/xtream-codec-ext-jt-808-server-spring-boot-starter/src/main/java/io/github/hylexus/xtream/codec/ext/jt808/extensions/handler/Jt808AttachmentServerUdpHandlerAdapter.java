@@ -51,26 +51,41 @@ public class Jt808AttachmentServerUdpHandlerAdapter extends Jt808InstructionServ
 
     @Override
     protected Mono<Void> handleRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, DatagramPacket datagramPacket) {
-        // 普通的指令消息
-        if (!JtProtocolUtils.isAttachmentRequest(datagramPacket.content())) {
-            return super.handleRequest(nettyInbound, nettyOutbound, datagramPacket);
+        // 码流消息
+        if (JtProtocolUtils.isAttachmentRequest(datagramPacket.content())) {
+            return this.handleStreamRequest(nettyInbound, nettyOutbound, datagramPacket.content(), datagramPacket.sender());
         }
 
-        // 码流消息
-        return this.handleStreamRequest(nettyInbound, nettyOutbound, datagramPacket.content(), datagramPacket.sender());
+        // 普通的指令消息
+        return super.handleRequest(nettyInbound, nettyOutbound, datagramPacket);
     }
 
     protected Mono<Void> handleStreamRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf payload, InetSocketAddress remoteAddress) {
-        final Jt808Session session = Jt808AttachmentHandlerUtils.getAttachmentSessionUdp(nettyOutbound, remoteAddress);
-        if (session == null) {
-            return Mono.error(new IllegalStateException("attachment session not found"));
-        }
+        // final Jt808Session session = Jt808AttachmentHandlerUtils.getAttachmentSessionUdp(nettyOutbound, remoteAddress);
+        // if (session == null) {
+        //     return Mono.error(new IllegalStateException("attachment session not found"));
+        // }
+        return this.getUdpAttachmentSession(remoteAddress).flatMap(session -> {
+            session.lastCommunicateTime(Instant.now());
 
-        session.lastCommunicateTime(Instant.now());
+            final XtreamExchange exchange = this.exchangeCreator.createUdpExchange(allocator, nettyInbound, nettyOutbound, payload, remoteAddress);
+            final Jt808Request jt808Request = Jt808AttachmentHandlerUtils.simulateJt808Request(allocator, nettyInbound, payload, session, exchange, exchangeCreator.generateRequestId(nettyInbound));
+            final XtreamExchange simulatedExchange = exchange.mutate().request(jt808Request).build();
+            return this.attachmentHandler.handle(simulatedExchange)
+                    .doOnError(Throwable.class, throwable -> {
+                        // ...
+                        log.error(throwable.getMessage(), throwable);
+                    });
+        });
+    }
 
-        final XtreamExchange exchange = this.exchangeCreator.createTcpExchange(allocator, nettyInbound, nettyOutbound, payload, remoteAddress);
-        final Jt808Request jt808Request = Jt808AttachmentHandlerUtils.simulateJt808Request(allocator, nettyInbound, payload, session, exchange, exchangeCreator.generateRequestId(nettyInbound));
-        final XtreamExchange simulatedExchange = exchange.mutate().request(jt808Request).build();
-        return this.attachmentHandler.handle(simulatedExchange);
+    Mono<Jt808Session> getUdpAttachmentSession(InetSocketAddress remoteAddress) {
+        final String sessionId = this.sessionManager.sessionIdGenerator().generateUdpSessionId(remoteAddress);
+        return this.sessionManager.getSessionById(sessionId)
+                .map(session -> {
+                    @SuppressWarnings("rawtype") Jt808Session jt808Session = (Jt808Session) session;
+                    return jt808Session;
+                })
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new IllegalStateException("Attachment session not found: " + remoteAddress))));
     }
 }

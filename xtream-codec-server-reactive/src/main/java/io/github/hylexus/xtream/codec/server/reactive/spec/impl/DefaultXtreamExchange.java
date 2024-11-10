@@ -31,6 +31,12 @@ public class DefaultXtreamExchange implements XtreamExchange {
     protected final XtreamResponse response;
     protected final Mono<XtreamSession> sessionMono;
 
+    public DefaultXtreamExchange(XtreamSession session, XtreamRequest request, XtreamResponse response) {
+        this.request = request;
+        this.response = response;
+        this.sessionMono = Mono.just(session);
+    }
+
     public DefaultXtreamExchange(@SuppressWarnings("rawtypes") XtreamSessionManager sessionManager, XtreamRequest request, XtreamResponse response) {
         this.request = request;
         this.response = response;

@@ -36,22 +36,32 @@ public interface XtreamSessionManager<S extends XtreamSession> {
     XtreamSessionIdGenerator sessionIdGenerator();
 
     default Mono<S> getSession(XtreamExchange exchange, boolean createNewIfMissing) {
-        if (createNewIfMissing) {
-            return this.getSession(exchange).switchIfEmpty(Mono.defer(() -> this.createSession(exchange)));
-        }
-        return this.getSession(exchange);
+        return Mono.defer(() -> {
+            if (createNewIfMissing) {
+                final String sessionId = this.sessionIdGenerator().generateSessionId(exchange);
+                return this.getSessionById(sessionId).switchIfEmpty(Mono.defer(() -> {
+                    // ...
+                    return this.createSession(sessionId, exchange);
+                }));
+            }
+            return this.getSession(exchange);
+        });
     }
 
     Mono<S> getSession(XtreamExchange exchange);
 
-    Mono<S> createSession(XtreamExchange exchange);
+    Mono<S> createSession(String sessionId, XtreamExchange exchange);
+
+    default Mono<S> createSession(XtreamExchange exchange) {
+        final String sessionId = this.sessionIdGenerator().generateSessionId(exchange);
+        return this.createSession(sessionId, exchange);
+    }
 
     Mono<S> getSessionById(String sessionId);
 
     boolean closeSessionById(String sessionId, XtreamSessionEventListener.SessionCloseReason reason);
 
     /**
-     * @see XtreamSession#invalidate()
      * @see XtreamSession#invalidate(XtreamSessionEventListener.SessionCloseReason)
      */
     void closeSession(S session, XtreamSessionEventListener.SessionCloseReason reason);

@@ -40,8 +40,4 @@ public interface XtreamSession extends XtreamOutbound {
 
     void invalidate(XtreamSessionEventListener.SessionCloseReason reason);
 
-    default void invalidate() {
-        invalidate(XtreamSessionEventListener.DefaultSessionCloseReason.MANUAL_CLOSED);
-    }
-
 }

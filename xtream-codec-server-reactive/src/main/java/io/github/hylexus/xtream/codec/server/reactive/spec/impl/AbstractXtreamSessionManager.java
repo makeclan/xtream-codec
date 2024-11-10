@@ -126,9 +126,8 @@ public abstract class AbstractXtreamSessionManager<S extends XtreamSession> impl
     }
 
     @Override
-    public Mono<S> createSession(XtreamExchange exchange) {
-        final String sessionId = this.sessionIdGenerator.generateSessionId(exchange);
-        final S session = this.doCreateSession(exchange);
+    public Mono<S> createSession(String sessionId, XtreamExchange exchange) {
+        final S session = this.doCreateSession(sessionId, exchange);
         this.sessions.put(sessionId, session);
 
         this.invokeListener(listener -> listener.afterSessionCreate(session));
@@ -146,7 +145,7 @@ public abstract class AbstractXtreamSessionManager<S extends XtreamSession> impl
         }
     }
 
-    protected abstract S doCreateSession(XtreamExchange exchange);
+    protected abstract S doCreateSession(String sessionId, XtreamExchange exchange);
 
     @Override
     public Mono<S> getSessionById(String sessionId) {

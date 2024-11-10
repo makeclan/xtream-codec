@@ -56,14 +56,14 @@ public final class JtProtocolConstant {
     public static final String BEAN_NAME_JT_808_UDP_XTREAM_SERVER_INSTRUCTION_SERVER = "jt808UdpXtreamServerInstructionServer";
     public static final String BEAN_NAME_JT_808_UDP_XTREAM_SERVER_ATTACHMENT_SERVER = "jt808UdpXtreamServerAttachmentServer";
 
-    private static final AttributeKey<Jt808Session> NETTY_ATTR_KEY_TCP_ATTACHMENT_SESSION = AttributeKey.newInstance("jt808/attachment/tcp/" + Jt808Session.class.getName());
+    // private static final AttributeKey<Jt808Session> NETTY_ATTR_KEY_TCP_ATTACHMENT_SESSION = AttributeKey.newInstance("jt808/attachment/tcp/" + Jt808Session.class.getName());
 
-    public static AttributeKey<Jt808Session> udpSessionKey(InetSocketAddress remoteAddress) {
-        return AttributeKey.valueOf("jt808/attachment/udp/" + remoteAddress.toString());
-    }
+    // public static AttributeKey<Jt808Session> udpSessionKey(InetSocketAddress remoteAddress) {
+    //     return AttributeKey.valueOf("jt808/attachment/udp/" + remoteAddress.toString());
+    // }
 
-    public static AttributeKey<Jt808Session> tcpSessionKey() {
-        return NETTY_ATTR_KEY_TCP_ATTACHMENT_SESSION;
-    }
+    // public static AttributeKey<Jt808Session> tcpSessionKey() {
+    //     return NETTY_ATTR_KEY_TCP_ATTACHMENT_SESSION;
+    // }
 
 }
