@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  * @author hylexus
  */
 @RestController
-@RequestMapping("/dashboard-api/v1")
+@RequestMapping("/dashboard-api/v1/event-publisher")
 public class BuiltinJt808DashboardPublisherController {
 
     private final XtreamEventPublisher eventPublisher;
@@ -44,7 +44,7 @@ public class BuiltinJt808DashboardPublisherController {
         this.eventPublisher = eventPublisher;
     }
 
-    @GetMapping("/event-publishers")
+    @GetMapping("/subscribers")
     public PageableVo<EventPublisherInfo> list(@Validated PageableDto dto) {
         final int total = this.eventPublisher.subscriberCount();
         final List<EventPublisherInfo> list = this.eventPublisher.subscriberView()
