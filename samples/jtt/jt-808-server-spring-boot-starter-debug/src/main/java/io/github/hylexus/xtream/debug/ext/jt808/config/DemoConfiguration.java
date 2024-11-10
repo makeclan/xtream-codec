@@ -29,6 +29,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Map;
+
 /**
  * @author hylexus
  */
@@ -53,7 +55,7 @@ public class DemoConfiguration {
     // @Bean
     public CommandLineRunner commandLineRunner(XtreamEventPublisher publisher) {
         return args -> {
-            publisher.subscribe().subscribe(event -> {
+            publisher.subscribeAll(Map.of("desc", "demo")).subscribe(event -> {
                 log.info("Event ::: {}", event);
             });
         };

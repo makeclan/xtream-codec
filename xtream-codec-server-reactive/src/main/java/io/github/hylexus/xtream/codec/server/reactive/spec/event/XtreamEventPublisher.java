@@ -19,7 +19,7 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.event;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.builtin.DefaultXtreamEvent;
 import reactor.core.publisher.Flux;
 
-import java.util.UUID;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -50,19 +50,12 @@ public interface XtreamEventPublisher {
         }
     }
 
-    /**
-     * 默认实现仅仅判断了当前是否有订阅者。
-     */
     Predicate<XtreamEvent.XtreamEventType> eventPredicate();
 
-    Flux<XtreamEvent> subscribe(String id, String description);
+    Flux<XtreamEvent> subscribe(XtreamEventSubscriberInfo subscriberInfo);
 
-    default Flux<XtreamEvent> subscribe(String id) {
-        return this.subscribe(id, null);
-    }
-
-    default Flux<XtreamEvent> subscribe() {
-        return this.subscribe(UUID.randomUUID().toString().replace("-", ""), null);
+    default Flux<XtreamEvent> subscribeAll(Map<String, Object> description) {
+        return this.subscribe(XtreamEventSubscriberInfo.allEventsSubscriber(description));
     }
 
     void shutdown();

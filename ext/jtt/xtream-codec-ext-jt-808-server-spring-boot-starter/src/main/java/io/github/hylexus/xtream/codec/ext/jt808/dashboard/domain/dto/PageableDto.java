@@ -14,16 +14,27 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.exception;
+package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto;
 
-import io.github.hylexus.xtream.codec.ext.jt808.domain.DefaultRespCode;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-public class ClientParamException extends XtreamHttpException {
-    public ClientParamException() {
-        super(DefaultRespCode.BAD_REQUEST);
-    }
+@Getter
+@Setter
+@ToString
+public class PageableDto {
 
-    public ClientParamException(String message) {
-        super(message, DefaultRespCode.BAD_REQUEST);
+    @Min(value = 1, message = "page must be greater than or equal to 1")
+    private Integer page = 1;
+
+    @Min(value = 1, message = "size must be greater than or equal to 1")
+    @Max(value = 200, message = "size must be less than or equal to 200")
+    private Integer size = 10;
+
+    public int getOffset() {
+        return (page - 1) * size;
     }
 }

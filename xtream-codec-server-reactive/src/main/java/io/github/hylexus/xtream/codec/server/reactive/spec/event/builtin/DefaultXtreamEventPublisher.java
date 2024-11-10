@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
@@ -35,15 +37,38 @@ import java.util.stream.Stream;
  */
 public class DefaultXtreamEventPublisher implements XtreamEventPublisher {
     private static final Logger log = LoggerFactory.getLogger(DefaultXtreamEventPublisher.class);
+
     private final ConcurrentMap<String, XtreamEventSubscriberInfo> subscribers = new ConcurrentHashMap<>();
+    private final Map<Integer, Integer> interestedEventTypes = new ConcurrentHashMap<>();
+
     private final Sinks.Many<XtreamEvent> sink;
     private final XtreamSchedulerRegistry schedulerRegistry;
+    protected Predicate<XtreamEvent.XtreamEventType> defaultPredicate;
 
     public DefaultXtreamEventPublisher(XtreamSchedulerRegistry schedulerRegistry) {
         this.schedulerRegistry = schedulerRegistry;
         this.sink = Sinks.many().multicast().onBackpressureBuffer(1, false);
+        this.defaultPredicate = eventType -> {
+            // 没有订阅者
+            if (this.subscribers.isEmpty()) {
+                return false;
+            }
+
+            final int code = eventType.code();
+            // 事件类型中有 ALL(所有类型事件) ==> 无条件发布
+            if (this.interestedEventTypes.containsKey(XtreamEvent.DefaultXtreamEventType.ALL.code())) {
+                return true;
+            }
+
+            // 只发布有必要发布的事件
+            final Integer refCount = this.interestedEventTypes.get(code);
+            return refCount != null && refCount > 0;
+        };
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void publish(XtreamEvent event) {
         final Sinks.EmitResult emitResult = this.sink.tryEmitNext(event);
@@ -54,36 +79,60 @@ public class DefaultXtreamEventPublisher implements XtreamEventPublisher {
 
     @Override
     public Predicate<XtreamEvent.XtreamEventType> eventPredicate() {
-        // todo 增强判断逻辑
-        return eventType -> !this.subscribers.isEmpty();
+        return this.defaultPredicate;
     }
 
     @Override
-    public Flux<XtreamEvent> subscribe(String id, String description) {
-        try {
-            final XtreamEventSubscriberInfo info = new XtreamEventSubscriberInfo.DefaultXtreamEventSubscriberInfo(id, description);
-            final XtreamEventSubscriberInfo old = this.subscribers.putIfAbsent(id, info);
-            if (old != null) {
-                return Flux.error(new IllegalStateException("Subscriber already exists: " + old));
-            }
+    public Flux<XtreamEvent> subscribe(XtreamEventSubscriberInfo info) {
+        // info.interestedEventsCode() 由外部确保返回一个已经计算好的常量(而不是每次调用都计算一次)
+        final Set<Integer> interestedEventsCode = info.interestedEventsCode();
+        if (interestedEventsCode.isEmpty()) {
+            log.error("Interested events code cannot be empty for subscriber: {}", info);
+            return Flux.error(new IllegalArgumentException("Interested events code cannot be empty"));
+        }
 
-            return sink.asFlux()
-                    .publishOn(this.schedulerRegistry.eventPublisherScheduler())
-                    .doOnError(error -> {
-                        // ...
-                        log.error("Error occurred", error);
-                    })
-                    .doOnTerminate(() -> {
-                        // ...
-                        this.subscribers.remove(id);
-                    })
-                    .doFinally(signalType -> {
-                        // ...
-                        this.subscribers.remove(id);
-                    });
-        } catch (Throwable e) {
-            this.subscribers.remove(id);
-            throw e;
+        // 新增订阅者
+        final XtreamEventSubscriberInfo old = this.subscribers.putIfAbsent(info.id(), info);
+        if (old != null) {
+            log.error("Subscriber already exists: {}", info);
+            return Flux.error(new IllegalStateException("Subscriber already exists: " + info));
+        }
+
+        // 增加事件类型的引用计数
+        synchronized (this.interestedEventTypes) {
+            for (final Integer code : interestedEventsCode) {
+                this.interestedEventTypes.compute(code, (key, count) -> count == null ? 1 : count + 1);
+            }
+        }
+
+        return sink.asFlux()
+                .filter(event -> interestedEventsCode.contains(
+                        XtreamEvent.XtreamEventType.ALL.code())
+                                 || interestedEventsCode.contains(event.type().code())
+                )
+                .publishOn(this.schedulerRegistry.eventPublisherScheduler())
+                .doFinally(signalType -> {
+                    // ...
+                    this.unsubscribe(info);
+                });
+    }
+
+    protected void unsubscribe(XtreamEventSubscriberInfo info) {
+        // 移除订阅者
+        this.subscribers.remove(info.id());
+        // 减少事件类型的引用计数
+        synchronized (this.interestedEventTypes) {
+            for (final int code : info.interestedEventsCode()) {
+                this.interestedEventTypes.compute(code, (key, count) -> {
+                    // 引用计数 <= 1  ==> 移除
+                    if (count == null || count <= 1) {
+                        return null;
+                    } else {
+                        // 引用计数 - 1
+                        return count - 1;
+                    }
+                });
+            }
         }
     }
 

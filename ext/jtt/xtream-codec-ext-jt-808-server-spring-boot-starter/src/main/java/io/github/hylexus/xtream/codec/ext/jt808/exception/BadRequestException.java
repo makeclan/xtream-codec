@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto;
+package io.github.hylexus.xtream.codec.ext.jt808.exception;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import io.github.hylexus.xtream.codec.ext.jt808.domain.DefaultRespCode;
 
-import java.util.Set;
+public class BadRequestException extends XtreamHttpException {
+    public BadRequestException() {
+        super(DefaultRespCode.BAD_REQUEST);
+    }
 
-@Getter
-@Setter
-@ToString
-public class LinkDataDto {
-    private Set<Integer> eventCodes;
-    @NotNull(message = "terminalId is missing")
-    @NotEmpty(message = "terminalId is empty")
-    private String terminalId;
+    public BadRequestException(String message) {
+        super(message, DefaultRespCode.BAD_REQUEST);
+    }
 }

@@ -18,6 +18,11 @@ package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.events;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEvent;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 /**
  * @author hylexus
  */
@@ -44,5 +49,15 @@ public enum Jt808DashboardEventType implements XtreamEvent.XtreamEventType {
     @Override
     public String description() {
         return this.description;
+    }
+
+    private static final Map<Integer, Jt808DashboardEventType> CACHES;
+
+    static {
+        CACHES = Arrays.stream(values()).collect(Collectors.toMap(Jt808DashboardEventType::code, it -> it));
+    }
+
+    public static Optional<XtreamEvent.XtreamEventType> of(Integer code) {
+        return Optional.ofNullable(CACHES.get(code));
     }
 }

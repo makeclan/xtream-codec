@@ -16,6 +16,11 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec.event;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 /**
  * 标记接口
  *
@@ -31,6 +36,39 @@ public interface XtreamEvent {
         int code();
 
         String description();
+
+        XtreamEventType ALL = DefaultXtreamEventType.ALL;
     }
 
+    enum DefaultXtreamEventType implements XtreamEventType {
+        ALL(-1, "所有事件"),
+        ;
+        private final int code;
+        private final String description;
+
+        DefaultXtreamEventType(int code, String description) {
+            this.code = code;
+            this.description = description;
+        }
+
+        @Override
+        public int code() {
+            return this.code;
+        }
+
+        @Override
+        public String description() {
+            return this.description;
+        }
+
+        private static final Map<Integer, DefaultXtreamEventType> CACHES;
+
+        static {
+            CACHES = Arrays.stream(values()).collect(Collectors.toMap(DefaultXtreamEventType::code, it -> it));
+        }
+
+        public static Optional<XtreamEventType> of(Integer code) {
+            return Optional.ofNullable(CACHES.get(code));
+        }
+    }
 }

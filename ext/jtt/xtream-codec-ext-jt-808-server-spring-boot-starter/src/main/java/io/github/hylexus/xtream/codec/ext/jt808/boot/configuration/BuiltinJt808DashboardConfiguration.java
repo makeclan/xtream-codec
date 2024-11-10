@@ -17,10 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration;
 
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.BuiltinJt808DashboardCommonController;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.BuiltinJt808DashboardEventController;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.BuiltinJt808DashboardMetricsController;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.BuiltinJt808DashboardSessionController;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.*;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808MessageDescriptor;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.Jt808DashboardRequestLifecycleListener;
@@ -85,6 +82,11 @@ public class BuiltinJt808DashboardConfiguration {
             @Autowired(required = false) Jt808SessionManager sessionManager,
             @Autowired(required = false) Jt808AttachmentSessionManager attachmentSessionManager) {
         return new BuiltinJt808DashboardSessionController(sessionManager, attachmentSessionManager);
+    }
+
+    @Bean
+    BuiltinJt808DashboardPublisherController builtinJt808DashboardPublisherController(XtreamEventPublisher eventPublisher) {
+        return new BuiltinJt808DashboardPublisherController(eventPublisher);
     }
 
 }

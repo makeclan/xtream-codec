@@ -16,6 +16,13 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec.event;
 
+import java.time.Instant;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 /**
  * @author hylexus
  */
@@ -26,17 +33,60 @@ public interface XtreamEventSubscriberInfo {
      */
     String id();
 
+    Instant createdAt();
+
     /**
      * 可选的描述信息
      */
-    default String description() {
-        return null;
+    default Map<String, Object> metadata() {
+        return Collections.emptyMap();
+    }
+
+    Set<XtreamEvent.XtreamEventType> interestedEvents();
+
+    Set<Integer> interestedEventsCode();
+
+    /**
+     * 订阅所有事件
+     */
+    static XtreamEventSubscriberInfo allEventsSubscriber(Map<String, Object> description) {
+        return new DefaultXtreamEventSubscriberInfo(
+                UUID.randomUUID().toString().replace("-", ""),
+                Set.of(XtreamEvent.DefaultXtreamEventType.ALL),
+                description
+        );
+    }
+
+    static XtreamEventSubscriberInfo of(Set<XtreamEvent.XtreamEventType> interestedEvents, Map<String, Object> metadata) {
+        return of(UUID.randomUUID().toString().replace("-", ""), interestedEvents, metadata);
+    }
+
+    static XtreamEventSubscriberInfo of(String id, Set<XtreamEvent.XtreamEventType> interestedEvents, Map<String, Object> metadata) {
+        return new XtreamEventSubscriberInfo.DefaultXtreamEventSubscriberInfo(
+                id,
+                interestedEvents,
+                metadata
+        );
     }
 
     record DefaultXtreamEventSubscriberInfo(
             String id,
-            String description
+            Set<XtreamEvent.XtreamEventType> interestedEvents,
+            Set<Integer> interestedEventsCode,
+            Instant createdAt,
+            Map<String, Object> metadata
     ) implements XtreamEventSubscriberInfo {
+
+        public DefaultXtreamEventSubscriberInfo(
+                String id,
+                Set<XtreamEvent.XtreamEventType> interestedEvents,
+                Map<String, Object> metadata) {
+            this(
+                    id,
+                    interestedEvents, interestedEvents.stream().map(XtreamEvent.XtreamEventType::code).collect(Collectors.toSet()), Instant.now(),
+                    metadata
+            );
+        }
 
     }
 
