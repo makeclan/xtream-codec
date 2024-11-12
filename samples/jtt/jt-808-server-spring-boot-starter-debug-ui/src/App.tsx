@@ -1,17 +1,44 @@
-import { Route, Routes } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import IndexPage from "@/pages/index";
 import DebugPage from "@/pages/debug.tsx";
-import EventPage from "@/pages/event.tsx";
+import AttachmentPage from "@/pages/attachment.tsx";
+import InstructionPage from "@/pages/instruction.tsx";
+import DashboardPage from "@/pages/dashboard.tsx";
+import DashboardLayout from "@/layouts/dashboard.tsx";
+import { loader as rootLoader } from "@/routes/root.tsx";
+const router = createBrowserRouter([
+  {
+    path: "/",
+    id: "root",
+    element: <DashboardLayout />,
+    loader: rootLoader,
+    children: [
+      {
+        index: true,
+        element: <DashboardPage />,
+      },
+      {
+        path: "dashboard",
+        element: <DashboardPage />,
+      },
+      {
+        path: "instruction",
+        element: <InstructionPage />,
+      },
+      {
+        path: "attachment",
+        element: <AttachmentPage />,
+      },
+      {
+        path: "debug",
+        element: <DebugPage />,
+      },
+    ],
+  },
+]);
 
 function App() {
-  return (
-    <Routes>
-      <Route element={<IndexPage />} path="/" />
-      <Route element={<DebugPage />} path="/debug" />
-      <Route element={<EventPage />} path="/event" />
-    </Routes>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;

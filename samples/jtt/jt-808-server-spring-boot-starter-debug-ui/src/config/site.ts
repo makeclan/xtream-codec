@@ -1,27 +1,24 @@
 // export type SiteConfig = typeof siteConfig;
 
+import {
+  GithubIcon,
+  HeartFilledIcon,
+  MoonFilledIcon,
+  SunFilledIcon,
+} from "@/components/icons.tsx";
+
 export const siteConfig = {
-  name: "Codec",
-  description: "Codec",
-  navItems: [
+  name: "Xtream",
+  description: "Xtream",
+  sidenav: [
+    { name: "Dashboard", href: "/dashboard", icon: GithubIcon },
     {
-      label: "Debug",
-      href: "/debug",
+      name: "Attachment",
+      href: "/attachment",
+      icon: HeartFilledIcon,
     },
-    {
-      label: "Event",
-      href: "/event",
-    },
-  ],
-  navMenuItems: [
-    {
-      label: "Debug",
-      href: "/debug",
-    },
-    {
-      label: "Event",
-      href: "/event",
-    },
+    { name: "Instruction", href: "/instruction", icon: MoonFilledIcon },
+    { name: "Debug", href: "/debug", icon: SunFilledIcon },
   ],
   links: {
     github: "https://github.com/hylexus/jt-framework",

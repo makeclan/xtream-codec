@@ -23,3 +23,21 @@ export type Event = {
   rawHexString: string;
   escapedHexString: string;
 };
+
+export enum EventType {
+  RECEIVE_PACKAGE = -100, // 请求
+  MERGE_PACKAGE = -101, // "合并请求"
+  SEND_PACKAGE = -102, // "响应"
+  COMMAND = -103, // "指令下发"
+}
+// interface SessionCount {
+//   max: number;
+//   current: number;
+// }
+// interface SessionRequest {
+//   total: number;
+//   details: any;
+// }
+export interface Metrics {
+  [key: string]: any;
+}

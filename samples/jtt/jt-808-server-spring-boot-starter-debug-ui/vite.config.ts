@@ -7,9 +7,11 @@ export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   server: {
     proxy: {
-      "/api": {
+      "/dashboard-api": {
         target: "http://localhost:9999",
         changeOrigin: true,
+        rewrite: (path) =>
+          path.replace(/^\/dashboard-api/, "/dashboard-api/v1"),
       },
     },
   },
