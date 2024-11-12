@@ -67,7 +67,7 @@ public class BuiltinJt808DashboardEventController {
     private Flux<ServerSentEvent<Object>> createServerSentEventFlux(ServerWebExchange exchange, LinkDataDto dto) {
         final Set<XtreamEvent.XtreamEventType> interestedEvents = this.convertToXtreamEventTypes(dto);
 
-        final Predicate<XtreamEvent> filter = this.createTypeFilter(interestedEvents).and(this.createTerminalIdFilter(dto));
+        // final Predicate<XtreamEvent> filter = this.createTypeFilter(interestedEvents).and(this.createTerminalIdFilter(dto));
 
         final String clientIp = JtWebUtils.getClientIp(exchange.getRequest().getHeaders()::getFirst).orElse("unknown");
         return this.eventPublisher.subscribe(
@@ -77,6 +77,7 @@ public class BuiltinJt808DashboardEventController {
                         )
                 )
                 // .filter(filter)
+                .filter(this.createTerminalIdFilter(dto))
                 .map(event -> {
                     // ...
                     return ServerSentEvent.builder()
@@ -102,8 +103,8 @@ public class BuiltinJt808DashboardEventController {
         }
         return dto.getEventCodes().stream().map(code -> {
             // ...
-            return Jt808DashboardEventType.of(code)
-                    .or(() -> XtreamEvent.DefaultXtreamEventType.of(code))
+            return XtreamEvent.DefaultXtreamEventType.of(code)
+                    .or(() -> Jt808DashboardEventType.of(code))
                     .orElseThrow(() -> new BadRequestException("Invalid event code: " + code));
         }).collect(Collectors.toSet());
     }

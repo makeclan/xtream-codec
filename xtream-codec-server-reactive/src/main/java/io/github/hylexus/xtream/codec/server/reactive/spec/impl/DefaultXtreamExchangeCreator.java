@@ -28,6 +28,7 @@ import java.net.InetSocketAddress;
  * @author hylexus
  */
 public class DefaultXtreamExchangeCreator implements XtreamExchangeCreator {
+
     @SuppressWarnings("rawtypes")
     protected final XtreamSessionManager sessionManager;
 
@@ -44,7 +45,7 @@ public class DefaultXtreamExchangeCreator implements XtreamExchangeCreator {
     @Override
     public XtreamExchange createTcpExchange(ByteBufAllocator allocator, NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf byteBuf, InetSocketAddress remoteAddress) {
         final XtreamRequest.Type type = XtreamRequest.Type.TCP;
-        final DefaultXtreamRequest request = new DefaultXtreamRequest(this.generateRequestId(nettyInbound), allocator, nettyInbound, type, byteBuf, remoteAddress);
+        final XtreamRequest request = this.doCreateTcpRequest(allocator, nettyInbound, byteBuf, remoteAddress, type);
         final DefaultXtreamResponse response = new DefaultXtreamResponse(allocator, nettyOutbound, type, remoteAddress);
 
         return new DefaultXtreamExchange(sessionManager, request, response);
@@ -53,9 +54,17 @@ public class DefaultXtreamExchangeCreator implements XtreamExchangeCreator {
     @Override
     public XtreamExchange createUdpExchange(ByteBufAllocator allocator, NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf payload, InetSocketAddress remoteAddress) {
         final XtreamRequest.Type type = XtreamRequest.Type.UDP;
-        final DefaultXtreamRequest request = new DefaultXtreamRequest(this.generateRequestId(nettyInbound), allocator, nettyInbound, type, payload, remoteAddress);
+        final XtreamRequest request = this.doCreateUdpRequest(allocator, nettyInbound, payload, remoteAddress, type);
         final DefaultXtreamResponse response = new DefaultXtreamResponse(allocator, nettyOutbound, type, remoteAddress);
 
         return new DefaultXtreamExchange(sessionManager, request, response);
+    }
+
+    protected XtreamRequest doCreateTcpRequest(ByteBufAllocator allocator, NettyInbound nettyInbound, ByteBuf byteBuf, InetSocketAddress remoteAddress, XtreamRequest.Type type) {
+        return new DefaultXtreamRequest(this.generateRequestId(nettyInbound), allocator, nettyInbound, type, byteBuf, remoteAddress);
+    }
+
+    protected XtreamRequest doCreateUdpRequest(ByteBufAllocator allocator, NettyInbound nettyInbound, ByteBuf payload, InetSocketAddress remoteAddress, XtreamRequest.Type type) {
+        return new DefaultXtreamRequest(this.generateRequestId(nettyInbound), allocator, nettyInbound, type, payload, remoteAddress);
     }
 }

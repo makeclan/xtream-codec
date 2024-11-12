@@ -18,9 +18,11 @@ package io.github.hylexus.xtream.codec.ext.jt808.codec.impl;
 
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.netty.buffer.ByteBuf;
+import reactor.netty.NettyInbound;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -39,8 +41,8 @@ public class Jt808RequestLifecycleListenerComposite implements Jt808RequestLifec
     }
 
     @Override
-    public void afterRequestDecode(XtreamExchange exchange, Jt808Request jt808Request, XtreamRequest originalRequest) {
-        this.invokeListeners(lifecycleListener -> lifecycleListener.afterRequestDecode(exchange, jt808Request, originalRequest));
+    public void afterRequestDecode(NettyInbound nettyInbound, ByteBuf rawPayload, Jt808Request jt808Request) {
+        this.invokeListeners(lifecycleListener -> lifecycleListener.afterRequestDecode(nettyInbound, rawPayload, jt808Request));
     }
 
     @Override
@@ -54,7 +56,7 @@ public class Jt808RequestLifecycleListenerComposite implements Jt808RequestLifec
     }
 
     @Override
-    public void beforeCommandSend(ByteBuf command) {
-        this.invokeListeners(lifecycleListener -> lifecycleListener.beforeCommandSend(command));
+    public void beforeCommandSend(Jt808Session session, ByteBuf command) {
+        this.invokeListeners(lifecycleListener -> lifecycleListener.beforeCommandSend(session, command));
     }
 }

@@ -16,10 +16,17 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.extensions.handler;
 
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchangeCreator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.DefaultTcpXtreamNettyHandlerAdapter;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import reactor.core.publisher.Mono;
+import reactor.netty.NettyInbound;
+import reactor.netty.NettyOutbound;
+
+import java.net.InetSocketAddress;
 
 /**
  * @author hylexus
@@ -27,5 +34,13 @@ import io.netty.buffer.ByteBufAllocator;
 public class Jt808InstructionServerTcpHandlerAdapter extends DefaultTcpXtreamNettyHandlerAdapter {
     public Jt808InstructionServerTcpHandlerAdapter(ByteBufAllocator allocator, XtreamExchangeCreator xtreamExchangeCreator, XtreamHandler xtreamHandler) {
         super(allocator, xtreamExchangeCreator, xtreamHandler);
+    }
+
+    protected Mono<Void> handleSingleRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf payload, InetSocketAddress remoteAddress) {
+        final XtreamExchange exchange = this.xtreamExchangeCreator.createTcpExchange(allocator, nettyInbound, nettyOutbound, payload, remoteAddress);
+        return this.doTcpExchange(exchange).doFinally(signalType -> {
+            // ...
+            exchange.request().release();
+        });
     }
 }

@@ -21,8 +21,8 @@ import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808Ser
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
+import io.netty.buffer.ByteBuf;
+import reactor.netty.NettyInbound;
 
 import java.util.concurrent.atomic.LongAdder;
 
@@ -36,7 +36,7 @@ public class RequestInfoCollector implements Jt808RequestLifecycleListener {
     }
 
     @Override
-    public void afterRequestDecode(XtreamExchange exchange, Jt808Request jt808Request, XtreamRequest originalRequest) {
+    public void afterRequestDecode(NettyInbound nettyInbound, ByteBuf rawPayload, Jt808Request jt808Request) {
 
         final SimpleTypes.RequestInfo requestInfo = switch (jt808Request.type()) {
             case TCP -> switch (jt808Request.serverType()) {

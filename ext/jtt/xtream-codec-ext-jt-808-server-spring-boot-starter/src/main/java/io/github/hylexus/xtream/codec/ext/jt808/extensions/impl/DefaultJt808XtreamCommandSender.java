@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.extensions.impl;
 
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808ResponseEncoder;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808CommandSender;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
@@ -30,6 +31,7 @@ import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotatedElementUtils;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.MonoSink;
 
@@ -46,12 +48,14 @@ public class DefaultJt808XtreamCommandSender implements Jt808CommandSender {
     protected final Jt808ResponseEncoder jt808ResponseEncoder;
     protected final Jt808FlowIdGenerator flowIdGenerator;
     private final Map<Jt808CommandKey, MonoSink<Object>> sinkMap = new HashMap<>();
+    protected final Jt808RequestLifecycleListener requestLifecycleListener;
 
-    public DefaultJt808XtreamCommandSender(ByteBufAllocator bufferFactory, XtreamSessionManager<Jt808Session> sessionManager, Jt808ResponseEncoder jt808ResponseEncoder, Jt808FlowIdGenerator flowIdGenerator) {
+    public DefaultJt808XtreamCommandSender(ByteBufAllocator bufferFactory, XtreamSessionManager<Jt808Session> sessionManager, Jt808ResponseEncoder jt808ResponseEncoder, Jt808FlowIdGenerator flowIdGenerator, Jt808RequestLifecycleListener requestLifecycleListener) {
         this.bufferFactory = bufferFactory;
         this.sessionManager = sessionManager;
         this.jt808ResponseEncoder = jt808ResponseEncoder;
         this.flowIdGenerator = flowIdGenerator;
+        this.requestLifecycleListener = requestLifecycleListener;
     }
 
     @Override
@@ -68,7 +72,7 @@ public class DefaultJt808XtreamCommandSender implements Jt808CommandSender {
     public Mono<Void> sendByteBuf(String sessionId, Publisher<? extends ByteBuf> data) {
         return this.getSessionById(sessionId).flatMap(session -> {
             // ...
-            return session.writeWith(data);
+            return this.doWrite(data, session);
         });
     }
 
@@ -79,7 +83,7 @@ public class DefaultJt808XtreamCommandSender implements Jt808CommandSender {
             final Jt808ProtocolVersion version = session.protocolVersion();
             return bodyMono.flatMap(body -> {
                 final Mono<ByteBuf> buffer = this.encodeJt808Message(version, terminalId, -1, body);
-                return session.writeWith(buffer);
+                return this.doWrite(buffer, session);
             });
         });
     }
@@ -102,7 +106,7 @@ public class DefaultJt808XtreamCommandSender implements Jt808CommandSender {
 
             return bodyMono.flatMap(body -> {
                 final Mono<ByteBuf> buffer = this.encodeJt808Message(version, terminalId, flowId, body);
-                return session.writeWith(buffer);
+                return this.doWrite(buffer, session);
             }).then(mono).doFinally(signalType -> {
                 // ...
                 sinkMap.remove(commandKey);
@@ -116,6 +120,14 @@ public class DefaultJt808XtreamCommandSender implements Jt808CommandSender {
         if (sink != null) {
             sink.success(clientResponse);
         }
+    }
+
+    protected Mono<Void> doWrite(Publisher<? extends ByteBuf> data, Jt808Session session) {
+        return switch (data) {
+            case Mono<? extends ByteBuf> mono -> session.writeWith(mono.doOnNext(command -> this.requestLifecycleListener.beforeCommandSend(session, command)));
+            case Flux<? extends ByteBuf> flux -> session.writeWith(flux.doOnNext(command -> this.requestLifecycleListener.beforeCommandSend(session, command)));
+            default -> throw new IllegalArgumentException("Unsupported data type: " + data.getClass());
+        };
     }
 
 

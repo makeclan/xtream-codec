@@ -17,9 +17,9 @@
 package io.github.hylexus.xtream.codec.ext.jt808.spec.impl;
 
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808AttachmentSessionManager;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ServerType;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
-import io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolConstant;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamResponse;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
@@ -39,11 +39,14 @@ public class DefaultJt808AttachmentSessionManager extends AbstractXtreamSessionM
 
     @Override
     protected Jt808Session doCreateSession(String sessionId, XtreamExchange exchange) {
+        final Jt808Request request = (Jt808Request) exchange.request();
         final XtreamResponse response = exchange.response();
         return new DefaultJt808Session(
                 sessionId,
                 Jt808ServerType.ATTACHMENT_SERVER,
                 exchange.request().type(),
+                request.header().version(),
+                request.terminalId(),
                 response.outbound(),
                 response.remoteAddress(),
                 this

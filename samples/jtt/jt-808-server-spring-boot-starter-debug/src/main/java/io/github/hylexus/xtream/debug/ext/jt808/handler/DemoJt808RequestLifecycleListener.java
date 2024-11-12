@@ -26,6 +26,7 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPubl
 import io.github.hylexus.xtream.debug.ext.jt808.domain.values.DemoJt808EventPayloads;
 import io.github.hylexus.xtream.debug.ext.jt808.domain.values.DemoJt808EventType;
 import io.netty.buffer.ByteBuf;
+import reactor.netty.NettyInbound;
 
 /**
  * @author hylexus
@@ -38,7 +39,7 @@ public class DemoJt808RequestLifecycleListener implements Jt808RequestLifecycleL
     }
 
     @Override
-    public void afterRequestDecode(XtreamExchange exchange, Jt808Request jt808Request, XtreamRequest originalRequest) {
+    public void afterRequestDecode(NettyInbound nettyInbound, ByteBuf rawPayload, Jt808Request jt808Request) {
         // 请求被解码之后发送事件
         // 发送事件然后立即返回；不要有阻塞的操作
         this.eventPublisher.publishIfNecessary(
@@ -51,7 +52,7 @@ public class DemoJt808RequestLifecycleListener implements Jt808RequestLifecycleL
                             header.version().shortDesc(),
                             header.messageBodyProps().hasSubPackage(),
                             header.messageId(),
-                            FormatUtils.toHexString(originalRequest.payload()),
+                            FormatUtils.toHexString(rawPayload),
                             FormatUtils.toHexString(jt808Request.payload())
                     );
                 }

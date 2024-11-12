@@ -35,7 +35,7 @@ import java.util.StringJoiner;
 /**
  * @author hylexus
  */
-public class DefaultJt808Session extends AbstractXtreamOutbound implements Jt808Session.MutableJt808Session {
+public class DefaultJt808Session extends AbstractXtreamOutbound implements Jt808Session {
     private final XtreamSessionManager<Jt808Session> sessionManager;
 
     private final String id;
@@ -45,14 +45,16 @@ public class DefaultJt808Session extends AbstractXtreamOutbound implements Jt808
     private volatile boolean verified;
     protected final Map<String, Object> attributes = new HashMap<>();
     // 下面几个属性只有在请求被解析之后才能确定具体值
-    private Jt808ProtocolVersion protocolVersion;
-    private String terminalId;
+    private final Jt808ProtocolVersion protocolVersion;
+    private final String terminalId;
 
-    public DefaultJt808Session(String id, Jt808ServerType role, XtreamRequest.Type type, NettyOutbound outbound, InetSocketAddress remoteAddress, XtreamSessionManager<Jt808Session> sessionManager) {
+    public DefaultJt808Session(String id, Jt808ServerType role, XtreamRequest.Type type, Jt808ProtocolVersion protocolVersion, String terminalId, NettyOutbound outbound, InetSocketAddress remoteAddress, XtreamSessionManager<Jt808Session> sessionManager) {
         super(ByteBufAllocator.DEFAULT, outbound, type, remoteAddress);
         this.id = id;
         this.role = role;
         this.sessionManager = sessionManager;
+        this.protocolVersion = protocolVersion;
+        this.terminalId = terminalId;
         this.creationTime = this.lastCommunicateTime = Instant.now();
         this.verified = false;
     }
@@ -88,21 +90,10 @@ public class DefaultJt808Session extends AbstractXtreamOutbound implements Jt808
         return this.protocolVersion;
     }
 
-    @Override
-    public MutableJt808Session protocolVersion(Jt808ProtocolVersion protocolVersion) {
-        this.protocolVersion = protocolVersion;
-        return this;
-    }
 
     @Override
     public String terminalId() {
         return this.terminalId;
-    }
-
-    @Override
-    public MutableJt808Session terminalId(String terminalId) {
-        this.terminalId = terminalId;
-        return this;
     }
 
     @Override

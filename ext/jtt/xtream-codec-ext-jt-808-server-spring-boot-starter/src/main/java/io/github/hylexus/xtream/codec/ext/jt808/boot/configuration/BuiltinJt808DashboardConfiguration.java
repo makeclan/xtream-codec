@@ -40,8 +40,12 @@ public class BuiltinJt808DashboardConfiguration {
 
     @Bean
     @ConditionalOnBean(Jt808SessionManager.class)
-    SessionInfoCollector sessionManager(Jt808ServerSimpleMetricsHolder serverSimpleMetricsHolder, Jt808SessionManager sessionManager) {
-        return new SessionInfoCollector(serverSimpleMetricsHolder, sessionManager);
+    SessionInfoCollector sessionManager(
+            Jt808ServerSimpleMetricsHolder serverSimpleMetricsHolder,
+            XtreamEventPublisher eventPublisher,
+            @Autowired(required = false) Jt808SessionManager sessionManager,
+            @Autowired(required = false) Jt808AttachmentSessionManager attachmentSessionManager) {
+        return new SessionInfoCollector(serverSimpleMetricsHolder, sessionManager, attachmentSessionManager, eventPublisher);
     }
 
     @Bean

@@ -33,7 +33,6 @@ import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
 
 import java.net.InetSocketAddress;
-import java.time.Instant;
 import java.util.List;
 
 /**
@@ -67,17 +66,9 @@ public class Jt808InstructionServerUdpHandlerAdapter extends DefaultUdpXtreamNet
 
     protected Mono<Void> handleSingleRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf payload, InetSocketAddress remoteAddress) {
         final XtreamExchange exchange = this.exchangeCreator.createUdpExchange(allocator, nettyInbound, nettyOutbound, payload, remoteAddress);
-        return exchange.session().flatMap(session -> {
-            session.lastCommunicateTime(Instant.now());
-            return xtreamHandler
-                    .handle(exchange)
-                    .doOnError(Throwable.class, throwable -> {
-                        // ...
-                        log.error(throwable.getMessage(), throwable);
-                    }).doFinally(signalType -> {
-                        // ...
-                        XtreamBytes.releaseBuf(payload);
-                    });
+        return this.doUdpExchange(exchange).doFinally(signalType -> {
+            XtreamBytes.releaseBuf(payload);
+            exchange.request().release();
         });
     }
 }

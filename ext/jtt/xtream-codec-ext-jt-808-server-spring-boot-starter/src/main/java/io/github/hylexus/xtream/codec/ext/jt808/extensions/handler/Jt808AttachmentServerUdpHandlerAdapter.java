@@ -16,14 +16,21 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.extensions.handler;
 
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestCombiner;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808UdpDatagramPackageSplitter;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ServerType;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
-import io.github.hylexus.xtream.codec.ext.jt808.utils.Jt808AttachmentHandlerUtils;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808MessageBodyProps;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808Request;
 import io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolUtils;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchangeCreator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamInbound;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamExchange;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamResponse;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.socket.DatagramPacket;
@@ -61,22 +68,42 @@ public class Jt808AttachmentServerUdpHandlerAdapter extends Jt808InstructionServ
     }
 
     protected Mono<Void> handleStreamRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf payload, InetSocketAddress remoteAddress) {
-        // final Jt808Session session = Jt808AttachmentHandlerUtils.getAttachmentSessionUdp(nettyOutbound, remoteAddress);
-        // if (session == null) {
-        //     return Mono.error(new IllegalStateException("attachment session not found"));
-        // }
         return this.getUdpAttachmentSession(remoteAddress).flatMap(session -> {
             session.lastCommunicateTime(Instant.now());
-
-            final XtreamExchange exchange = this.exchangeCreator.createUdpExchange(allocator, nettyInbound, nettyOutbound, payload, remoteAddress);
-            final Jt808Request jt808Request = Jt808AttachmentHandlerUtils.simulateJt808Request(allocator, nettyInbound, payload, session, exchange, exchangeCreator.generateRequestId(nettyInbound));
-            final XtreamExchange simulatedExchange = exchange.mutate().request(jt808Request).build();
+            final Jt808Request jt808Request = simulateJt808Request(allocator, nettyInbound, payload, session, remoteAddress);
+            final DefaultXtreamResponse response = new DefaultXtreamResponse(allocator, nettyOutbound, XtreamInbound.Type.UDP, remoteAddress);
+            final XtreamExchange simulatedExchange = new DefaultXtreamExchange(this.exchangeCreator.sessionManager(), jt808Request, response);
             return this.attachmentHandler.handle(simulatedExchange)
                     .doOnError(Throwable.class, throwable -> {
                         // ...
                         log.error(throwable.getMessage(), throwable);
                     });
         });
+    }
+
+    public Jt808Request simulateJt808Request(ByteBufAllocator allocator, NettyInbound nettyInbound, ByteBuf payload, Jt808Session session, InetSocketAddress remoteAddress) {
+        final Jt808RequestHeader header = Jt808RequestHeader.newBuilder()
+                .version(session.protocolVersion())
+                .messageId(0x30316364)
+                .messageBodyProps(new DefaultJt808MessageBodyProps(0))
+                .terminalId(session.terminalId())
+                .flowId(0)
+                .build();
+
+        return new DefaultJt808Request(
+                Jt808ServerType.ATTACHMENT_SERVER,
+                this.exchangeCreator.generateRequestId(nettyInbound),
+                Jt808RequestCombiner.randomTraceId(),
+                allocator,
+                nettyInbound,
+                XtreamInbound.Type.UDP,
+                // 跳过 0x30316364 4字节
+                payload.readerIndex(payload.readerIndex() + 4),
+                remoteAddress,
+                header,
+                0,
+                0
+        );
     }
 
     Mono<Jt808Session> getUdpAttachmentSession(InetSocketAddress remoteAddress) {

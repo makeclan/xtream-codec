@@ -17,6 +17,8 @@
 package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration.attachment;
 
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808AttachmentServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.impl.BuiltinJt808AttachmentServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808AttachmentSessionManager;
@@ -25,6 +27,7 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionEventLis
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.UdpSessionIdleStateCheckerProps;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -39,23 +42,26 @@ public class BuiltinJt808AttachmentServerConfiguration {
 
     @Bean(destroyMethod = "shutdown")
     @ConditionalOnMissingBean
-    Jt808AttachmentSessionManager jt808AttachmentSessionManager(
-            XtreamSessionIdGenerator idGenerator,
-            XtreamJt808ServerProperties serverProperties,
-            ObjectProvider<XtreamSessionEventListener> listeners) {
+    Jt808AttachmentSessionManager jt808AttachmentSessionManager(XtreamSessionIdGenerator idGenerator, XtreamJt808ServerProperties serverProperties) {
 
         final UdpSessionIdleStateCheckerProps idleStateChecker = serverProperties.getAttachmentServer().getUdpServer().getSessionIdleStateChecker();
-        final DefaultJt808AttachmentSessionManager sessionManager = new DefaultJt808AttachmentSessionManager(
+        return new DefaultJt808AttachmentSessionManager(
                 serverProperties.getAttachmentServer().getUdpServer().isEnabled(),
                 idleStateChecker, idGenerator
         );
-        listeners.orderedStream().forEach(sessionManager::addListener);
-        return sessionManager;
+    }
+
+    @Bean
+    CommandLineRunner xtreamAttachmentSessionEventListenerRegister(Jt808AttachmentSessionManager sessionManager, ObjectProvider<XtreamSessionEventListener> listeners) {
+        return args -> listeners.orderedStream().forEach(sessionManager::addListener);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    Jt808AttachmentServerExchangeCreator jt808AttachmentServerExchangeCreator(Jt808AttachmentSessionManager sessionManager) {
-        return new BuiltinJt808AttachmentServerExchangeCreator(sessionManager);
+    Jt808AttachmentServerExchangeCreator jt808AttachmentServerExchangeCreator(
+            Jt808AttachmentSessionManager sessionManager,
+            Jt808RequestDecoder requestDecoder,
+            Jt808RequestLifecycleListener requestLifecycleListener) {
+        return new BuiltinJt808AttachmentServerExchangeCreator(sessionManager, requestDecoder, requestLifecycleListener);
     }
 }

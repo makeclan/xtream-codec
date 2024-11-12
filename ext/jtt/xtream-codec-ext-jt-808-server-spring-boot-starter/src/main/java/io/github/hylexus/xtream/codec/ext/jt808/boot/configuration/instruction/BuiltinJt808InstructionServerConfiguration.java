@@ -18,6 +18,8 @@ package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration.instruction;
 
 import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808ResponseEncoder;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808CommandSender;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808InstructionServerExchangeCreator;
@@ -60,13 +62,21 @@ public class BuiltinJt808InstructionServerConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    Jt808InstructionServerExchangeCreator jt808InstructionServerExchangeCreator(Jt808SessionManager sessionManager) {
-        return new BuiltinJt808InstructionServerExchangeCreator(sessionManager);
+    Jt808InstructionServerExchangeCreator jt808InstructionServerExchangeCreator(
+            Jt808SessionManager sessionManager,
+            Jt808RequestDecoder requestDecoder,
+            Jt808RequestLifecycleListener requestLifecycleListener) {
+        return new BuiltinJt808InstructionServerExchangeCreator(sessionManager, requestDecoder, requestLifecycleListener);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    Jt808CommandSender jt808CommandSender(BufferFactoryHolder holder, Jt808SessionManager sessionManager, Jt808ResponseEncoder encoder, Jt808FlowIdGenerator flowIdGenerator) {
-        return new DefaultJt808XtreamCommandSender(holder.getAllocator(), sessionManager, encoder, flowIdGenerator);
+    Jt808CommandSender jt808CommandSender(
+            BufferFactoryHolder holder,
+            Jt808SessionManager sessionManager,
+            Jt808ResponseEncoder encoder,
+            Jt808FlowIdGenerator flowIdGenerator,
+            Jt808RequestLifecycleListener requestLifecycleListener) {
+        return new DefaultJt808XtreamCommandSender(holder.getAllocator(), sessionManager, encoder, flowIdGenerator, requestLifecycleListener);
     }
 }

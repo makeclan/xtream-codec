@@ -38,10 +38,20 @@ public interface XtreamEvent {
         String description();
 
         XtreamEventType ALL = DefaultXtreamEventType.ALL;
+        XtreamEventType AFTER_SESSION_CREATED = DefaultXtreamEventType.AFTER_SESSION_CREATED;
+        XtreamEventType BEFORE_SESSION_CLOSED = DefaultXtreamEventType.BEFORE_SESSION_CLOSED;
+        XtreamEventType AFTER_REQUEST_RECEIVED = DefaultXtreamEventType.AFTER_REQUEST_RECEIVED;
+        XtreamEventType BEFORE_RESPONSE_SEND = DefaultXtreamEventType.BEFORE_RESPONSE_SEND;
+        XtreamEventType BEFORE_COMMAND_SEND = DefaultXtreamEventType.BEFORE_COMMAND_SEND;
     }
 
     enum DefaultXtreamEventType implements XtreamEventType {
         ALL(-1, "所有事件"),
+        AFTER_SESSION_CREATED(-99, "Session创建"),
+        BEFORE_SESSION_CLOSED(-98, "Session关闭"),
+        AFTER_REQUEST_RECEIVED(-100, "收到请求"),
+        BEFORE_RESPONSE_SEND(-102, "发送响应"),
+        BEFORE_COMMAND_SEND(-103, "指令下发"),
         ;
         private final int code;
         private final String description;

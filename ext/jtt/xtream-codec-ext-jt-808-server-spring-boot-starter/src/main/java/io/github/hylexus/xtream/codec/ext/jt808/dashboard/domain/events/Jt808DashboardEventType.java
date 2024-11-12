@@ -25,12 +25,10 @@ import java.util.stream.Collectors;
 
 /**
  * @author hylexus
+ * @see io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEvent.DefaultXtreamEventType
  */
 public enum Jt808DashboardEventType implements XtreamEvent.XtreamEventType {
-    RECEIVE_PACKAGE(-100, "请求"),
-    MERGE_PACKAGE(-101, "合并请求"),
-    SEND_PACKAGE(-102, "响应"),
-    COMMAND(-103, "指令下发"),
+    AFTER_SUB_REQUEST_MERGED(-101, "请求合并"),
     ;
 
     private final int code;

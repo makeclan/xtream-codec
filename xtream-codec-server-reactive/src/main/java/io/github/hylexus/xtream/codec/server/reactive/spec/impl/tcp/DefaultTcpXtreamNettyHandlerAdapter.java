@@ -51,6 +51,9 @@ public class DefaultTcpXtreamNettyHandlerAdapter implements TcpXtreamNettyHandle
     @Override
     public Publisher<Void> apply(NettyInbound nettyInbound, NettyOutbound nettyOutbound) {
         return nettyInbound.receive().flatMap(byteBuf -> {
+            if (byteBuf.readableBytes() <= 0) {
+                return Mono.empty();
+            }
             final InetSocketAddress remoteAddress = this.initTcpRemoteAddress(nettyInbound);
             return this.handleSingleRequest(nettyInbound, nettyOutbound, byteBuf, remoteAddress);
         }).onErrorResume(throwable -> {
@@ -60,11 +63,11 @@ public class DefaultTcpXtreamNettyHandlerAdapter implements TcpXtreamNettyHandle
     }
 
     protected Mono<Void> handleSingleRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf payload, InetSocketAddress remoteAddress) {
-        if (payload.readableBytes() <= 0) {
-            return Mono.empty();
-        }
-
         final XtreamExchange exchange = this.xtreamExchangeCreator.createTcpExchange(allocator, nettyInbound, nettyOutbound, payload, remoteAddress);
+        return this.doTcpExchange(exchange);
+    }
+
+    protected Mono<Void> doTcpExchange(XtreamExchange exchange) {
         return exchange.session().flatMap(session -> {
             session.lastCommunicateTime(Instant.now());
             return xtreamHandler

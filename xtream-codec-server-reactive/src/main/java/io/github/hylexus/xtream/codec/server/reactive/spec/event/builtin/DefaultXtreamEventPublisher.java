@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -39,7 +38,7 @@ public class DefaultXtreamEventPublisher implements XtreamEventPublisher {
     private static final Logger log = LoggerFactory.getLogger(DefaultXtreamEventPublisher.class);
 
     private final ConcurrentMap<String, XtreamEventSubscriberInfo> subscribers = new ConcurrentHashMap<>();
-    private final Map<Integer, Integer> interestedEventTypes = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Integer, Integer> interestedEventTypes = new ConcurrentHashMap<>();
 
     private final Sinks.Many<XtreamEvent> sink;
     private final XtreamSchedulerRegistry schedulerRegistry;

@@ -17,9 +17,11 @@
 package io.github.hylexus.xtream.codec.ext.jt808.codec;
 
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.netty.buffer.ByteBuf;
+import reactor.netty.NettyInbound;
 
 /**
  * JT808 请求生命周期监听器。
@@ -41,12 +43,12 @@ public interface Jt808RequestLifecycleListener {
     /**
      * 原始请求解码为 JTT/808 请求之后回调
      *
-     * @param exchange        请求上下文
-     * @param jt808Request    解码后的 JTT/808 请求
-     * @param originalRequest 原始请求
+     * @param nettyInbound 请求上下文
+     * @param rawPayload   原始请求
+     * @param jt808Request 解码后的 JTT/808 请求
      * @implNote 不要有阻塞操作
      */
-    default void afterRequestDecode(XtreamExchange exchange, Jt808Request jt808Request, XtreamRequest originalRequest) {
+    default void afterRequestDecode(NettyInbound nettyInbound, ByteBuf rawPayload, Jt808Request jt808Request) {
     }
 
     /**
@@ -70,12 +72,13 @@ public interface Jt808RequestLifecycleListener {
     }
 
     /**
-     * todo 下发指令前回调
+     * (主动)下发指令之前回调
      *
+     * @param session 会话信息
      * @param command 下发的指令
      * @see io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808CommandSender
      */
-    default void beforeCommandSend(ByteBuf command) {
+    default void beforeCommandSend(Jt808Session session, ByteBuf command) {
     }
 
     class NoopJt808RequestLifecycleListener implements Jt808RequestLifecycleListener {

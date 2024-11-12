@@ -16,6 +16,9 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.events;
 
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionEventListener;
+import org.springframework.util.StringUtils;
+
 /**
  * @author hylexus
  */
@@ -26,14 +29,39 @@ public class Jt808DashboardEventPayloads {
         String terminalId();
 
         default boolean match(String input) {
-            return terminalId().contains(input.toLowerCase());
+            final String terminalId = terminalId();
+            return StringUtils.hasText(terminalId)
+                   && terminalId.contains(input.toLowerCase());
         }
+    }
+
+    /**
+     * Session 创建
+     */
+    public record SessionCreationInfo(
+            String id,
+            String terminalId,
+            String version,
+            String type,
+            String remoteAddress) implements HasTerminalId {
+    }
+
+    /**
+     * Session 关闭
+     */
+    public record SessionClosingInfo(
+            String id,
+            String terminalId,
+            String version,
+            String type,
+            String remoteAddress,
+            XtreamSessionEventListener.SessionCloseReason reason) implements HasTerminalId {
     }
 
     /**
      * 收到 JT808 请求
      */
-    public record ReceiveRequest(
+    public record ReceivedRequestInfo(
             String requestId,
             String traceId,
             String terminalId,
@@ -47,7 +75,7 @@ public class Jt808DashboardEventPayloads {
     /**
      * JT808 合并请求
      */
-    public record MergeRequest(
+    public record MergedRequestInfo(
             String requestId,
             String traceId,
             String terminalId,
@@ -60,11 +88,22 @@ public class Jt808DashboardEventPayloads {
     /**
      * 回复 JT808 响应
      */
-    public record SendResponse(
+    public record ResponseInfo(
             String requestId,
             String traceId,
             String terminalId,
             int messageId,
             String hexString) implements HasTerminalId {
     }
+
+    /**
+     * 主动下发指令
+     */
+    public record CommandInfo(
+            String sessionId,
+            String terminalId,
+            String version,
+            String command) implements HasTerminalId {
+    }
+
 }

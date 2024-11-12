@@ -22,10 +22,13 @@ import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.events.Jt808Das
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.events.Jt808DashboardEventType;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
+import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEvent;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 import io.netty.buffer.ByteBuf;
+import reactor.netty.NettyInbound;
 
 /**
  * @author hylexus
@@ -38,21 +41,21 @@ public class Jt808DashboardRequestLifecycleListener implements Jt808RequestLifec
     }
 
     @Override
-    public void afterRequestDecode(XtreamExchange exchange, Jt808Request jt808Request, XtreamRequest originalRequest) {
+    public void afterRequestDecode(NettyInbound nettyInbound, ByteBuf rawPayload, Jt808Request jt808Request) {
         // 请求被解码之后发送事件
         // 发送事件然后立即返回；不要有阻塞的操作
         this.eventPublisher.publishIfNecessary(
-                Jt808DashboardEventType.RECEIVE_PACKAGE,
+                XtreamEvent.XtreamEventType.AFTER_REQUEST_RECEIVED,
                 () -> {
                     final Jt808RequestHeader header = jt808Request.header();
-                    return new Jt808DashboardEventPayloads.ReceiveRequest(
+                    return new Jt808DashboardEventPayloads.ReceivedRequestInfo(
                             jt808Request.requestId(),
                             jt808Request.traceId(),
                             jt808Request.terminalId(),
                             header.version().shortDesc(),
                             header.messageBodyProps().hasSubPackage(),
                             header.messageId(),
-                            FormatUtils.toHexString(originalRequest.payload()),
+                            FormatUtils.toHexString(rawPayload),
                             FormatUtils.toHexString(jt808Request.payload())
                     );
                 }
@@ -64,10 +67,10 @@ public class Jt808DashboardRequestLifecycleListener implements Jt808RequestLifec
         // 分包合并之后发送事件
         // 发送事件然后立即返回；不要有阻塞的操作
         this.eventPublisher.publishIfNecessary(
-                Jt808DashboardEventType.MERGE_PACKAGE,
+                Jt808DashboardEventType.AFTER_SUB_REQUEST_MERGED,
                 () -> {
                     final Jt808RequestHeader header = mergedRequest.header();
-                    return new Jt808DashboardEventPayloads.MergeRequest(
+                    return new Jt808DashboardEventPayloads.MergedRequestInfo(
                             mergedRequest.requestId(),
                             mergedRequest.traceId(),
                             mergedRequest.terminalId(),
@@ -83,17 +86,33 @@ public class Jt808DashboardRequestLifecycleListener implements Jt808RequestLifec
     @Override
     public void beforeResponseSend(XtreamRequest request, ByteBuf response) {
         this.eventPublisher.publishIfNecessary(
-                Jt808DashboardEventType.SEND_PACKAGE,
+                XtreamEvent.XtreamEventType.BEFORE_RESPONSE_SEND,
                 () -> {
                     final Jt808Request jt808Request = (Jt808Request) request;
                     final String requestId = jt808Request.requestId();
                     final String traceId = jt808Request.traceId();
-                    return new Jt808DashboardEventPayloads.SendResponse(
+                    return new Jt808DashboardEventPayloads.ResponseInfo(
                             requestId,
                             traceId,
                             jt808Request.terminalId(),
                             jt808Request.messageId(),
                             FormatUtils.toHexString(response)
+                    );
+                }
+        );
+    }
+
+    @Override
+    public void beforeCommandSend(Jt808Session session, ByteBuf command) {
+        this.eventPublisher.publishIfNecessary(
+                XtreamEvent.XtreamEventType.BEFORE_COMMAND_SEND,
+                () -> {
+                    // ...
+                    return new Jt808DashboardEventPayloads.CommandInfo(
+                            session.id(),
+                            session.terminalId(),
+                            session.protocolVersion().shortDesc(),
+                            FormatUtils.toHexString(command)
                     );
                 }
         );

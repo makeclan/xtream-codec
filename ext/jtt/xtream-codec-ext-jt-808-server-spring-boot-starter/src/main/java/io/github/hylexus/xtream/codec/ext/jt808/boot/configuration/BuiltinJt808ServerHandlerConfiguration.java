@@ -20,13 +20,12 @@ import io.github.hylexus.xtream.codec.core.EntityCodec;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.configuration.attachment.BuiltinJt808AttachmentServerConfiguration;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.configuration.instruction.BuiltinJt808InstructionServerConfiguration;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestCombiner;
-import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808ResponseEncoder;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.Jt808RequestLifecycleListenerComposite;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
-import io.github.hylexus.xtream.codec.ext.jt808.extensions.filter.Jt808RequestDecoderFilter;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.filter.Jt808RequestCombinerFilter;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestMappingHandlerMapping;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBodyHandlerResultHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
@@ -77,11 +76,10 @@ public class BuiltinJt808ServerHandlerConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(prefix = "jt808-server.builtin-filters.request-decoder", name = "enabled", havingValue = "true", matchIfMissing = true)
-    Jt808RequestDecoderFilter jt808RequestDecoderFilter(
-            Jt808RequestDecoder jt808RequestDecoder,
+    Jt808RequestCombinerFilter jt808RequestCombinerFilter(
             Jt808RequestCombiner jt808RequestCombiner,
             Jt808RequestLifecycleListener lifecycleListener) {
-        return new Jt808RequestDecoderFilter(jt808RequestDecoder, jt808RequestCombiner, lifecycleListener);
+        return new Jt808RequestCombinerFilter(jt808RequestCombiner, lifecycleListener);
     }
     // endregion filters
 
