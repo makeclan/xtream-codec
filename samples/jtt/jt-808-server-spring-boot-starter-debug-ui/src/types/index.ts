@@ -25,11 +25,14 @@ export type Event = {
 };
 
 export enum EventType {
-  RECEIVE_PACKAGE = -100, // 请求
-  MERGE_PACKAGE = -101, // "合并请求"
-  SEND_PACKAGE = -102, // "响应"
-  COMMAND = -103, // "指令下发"
+  ALL = "-1", // 所有事件
+  AFTER_SESSION_CREATED = "-99", // Session创建
+  BEFORE_SESSION_CLOSED = "-98", // Session关闭
+  AFTER_REQUEST_RECEIVED = "-100", // 收到请求
+  BEFORE_RESPONSE_SEND = "-102", // 发送响应
+  BEFORE_COMMAND_SEND = "-103", // 指令下发
 }
+
 // interface SessionCount {
 //   max: number;
 //   current: number;
