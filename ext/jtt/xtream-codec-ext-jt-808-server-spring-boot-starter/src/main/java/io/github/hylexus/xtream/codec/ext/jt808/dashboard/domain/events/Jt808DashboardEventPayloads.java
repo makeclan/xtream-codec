@@ -16,8 +16,11 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.events;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionEventListener;
 import org.springframework.util.StringUtils;
+
+import java.time.Instant;
 
 /**
  * @author hylexus
@@ -35,6 +38,11 @@ public class Jt808DashboardEventPayloads {
         }
     }
 
+    public interface HasEventTime {
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "GMT+8")
+        Instant eventTime();
+    }
+
     /**
      * Session 创建
      */
@@ -43,7 +51,8 @@ public class Jt808DashboardEventPayloads {
             String terminalId,
             String version,
             String type,
-            String remoteAddress) implements HasTerminalId {
+            String remoteAddress,
+            Instant eventTime) implements HasTerminalId, HasEventTime {
     }
 
     /**
@@ -55,7 +64,8 @@ public class Jt808DashboardEventPayloads {
             String version,
             String type,
             String remoteAddress,
-            XtreamSessionEventListener.SessionCloseReason reason) implements HasTerminalId {
+            XtreamSessionEventListener.SessionCloseReason reason,
+            Instant eventTime) implements HasTerminalId, HasEventTime {
     }
 
     /**
@@ -69,7 +79,8 @@ public class Jt808DashboardEventPayloads {
             boolean isSubPackage,
             int messageId,
             String rawHexString,
-            String escapedHexString) implements HasTerminalId {
+            String escapedHexString,
+            Instant eventTime) implements HasTerminalId, HasEventTime {
     }
 
     /**
@@ -82,7 +93,8 @@ public class Jt808DashboardEventPayloads {
             String version,
             boolean isSubPackage,
             int messageId,
-            String mergedHexString) implements HasTerminalId {
+            String mergedHexString,
+            Instant eventTime) implements HasTerminalId, HasEventTime {
     }
 
     /**
@@ -93,7 +105,8 @@ public class Jt808DashboardEventPayloads {
             String traceId,
             String terminalId,
             int messageId,
-            String hexString) implements HasTerminalId {
+            String hexString,
+            Instant eventTime) implements HasTerminalId, HasEventTime {
     }
 
     /**
@@ -103,7 +116,8 @@ public class Jt808DashboardEventPayloads {
             String sessionId,
             String terminalId,
             String version,
-            String command) implements HasTerminalId {
+            String command,
+            Instant eventTime) implements HasTerminalId, HasEventTime {
     }
 
 }

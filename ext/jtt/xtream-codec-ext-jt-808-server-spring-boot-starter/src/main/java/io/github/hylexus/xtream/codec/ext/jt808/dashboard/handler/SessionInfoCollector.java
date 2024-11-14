@@ -29,6 +29,8 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionEventLis
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEvent;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 
+import java.time.Instant;
+
 public class SessionInfoCollector implements XtreamSessionEventListener {
     private final Jt808ServerSimpleMetricsHolder metricsHolder;
     private final Jt808SessionManager sessionManager;
@@ -57,7 +59,8 @@ public class SessionInfoCollector implements XtreamSessionEventListener {
                             jt808Session.terminalId(),
                             jt808Session.protocolVersion().shortDesc(),
                             jt808Session.type().name(),
-                            jt808Session.remoteAddress().toString()
+                            jt808Session.remoteAddress().toString(),
+                            session.creationTime()
                     );
                 }
         );
@@ -68,7 +71,7 @@ public class SessionInfoCollector implements XtreamSessionEventListener {
         final Jt808Session jt808Session = (Jt808Session) session;
 
         updateCount(session.type(), jt808Session.role());
-
+        final Instant now = Instant.now();
         this.eventPublisher.publishIfNecessary(
                 XtreamEvent.XtreamEventType.BEFORE_SESSION_CLOSED,
                 () -> {
@@ -79,7 +82,8 @@ public class SessionInfoCollector implements XtreamSessionEventListener {
                             jt808Session.protocolVersion().shortDesc(),
                             jt808Session.type().name(),
                             jt808Session.remoteAddress().toString(),
-                            reason
+                            reason,
+                            now
                     );
                 }
         );

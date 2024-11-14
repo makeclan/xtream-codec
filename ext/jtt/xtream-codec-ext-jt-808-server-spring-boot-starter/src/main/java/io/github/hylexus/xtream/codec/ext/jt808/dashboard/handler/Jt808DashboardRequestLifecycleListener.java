@@ -30,6 +30,8 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPubl
 import io.netty.buffer.ByteBuf;
 import reactor.netty.NettyInbound;
 
+import java.time.Instant;
+
 /**
  * @author hylexus
  */
@@ -44,6 +46,7 @@ public class Jt808DashboardRequestLifecycleListener implements Jt808RequestLifec
     public void afterRequestDecode(NettyInbound nettyInbound, ByteBuf rawPayload, Jt808Request jt808Request) {
         // 请求被解码之后发送事件
         // 发送事件然后立即返回；不要有阻塞的操作
+        final Instant now = Instant.now();
         this.eventPublisher.publishIfNecessary(
                 XtreamEvent.XtreamEventType.AFTER_REQUEST_RECEIVED,
                 () -> {
@@ -56,7 +59,8 @@ public class Jt808DashboardRequestLifecycleListener implements Jt808RequestLifec
                             header.messageBodyProps().hasSubPackage(),
                             header.messageId(),
                             FormatUtils.toHexString(rawPayload),
-                            FormatUtils.toHexString(jt808Request.payload())
+                            FormatUtils.toHexString(jt808Request.payload()),
+                            now
                     );
                 }
         );
@@ -66,6 +70,7 @@ public class Jt808DashboardRequestLifecycleListener implements Jt808RequestLifec
     public void afterSubPackageMerged(XtreamExchange exchange, Jt808Request mergedRequest) {
         // 分包合并之后发送事件
         // 发送事件然后立即返回；不要有阻塞的操作
+        final Instant now = Instant.now();
         this.eventPublisher.publishIfNecessary(
                 Jt808DashboardEventType.AFTER_SUB_REQUEST_MERGED,
                 () -> {
@@ -77,7 +82,8 @@ public class Jt808DashboardRequestLifecycleListener implements Jt808RequestLifec
                             header.version().shortDesc(),
                             header.messageBodyProps().hasSubPackage(),
                             header.messageId(),
-                            FormatUtils.toHexString(mergedRequest.payload())
+                            FormatUtils.toHexString(mergedRequest.payload()),
+                            now
                     );
                 }
         );
@@ -85,6 +91,7 @@ public class Jt808DashboardRequestLifecycleListener implements Jt808RequestLifec
 
     @Override
     public void beforeResponseSend(XtreamRequest request, ByteBuf response) {
+        final Instant now = Instant.now();
         this.eventPublisher.publishIfNecessary(
                 XtreamEvent.XtreamEventType.BEFORE_RESPONSE_SEND,
                 () -> {
@@ -96,7 +103,8 @@ public class Jt808DashboardRequestLifecycleListener implements Jt808RequestLifec
                             traceId,
                             jt808Request.terminalId(),
                             jt808Request.messageId(),
-                            FormatUtils.toHexString(response)
+                            FormatUtils.toHexString(response),
+                            now
                     );
                 }
         );
@@ -104,6 +112,7 @@ public class Jt808DashboardRequestLifecycleListener implements Jt808RequestLifec
 
     @Override
     public void beforeCommandSend(Jt808Session session, ByteBuf command) {
+        final Instant now = Instant.now();
         this.eventPublisher.publishIfNecessary(
                 XtreamEvent.XtreamEventType.BEFORE_COMMAND_SEND,
                 () -> {
@@ -112,7 +121,8 @@ public class Jt808DashboardRequestLifecycleListener implements Jt808RequestLifec
                             session.id(),
                             session.terminalId(),
                             session.protocolVersion().shortDesc(),
-                            FormatUtils.toHexString(command)
+                            FormatUtils.toHexString(command),
+                            now
                     );
                 }
         );
