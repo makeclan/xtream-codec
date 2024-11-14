@@ -22,6 +22,7 @@ export type Event = {
   messageId: string;
   rawHexString: string;
   escapedHexString: string;
+  type: EventType;
 };
 
 export enum EventType {

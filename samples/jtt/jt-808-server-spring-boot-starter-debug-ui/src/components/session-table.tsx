@@ -11,18 +11,16 @@ import { Spinner } from "@nextui-org/spinner";
 import { Pagination } from "@nextui-org/pagination";
 import { Button } from "@nextui-org/button";
 import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/modal";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   EventSourceMessage,
   fetchEventSource,
 } from "@microsoft/fetch-event-source";
-import { Card, CardBody } from "@nextui-org/card";
-import { Avatar } from "@nextui-org/avatar";
-import { Spacer } from "@nextui-org/spacer";
-import clsx from "clsx";
+import { ScrollShadow } from "@nextui-org/scroll-shadow";
 
 import { usePageList } from "@/hooks/use-page-list.ts";
-import { EventType, Session } from "@/types";
+import { Session } from "@/types";
+import Message from "@/components/message.tsx";
 
 export default function SessionTable(props: { path: string }) {
   const { setPage, page, pages, data, isLoading } = usePageList(props.path);
@@ -46,7 +44,7 @@ export default function SessionTable(props: { path: string }) {
           const data: any = JSON.parse(event.data);
 
           data.type = event.event;
-          setLinkData((pre) => pre.concat([data]));
+          setLinkData((pre: Event[]) => pre.concat([data]));
         },
       },
     ).then(() => {
@@ -57,6 +55,23 @@ export default function SessionTable(props: { path: string }) {
       ctrl.abort();
     };
   }, [isOpen]);
+
+  useEffect(() => {
+    scrollToIndex(linkData.length - 1);
+  }, [linkData]);
+
+  const listRef = useRef<HTMLDivElement>(null);
+  const scrollToIndex = (index: number) => {
+    const listNode = listRef.current;
+    // This line assumes a particular DOM structure:
+    const imgNode = listNode?.querySelectorAll(".message-card")[index];
+
+    imgNode?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
+  };
   const loadingState =
     isLoading && data?.data?.length === 0 ? "loading" : "idle";
 
@@ -75,7 +90,6 @@ export default function SessionTable(props: { path: string }) {
   };
   const onClose = () => {
     setIsOpen(false);
-    // closeConnection();
   };
 
   return (
@@ -139,32 +153,11 @@ export default function SessionTable(props: { path: string }) {
               {selectedRow?.terminalId}
             </ModalHeader>
             <ModalBody>
-              {linkData.map((item: any, index: number) => (
-                <div
-                  key={index}
-                  className={clsx(
-                    "flex items-center",
-                    EventType.AFTER_REQUEST_RECEIVED === item.type
-                      ? "flex-row-reverse"
-                      : "",
-                  )}
-                >
-                  <Avatar
-                    className="flex-shrink-0"
-                    name={
-                      EventType.AFTER_REQUEST_RECEIVED === item.type ? "S" : "C"
-                    }
-                  />
-                  <Spacer x={2} />
-                  <Card className="flex-grow-0">
-                    <CardBody>
-                      {Object.keys(item).map((e, i) => (
-                        <p key={i}>{`${e}: ${item[e]}`}</p>
-                      ))}
-                    </CardBody>
-                  </Card>
-                </div>
-              ))}
+              <ScrollShadow ref={listRef} hideScrollBar>
+                {linkData.map((item: any, index: number) => (
+                  <Message key={index} className="message-card" item={item} />
+                ))}
+              </ScrollShadow>
             </ModalBody>
           </>
         </ModalContent>
