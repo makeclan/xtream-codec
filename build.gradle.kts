@@ -4,6 +4,7 @@ import java.util.*
 
 plugins {
     id("java-library")
+    id("org.springframework.boot") version "3.3.5" apply(false)
     id("io.spring.dependency-management") version "1.1.6"
     id("maven-publish")
     id("signing")
@@ -89,6 +90,8 @@ configure(subprojects) {
     license {
         header = rootProject.file("build-script/license/license-header")
         skipExistingHeaders = false
+        exclude("**/spring.factories")
+        exclude("**/org.springframework.boot.autoconfigure.AutoConfiguration.imports")
     }
 
     apply(plugin = "com.github.jk1.dependency-license-report")
