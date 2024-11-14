@@ -17,16 +17,21 @@ import {
   fetchEventSource,
 } from "@microsoft/fetch-event-source";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
+import { Select, SelectItem } from "@nextui-org/select";
+import { Input } from "@nextui-org/input";
+import { Spacer } from "@nextui-org/spacer";
 
 import { usePageList } from "@/hooks/use-page-list.ts";
-import { Session } from "@/types";
+import { EventType, Session, Event } from "@/types";
 import Message from "@/components/message.tsx";
+import { subtitle } from "@/components/primitives.ts";
 
 export default function SessionTable(props: { path: string }) {
   const { setPage, page, pages, data, isLoading } = usePageList(props.path);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedRow, setSelectedRow] = useState<Session | null>(null);
-  const [linkData, setLinkData] = useState<any>([]);
+  const [linkData, setLinkData] = useState<Event[]>([]);
+  const [max, setMax] = useState("100");
 
   useEffect(() => {
     if (!isOpen) {
@@ -40,11 +45,16 @@ export default function SessionTable(props: { path: string }) {
         method: "GET",
         signal: ctrl.signal,
         onmessage: (event: EventSourceMessage) => {
-          console.log("Received event", event);
           const data: any = JSON.parse(event.data);
 
           data.type = event.event;
-          setLinkData((pre: Event[]) => pre.concat([data]));
+          setLinkData((pre) => {
+            if (pre.length < Number(max)) {
+              return pre.concat([data]);
+            } else {
+              return pre.concat([data]);
+            }
+          });
         },
       },
     ).then(() => {
@@ -58,12 +68,11 @@ export default function SessionTable(props: { path: string }) {
 
   useEffect(() => {
     scrollToIndex(linkData.length - 1);
-  }, [linkData]);
+  }, [linkData, isOpen]);
 
   const listRef = useRef<HTMLDivElement>(null);
   const scrollToIndex = (index: number) => {
     const listNode = listRef.current;
-    // This line assumes a particular DOM structure:
     const imgNode = listNode?.querySelectorAll(".message-card")[index];
 
     imgNode?.scrollIntoView({
@@ -91,6 +100,13 @@ export default function SessionTable(props: { path: string }) {
   const onClose = () => {
     setIsOpen(false);
   };
+  const eventList = [];
+
+  for (const key in EventType) {
+    if (!["-1", "ALL"].includes(key) && !isNaN(Number(key))) {
+      eventList.push({ key, name: key });
+    }
+  }
 
   return (
     <>
@@ -128,7 +144,11 @@ export default function SessionTable(props: { path: string }) {
               {(columnKey) =>
                 columnKey === "operation" ? (
                   <TableCell>
-                    <Button size="sm" onClick={() => handleMonitor(item)}>
+                    <Button
+                      color="primary"
+                      size="sm"
+                      onClick={() => handleMonitor(item)}
+                    >
                       Monitor
                     </Button>
                   </TableCell>
@@ -149,12 +169,34 @@ export default function SessionTable(props: { path: string }) {
       >
         <ModalContent>
           <>
-            <ModalHeader className="flex flex-col gap-1">
-              {selectedRow?.terminalId}
+            <ModalHeader className="flex justify-between gap-1">
+              <div className={subtitle()}>
+                terminalId: {selectedRow?.terminalId}
+              </div>
             </ModalHeader>
             <ModalBody>
+              <div className=" flex items-center">
+                <Input
+                  className="w-1/6"
+                  label="Max Length"
+                  size="sm"
+                  type="number"
+                  value={max}
+                  onValueChange={setMax}
+                />
+                <Spacer x={4} />
+                <Select label="Event Type" className="w-1/3" selectionMode="multiple" size="sm">
+                  {eventList.map((item) => (
+                    <SelectItem key={item.key}>{item.name}</SelectItem>
+                  ))}
+                </Select>
+                <Spacer x={4} />
+                <Button color="primary" size="sm">
+                  filter
+                </Button>
+              </div>
               <ScrollShadow ref={listRef} hideScrollBar>
-                {linkData.map((item: any, index: number) => (
+                {linkData?.map((item: any, index: number) => (
                   <Message key={index} className="message-card" item={item} />
                 ))}
               </ScrollShadow>

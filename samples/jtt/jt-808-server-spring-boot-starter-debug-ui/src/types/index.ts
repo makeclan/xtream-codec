@@ -4,7 +4,7 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };
 
-export type Session = {
+export interface Session {
   id: string;
   terminalId: string;
   serverType: string;
@@ -12,26 +12,26 @@ export type Session = {
   protocolType: string;
   creationTime: string;
   lastCommunicateTime: string;
-};
+}
 
-export type Event = {
-  requestId: string;
-  traceId: string;
-  version: string;
-  isSubPackage: string;
-  messageId: string;
-  rawHexString: string;
-  escapedHexString: string;
-  type: EventType;
-};
+// export interface Event {
+//   requestId: string;
+//   traceId: string;
+//   version: string;
+//   isSubPackage: string;
+//   messageId: string;
+//   rawHexString: string;
+//   escapedHexString: string;
+//   type: EventType;
+// }
 
 export enum EventType {
-  ALL = "-1", // 所有事件
-  AFTER_SESSION_CREATED = "-99", // Session创建
-  BEFORE_SESSION_CLOSED = "-98", // Session关闭
-  AFTER_REQUEST_RECEIVED = "-100", // 收到请求
-  BEFORE_RESPONSE_SEND = "-102", // 发送响应
-  BEFORE_COMMAND_SEND = "-103", // 指令下发
+  ALL = -1, // 所有事件
+  AFTER_SESSION_CREATED = -99, // Session创建
+  BEFORE_SESSION_CLOSED = -98, // Session关闭
+  AFTER_REQUEST_RECEIVED = -100, // 收到请求
+  BEFORE_RESPONSE_SEND = -102, // 发送响应
+  BEFORE_COMMAND_SEND = -103, // 指令下发
 }
 
 // interface SessionCount {
@@ -43,5 +43,8 @@ export enum EventType {
 //   details: any;
 // }
 export interface Metrics {
+  [key: string]: any;
+}
+export interface Event {
   [key: string]: any;
 }

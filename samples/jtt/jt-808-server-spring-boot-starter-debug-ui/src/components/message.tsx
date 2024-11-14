@@ -17,14 +17,16 @@ export default function Message({
       className={clsx(
         className,
         "flex m-4",
-        EventType.AFTER_REQUEST_RECEIVED === item.type
+        EventType.AFTER_REQUEST_RECEIVED === Number(item.type)
           ? "flex-row-reverse"
           : "",
       )}
     >
       <Avatar
         className="flex-shrink-0"
-        name={EventType.AFTER_REQUEST_RECEIVED === item.type ? "S" : "C"}
+        name={
+          EventType.AFTER_REQUEST_RECEIVED === Number(item.type) ? "S" : "C"
+        }
       />
       <Spacer x={2} />
       <Card className="flex-grow-0">
