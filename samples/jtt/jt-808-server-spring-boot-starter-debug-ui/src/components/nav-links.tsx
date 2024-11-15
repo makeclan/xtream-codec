@@ -14,7 +14,8 @@ export default function NavLinks() {
         return (
           <Link
             key={link.name}
-            color={link.href === location.pathname ? "primary" : 'foreground'}
+            className="p-2"
+            color={link.href === location.pathname ? "primary" : "foreground"}
             href={link.href}
           >
             <LinkIcon className="w-6" />

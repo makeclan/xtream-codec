@@ -29,10 +29,10 @@ export default function Message({
         }
       />
       <Spacer x={2} />
-      <Card className="flex-grow-0">
+      <Card className="flex-grow-0 max-w-2xl">
         <CardBody>
           {Object.keys(item).map((e, i) => (
-            <p key={i}>{`${e}: ${item[e]}`}</p>
+            <p key={i}>{`${e}: ${item[e as keyof Event]}`}</p>
           ))}
         </CardBody>
       </Card>

@@ -14,16 +14,18 @@ export interface Session {
   lastCommunicateTime: string;
 }
 
-// export interface Event {
-//   requestId: string;
-//   traceId: string;
-//   version: string;
-//   isSubPackage: string;
-//   messageId: string;
-//   rawHexString: string;
-//   escapedHexString: string;
-//   type: EventType;
-// }
+export type SessionType = "instruction" | "attachment";
+
+export interface Event {
+  requestId: string;
+  traceId: string;
+  version: string;
+  isSubPackage: string;
+  messageId: string;
+  rawHexString: string;
+  escapedHexString: string;
+  type: EventType;
+}
 
 export enum EventType {
   ALL = -1, // 所有事件
@@ -43,9 +45,6 @@ export enum EventType {
 //   details: any;
 // }
 export interface Metrics {
-  [key: string]: any;
-}
-export interface Event {
   [key: string]: any;
 }
 

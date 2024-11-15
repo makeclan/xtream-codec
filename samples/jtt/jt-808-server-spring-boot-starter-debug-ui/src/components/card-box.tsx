@@ -7,6 +7,7 @@ import {
 import { Code } from "@nextui-org/code";
 
 import { Metrics } from "@/types";
+import { Link } from "@nextui-org/link";
 
 export default function CardBox() {
   const [data, setData] = useState<Metrics>({});
@@ -48,6 +49,7 @@ export default function CardBox() {
           <p className="text-default-500">
             subscriber: {data.eventPublisher?.subscriber?.total}
           </p>
+          <Link color="primary" href={"/subscriber"}>detail</Link>
         </CardBody>
         <CardFooter className="text-small justify-between">
           <b>subscriber</b>

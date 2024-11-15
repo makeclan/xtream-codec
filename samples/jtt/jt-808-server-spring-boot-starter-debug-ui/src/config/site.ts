@@ -4,6 +4,7 @@ import {
   GithubIcon,
   HeartFilledIcon,
   MoonFilledIcon,
+  SearchIcon,
   SunFilledIcon,
 } from "@/components/icons.tsx";
 
@@ -18,6 +19,7 @@ export const siteConfig = {
       icon: HeartFilledIcon,
     },
     { name: "Instruction", href: "/instruction", icon: MoonFilledIcon },
+    { name: "Subscriber", href: "/subscriber", icon: SearchIcon },
     { name: "Debug", href: "/debug", icon: SunFilledIcon },
   ],
   links: {

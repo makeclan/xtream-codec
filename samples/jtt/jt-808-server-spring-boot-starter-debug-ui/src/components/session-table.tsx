@@ -1,5 +1,4 @@
 import {
-  getKeyValue,
   Table,
   TableBody,
   TableCell,
@@ -11,27 +10,34 @@ import { Spinner } from "@nextui-org/spinner";
 import { Pagination } from "@nextui-org/pagination";
 import { Button } from "@nextui-org/button";
 import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/modal";
+import { ScrollShadow } from "@nextui-org/scroll-shadow";
+import { Select, SelectItem } from "@nextui-org/select";
+import { Input } from "@nextui-org/input";
+import { Spacer } from "@nextui-org/spacer";
 import { useEffect, useRef, useState } from "react";
 import {
   EventSourceMessage,
   fetchEventSource,
 } from "@microsoft/fetch-event-source";
-import { ScrollShadow } from "@nextui-org/scroll-shadow";
-import { Select, SelectItem } from "@nextui-org/select";
-import { Input } from "@nextui-org/input";
-import { Spacer } from "@nextui-org/spacer";
 
 import { usePageList } from "@/hooks/use-page-list.ts";
-import { EventType, Session, Event } from "@/types";
+import { useRenderCell } from "@/hooks/use-render-cell";
+import { EventType, Session, Event, SessionType } from "@/types";
 import Message from "@/components/message.tsx";
 import { subtitle } from "@/components/primitives.ts";
 
-export default function SessionTable(props: { path: string }) {
-  const { setPage, page, pages, data, isLoading } = usePageList(props.path);
+export default function SessionTable(props: { type: SessionType }) {
+  const path = `${import.meta.env.VITE_API_DASHBOARD_V1}session/${props.type}-session/list`;
+  const { setPage, page, pages, data, isLoading } = usePageList(path);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedRow, setSelectedRow] = useState<Session | null>(null);
   const [linkData, setLinkData] = useState<Event[]>([]);
   const [max, setMax] = useState("100");
+  const handleMonitor = (item: Session) => {
+    setSelectedRow(item);
+    setIsOpen(true);
+  };
+  const { renderCell } = useRenderCell(props.type, handleMonitor);
 
   useEffect(() => {
     if (!isOpen) {
@@ -93,10 +99,7 @@ export default function SessionTable(props: { path: string }) {
     { key: "lastCommunicateTime", label: "lastCommunicateTime" },
     { key: "operation", label: "operation" },
   ];
-  const handleMonitor = (item: Session) => {
-    setSelectedRow(item);
-    setIsOpen(true);
-  };
+
   const onClose = () => {
     setIsOpen(false);
   };
@@ -107,6 +110,10 @@ export default function SessionTable(props: { path: string }) {
       eventList.push({ key, name: key });
     }
   }
+
+  const onFilter = () => {
+    // TODO filter
+  };
 
   return (
     <>
@@ -141,21 +148,9 @@ export default function SessionTable(props: { path: string }) {
         >
           {(item) => (
             <TableRow key={item?.id}>
-              {(columnKey) =>
-                columnKey === "operation" ? (
-                  <TableCell>
-                    <Button
-                      color="primary"
-                      size="sm"
-                      onClick={() => handleMonitor(item)}
-                    >
-                      Monitor
-                    </Button>
-                  </TableCell>
-                ) : (
-                  <TableCell>{getKeyValue(item, columnKey)}</TableCell>
-                )
-              }
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
             </TableRow>
           )}
         </TableBody>
@@ -185,13 +180,18 @@ export default function SessionTable(props: { path: string }) {
                   onValueChange={setMax}
                 />
                 <Spacer x={4} />
-                <Select label="Event Type" className="w-1/3" selectionMode="multiple" size="sm">
+                <Select
+                  className="w-1/3"
+                  label="Event Type"
+                  selectionMode="multiple"
+                  size="sm"
+                >
                   {eventList.map((item) => (
                     <SelectItem key={item.key}>{item.name}</SelectItem>
                   ))}
                 </Select>
                 <Spacer x={4} />
-                <Button color="primary" size="sm">
+                <Button color="primary" size="sm" onPress={onFilter}>
                   filter
                 </Button>
               </div>

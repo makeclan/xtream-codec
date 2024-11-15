@@ -6,6 +6,7 @@ import InstructionPage from "@/pages/instruction.tsx";
 import DashboardPage from "@/pages/dashboard.tsx";
 import DashboardLayout from "@/layouts/dashboard.tsx";
 import { loader as rootLoader } from "@/routes/root.tsx";
+import SubscribePage from "@/pages/subscriber.tsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
       {
         path: "debug",
         element: <DebugPage />,
+      },
+      {
+        path: "subscriber",
+        element: <SubscribePage />,
       },
     ],
   },

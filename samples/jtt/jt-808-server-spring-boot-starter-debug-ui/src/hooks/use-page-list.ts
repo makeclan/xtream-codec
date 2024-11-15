@@ -7,6 +7,7 @@ import { request } from "@/utils/request.ts";
 export const usePageList = (path: string) => {
   const [page, setPage] = useState(1);
   const rowsPerPage = 10;
+
   const { data, isLoading } = useSWR<{ total: number; data: Session[] }>(
     `${path}${page}`,
     () =>
