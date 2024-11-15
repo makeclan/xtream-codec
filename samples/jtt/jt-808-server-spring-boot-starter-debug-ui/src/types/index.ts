@@ -48,3 +48,12 @@ export interface Metrics {
 export interface Event {
   [key: string]: any;
 }
+
+export interface ServerInfo {
+  // xtream-codec 版本
+  xtreamCodecVersion: string;
+  // 服务启动时间
+  serverStartupTime: string;
+  // 服务配置(application.yaml#jt808-server.*)
+  configuration: {};
+}

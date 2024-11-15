@@ -16,10 +16,14 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.github.hylexus.xtream.codec.common.XtreamVersion;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.Instant;
 
 /**
  * @author hylexus
@@ -27,15 +31,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/dashboard-api/v1")
 public class BuiltinJt808DashboardCommonController {
-
+    private final Instant serverStartupTime = Instant.now();
     private final XtreamJt808ServerProperties serverProperties;
+    private final String version = XtreamVersion.getVersion("Unknown");
 
     public BuiltinJt808DashboardCommonController(XtreamJt808ServerProperties serverProperties) {
         this.serverProperties = serverProperties;
     }
 
     @GetMapping("/config")
-    public XtreamJt808ServerProperties config() {
-        return this.serverProperties;
+    public Config config() {
+        return new Config(this.version, this.serverStartupTime, this.serverProperties);
     }
+
+    public record Config(
+            String xtreamCodecVersion,
+            @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "GMT+8") Instant serverStartupTime,
+            XtreamJt808ServerProperties configuration) {
+    }
+
 }
