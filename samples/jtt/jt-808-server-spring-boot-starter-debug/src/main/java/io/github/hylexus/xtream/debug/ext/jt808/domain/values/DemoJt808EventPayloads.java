@@ -30,8 +30,7 @@ public class DemoJt808EventPayloads {
             String version,
             boolean isSubPackage,
             int messageId,
-            String rawHexString,
-            String escapedHexString) {
+            String hexString) {
     }
 
     /**

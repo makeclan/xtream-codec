@@ -59,7 +59,6 @@ public class Jt808DashboardRequestLifecycleListener implements Jt808RequestLifec
                             header.messageBodyProps().hasSubPackage(),
                             header.messageId(),
                             FormatUtils.toHexString(rawPayload),
-                            FormatUtils.toHexString(jt808Request.payload()),
                             now
                     );
                 }

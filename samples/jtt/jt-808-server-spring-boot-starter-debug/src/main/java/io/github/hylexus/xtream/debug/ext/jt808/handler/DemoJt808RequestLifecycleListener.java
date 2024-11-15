@@ -52,8 +52,7 @@ public class DemoJt808RequestLifecycleListener implements Jt808RequestLifecycleL
                             header.version().shortDesc(),
                             header.messageBodyProps().hasSubPackage(),
                             header.messageId(),
-                            FormatUtils.toHexString(rawPayload),
-                            FormatUtils.toHexString(jt808Request.payload())
+                            FormatUtils.toHexString(rawPayload)
                     );
                 }
         );

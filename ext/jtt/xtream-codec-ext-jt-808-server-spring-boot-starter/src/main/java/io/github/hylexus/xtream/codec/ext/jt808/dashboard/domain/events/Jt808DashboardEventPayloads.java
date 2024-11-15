@@ -78,8 +78,7 @@ public class Jt808DashboardEventPayloads {
             String version,
             boolean isSubPackage,
             int messageId,
-            String rawHexString,
-            String escapedHexString,
+            String hexString,
             Instant eventTime) implements HasTerminalId, HasEventTime {
     }
 
