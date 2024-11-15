@@ -41,10 +41,47 @@ public interface XtreamSessionIdGenerator {
     String generateTcpSessionId(Channel channel);
 
     class DefalutXtreamSessionIdGenerator implements XtreamSessionIdGenerator {
+        private static final char[] DIGIT_MAP = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'};
 
         @Override
         public String generateTcpSessionId(Channel channel) {
             return channel.id().asLongText();
+        }
+
+        @Override
+        public String generateUdpSessionId(InetSocketAddress remoteAddress) {
+            final StringBuilder result = new StringBuilder();
+            final String address = remoteAddress.getHostString();
+            final int port = remoteAddress.getPort();
+
+            // IP地址部分
+            for (char c : address.toCharArray()) {
+                if (c == '.') {
+                    // 小数点映射为 'X'
+                    result.append('X');
+                } else if (Character.isDigit(c)) {
+                    int digit = Character.getNumericValue(c);
+                    // 数字映射为字母
+                    result.append(DIGIT_MAP[digit]);
+                } else {
+                    // 非数字和小数点的字符，直接追加
+                    result.append(c);
+                }
+            }
+
+            // 分隔符
+            result.append("S");
+
+            // 端口号部分
+            for (char c : String.valueOf(port).toCharArray()) {
+                if (Character.isDigit(c)) {
+                    int digit = Character.getNumericValue(c);
+                    // 数字映射为字母
+                    result.append(DIGIT_MAP[digit]);
+                }
+            }
+
+            return result.toString();
         }
     }
 

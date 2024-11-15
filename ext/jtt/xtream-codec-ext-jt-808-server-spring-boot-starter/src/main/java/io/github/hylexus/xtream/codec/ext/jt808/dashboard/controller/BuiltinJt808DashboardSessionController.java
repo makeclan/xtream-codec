@@ -17,22 +17,26 @@
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller;
 
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.Jt808SessionQueryDto;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.events.Jt808DashboardSessionCloseReason;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.Jt808SessionVo;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.PageableVo;
+import io.github.hylexus.xtream.codec.ext.jt808.domain.DefaultRespCode;
+import io.github.hylexus.xtream.codec.ext.jt808.exception.XtreamHttpException;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808AttachmentSessionManager;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionManager;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 /**
  * @author hylexus
  */
+// todo 接口重命名
 @RestController
 @RequestMapping("/dashboard-api/v1/session")
 public class BuiltinJt808DashboardSessionController {
@@ -52,6 +56,26 @@ public class BuiltinJt808DashboardSessionController {
     @GetMapping("/attachment-session/list")
     public PageableVo<Jt808SessionVo> attachmentSessionList(Jt808SessionQueryDto dto) {
         return this.doSearch(dto, this.attachmentSessionManager);
+    }
+
+    @DeleteMapping("/instruction-session/{sessionId}")
+    public Mono<Map<String, Boolean>> deleteInstructionSession(@PathVariable("sessionId") String sessionId) {
+        return this.closeSession(sessionId, this.sessionManager);
+    }
+
+    @DeleteMapping("/attachment-session/{sessionId}")
+    public Mono<Map<String, Boolean>> deleteAttachmentSession(@PathVariable("sessionId") String sessionId) {
+        return this.closeSession(sessionId, this.attachmentSessionManager);
+    }
+
+    private Mono<Map<String, Boolean>> closeSession(String sessionId, XtreamSessionManager<Jt808Session> manager) {
+        return manager.getSessionById(sessionId)
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new XtreamHttpException("No session found with sessionId: " + sessionId, DefaultRespCode.NOT_FOUND))))
+                .map(session -> {
+                    // todo clientIP
+                    final boolean closed = manager.closeSessionById(sessionId, new Jt808DashboardSessionCloseReason("ClosedByDashboardUser", null));
+                    return Map.of("closed", closed);
+                });
     }
 
     private PageableVo<Jt808SessionVo> doSearch(Jt808SessionQueryDto dto, XtreamSessionManager<Jt808Session> manager) {
