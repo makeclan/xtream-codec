@@ -36,20 +36,20 @@ public class RequestInfoCollector implements Jt808RequestLifecycleListener {
     }
 
     @Override
-    public void afterRequestDecode(NettyInbound nettyInbound, ByteBuf rawPayload, Jt808Request jt808Request) {
+    public void afterRequestDecoded(NettyInbound nettyInbound, ByteBuf rawPayload, Jt808Request request) {
 
-        final SimpleTypes.RequestInfo requestInfo = switch (jt808Request.type()) {
-            case TCP -> switch (jt808Request.serverType()) {
+        final SimpleTypes.RequestInfo requestInfo = switch (request.type()) {
+            case TCP -> switch (request.serverType()) {
                 case INSTRUCTION_SERVER -> this.metricsHolder.getTcpInstructionRequest();
                 case ATTACHMENT_SERVER -> this.metricsHolder.getTcpAttachmentRequest();
             };
-            case UDP -> switch (jt808Request.serverType()) {
+            case UDP -> switch (request.serverType()) {
                 case INSTRUCTION_SERVER -> this.metricsHolder.getUdpInstructionRequest();
                 case ATTACHMENT_SERVER -> this.metricsHolder.getUdpAttachmentRequest();
             };
         };
 
-        final int messageId = jt808Request.header().messageId();
+        final int messageId = request.header().messageId();
         requestInfo.incrementTotal();
         requestInfo
                 .details()

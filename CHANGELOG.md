@@ -4,6 +4,10 @@
 
 - 优化会话管理
 
+### ⚠️ Breaking Changes
+
+- 配置项重新调整
+
 ## 0.0.1-beta.4
 
 ### ⭐ New Features

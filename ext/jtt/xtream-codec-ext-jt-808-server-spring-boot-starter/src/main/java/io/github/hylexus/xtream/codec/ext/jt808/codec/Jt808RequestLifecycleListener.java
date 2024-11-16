@@ -19,7 +19,6 @@ package io.github.hylexus.xtream.codec.ext.jt808.codec;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.netty.buffer.ByteBuf;
 import reactor.netty.NettyInbound;
 
@@ -45,10 +44,10 @@ public interface Jt808RequestLifecycleListener {
      *
      * @param nettyInbound 请求上下文
      * @param rawPayload   原始请求
-     * @param jt808Request 解码后的 JTT/808 请求
+     * @param request      解码后的 JTT/808 请求
      * @implNote 不要有阻塞操作
      */
-    default void afterRequestDecode(NettyInbound nettyInbound, ByteBuf rawPayload, Jt808Request jt808Request) {
+    default void afterRequestDecoded(NettyInbound nettyInbound, ByteBuf rawPayload, Jt808Request request) {
     }
 
     /**
@@ -68,7 +67,7 @@ public interface Jt808RequestLifecycleListener {
      * @param response 给客户端回复的数据
      * @implNote 不要有阻塞操作
      */
-    default void beforeResponseSend(XtreamRequest request, ByteBuf response) {
+    default void beforeResponseSend(Jt808Request request, ByteBuf response) {
     }
 
     /**

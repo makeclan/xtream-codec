@@ -24,7 +24,6 @@ import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEvent;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 import io.netty.buffer.ByteBuf;
@@ -43,18 +42,18 @@ public class Jt808DashboardRequestLifecycleListener implements Jt808RequestLifec
     }
 
     @Override
-    public void afterRequestDecode(NettyInbound nettyInbound, ByteBuf rawPayload, Jt808Request jt808Request) {
+    public void afterRequestDecoded(NettyInbound nettyInbound, ByteBuf rawPayload, Jt808Request request) {
         // 请求被解码之后发送事件
         // 发送事件然后立即返回；不要有阻塞的操作
         final Instant now = Instant.now();
         this.eventPublisher.publishIfNecessary(
                 XtreamEvent.XtreamEventType.AFTER_REQUEST_RECEIVED,
                 () -> {
-                    final Jt808RequestHeader header = jt808Request.header();
+                    final Jt808RequestHeader header = request.header();
                     return new Jt808DashboardEventPayloads.ReceivedRequestInfo(
-                            jt808Request.requestId(),
-                            jt808Request.traceId(),
-                            jt808Request.terminalId(),
+                            request.requestId(),
+                            request.traceId(),
+                            request.terminalId(),
                             header.version().shortDesc(),
                             header.messageBodyProps().hasSubPackage(),
                             header.messageId(),
@@ -89,19 +88,17 @@ public class Jt808DashboardRequestLifecycleListener implements Jt808RequestLifec
     }
 
     @Override
-    public void beforeResponseSend(XtreamRequest request, ByteBuf response) {
+    public void beforeResponseSend(Jt808Request request, ByteBuf response) {
         final Instant now = Instant.now();
         this.eventPublisher.publishIfNecessary(
                 XtreamEvent.XtreamEventType.BEFORE_RESPONSE_SEND,
                 () -> {
-                    final Jt808Request jt808Request = (Jt808Request) request;
-                    final String requestId = jt808Request.requestId();
-                    final String traceId = jt808Request.traceId();
+                    // ...
                     return new Jt808DashboardEventPayloads.ResponseInfo(
-                            requestId,
-                            traceId,
-                            jt808Request.terminalId(),
-                            jt808Request.messageId(),
+                            request.requestId(),
+                            request.traceId(),
+                            request.terminalId(),
+                            request.messageId(),
                             FormatUtils.toHexString(response),
                             now
                     );

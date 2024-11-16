@@ -21,7 +21,6 @@ import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListe
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 import io.github.hylexus.xtream.debug.ext.jt808.domain.values.DemoJt808EventPayloads;
 import io.github.hylexus.xtream.debug.ext.jt808.domain.values.DemoJt808EventType;
@@ -39,16 +38,16 @@ public class DemoJt808RequestLifecycleListener implements Jt808RequestLifecycleL
     }
 
     @Override
-    public void afterRequestDecode(NettyInbound nettyInbound, ByteBuf rawPayload, Jt808Request jt808Request) {
+    public void afterRequestDecoded(NettyInbound nettyInbound, ByteBuf rawPayload, Jt808Request request) {
         // 请求被解码之后发送事件
         // 发送事件然后立即返回；不要有阻塞的操作
         this.eventPublisher.publishIfNecessary(
                 DemoJt808EventType.RECEIVE_PACKAGE,
                 () -> {
-                    final Jt808RequestHeader header = jt808Request.header();
+                    final Jt808RequestHeader header = request.header();
                     return new DemoJt808EventPayloads.ReceiveRequest(
-                            jt808Request.requestId(),
-                            jt808Request.traceId(),
+                            request.requestId(),
+                            request.traceId(),
                             header.version().shortDesc(),
                             header.messageBodyProps().hasSubPackage(),
                             header.messageId(),
@@ -79,15 +78,14 @@ public class DemoJt808RequestLifecycleListener implements Jt808RequestLifecycleL
     }
 
     @Override
-    public void beforeResponseSend(XtreamRequest request, ByteBuf response) {
+    public void beforeResponseSend(Jt808Request request, ByteBuf response) {
         this.eventPublisher.publishIfNecessary(
                 DemoJt808EventType.SEND_PACKAGE,
                 () -> {
-                    final Jt808Request jt808Request = (Jt808Request) request;
-                    final String requestId = jt808Request.requestId();
-                    final String traceId = jt808Request.traceId();
+                    // ...
                     return new DemoJt808EventPayloads.SendResponse(
-                            requestId, traceId,
+                            request.requestId(),
+                            request.traceId(),
                             0,
                             FormatUtils.toHexString(response)
                     );

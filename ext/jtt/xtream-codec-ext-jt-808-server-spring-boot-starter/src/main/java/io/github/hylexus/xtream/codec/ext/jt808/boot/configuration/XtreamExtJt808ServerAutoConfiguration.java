@@ -102,7 +102,7 @@ public class XtreamExtJt808ServerAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     Jt808RequestCombiner jt808RequestCombiner(BufferFactoryHolder bufferFactoryHolder, XtreamJt808ServerProperties properties) {
-        final XtreamJt808ServerProperties.RequestSubPackageStorage subPackageStorage = properties.getRequestSubPackageStorage();
+        final XtreamJt808ServerProperties.RequestSubPacketStorage subPackageStorage = properties.getFeatures().getRequestCombiner().getSubPackageStorage();
         return new DefaultJt808RequestCombiner(bufferFactoryHolder.getAllocator(), subPackageStorage.getMaximumSize(), subPackageStorage.getTtl());
     }
 

@@ -47,14 +47,14 @@ public class BuiltinJt808AttachmentServerExchangeCreator
     @Override
     protected XtreamRequest doCreateTcpRequest(ByteBufAllocator allocator, NettyInbound nettyInbound, ByteBuf byteBuf, InetSocketAddress remoteAddress, XtreamRequest.Type type) {
         final Jt808Request request = this.requestDecoder.decode(Jt808ServerType.ATTACHMENT_SERVER, this.generateRequestId(nettyInbound), allocator, nettyInbound, XtreamInbound.Type.TCP, byteBuf, remoteAddress);
-        this.requestLifecycleListener.afterRequestDecode(nettyInbound, byteBuf, request);
+        this.requestLifecycleListener.afterRequestDecoded(nettyInbound, byteBuf, request);
         return request;
     }
 
     @Override
     protected XtreamRequest doCreateUdpRequest(ByteBufAllocator allocator, NettyInbound nettyInbound, ByteBuf payload, InetSocketAddress remoteAddress, XtreamRequest.Type type) {
         final Jt808Request request = this.requestDecoder.decode(Jt808ServerType.ATTACHMENT_SERVER, this.generateRequestId(nettyInbound), allocator, nettyInbound, XtreamInbound.Type.UDP, payload, remoteAddress);
-        this.requestLifecycleListener.afterRequestDecode(nettyInbound, payload, request);
+        this.requestLifecycleListener.afterRequestDecoded(nettyInbound, payload, request);
         return request;
     }
 }

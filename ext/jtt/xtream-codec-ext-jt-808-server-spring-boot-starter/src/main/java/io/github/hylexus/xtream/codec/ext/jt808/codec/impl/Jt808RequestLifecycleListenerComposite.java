@@ -20,7 +20,6 @@ import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListe
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.netty.buffer.ByteBuf;
 import reactor.netty.NettyInbound;
 
@@ -41,8 +40,8 @@ public class Jt808RequestLifecycleListenerComposite implements Jt808RequestLifec
     }
 
     @Override
-    public void afterRequestDecode(NettyInbound nettyInbound, ByteBuf rawPayload, Jt808Request jt808Request) {
-        this.invokeListeners(lifecycleListener -> lifecycleListener.afterRequestDecode(nettyInbound, rawPayload, jt808Request));
+    public void afterRequestDecoded(NettyInbound nettyInbound, ByteBuf rawPayload, Jt808Request request) {
+        this.invokeListeners(lifecycleListener -> lifecycleListener.afterRequestDecoded(nettyInbound, rawPayload, request));
     }
 
     @Override
@@ -51,7 +50,7 @@ public class Jt808RequestLifecycleListenerComposite implements Jt808RequestLifec
     }
 
     @Override
-    public void beforeResponseSend(XtreamRequest request, ByteBuf response) {
+    public void beforeResponseSend(Jt808Request request, ByteBuf response) {
         this.invokeListeners(lifecycleListener -> lifecycleListener.beforeResponseSend(request, response));
     }
 

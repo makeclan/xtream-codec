@@ -28,6 +28,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTy
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.filter.Jt808RequestCombinerFilter;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestMappingHandlerMapping;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBodyHandlerResultHandler;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.listener.Jt808RequestLoggerListener;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamBlockingHandlerMethodPredicate;
@@ -68,14 +69,14 @@ public class BuiltinJt808ServerHandlerConfiguration {
 
     // region filters
     @Bean
-    @ConditionalOnProperty(prefix = "jt808-server.builtin-filters.request-logger", name = "enabled", havingValue = "true", matchIfMissing = true)
-    LoggingXtreamFilter loggingXtreamFilter() {
-        return new LoggingXtreamFilter();
+    @ConditionalOnProperty(prefix = "jt808-server.features.request-logger", name = "enabled", havingValue = "true", matchIfMissing = true)
+    Jt808RequestLoggerListener loggingXtreamFilter() {
+        return new Jt808RequestLoggerListener();
     }
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = "jt808-server.builtin-filters.request-decoder", name = "enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "jt808-server.features.request-combiner", name = "enabled", havingValue = "true", matchIfMissing = true)
     Jt808RequestCombinerFilter jt808RequestCombinerFilter(
             Jt808RequestCombiner jt808RequestCombiner,
             Jt808RequestLifecycleListener lifecycleListener) {
@@ -149,7 +150,7 @@ public class BuiltinJt808ServerHandlerConfiguration {
     }
     // endregion session
 
-    @ConditionalOnExpression("${jt808-server.dashboard.enabled:true} || ${management.endpoint.jt808.enabled:false}")
+    @ConditionalOnExpression("${jt808-server.features.dashboard.enabled:true} || ${management.endpoint.jt808.enabled:false}")
     static class BuiltinJt808DashboardAndActuatorConfiguration {
         @Bean
         Jt808ServerSimpleMetricsHolder metricsHolder() {

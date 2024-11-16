@@ -18,7 +18,7 @@
 ### SpringBoot 配置######################################
 ########################################################
 server:
-  port: 9999
+  port: 8888
 
 ########################################################
 ### 示例项目自身的配置(和框架无关)####################
@@ -36,19 +36,21 @@ demo-app-config:
 jt808-server:
   # false: 不会进行任何自动配置
   enabled: true
-  dashboard:
-    enabled: true
-  builtin-filters:
-    # 内置的请求日志 filter(仅仅用于调试)
+  ## 内置功能
+  features:
+    ### 请求日志(仅仅用于调试)
     request-logger:
       enabled: true
-    # 内置的请求解码 filter(如果不启用的话，你需要手动解码请求)
-    request-decoder:
+    ### 请求合并(如果不启用的话，你需要手动合并子包请求)
+    request-combiner:
       enabled: true
-  # 分包请求暂存器
-  request-sub-package-storage:
-    maximum-size: 1024
-    ttl: 45s
+      # 子包暂存器
+      sub-package-storage:
+        maximum-size: 1024
+        ttl: 45s
+    ### 是否启用 Dashboard
+    dashboard:
+      enabled: true
   ## 指令服务器
   instruction-server:
     # TCP 服务配置(指令服务器)
@@ -58,7 +60,7 @@ jt808-server:
       # 绑定所有网卡
       host: 0.0.0.0
       # TCP 服务端口
-      port: 7777
+      port: 3618
       ## 指令报文的最大长度
       ## @see: io.netty.handler.codec.DelimiterBasedFrameDecoder.maxFrameLength
       max-instruction-frame-length: 1024
@@ -82,7 +84,7 @@ jt808-server:
       # 绑定所有网卡
       host: 0.0.0.0
       # UDP 服务端口
-      port: 8888
+      port: 3721
       ## 指令服务器的会话空闲状态检查器(UDP)
       session-idle-state-checker:
         max-idle-time: 10m
@@ -102,7 +104,7 @@ jt808-server:
     tcp-server:
       enabled: true
       host: 0.0.0.0
-      port: 7778
+      port: 3824
       ## 指令报文的最大长度
       ## @see: io.netty.handler.codec.DelimiterBasedFrameDecoder.maxFrameLength
       max-instruction-frame-length: 1024
@@ -128,7 +130,7 @@ jt808-server:
       # 绑定所有网卡
       host: 0.0.0.0
       # UDP 服务端口
-      port: 8889
+      port: 3927
       ## 附件服务器的会话空闲状态检查器(UDP)
       session-idle-state-checker:
         max-idle-time: 10m

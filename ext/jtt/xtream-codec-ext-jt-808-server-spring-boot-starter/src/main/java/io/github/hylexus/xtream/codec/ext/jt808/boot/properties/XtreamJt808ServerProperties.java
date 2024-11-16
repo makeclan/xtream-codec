@@ -38,15 +38,6 @@ public class XtreamJt808ServerProperties {
     private boolean enabled = true;
 
     @NestedConfigurationProperty
-    public FeatureProps dashboard = new FeatureProps();
-
-    @NestedConfigurationProperty
-    private BuiltinFilters builtinFilters = new BuiltinFilters();
-
-    @NestedConfigurationProperty
-    private RequestSubPackageStorage requestSubPackageStorage = new RequestSubPackageStorage();
-
-    @NestedConfigurationProperty
     private InstructionServerProps instructionServer = new InstructionServerProps();
 
     @NestedConfigurationProperty
@@ -85,7 +76,7 @@ public class XtreamJt808ServerProperties {
     public static class BaseServerProps {
         private boolean enabled = true;
         private String host;
-        private int port = 6666;
+        private int port;
     }
 
     @Getter
@@ -199,27 +190,6 @@ public class XtreamJt808ServerProperties {
         private boolean preferNative = LoopResources.DEFAULT_NATIVE;
     }
 
-    @Getter
-    @Setter
-    @ToString
-    public static class RequestSubPackageStorage {
-        /**
-         * 缓存最大大小
-         */
-        private int maximumSize = 1024;
-        /**
-         * 缓存条目的存活时间
-         */
-        private Duration ttl = Duration.ofSeconds(60);
-    }
-
-    @Getter
-    @Setter
-    @ToString
-    public static class BuiltinFilters {
-        private BaseFilterProps requestLogger = new BaseFilterProps();
-        private BaseFilterProps requestDecoder = new BaseFilterProps();
-    }
 
     @Getter
     @Setter
@@ -231,10 +201,59 @@ public class XtreamJt808ServerProperties {
         private boolean enabled = true;
     }
 
+    @NestedConfigurationProperty
+    private Features features = new Features();
+
     @Getter
     @Setter
     @ToString
-    public static class BaseFilterProps {
+    public static class Features {
+        @NestedConfigurationProperty
+        private DashboardFeature dashboard = new DashboardFeature();
+
+        @NestedConfigurationProperty
+        private RequestLoggerFeature requestLogger = new RequestLoggerFeature();
+
+        @NestedConfigurationProperty
+        private RequestCombinerFeature requestCombiner = new RequestCombinerFeature();
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class DashboardFeature {
         private boolean enabled = true;
     }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class RequestLoggerFeature {
+        private boolean enabled = true;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class RequestCombinerFeature {
+        private boolean enabled = true;
+
+        @NestedConfigurationProperty
+        private RequestSubPacketStorage subPackageStorage = new RequestSubPacketStorage();
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class RequestSubPacketStorage {
+        /**
+         * 缓存最大大小
+         */
+        private int maximumSize = 1024;
+        /**
+         * 缓存条目的存活时间
+         */
+        private Duration ttl = Duration.ofSeconds(60);
+    }
+
 }
