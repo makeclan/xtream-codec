@@ -49,6 +49,7 @@ tasks.register<Exec>("buildJt808DebugUi") {
     group = debugUiGroup
     description = "构建jt808-debug-ui"
     workingDir = file(debugUiDir)
+    commandLine("pnpm", "install", "--registry", "https://registry.npmmirror.com")
     commandLine("pnpm", "run", "build")
 }
 

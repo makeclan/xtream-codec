@@ -60,7 +60,7 @@ jt808-server:
       # 绑定所有网卡
       host: 0.0.0.0
       # TCP 服务端口
-      port: 3618
+      port: 3927
       ## 指令报文的最大长度
       ## @see: io.netty.handler.codec.DelimiterBasedFrameDecoder.maxFrameLength
       max-instruction-frame-length: 1024
@@ -130,7 +130,7 @@ jt808-server:
       # 绑定所有网卡
       host: 0.0.0.0
       # UDP 服务端口
-      port: 3927
+      port: 3618
       ## 附件服务器的会话空闲状态检查器(UDP)
       session-idle-state-checker:
         max-idle-time: 10m
