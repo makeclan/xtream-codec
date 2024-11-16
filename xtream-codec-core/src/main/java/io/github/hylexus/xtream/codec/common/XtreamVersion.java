@@ -16,7 +16,8 @@
 
 package io.github.hylexus.xtream.codec.common;
 
-import org.springframework.lang.Nullable;
+
+import jakarta.annotation.Nullable;
 
 /**
  * 当前类是从 `org.springframework.core.SpringVersion` 复制过来修改的。

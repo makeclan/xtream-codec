@@ -16,4 +16,7 @@ dependencies {
         exclude(group = "org.apache.logging.log4j")
         exclude(module = "jul-to-slf4j")
     }
+
+    implementation("jakarta.annotation:jakarta.annotation-api")
+
 }

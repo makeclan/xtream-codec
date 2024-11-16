@@ -20,9 +20,9 @@ import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.exception.RequestHandlerNotFoundException;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamRequestExceptionHandler;
+import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -32,7 +32,7 @@ public class GlobalXtreamServerExceptionHandler implements XtreamRequestExceptio
     private static final Logger log = LoggerFactory.getLogger(GlobalXtreamServerExceptionHandler.class);
 
     @Override
-    public Mono<Void> handleRequestException(XtreamExchange exchange, @NonNull Throwable ex) {
+    public Mono<Void> handleRequestException(XtreamExchange exchange, @Nonnull Throwable ex) {
         if (ex instanceof RequestHandlerNotFoundException) {
             log.info("receive unknown msg: {}", FormatUtils.toHexString(exchange.request().payload()));
             return Mono.empty();

@@ -22,9 +22,9 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleStateEvent;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 
 import java.util.function.Consumer;
 
@@ -75,7 +75,7 @@ public class XtreamTcpHeatBeatHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelInactive(@NonNull ChannelHandlerContext ctx) {
+    public void channelInactive(@Nonnull ChannelHandlerContext ctx) {
         if (log.isDebugEnabled()) {
             log.warn("channelInactive, address={} ", ctx.channel().remoteAddress());
         }

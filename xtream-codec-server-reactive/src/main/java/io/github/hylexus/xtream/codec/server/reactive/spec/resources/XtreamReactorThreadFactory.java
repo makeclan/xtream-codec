@@ -16,11 +16,11 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec.resources;
 
+import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.scheduler.NonBlocking;
 import reactor.util.annotation.NonNull;
-import reactor.util.annotation.Nullable;
 
 import java.util.Objects;
 import java.util.concurrent.ThreadFactory;

@@ -16,10 +16,10 @@
 
 package io.github.hylexus.xtream.debug.ext.jt808.config;
 
+import jakarta.annotation.Nonnull;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.lang.NonNull;
 import org.springframework.web.reactive.config.ResourceHandlerRegistry;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 import org.springframework.web.reactive.resource.PathResourceResolver;
@@ -48,16 +48,16 @@ public class DashboardWebFluxConfigurer implements WebFluxConfigurer {
         private final PathResourceResolver defaultResolver = new PathResourceResolver();
 
         @Override
-        @NonNull
-        public Mono<Resource> resolveResource(ServerWebExchange exchange, @NonNull String requestPath, @NonNull List<? extends Resource> locations, @NonNull ResourceResolverChain chain) {
+        @Nonnull
+        public Mono<Resource> resolveResource(ServerWebExchange exchange, @Nonnull String requestPath, @Nonnull List<? extends Resource> locations, @Nonnull ResourceResolverChain chain) {
             return defaultResolver
                     .resolveResource(exchange, requestPath, locations, chain)
                     .switchIfEmpty(Mono.just(new ClassPathResource("/static/index.html")));
         }
 
         @Override
-        @NonNull
-        public Mono<String> resolveUrlPath(@NonNull String resourcePath, @NonNull List<? extends Resource> locations, @NonNull ResourceResolverChain chain) {
+        @Nonnull
+        public Mono<String> resolveUrlPath(@Nonnull String resourcePath, @Nonnull List<? extends Resource> locations, @Nonnull ResourceResolverChain chain) {
             return defaultResolver.resolveUrlPath(resourcePath, locations, chain);
         }
     }

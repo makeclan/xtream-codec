@@ -26,6 +26,9 @@ dependencies {
     api("org.springframework.boot:spring-boot-starter-webflux")
     api("org.springframework.boot:spring-boot-starter-validation")
     api("org.springframework.boot:spring-boot-starter-logging")
+
+    implementation("jakarta.annotation:jakarta.annotation-api")
+
 }
 
 val debugUiStaticDir = project.file("src/main/resources/static")
