@@ -13,11 +13,11 @@ import { Pagination } from "@nextui-org/pagination";
 import { usePageList } from "@/hooks/use-page-list.ts";
 
 export default function SubscribePage() {
-  const path = `${import.meta.env.VITE_API_DASHBOARD_V1}event-publisher/subscribers`;
-  const { setPage, page, pages, data, isLoading } = usePageList(path);
+  const path = `event-publisher/subscribers`;
+  const { setPage, page, pages, tableData, isLoading } = usePageList(path);
 
   const loadingState =
-    isLoading && data?.data?.length === 0 ? "loading" : "idle";
+    isLoading && tableData?.data?.length === 0 ? "loading" : "idle";
 
   const columns = [
     { key: "id", label: "id" },
@@ -53,7 +53,7 @@ export default function SubscribePage() {
         </TableHeader>
         <TableBody
           emptyContent={"No rows to display."}
-          items={data?.data ?? []}
+          items={tableData?.data ?? []}
           loadingContent={<Spinner />}
           loadingState={loadingState}
         >

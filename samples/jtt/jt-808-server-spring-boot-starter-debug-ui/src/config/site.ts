@@ -5,7 +5,7 @@ import {
   HeartFilledIcon,
   MoonFilledIcon,
   SearchIcon,
-  SunFilledIcon,
+  SunFilledIcon
 } from "@/components/icons.tsx";
 
 export const siteConfig = {
@@ -21,6 +21,7 @@ export const siteConfig = {
     { name: "Instruction", href: "/instruction", icon: MoonFilledIcon },
     { name: "Subscriber", href: "/subscriber", icon: SearchIcon },
     { name: "Debug", href: "/debug", icon: SunFilledIcon },
+    { name: "Configuration", href: "/configuration", icon: MoonFilledIcon },
   ],
   links: {
     github: "https://github.com/hylexus/jt-framework",

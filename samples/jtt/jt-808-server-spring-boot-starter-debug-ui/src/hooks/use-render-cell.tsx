@@ -4,16 +4,13 @@ import { Tooltip } from "@nextui-org/tooltip";
 
 import { DelIcon, EyeIcon } from "@/components/icons.tsx";
 import { Session, SessionType } from "@/types";
-export const useRenderCell = (type: SessionType, handleMonitor: Function) => {
+export const useRenderCell = (
+  _type: SessionType,
+  handleMonitor: Function,
+  handleDel: Function,
+) => {
   const renderCell = useCallback((session: Session, columnKey: React.Key) => {
     const cellValue = session[columnKey as keyof Session];
-    const handleDel = (_session: Session) => {
-      if (type === "instruction") {
-        // TODO del instruction
-      } else {
-        // TODO del attachment
-      }
-    };
 
     switch (columnKey) {
       case "operation":

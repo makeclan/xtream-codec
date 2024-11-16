@@ -8,7 +8,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/dashboard-api": {
-        target: "http://localhost:9999",
+        target: "http://localhost:8888",
         changeOrigin: true,
         rewrite: (path) =>
           path.replace(/^\/dashboard-api/, "/dashboard-api/v1"),

@@ -8,7 +8,10 @@ export const usePageList = (path: string) => {
   const [page, setPage] = useState(1);
   const rowsPerPage = 10;
 
-  const { data, isLoading } = useSWR<{ total: number; data: Session[] }>(
+  const { data, isLoading } = useSWR<{
+    total: number;
+    data: Session[];
+  }>(
     `${path}${page}`,
     () =>
       request({
@@ -28,5 +31,5 @@ export const usePageList = (path: string) => {
     return data?.total ? Math.ceil(data.total / rowsPerPage) : 0;
   }, [data?.total, rowsPerPage]);
 
-  return { page, pages, data, isLoading, setPage };
+  return { page, pages, tableData: data, isLoading, setPage };
 };

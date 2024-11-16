@@ -1,16 +1,20 @@
-import { Card, CardBody, CardFooter } from "@nextui-org/card";
+import { Card, CardBody, CardFooter, CardHeader } from "@nextui-org/card";
 import { useEffect, useState } from "react";
 import {
   EventSourceMessage,
   fetchEventSource,
 } from "@microsoft/fetch-event-source";
 import { Code } from "@nextui-org/code";
-
-import { Metrics } from "@/types";
 import { Link } from "@nextui-org/link";
+import { useRouteLoaderData } from "react-router-dom";
+import { Spacer } from "@nextui-org/spacer";
+
+import { Metrics, ServerInfo } from "@/types";
 
 export default function CardBox() {
+  const { config } = useRouteLoaderData("root") as { config: ServerInfo };
   const [data, setData] = useState<Metrics>({});
+
   const listCount = [
     "tcpInstructionSession",
     "tcpAttachmentSession",
@@ -44,17 +48,40 @@ export default function CardBox() {
 
   return (
     <>
-      <Card className="m-4" shadow="sm">
-        <CardBody className="overflow-visible p-4">
-          <p className="text-default-500">
-            subscriber: {data.eventPublisher?.subscriber?.total}
-          </p>
-          <Link color="primary" href={"/subscriber"}>detail</Link>
-        </CardBody>
-        <CardFooter className="text-small justify-between">
-          <b>subscriber</b>
-        </CardFooter>
-      </Card>
+      <div className="gap-4 grid grid-cols-1 sm:grid-cols-3">
+        <Card shadow="sm">
+          <CardHeader>
+            <p>Version</p>
+          </CardHeader>
+          <CardBody className="overflow-visible p-4">
+            <p>{config.xtreamCodecVersion}</p>
+          </CardBody>
+        </Card>
+        <Card shadow="sm">
+          <CardHeader>
+            <p>serverStartupTime</p>
+          </CardHeader>
+          <CardBody className="overflow-visible p-4">
+            <p className="text-default-500">{config.serverStartupTime}</p>
+          </CardBody>
+        </Card>
+        <Card shadow="sm">
+          <CardHeader className="flex">
+            <p>subscriber</p>
+          </CardHeader>
+          <CardBody className="overflow-visible p-4">
+            <p className="text-default-500">
+              {data.eventPublisher?.subscriber?.total}
+            </p>
+          </CardBody>
+          <CardFooter className="text-small justify-between">
+            <Link color="primary" href={"/subscriber"}>
+              detail
+            </Link>
+          </CardFooter>
+        </Card>
+      </div>
+      <Spacer y={4} />
       <div className="gap-4 grid grid-cols-2 sm:grid-cols-4">
         {listCount.map((item, index) => (
           <Card
@@ -65,14 +92,16 @@ export default function CardBox() {
               // TODO
             }}
           >
+            <CardHeader className="text-small justify-between">
+              <b>{item}</b>
+            </CardHeader>
             <CardBody className="overflow-visible p-4">
-              <p className="text-default-500">max: {data[item]?.max}</p>
               <p className="text-default-500">
                 current: {data?.[item]?.current}
               </p>
             </CardBody>
             <CardFooter className="text-small justify-between">
-              <b>{item}</b>
+              <b>max: {data[item]?.max}</b>
             </CardFooter>
           </Card>
         ))}
@@ -85,8 +114,11 @@ export default function CardBox() {
               // TODO
             }}
           >
+            <CardHeader className="text-small justify-between">
+              <b>{item}</b>
+            </CardHeader>
             <CardBody className="overflow-visible p-4">
-              <p className="text-default-500">total: {data[item]?.total}</p>
+              <p className="text-default-500" />
               <div className="text-default-500">
                 detail:
                 {data[item] &&
@@ -98,7 +130,7 @@ export default function CardBox() {
               </div>
             </CardBody>
             <CardFooter className="text-small justify-between">
-              <b>{item}</b>
+              <b>total: {data[item]?.total}</b>
             </CardFooter>
           </Card>
         ))}

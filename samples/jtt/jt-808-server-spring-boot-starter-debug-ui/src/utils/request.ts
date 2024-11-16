@@ -17,7 +17,7 @@ interface LoadingHandler {
 }
 
 const config = {
-  BASE_URL: import.meta.env.VITE_API_BASE_URL,
+  BASE_URL: import.meta.env.VITE_API_DASHBOARD_V1,
   TIMEOUT: parseInt(import.meta.env.VITE_BASE_API_TIMEOUT || "30000", 10),
 };
 
