@@ -86,12 +86,11 @@ export default function SessionMonitor({
       }
     });
   }, [max]);
-  const listRef = useRef<HTMLDivElement>(null);
-  const scrollToIndex = (index: number) => {
-    const listNode = listRef.current;
-    const imgNode = listNode?.querySelectorAll(".message-card")[index];
+  const listBottomRef = useRef<HTMLDivElement>(null);
+  const scrollToIndex = () => {
+    const listNode = listBottomRef.current;
 
-    imgNode?.scrollIntoView({
+    listNode?.scrollIntoView({
       behavior: "smooth",
       block: "start",
       inline: "center",
@@ -119,7 +118,7 @@ export default function SessionMonitor({
   }, [linkData, selected]);
 
   useEffect(() => {
-    scrollToIndex(filteredLinkData.length - 1);
+    scrollToIndex();
   }, [filteredLinkData, isOpen]);
 
   return (
@@ -171,10 +170,11 @@ export default function SessionMonitor({
                 </DropdownMenu>
               </Dropdown>
             </div>
-            <ScrollShadow ref={listRef} hideScrollBar>
+            <ScrollShadow hideScrollBar>
               {filteredLinkData?.map((item: any, index: number) => (
                 <Message key={index} className="message-card" item={item} />
               ))}
+              <div ref={listBottomRef} />
             </ScrollShadow>
           </ModalBody>
         </>
