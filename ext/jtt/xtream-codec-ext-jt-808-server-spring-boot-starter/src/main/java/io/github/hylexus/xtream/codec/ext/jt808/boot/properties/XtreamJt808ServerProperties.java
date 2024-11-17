@@ -38,6 +38,9 @@ public class XtreamJt808ServerProperties {
     private boolean enabled = true;
 
     @NestedConfigurationProperty
+    private Features features = new Features();
+
+    @NestedConfigurationProperty
     private InstructionServerProps instructionServer = new InstructionServerProps();
 
     @NestedConfigurationProperty
@@ -200,9 +203,6 @@ public class XtreamJt808ServerProperties {
          */
         private boolean enabled = true;
     }
-
-    @NestedConfigurationProperty
-    private Features features = new Features();
 
     @Getter
     @Setter

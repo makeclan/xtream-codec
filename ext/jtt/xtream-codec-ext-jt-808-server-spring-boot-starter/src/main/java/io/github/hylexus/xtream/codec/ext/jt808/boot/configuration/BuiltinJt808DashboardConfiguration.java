@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Bean;
 /**
  * @author hylexus
  */
-@ConditionalOnProperty(prefix = "jt808-server.dashboard", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "jt808-server.features.dashboard", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class BuiltinJt808DashboardConfiguration {
 
     @Bean

@@ -26,6 +26,8 @@ import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler.Single
 import io.github.hylexus.xtream.codec.ext.jt808.processor.BuiltinJt808ServerCustomSchedulerRegistrar;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamServerConstants;
+import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
+import io.github.hylexus.xtream.codec.server.reactive.spec.event.builtin.DefaultXtreamEventPublisher;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamBlockingHandlerMethodPredicate;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.DefaultXtreamBlockingHandlerMethodPredicate;
 import io.github.hylexus.xtream.codec.server.reactive.spec.resources.DefaultXtreamSchedulerRegistry;
@@ -55,6 +57,12 @@ public class BuiltinJt808ServerSchedulerConfiguration {
             @Qualifier(XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER) Scheduler blockingScheduler,
             @Qualifier(XtreamServerConstants.BEAN_NAME_EVENT_PUBLISHER_SCHEDULER) Scheduler eventPublisherScheduler) {
         return new DefaultXtreamSchedulerRegistry(nonBlockingScheduler, blockingScheduler, eventPublisherScheduler);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    XtreamEventPublisher xtreamEventPublisher(XtreamSchedulerRegistry schedulerRegistry) {
+        return new DefaultXtreamEventPublisher(schedulerRegistry);
     }
 
     @Bean(name = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER)
