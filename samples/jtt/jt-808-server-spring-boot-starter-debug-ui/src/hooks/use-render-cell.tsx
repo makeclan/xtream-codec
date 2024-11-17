@@ -17,21 +17,21 @@ export const useRenderCell = (
         return (
           <div className="flex">
             <Tooltip content="Monitor">
-              <span
+              <button
                 className="text-lg text-default-400 cursor-pointer active:opacity-50"
                 onClick={() => handleMonitor(session)}
               >
                 <EyeIcon />
-              </span>
+              </button>
             </Tooltip>
             <Spacer x={4} />
             <Tooltip content="Delete">
-              <span
+              <button
                 className="text-lg text-default-400 cursor-pointer active:opacity-50"
                 onClick={() => handleDel(session)}
               >
                 <DelIcon />
-              </span>
+              </button>
             </Tooltip>
           </div>
         );

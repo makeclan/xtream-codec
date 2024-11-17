@@ -60,7 +60,11 @@ export default function SubscribePage() {
           {(item) => (
             <TableRow key={item?.id}>
               {(columnKey) => (
-                <TableCell><pre>{JSON.stringify(getKeyValue(item, columnKey), null, 2)}</pre></TableCell>
+                <TableCell>
+                  <pre>
+                    {JSON.stringify(getKeyValue(item, columnKey), null, 2)}
+                  </pre>
+                </TableCell>
               )}
             </TableRow>
           )}

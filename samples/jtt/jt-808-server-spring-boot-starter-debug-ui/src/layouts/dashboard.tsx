@@ -13,7 +13,7 @@ export default function DashboardLayout() {
         </div>
         <div className=" flex-grow md:overflow-y-auto">
           <Navbar />
-          <main className="container mx-auto max-w-7xl px-6 flex-grow pt-16">
+          <main className="container mx-auto max-w-7xl px-6 py-8 flex-grow">
             <Outlet />
           </main>
         </div>

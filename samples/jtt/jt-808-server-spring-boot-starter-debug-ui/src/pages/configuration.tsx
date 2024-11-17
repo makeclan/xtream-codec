@@ -1,6 +1,6 @@
 import { useRouteLoaderData } from "react-router-dom";
-
 import { Code } from "@nextui-org/code";
+
 import { ServerInfo } from "@/types";
 
 export default function ConfigurationPage() {

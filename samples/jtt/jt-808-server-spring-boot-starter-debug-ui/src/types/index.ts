@@ -25,15 +25,19 @@ export interface Event {
   rawHexString: string;
   escapedHexString: string;
   type: EventType;
+  eventTime: string;
+  remoteAddress: string;
+  reason: string;
 }
 
 export enum EventType {
   ALL = -1, // 所有事件
-  AFTER_SESSION_CREATED = -99, // Session创建
-  BEFORE_SESSION_CLOSED = -98, // Session关闭
-  AFTER_REQUEST_RECEIVED = -100, // 收到请求
-  BEFORE_RESPONSE_SEND = -102, // 发送响应
   BEFORE_COMMAND_SEND = -103, // 指令下发
+  BEFORE_RESPONSE_SEND, // 发送响应
+  AFTER_SUB_REQUEST_MERGED, // 合并请求
+  AFTER_REQUEST_RECEIVED, // 收到请求
+  AFTER_SESSION_CREATED, // Session创建
+  BEFORE_SESSION_CLOSED, // Session关闭
 }
 
 // interface SessionCount {
