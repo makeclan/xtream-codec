@@ -21,11 +21,11 @@ export default function Message({
     ].includes(Number(item.type))
       ? {
           name: "C",
-          flexRow: "flex-row-reverse",
+          flexRow: "",
         }
       : {
           name: "S",
-          flexRow: "",
+          flexRow: "flex-row-reverse",
         };
   }, [item]);
 

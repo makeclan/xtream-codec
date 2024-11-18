@@ -5,7 +5,6 @@ import {
   NavbarContent,
   NavbarItem,
 } from "@nextui-org/navbar";
-import { useLocation } from "react-router-dom";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
@@ -14,12 +13,6 @@ import { GithubIcon, HeartFilledIcon } from "@/components/icons";
 export const Navbar = () => {
   return (
     <NextUINavbar maxWidth="xl" position="sticky">
-      <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
-        <div className="hidden lg:flex gap-4 justify-start ml-2">
-          {useLocation().pathname.slice(1)}
-        </div>
-      </NavbarContent>
-
       <NavbarContent
         className="hidden sm:flex basis-1/5 sm:basis-full"
         justify="end"

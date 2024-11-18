@@ -4,10 +4,19 @@ import {
   EventSourceMessage,
   fetchEventSource,
 } from "@microsoft/fetch-event-source";
-import { Code } from "@nextui-org/code";
 import { Link } from "@nextui-org/link";
 import { useRouteLoaderData } from "react-router-dom";
 import { Spacer } from "@nextui-org/spacer";
+import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
+import { Button } from "@nextui-org/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from "@nextui-org/table";
 
 import { Metrics, ServerInfo } from "@/types";
 
@@ -118,16 +127,49 @@ export default function CardBox() {
               <b>{item}</b>
             </CardHeader>
             <CardBody className="overflow-visible p-4">
-              <p className="text-default-500" />
-              <div className="text-default-500">
-                detail:
-                {data[item] &&
-                  Object.keys(data[item].details).map((e, i) => (
-                    <Code key={i}>
-                      <pre>{JSON.stringify(e)}</pre>
-                    </Code>
-                  ))}
-              </div>
+              {data[item]?.total > 0 && (
+                <Popover placement="right">
+                  <PopoverTrigger>
+                    <Button>detail</Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <Table
+                      aria-label="Detail"
+                      classNames={{
+                        base: "max-h-[520px] overflow-scroll",
+                        table: "min-h-[100px]",
+                      }}
+                      shadow="none"
+                    >
+                      <TableHeader>
+                        <TableColumn>messageId</TableColumn>
+                        <TableColumn>desc</TableColumn>
+                        <TableColumn>count</TableColumn>
+                        <TableColumn>messageIdAsHexString</TableColumn>
+                      </TableHeader>
+                      <TableBody>
+                        {data[item] &&
+                          Object.keys(data[item].details).map((e, i) => (
+                            <TableRow key={i}>
+                              <TableCell>
+                                {data[item].details[e].messageId}
+                              </TableCell>
+                              <TableCell>
+                                {data[item].details[e].desc}
+                              </TableCell>
+                              <TableCell>
+                                {data[item].details[e].count}
+                              </TableCell>
+                              <TableCell>
+                                {data[item].details[e].messageIdAsHexString}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                      </TableBody>
+                    </Table>
+                  </PopoverContent>
+                </Popover>
+              )}
             </CardBody>
             <CardFooter className="text-small justify-between">
               <b>total: {data[item]?.total}</b>

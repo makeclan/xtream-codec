@@ -1,6 +1,6 @@
 import { Link } from "@nextui-org/link";
 
-import { Logo } from "@/components/icons";
+import { LogoIcon } from "@/components/icons";
 import NavLinks from "@/components/nav-links.tsx";
 
 export default function SideNav() {
@@ -11,7 +11,7 @@ export default function SideNav() {
         href="/"
       >
         <div className=" text-white">
-          <Logo />
+          <LogoIcon />
         </div>
       </Link>
       <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
