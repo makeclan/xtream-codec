@@ -36,7 +36,7 @@ public class Jt808RequestLoggerListener implements Jt808RequestLifecycleListener
     public void afterRequestDecoded(NettyInbound nettyInbound, ByteBuf rawPayload, Jt808Request request) {
         log.info("===> Receive [{}/0x{}] message: requestId = {}, traceId = {}, remoteAddr = {}, payload = 7e{}7e",
                 request.type(),
-                FormatUtils.toHexString(request.messageId(), 2),
+                FormatUtils.toHexString(request.messageId(), 4),
                 request.requestId(),
                 request.traceId(),
                 request.remoteAddress(),

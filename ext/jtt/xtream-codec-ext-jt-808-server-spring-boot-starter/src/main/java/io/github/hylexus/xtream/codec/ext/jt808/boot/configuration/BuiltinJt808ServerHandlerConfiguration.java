@@ -36,7 +36,7 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandler
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMethodHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.DelegateXtreamHandlerMethodArgumentResolver;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.LoggingXtreamRequestExceptionHandler;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.LoggingXtreamFilter;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.EmptyXtreamHandlerResultHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.LoggingXtreamHandlerResultHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.SimpleXtreamRequestHandlerHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.XtreamResponseBodyHandlerResultHandler;
@@ -123,6 +123,11 @@ public class BuiltinJt808ServerHandlerConfiguration {
     @Bean
     LoggingXtreamHandlerResultHandler loggingXtreamHandlerResultHandler() {
         return new LoggingXtreamHandlerResultHandler();
+    }
+
+    @Bean
+    EmptyXtreamHandlerResultHandler emptyXtreamHandlerResultHandler() {
+        return new EmptyXtreamHandlerResultHandler();
     }
 
     @Bean
