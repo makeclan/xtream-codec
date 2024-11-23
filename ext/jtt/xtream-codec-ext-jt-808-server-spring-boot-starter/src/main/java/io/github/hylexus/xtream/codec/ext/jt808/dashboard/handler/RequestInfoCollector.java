@@ -17,7 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler;
 
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808MessageDescriptor;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriptionRegistry;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
@@ -28,11 +28,11 @@ import java.util.concurrent.atomic.LongAdder;
 
 public class RequestInfoCollector implements Jt808RequestLifecycleListener {
     private final Jt808ServerSimpleMetricsHolder metricsHolder;
-    private final Jt808MessageDescriptor messageDescriptor;
+    private final Jt808MessageDescriptionRegistry descriptionRegistry;
 
-    public RequestInfoCollector(Jt808ServerSimpleMetricsHolder metricsHolder, Jt808MessageDescriptor messageDescriptor) {
+    public RequestInfoCollector(Jt808ServerSimpleMetricsHolder metricsHolder, Jt808MessageDescriptionRegistry descriptionRegistry) {
         this.metricsHolder = metricsHolder;
-        this.messageDescriptor = messageDescriptor;
+        this.descriptionRegistry = descriptionRegistry;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class RequestInfoCollector implements Jt808RequestLifecycleListener {
         requestInfo
                 .details()
                 .computeIfAbsent("message_" + messageId, k -> {
-                    final String description = this.messageDescriptor.getDescription(messageId);
+                    final String description = this.descriptionRegistry.getDescription(messageId);
                     return new SimpleTypes.RequestDetail(messageId, new LongAdder(), description == null ? "Unknown" : description);
                 })
                 .incrementCount();

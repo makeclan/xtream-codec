@@ -18,17 +18,16 @@ package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration;
 
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.*;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808MessageDescriptor;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.Jt808DashboardRequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.RequestInfoCollector;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.SessionInfoCollector;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808AttachmentSessionManager;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriptionRegistry;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 
@@ -49,13 +48,7 @@ public class BuiltinJt808DashboardConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
-    Jt808MessageDescriptor jt808MessageDescriptor() {
-        return new Jt808MessageDescriptor.Default();
-    }
-
-    @Bean
-    RequestInfoCollector requestInfoCollector(Jt808ServerSimpleMetricsHolder metricsHolder, Jt808MessageDescriptor descriptor) {
+    RequestInfoCollector requestInfoCollector(Jt808ServerSimpleMetricsHolder metricsHolder, Jt808MessageDescriptionRegistry descriptor) {
         return new RequestInfoCollector(metricsHolder, descriptor);
     }
 

@@ -18,6 +18,7 @@ package io.github.hylexus.xtream.codec.ext.jt808.extensions.listener;
 
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriptionRegistry;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.netty.buffer.ByteBuf;
@@ -28,15 +29,19 @@ import reactor.netty.NettyInbound;
 public class Jt808RequestLoggerListener implements Jt808RequestLifecycleListener {
 
     private static final Logger log = LoggerFactory.getLogger(Jt808RequestLoggerListener.class);
+    private final Jt808MessageDescriptionRegistry descriptionRegistry;
 
-    public Jt808RequestLoggerListener() {
+    public Jt808RequestLoggerListener(Jt808MessageDescriptionRegistry descriptionRegistry) {
+        this.descriptionRegistry = descriptionRegistry;
     }
 
     @Override
     public void afterRequestDecoded(NettyInbound nettyInbound, ByteBuf rawPayload, Jt808Request request) {
-        log.info("===> Receive [{}/0x{}] message: requestId = {}, traceId = {}, remoteAddr = {}, payload = 7e{}7e",
+        final int messageId = request.messageId();
+        log.info("===> Receive [{}/0x{}({})] message: requestId = {}, traceId = {}, remoteAddr = {}, payload = 7e{}7e",
                 request.type(),
-                FormatUtils.toHexString(request.messageId(), 4),
+                FormatUtils.toHexString(messageId, 4),
+                this.descriptionRegistry.getDescription(messageId, "Unknown"),
                 request.requestId(),
                 request.traceId(),
                 request.remoteAddress(),

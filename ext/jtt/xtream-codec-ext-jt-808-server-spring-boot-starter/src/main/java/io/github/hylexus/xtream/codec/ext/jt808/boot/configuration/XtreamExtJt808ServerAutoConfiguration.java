@@ -21,6 +21,7 @@ import io.github.hylexus.xtream.codec.core.BeanMetadataRegistry;
 import io.github.hylexus.xtream.codec.core.EntityCodec;
 import io.github.hylexus.xtream.codec.core.FieldCodecRegistry;
 import io.github.hylexus.xtream.codec.core.XtreamCacheableClassPredicate;
+import io.github.hylexus.xtream.codec.core.annotation.OrderedComponent;
 import io.github.hylexus.xtream.codec.core.impl.DefaultFieldCodecRegistry;
 import io.github.hylexus.xtream.codec.core.impl.SimpleBeanMetadataRegistry;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.listener.XtreamExtJt808ServerStartupListener;
@@ -31,7 +32,9 @@ import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808RequestCo
 import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808RequestDecoder;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808ResponseEncoder;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808FlowIdGenerator;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriptionRegistry;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageEncryptionHandler;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808MessageDescriptionRegistry;
 import io.netty.buffer.ByteBufAllocator;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -39,6 +42,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+
+import java.util.List;
 
 @AutoConfiguration
 @Import({
@@ -79,6 +84,19 @@ public class XtreamExtJt808ServerAutoConfiguration {
     @ConditionalOnMissingBean
     EntityCodec entityCodec(BeanMetadataRegistry registry) {
         return new EntityCodec(registry);
+    }
+
+    @Bean
+    Jt808MessageDescriptionRegistry.Jt808MessageDescriptionRegistryCustomizer builtinJt808MessageDescriptionRegistry() {
+        return new DefaultJt808MessageDescriptionRegistry.BuiltinJt808MessageDescriptionRegistry();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    Jt808MessageDescriptionRegistry jt808MessageDescriptionRegistry(List<Jt808MessageDescriptionRegistry.Jt808MessageDescriptionRegistryCustomizer> customizers) {
+        final Jt808MessageDescriptionRegistry registry = new DefaultJt808MessageDescriptionRegistry();
+        OrderedComponent.sort(customizers).forEach(customizer -> customizer.customize(registry));
+        return registry;
     }
 
     @Bean

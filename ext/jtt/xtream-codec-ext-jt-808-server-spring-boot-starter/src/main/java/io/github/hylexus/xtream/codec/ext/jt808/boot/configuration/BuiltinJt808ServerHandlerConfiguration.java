@@ -29,6 +29,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.extensions.filter.Jt808RequestCo
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestMappingHandlerMapping;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBodyHandlerResultHandler;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.listener.Jt808RequestLoggerListener;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriptionRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamBlockingHandlerMethodPredicate;
@@ -74,8 +75,8 @@ public class BuiltinJt808ServerHandlerConfiguration {
 
     @Bean
     @ConditionalOnProperty(prefix = "jt808-server.features.request-logger", name = "enabled", havingValue = "true", matchIfMissing = true)
-    Jt808RequestLoggerListener loggingXtreamFilter() {
-        return new Jt808RequestLoggerListener();
+    Jt808RequestLoggerListener loggingXtreamFilter(Jt808MessageDescriptionRegistry descriptionRegistry) {
+        return new Jt808RequestLoggerListener(descriptionRegistry);
     }
 
     @Bean
