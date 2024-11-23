@@ -22,6 +22,7 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandler
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerResultHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.lang.reflect.Type;
@@ -47,7 +48,11 @@ public class EmptyXtreamHandlerResultHandler implements XtreamHandlerResultHandl
 
     @Override
     public Mono<Void> handleResult(XtreamExchange exchange, XtreamHandlerResult result) {
-        return Mono.empty();
+        return switch (result.getReturnValue()) {
+            case Mono<?> mono -> mono.then();
+            case Flux<?> flux -> flux.then();
+            case Object ignored -> Mono.empty();
+        };
     }
 
     @Override

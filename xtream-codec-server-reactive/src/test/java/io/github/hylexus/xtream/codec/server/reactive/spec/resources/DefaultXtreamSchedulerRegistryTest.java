@@ -34,12 +34,14 @@ class DefaultXtreamSchedulerRegistryTest {
     private DefaultXtreamSchedulerRegistry registry;
     private Scheduler defaultBlockingScheduler;
     private Scheduler defaultNonBlockingScheduler;
+    private Scheduler eventPublisherScheduler;
 
     @BeforeEach
     void setUp() {
         defaultBlockingScheduler = Schedulers.parallel();
         defaultNonBlockingScheduler = Schedulers.single();
-        registry = new DefaultXtreamSchedulerRegistry(defaultNonBlockingScheduler, defaultBlockingScheduler, Schedulers.boundedElastic());
+        eventPublisherScheduler = Schedulers.single();
+        registry = new DefaultXtreamSchedulerRegistry(defaultNonBlockingScheduler, defaultBlockingScheduler, eventPublisherScheduler);
     }
 
     @Test
@@ -51,6 +53,12 @@ class DefaultXtreamSchedulerRegistryTest {
     @Test
     void testGetSchedulerShouldReturnDefaultBlockingScheduler() {
         assertSame(defaultBlockingScheduler, registry.defaultBlockingScheduler());
+        assertEquals(3, registry.asMapView().size());
+    }
+
+    @Test
+    void testGetSchedulerShouldReturnEventPublisherScheduler() {
+        assertSame(eventPublisherScheduler, registry.eventPublisherScheduler());
         assertEquals(3, registry.asMapView().size());
     }
 

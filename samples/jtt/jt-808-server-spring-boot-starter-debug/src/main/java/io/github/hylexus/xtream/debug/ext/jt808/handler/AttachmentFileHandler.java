@@ -42,7 +42,6 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * @author hylexus
@@ -111,25 +110,32 @@ public class AttachmentFileHandler {
     /**
      * 这里对应的是苏标附件上传的码流: 0x31326364(并不是 1078 协议中的码流)
      */
-    // 这里是对应的文件上传的码流
     @Jt808RequestHandlerMapping(messageIds = 0x30316364)
-    public void processMsg30316364(Jt808Request request, @Jt808RequestBody BuiltinMessage30316364 body, @Nullable Jt808Session session) {
-        // 这里的示例都是随便瞎写的 存储到本地磁盘了
-        // 实际场景中看你自己需求  比如存储到 OSS、AWS、Minio……
+    public Mono<Void> processMsg30316364(Jt808Request request, @Jt808RequestBody BuiltinMessage30316364 body, @Nullable Jt808Session session) {
         if (session == null) {
             log.warn("session == null, 附件上传之前没有没有发送 0x1210,0x1211 消息???");
-            return;
+            return Mono.empty();
         }
 
         log.info("0x30316364 ==> {} -- {} -- {}", body.getFileName().trim(), body.getDataOffset(), body.getDataLength());
 
-        Optional.ofNullable(attachmentItemCache.getIfPresent(session.terminalId())).ifPresent((Map<String, BuiltinMessage1210.AttachmentItem> itemMap) -> {
-            final BuiltinMessage1210.AttachmentItem item = itemMap.get(body.getFileName().trim());
-            if (item == null) {
-                log.error("收到未知附件上传消息: {}", body);
-                return;
-            }
-            this.attachmentFileService.writeDataFragment(session, body, item.getGroup());
-        });
+        final Map<String, BuiltinMessage1210.AttachmentItem> itemMap = attachmentItemCache.getIfPresent(session.terminalId());
+        if (itemMap == null) {
+            return Mono.empty();
+        }
+
+        final BuiltinMessage1210.AttachmentItem item = itemMap.get(body.getFileName().trim());
+        if (item == null) {
+            log.error("收到未知附件上传消息: {}", body);
+            return Mono.empty();
+        }
+
+        // 这里的示例都是随便瞎写的 存储到本地磁盘了
+        // 实际场景中看你自己需求  比如存储到 OSS、AWS、Minio……
+        return this.attachmentFileService.writeDataFragmentAsync(session, body, item.getGroup())
+                .flatMap(dataSize -> {
+                    // ...
+                    return Mono.empty();
+                });
     }
 }

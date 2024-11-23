@@ -52,4 +52,9 @@ public class DemoConfiguration {
             });
         };
     }
+
+    // @Bean(name = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER)
+    // Scheduler scheduler(){
+    //     return Schedulers.newParallel("jt");
+    // }
 }

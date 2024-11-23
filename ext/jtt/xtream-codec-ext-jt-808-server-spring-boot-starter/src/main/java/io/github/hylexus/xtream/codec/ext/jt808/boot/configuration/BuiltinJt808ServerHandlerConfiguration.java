@@ -47,8 +47,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.LongAdder;
 
 @Import({
@@ -164,10 +164,10 @@ public class BuiltinJt808ServerHandlerConfiguration {
                     new SimpleTypes.SessionInfo(),
                     new SimpleTypes.SessionInfo(),
                     new SimpleTypes.SessionInfo(),
-                    new SimpleTypes.RequestInfo(new LongAdder(), new HashMap<>()),
-                    new SimpleTypes.RequestInfo(new LongAdder(), new HashMap<>()),
-                    new SimpleTypes.RequestInfo(new LongAdder(), new HashMap<>()),
-                    new SimpleTypes.RequestInfo(new LongAdder(), new HashMap<>())
+                    new SimpleTypes.RequestInfo(new LongAdder(), new ConcurrentHashMap<>()),
+                    new SimpleTypes.RequestInfo(new LongAdder(), new ConcurrentHashMap<>()),
+                    new SimpleTypes.RequestInfo(new LongAdder(), new ConcurrentHashMap<>()),
+                    new SimpleTypes.RequestInfo(new LongAdder(), new ConcurrentHashMap<>())
             );
         }
     }

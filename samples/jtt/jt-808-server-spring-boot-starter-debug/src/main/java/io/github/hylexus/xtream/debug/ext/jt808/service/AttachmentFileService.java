@@ -19,12 +19,13 @@ package io.github.hylexus.xtream.debug.ext.jt808.service;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1210;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage30316364;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
+import reactor.core.publisher.Mono;
 
 /**
  * @author hylexus
  */
 public interface AttachmentFileService {
 
-    void writeDataFragment(Jt808Session session, BuiltinMessage30316364 body, BuiltinMessage1210 group);
+    Mono<Integer> writeDataFragmentAsync(Jt808Session session, BuiltinMessage30316364 body, BuiltinMessage1210 group);
 
 }

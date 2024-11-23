@@ -16,7 +16,6 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration;
 
-import io.github.hylexus.xtream.codec.ext.jt808.boot.condition.ConditionalOnMissingCustomizedScheduler;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamServerSchedulerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler.BoundedElasticProperties;
@@ -67,7 +66,6 @@ public class BuiltinJt808ServerSchedulerConfiguration {
 
     @Bean(name = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER)
     @ConditionalOnMissingBean(name = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER)
-    @ConditionalOnMissingCustomizedScheduler(type = ConditionalOnMissingCustomizedScheduler.Type.NON_BLOCKING)
     Scheduler nonBlockingScheduler(XtreamJt808ServerProperties serverProperties) {
         final XtreamServerSchedulerProperties property = serverProperties.getSchedulers().getNonBlockingHandler();
         return createScheduler(property);
@@ -75,7 +73,6 @@ public class BuiltinJt808ServerSchedulerConfiguration {
 
     @Bean(name = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER)
     @ConditionalOnMissingBean(name = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER)
-    @ConditionalOnMissingCustomizedScheduler(type = ConditionalOnMissingCustomizedScheduler.Type.BLOCKING)
     Scheduler blockingScheduler(XtreamJt808ServerProperties serverProperties) {
         final XtreamServerSchedulerProperties property = serverProperties.getSchedulers().getBlockingHandler();
         return createScheduler(property);

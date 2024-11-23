@@ -47,11 +47,13 @@ public class XtreamHandlerMethodHandlerAdapter implements XtreamHandlerAdapter {
     public Mono<XtreamHandlerResult> handle(XtreamExchange exchange, Object handler) {
         final XtreamHandlerMethod handlerMethod = (XtreamHandlerMethod) handler;
 
-        return this.resolveArguments(exchange, handlerMethod).flatMap(args -> {
-            // ...
-            return handlerMethod.invoke(handlerMethod.getContainerInstance(), args);
-        }).publishOn(handlerMethod.getScheduler());
-        // .subscribeOn(handlerMethod.getScheduler());
+        return this.resolveArguments(exchange, handlerMethod)
+                // 参数解析结束之后 调度到指定的调度器中执行
+                .publishOn(handlerMethod.getScheduler())
+                .flatMap(args -> {
+                    // ...
+                    return handlerMethod.invoke(handlerMethod.getContainerInstance(), args);
+                });
     }
 
     private Mono<Object[]> resolveArguments(XtreamExchange exchange, XtreamHandlerMethod handlerMethod) {

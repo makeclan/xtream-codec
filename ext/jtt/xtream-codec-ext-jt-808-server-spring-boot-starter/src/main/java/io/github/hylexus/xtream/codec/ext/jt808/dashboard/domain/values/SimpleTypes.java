@@ -18,14 +18,14 @@ package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values;
 
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 
-import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.LongAdder;
 
 public final class SimpleTypes {
     private SimpleTypes() {
     }
 
-    public record RequestInfo(LongAdder total, Map<String, RequestDetail> details) {
+    public record RequestInfo(LongAdder total, ConcurrentMap<String, RequestDetail> details) {
         public void incrementTotal() {
             this.total.increment();
         }

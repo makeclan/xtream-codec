@@ -16,6 +16,8 @@
 
 package io.github.hylexus.xtream.codec.server.reactive.spec;
 
+import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamRequestHandler;
+import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamRequestHandlerMapping;
 import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamServerConstants;
 import reactor.core.scheduler.Scheduler;
 
@@ -30,14 +32,33 @@ public interface XtreamSchedulerRegistry {
     String SCHEDULER_NAME_BLOCKING = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER;
     String SCHEDULER_NAME_EVENT_PUBLISHER = XtreamServerConstants.BEAN_NAME_EVENT_PUBLISHER_SCHEDULER;
 
+    /**
+     * 非阻塞型处理器 使用的默认调度器
+     *
+     * @see XtreamRequestHandler#nonBlockingScheduler()
+     * @see XtreamRequestHandlerMapping#scheduler()
+     * @see io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamBlockingHandlerMethodPredicate
+     */
     default Scheduler defaultNonBlockingScheduler() {
         return this.getScheduler(SCHEDULER_NAME_NON_BLOCKING).orElseThrow();
     }
 
+    /**
+     * 阻塞型处理器 使用的默认调度器
+     *
+     * @see XtreamRequestHandler#blockingScheduler()
+     * @see XtreamRequestHandlerMapping#scheduler()
+     * @see io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamBlockingHandlerMethodPredicate
+     */
     default Scheduler defaultBlockingScheduler() {
         return this.getScheduler(SCHEDULER_NAME_BLOCKING).orElseThrow();
     }
 
+    /**
+     * 事件发布器专用的调度器
+     *
+     * @see io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher
+     */
     default Scheduler eventPublisherScheduler() {
         return this.getScheduler(SCHEDULER_NAME_EVENT_PUBLISHER).orElseThrow();
     }

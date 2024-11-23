@@ -71,7 +71,7 @@ public class DefaultXtreamSchedulerRegistry implements XtreamSchedulerRegistry {
 
     @Override
     public boolean removeScheduler(String name) {
-        if (SCHEDULER_NAME_BLOCKING.equals(name) || SCHEDULER_NAME_NON_BLOCKING.equals(name)) {
+        if (SCHEDULER_NAME_BLOCKING.equals(name) || SCHEDULER_NAME_NON_BLOCKING.equals(name) || SCHEDULER_NAME_EVENT_PUBLISHER.equals(name)) {
             throw new UnsupportedOperationException("Cannot remove default scheduler");
         }
 
