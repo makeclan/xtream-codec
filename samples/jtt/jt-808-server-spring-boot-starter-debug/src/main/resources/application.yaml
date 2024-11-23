@@ -38,6 +38,9 @@ jt808-server:
   enabled: true
   ## 内置功能
   features:
+    ### 转发请求时使用指定的调度器(而不是上游默认的Reactor调度器)
+    request-dispatcher-scheduler:
+      enabled: true
     ### 请求日志(仅仅用于调试)
     request-logger:
       enabled: true
@@ -146,6 +149,12 @@ jt808-server:
         prefer-native: true
   ## Reactor 用到的调度器配置
   schedulers:
+    ## [转发请求]的调度器
+    request-dispatcher:
+      type: parallel
+      parallel:
+        daemon: true
+        thread-name-prefix: dispatcher
     ## [非阻塞型]处理器的调度器
     non-blocking-handler:
       type: parallel

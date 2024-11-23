@@ -151,6 +151,9 @@ public class XtreamJt808ServerProperties {
     @ToString
     public static class SchedulerProperties {
         @NestedConfigurationProperty
+        private XtreamServerSchedulerProperties requestDispatcher = new XtreamServerSchedulerProperties();
+
+        @NestedConfigurationProperty
         private XtreamServerSchedulerProperties nonBlockingHandler = new XtreamServerSchedulerProperties();
 
         @NestedConfigurationProperty
@@ -212,10 +215,20 @@ public class XtreamJt808ServerProperties {
         private DashboardFeature dashboard = new DashboardFeature();
 
         @NestedConfigurationProperty
+        private RequestDispatcherFeature requestDispatcherScheduler = new RequestDispatcherFeature();
+
+        @NestedConfigurationProperty
         private RequestLoggerFeature requestLogger = new RequestLoggerFeature();
 
         @NestedConfigurationProperty
         private RequestCombinerFeature requestCombiner = new RequestCombinerFeature();
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class RequestDispatcherFeature {
+        private boolean enabled = true;
     }
 
     @Getter

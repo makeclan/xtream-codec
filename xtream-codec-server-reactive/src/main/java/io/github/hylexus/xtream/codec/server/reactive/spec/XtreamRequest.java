@@ -35,6 +35,11 @@ public interface XtreamRequest extends XtreamInbound {
 
     XtreamRequestBuilder mutate();
 
+    @SuppressWarnings("unchecked")
+    default <T extends XtreamRequest> T castAs(Class<T> ignored) {
+        return (T) this;
+    }
+
     @Override
     String toString();
 

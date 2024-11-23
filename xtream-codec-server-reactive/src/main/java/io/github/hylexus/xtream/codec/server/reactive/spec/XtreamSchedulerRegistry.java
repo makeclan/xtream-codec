@@ -19,6 +19,7 @@ package io.github.hylexus.xtream.codec.server.reactive.spec;
 import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamRequestHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamRequestHandlerMapping;
 import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamServerConstants;
+import jakarta.annotation.Nullable;
 import reactor.core.scheduler.Scheduler;
 
 import java.util.Map;
@@ -28,9 +29,20 @@ import java.util.Optional;
  * @author hylexus
  */
 public interface XtreamSchedulerRegistry {
+    String SCHEDULER_NAME_REQUEST_DISPATCHER = XtreamServerConstants.BEAN_NAME_REQUEST_DISPATCHER_SCHEDULER;
     String SCHEDULER_NAME_NON_BLOCKING = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER;
     String SCHEDULER_NAME_BLOCKING = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER;
     String SCHEDULER_NAME_EVENT_PUBLISHER = XtreamServerConstants.BEAN_NAME_EVENT_PUBLISHER_SCHEDULER;
+
+    /**
+     * 请求转发 使用的默认调度器
+     *
+     * @see io.github.hylexus.xtream.codec.server.reactive.spec.impl.RequestDispatcherSchedulerFilter
+     */
+    @Nullable
+    default Scheduler requestDispatcherScheduler() {
+        return this.getScheduler(SCHEDULER_NAME_REQUEST_DISPATCHER).orElse(null);
+    }
 
     /**
      * 非阻塞型处理器 使用的默认调度器

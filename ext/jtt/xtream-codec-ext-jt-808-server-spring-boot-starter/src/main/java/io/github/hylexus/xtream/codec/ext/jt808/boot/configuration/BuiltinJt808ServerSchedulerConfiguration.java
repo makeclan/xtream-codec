@@ -31,8 +31,10 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamBlockin
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.DefaultXtreamBlockingHandlerMethodPredicate;
 import io.github.hylexus.xtream.codec.server.reactive.spec.resources.DefaultXtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.resources.XtreamReactorThreadFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import reactor.core.scheduler.Scheduler;
@@ -52,16 +54,25 @@ public class BuiltinJt808ServerSchedulerConfiguration {
     @Bean
     @ConditionalOnMissingBean
     XtreamSchedulerRegistry xtreamSchedulerRegistry(
+            @Autowired(required = false) @Qualifier(XtreamServerConstants.BEAN_NAME_REQUEST_DISPATCHER_SCHEDULER) Scheduler requestDispatcherScheduler,
             @Qualifier(XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER) Scheduler nonBlockingScheduler,
             @Qualifier(XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER) Scheduler blockingScheduler,
             @Qualifier(XtreamServerConstants.BEAN_NAME_EVENT_PUBLISHER_SCHEDULER) Scheduler eventPublisherScheduler) {
-        return new DefaultXtreamSchedulerRegistry(nonBlockingScheduler, blockingScheduler, eventPublisherScheduler);
+        return new DefaultXtreamSchedulerRegistry(requestDispatcherScheduler, nonBlockingScheduler, blockingScheduler, eventPublisherScheduler);
     }
 
     @Bean
     @ConditionalOnMissingBean
     XtreamEventPublisher xtreamEventPublisher(XtreamSchedulerRegistry schedulerRegistry) {
         return new DefaultXtreamEventPublisher(schedulerRegistry);
+    }
+
+    @Bean(name = XtreamServerConstants.BEAN_NAME_REQUEST_DISPATCHER_SCHEDULER)
+    @ConditionalOnMissingBean(name = XtreamServerConstants.BEAN_NAME_REQUEST_DISPATCHER_SCHEDULER)
+    @ConditionalOnProperty(prefix = "jt808-server.features.request-dispatcher-scheduler", name = "enabled", havingValue = "true")
+    Scheduler requestDispatcherScheduler(XtreamJt808ServerProperties serverProperties) {
+        final XtreamServerSchedulerProperties property = serverProperties.getSchedulers().getRequestDispatcher();
+        return createScheduler(property);
     }
 
     @Bean(name = XtreamServerConstants.BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER)

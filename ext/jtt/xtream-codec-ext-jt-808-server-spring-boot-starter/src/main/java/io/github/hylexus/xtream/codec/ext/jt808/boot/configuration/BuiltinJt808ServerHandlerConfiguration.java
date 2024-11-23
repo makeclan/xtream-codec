@@ -36,10 +36,7 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandler
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMethodHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.DelegateXtreamHandlerMethodArgumentResolver;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.LoggingXtreamRequestExceptionHandler;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.EmptyXtreamHandlerResultHandler;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.LoggingXtreamHandlerResultHandler;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.SimpleXtreamRequestHandlerHandlerAdapter;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.XtreamResponseBodyHandlerResultHandler;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -68,6 +65,13 @@ public class BuiltinJt808ServerHandlerConfiguration {
     // endregion exceptionHandlers
 
     // region filters
+    @Bean
+    @ConditionalOnProperty(prefix = "jt808-server.features.request-dispatcher-scheduler", name = "enabled", havingValue = "true")
+    @ConditionalOnMissingBean
+    RequestDispatcherSchedulerFilter requestDispatcherSchedulerFilter(XtreamSchedulerRegistry schedulerRegistry) {
+        return new RequestDispatcherSchedulerFilter(schedulerRegistry);
+    }
+
     @Bean
     @ConditionalOnProperty(prefix = "jt808-server.features.request-logger", name = "enabled", havingValue = "true", matchIfMissing = true)
     Jt808RequestLoggerListener loggingXtreamFilter() {

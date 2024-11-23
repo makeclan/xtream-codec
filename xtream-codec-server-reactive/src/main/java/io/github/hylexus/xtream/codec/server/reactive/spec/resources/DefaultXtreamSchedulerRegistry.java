@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.server.reactive.spec.resources;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
+import jakarta.annotation.Nullable;
 import reactor.core.scheduler.Scheduler;
 
 import java.util.Collections;
@@ -29,18 +30,35 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DefaultXtreamSchedulerRegistry implements XtreamSchedulerRegistry {
 
+    @Nullable
+    protected final Scheduler requestDispatcherScheduler;
     protected final Scheduler defaultNonBlockingScheduler;
     protected final Scheduler defaultBlockingScheduler;
     protected final Scheduler eventPublisherScheduler;
     protected final ConcurrentHashMap<String, Scheduler> schedulerMap = new ConcurrentHashMap<>();
 
     public DefaultXtreamSchedulerRegistry(Scheduler defaultNonBlockingScheduler, Scheduler defaultBlockingScheduler, Scheduler eventPublisherScheduler) {
+        this(null, defaultNonBlockingScheduler, defaultBlockingScheduler, eventPublisherScheduler);
+    }
+
+    public DefaultXtreamSchedulerRegistry(@Nullable Scheduler requestDispatcherScheduler, Scheduler defaultNonBlockingScheduler, Scheduler defaultBlockingScheduler, Scheduler eventPublisherScheduler) {
+        this.requestDispatcherScheduler = requestDispatcherScheduler;
         this.defaultNonBlockingScheduler = defaultNonBlockingScheduler;
         this.defaultBlockingScheduler = defaultBlockingScheduler;
         this.eventPublisherScheduler = eventPublisherScheduler;
+
+        if (requestDispatcherScheduler != null) {
+            this.registerScheduler(SCHEDULER_NAME_REQUEST_DISPATCHER, requestDispatcherScheduler);
+        }
         this.registerScheduler(SCHEDULER_NAME_BLOCKING, defaultBlockingScheduler);
         this.registerScheduler(SCHEDULER_NAME_NON_BLOCKING, defaultNonBlockingScheduler);
         this.registerScheduler(SCHEDULER_NAME_EVENT_PUBLISHER, eventPublisherScheduler);
+    }
+
+    @Override
+    @Nullable
+    public Scheduler requestDispatcherScheduler() {
+        return this.requestDispatcherScheduler;
     }
 
     @Override
@@ -71,7 +89,7 @@ public class DefaultXtreamSchedulerRegistry implements XtreamSchedulerRegistry {
 
     @Override
     public boolean removeScheduler(String name) {
-        if (SCHEDULER_NAME_BLOCKING.equals(name) || SCHEDULER_NAME_NON_BLOCKING.equals(name) || SCHEDULER_NAME_EVENT_PUBLISHER.equals(name)) {
+        if (SCHEDULER_NAME_REQUEST_DISPATCHER.equals(name) || SCHEDULER_NAME_BLOCKING.equals(name) || SCHEDULER_NAME_NON_BLOCKING.equals(name) || SCHEDULER_NAME_EVENT_PUBLISHER.equals(name)) {
             throw new UnsupportedOperationException("Cannot remove default scheduler");
         }
 

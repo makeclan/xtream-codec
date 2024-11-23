@@ -20,6 +20,7 @@ public final class XtreamServerConstants {
     private XtreamServerConstants() {
     }
 
+    public static final String BEAN_NAME_REQUEST_DISPATCHER_SCHEDULER = "xtreamRequestDispatcherScheduler";
     public static final String BEAN_NAME_HANDLER_ADAPTER_NON_BLOCKING_SCHEDULER = "xtreamHandlerAdapterNonBlockingScheduler";
     public static final String BEAN_NAME_HANDLER_ADAPTER_BLOCKING_SCHEDULER = "xtreamHandlerAdapterBlockingScheduler";
     public static final String BEAN_NAME_EVENT_PUBLISHER_SCHEDULER = "xtreamEventPublisherScheduler";
