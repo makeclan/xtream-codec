@@ -324,6 +324,7 @@ fun isJavaProject(project: Project): Boolean {
                 "xtream-codec-server-reactive-debug-tcp",
                 "xtream-codec-server-reactive-debug-udp",
                 "jt-808-server-spring-boot-starter-debug",
+                "jt-808-server-quick-start",
             ).contains(project.name))
 }
 

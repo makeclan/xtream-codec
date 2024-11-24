@@ -90,7 +90,7 @@ public class DispatcherXtreamHandler implements XtreamHandler {
                     final Throwable cause = XtreamWrappedRuntimeException.unwrapIfNecessary(ex);
                     return result.getExceptionHandler().handleError(exchange, cause).flatMap(result2 ->
                             handleResult(exchange, result2, "Exception handler "
-                                    + result2.getHandler() + ", error=\"" + cause.getMessage() + "\""));
+                                                            + result2.getHandler() + ", error=\"" + cause.getMessage() + "\""));
                 });
             }
             return voidMono;
@@ -113,7 +113,7 @@ public class DispatcherXtreamHandler implements XtreamHandler {
 
     private <R> Mono<R> createNotFoundError(XtreamExchange exchange) {
         return Mono.defer(() -> {
-            Exception ex = new RequestHandlerNotFoundException("No handler found", exchange);
+            Exception ex = new RequestHandlerNotFoundException("No handler found. requestInfo : " + exchange.request(), exchange);
             return Mono.error(ex);
         });
     }
