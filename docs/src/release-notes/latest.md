@@ -4,6 +4,21 @@ article: false
 
 # 发版记录
 
+## 0.0.1-beta.5(2024-11-24)
+
+### ⭐ New Features
+
+- 优化 `Jt808SessionManager`
+- 优化 `Jt808CommandSender`
+- 优化 `XtreamEventPublisher`
+- 内置 **actuator** 指标
+- 请求解码逻辑移动到 `Filter` 之前
+- 新增 `RequestDispatcherSchedulerFilter`
+
+### ⚠️ Breaking Changes
+
+- 配置项重新调整
+
 ## 0.0.1-beta.4(2024-11-02)
 
 ### ⭐ New Features
