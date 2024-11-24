@@ -3,8 +3,8 @@ include("xtream-codec-core")
 include("xtream-codec-server-reactive")
 
 include("ext")
-include("ext:jtt")
-include("ext:jtt:xtream-codec-ext-jt-808-server-spring-boot-starter")
+include("ext:jt")
+include("ext:jt:xtream-codec-ext-jt-808-server-spring-boot-starter")
 
 include("debug")
 include("debug:xtream-codec-core-debug")

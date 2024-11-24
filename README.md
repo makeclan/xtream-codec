@@ -22,7 +22,7 @@
 
 该项目是一个基于 [projectreactor](https://projectreactor.io/) 的、和具体协议无关的、异步的、<span style="color:red;">非阻塞的</span>、TCP/UDP 服务端实现。
 
-同时提供了一个基于 [xtream-codec-server-reactive](xtream-codec-server-reactive) 的 [JT/T 808 协议](ext/jtt/xtream-codec-ext-jt-808-server-spring-boot-starter) 服务端实现。
+同时提供了一个基于 [xtream-codec-server-reactive](xtream-codec-server-reactive) 的 [JT/T 808 协议](ext/jt/xtream-codec-ext-jt-808-server-spring-boot-starter) 服务端实现。
 
 ## Modules
 
@@ -31,13 +31,13 @@
 ├── build-script  ## 构建脚本
 ├── docs          ## 文档
 ├── ext           ## 扩展模块
-│     └── jtt     ## JT/T 扩展
+│     └── jt      ## JT/T 扩展
 │         └── xtream-codec-ext-jt-808-server-spring-boot-starter  ## JT/T 808 扩展
 ├── quick-start   ## quick-start 示例
 │     └── jt      ## JT/T 示例
 │         └── jt-808-server-quick-start   ## JT/T 808 服务端示例
-├── samples       ## 调试专用(不用理会)
-│     ├── jtt     ## JT/T 示例(不用理会)
+├── debug         ## 调试专用(不用理会)
+│     ├── jt      ## JT/T 示例(不用理会)
 │     │   └── jt-808-server-spring-boot-starter-debug   ## JT/T 808 服务端调试(不用理会)
 │     ├── xtream-codec-core-debug                       ## xtream-codec-core 模块调试(不用理会)
 │     ├── xtream-codec-server-reactive-debug-tcp        ## xtream-codec-server-reactive TCP 调试(不用理会)

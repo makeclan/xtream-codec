@@ -117,7 +117,7 @@ configure(subprojects) {
         excludeBoms = true
 
         // excludes = mavenPublications.map { "xtream-codec:$it" }.toTypedArray()
-        excludes = mavenPublications.flatMap { listOf("xtream-codec:$it", "xtream-codec.ext.jtt:$it") }.toTypedArray()
+        excludes = mavenPublications.flatMap { listOf("xtream-codec:$it", "xtream-codec.ext.jt:$it") }.toTypedArray()
 
         // Set output directory for the report data.
         // Defaults to ${project.buildDir}/reports/dependency-license.
