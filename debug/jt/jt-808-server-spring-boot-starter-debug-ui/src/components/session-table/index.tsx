@@ -10,13 +10,14 @@ import { Spinner } from "@nextui-org/spinner";
 import { Pagination } from "@nextui-org/pagination";
 import { useState } from "react";
 
+import RenderCell from "./session-cell.tsx";
+
 import { usePageList } from "@/hooks/use-page-list.ts";
-import { useRenderCell } from "@/hooks/use-render-cell";
 import { Session, SessionType } from "@/types";
 import { request } from "@/utils/request.ts";
-import SessionMonitor from "@/components/session-monitor.tsx";
+import SessionMonitor from "@/components/session-monitor";
 
-export default function SessionTable(props: { type: SessionType }) {
+export default function Index(props: { type: SessionType }) {
   const path = `session/${props.type}-session/list`;
   const { setPage, page, pages, tableData, isLoading, mutate } =
     usePageList(path);
@@ -55,7 +56,6 @@ export default function SessionTable(props: { type: SessionType }) {
       console.error(_e);
     }
   };
-  const { renderCell } = useRenderCell(props.type, handleMonitor, handleDel);
 
   return (
     <>
@@ -91,7 +91,14 @@ export default function SessionTable(props: { type: SessionType }) {
           {(item) => (
             <TableRow key={item?.id}>
               {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
+                <TableCell>
+                  <RenderCell
+                    columnKey={columnKey}
+                    handleDel={handleDel}
+                    handleMonitor={handleMonitor}
+                    session={item}
+                  />
+                </TableCell>
               )}
             </TableRow>
           )}

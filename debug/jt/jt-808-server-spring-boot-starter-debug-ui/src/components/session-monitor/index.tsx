@@ -24,12 +24,13 @@ import {
   fetchEventSource,
 } from "@microsoft/fetch-event-source";
 
-import Message from "@/components/message.tsx";
+import Message from "./message.tsx";
+
 import { ChevronDownIcon } from "@/components/icons.tsx";
 import { subtitle } from "@/components/primitives.ts";
 import { Event, EventType, Session } from "@/types";
 
-export default function SessionMonitor({
+export default function Index({
   row,
   isOpen,
   setIsOpen,
