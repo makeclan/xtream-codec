@@ -220,7 +220,7 @@ configure(subprojects) {
     if (isMavenPublications(project)) {
         publishing {
             publications {
-                create<MavenPublication>("mavenPublication") {
+                create<MavenPublication>("maven") {
 
                     from(components["java"])
                     artifact(sourcesJar)
@@ -277,7 +277,7 @@ configure(subprojects) {
                         // 1.1 将 build-script/maven/repo-credentials.debug-template.properties 另存到 ~/.gradle/repo-credentials.properties 然后修改用户名和密码等属性
                         // 1.2 在 ~/.gradle/gradle.properties 中配置 signing.keyId, signing.password, signing.secretKeyRingFile
                         maven {
-                            name = "privateRepo"
+                            name = "private"
                             url = uri(mavenRepoConfig.getProperty("privateRepo-release.url"))
                             credentials {
                                 username = mavenRepoConfig.getProperty("privateRepo-release.username")
@@ -302,7 +302,7 @@ configure(subprojects) {
 
         signing {
             if (needSign()) {
-                sign(publishing.publications["mavenPublication"])
+                sign(publishing.publications["maven"])
             }
             ////// 在 ~/.gradle/gradle.properties 文件中配置:
             // 具体请参考模板文件: build-script/gradle/debug-template.gradle.properties

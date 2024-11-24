@@ -51,3 +51,4 @@ node_modules/
 /samples/jtt/jt-808-server-spring-boot-starter-debug-ui/.idea/
 /samples/jtt/jt-808-server-spring-boot-starter-debug/src/main/resources/static/
 /dev-tools-local/
+/samples/jtt/jt-808-server-spring-boot-starter-debug/src/main/resources/application-node3.yaml

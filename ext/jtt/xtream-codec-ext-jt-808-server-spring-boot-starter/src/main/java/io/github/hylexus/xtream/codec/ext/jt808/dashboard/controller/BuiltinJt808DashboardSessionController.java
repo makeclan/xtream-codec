@@ -93,7 +93,7 @@ public class BuiltinJt808DashboardSessionController {
     Predicate<Jt808Session> createFilter(Jt808SessionQueryDto dto) {
         Predicate<Jt808Session> predicate = it -> true;
         if (dto.getTerminalId() != null) {
-            predicate = predicate.and(it -> it.terminalId().equals(dto.getTerminalId()));
+            predicate = predicate.and(it -> it.terminalId().toLowerCase().contains(dto.getTerminalId().toLowerCase()));
         }
         if (dto.getServerType() != null) {
             predicate = predicate.and(it -> it.role() == dto.getServerType());
