@@ -12,13 +12,10 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     // common end
 
-    api(project(":xtream-codec-server-reactive"))
-    api("com.github.ben-manes.caffeine:caffeine")
-    api("org.springframework.boot:spring-boot-starter")
+    api(project(":ext:jt:xtream-codec-ext-jt-808-server-spring-boot-starter"))
 
-    compileOnly("org.springframework.boot:spring-boot-starter-webflux")
-    compileOnly("org.springframework.boot:spring-boot-starter-validation")
-    compileOnly("org.bouncycastle:bcprov-jdk18on")
+    api("org.springframework.boot:spring-boot-starter-webflux")
+    api("org.springframework.boot:spring-boot-starter-validation")
 
     // runtime
     implementation("org.springframework.boot:spring-boot-starter-actuator")

@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.debug.ext.jt808.config;
+package io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler;
 
 import jakarta.annotation.Nonnull;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.reactive.config.ResourceHandlerRegistry;
@@ -33,8 +32,7 @@ import java.util.List;
 /**
  * @author hylexus
  */
-@Configuration
-public class DashboardWebFluxConfigurer implements WebFluxConfigurer {
+public class Jt808ServerDashboardWebFluxConfigurer implements WebFluxConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

@@ -196,23 +196,10 @@ public class XtreamJt808ServerProperties {
         private boolean preferNative = LoopResources.DEFAULT_NATIVE;
     }
 
-
-    @Getter
-    @Setter
-    @ToString
-    public static class FeatureProps {
-        /**
-         * 是否启用 dashboard
-         */
-        private boolean enabled = true;
-    }
-
     @Getter
     @Setter
     @ToString
     public static class Features {
-        @NestedConfigurationProperty
-        private DashboardFeature dashboard = new DashboardFeature();
 
         @NestedConfigurationProperty
         private RequestDispatcherFeature requestDispatcherScheduler = new RequestDispatcherFeature();
@@ -228,13 +215,6 @@ public class XtreamJt808ServerProperties {
     @Setter
     @ToString
     public static class RequestDispatcherFeature {
-        private boolean enabled = true;
-    }
-
-    @Getter
-    @Setter
-    @ToString
-    public static class DashboardFeature {
         private boolean enabled = true;
     }
 

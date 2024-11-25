@@ -27,6 +27,7 @@ val mavenPublications = setOf(
     "xtream-codec-core",
     "xtream-codec-server-reactive",
     "xtream-codec-ext-jt-808-server-spring-boot-starter",
+    "xtream-codec-ext-jt-808-server-dashboard-spring-boot-starter",
 )
 
 // region Java

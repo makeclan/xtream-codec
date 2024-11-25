@@ -14,32 +14,48 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration;
+package io.github.hylexus.xtream.codec.ext.jt808.dashboard.boot.configuration;
 
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.*;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.Jt808DashboardRequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.RequestInfoCollector;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.SessionInfoCollector;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808AttachmentSessionManager;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriptionRegistry;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.LongAdder;
 
 /**
  * @author hylexus
  */
-@ConditionalOnProperty(prefix = "jt808-server.features.dashboard", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class BuiltinJt808DashboardConfiguration {
 
     @Bean
+    Jt808ServerSimpleMetricsHolder metricsHolder() {
+        return new Jt808ServerSimpleMetricsHolder(
+                new SimpleTypes.SessionInfo(),
+                new SimpleTypes.SessionInfo(),
+                new SimpleTypes.SessionInfo(),
+                new SimpleTypes.SessionInfo(),
+                new SimpleTypes.RequestInfo(new LongAdder(), new ConcurrentHashMap<>()),
+                new SimpleTypes.RequestInfo(new LongAdder(), new ConcurrentHashMap<>()),
+                new SimpleTypes.RequestInfo(new LongAdder(), new ConcurrentHashMap<>()),
+                new SimpleTypes.RequestInfo(new LongAdder(), new ConcurrentHashMap<>())
+        );
+    }
+
+    @Bean
     @ConditionalOnBean(Jt808SessionManager.class)
-    SessionInfoCollector sessionManager(
+    SessionInfoCollector sessionInfoCollector(
             Jt808ServerSimpleMetricsHolder serverSimpleMetricsHolder,
             XtreamEventPublisher eventPublisher,
             @Autowired(required = false) Jt808SessionManager sessionManager,

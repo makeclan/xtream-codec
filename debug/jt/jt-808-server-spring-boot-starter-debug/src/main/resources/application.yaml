@@ -36,6 +36,9 @@ demo-app-config:
 jt808-server:
   # false: 不会进行任何自动配置
   enabled: true
+  dashboard:
+    ### 是否启用 Dashboard
+    enabled: true
   ## 内置功能
   features:
     ### 转发请求时使用指定的调度器(而不是上游默认的Reactor调度器)
@@ -51,9 +54,6 @@ jt808-server:
       sub-package-storage:
         maximum-size: 1024
         ttl: 45s
-    ### 是否启用 Dashboard
-    dashboard:
-      enabled: true
   ## 指令服务器
   instruction-server:
     # TCP 服务配置(指令服务器)

@@ -17,7 +17,6 @@
 package io.github.hylexus.xtream.codec.ext.jt808.boot.actuator;
 
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
@@ -30,25 +29,22 @@ import java.util.List;
 public class BuiltinJt808ServerEndpoint {
 
     private final XtreamJt808ServerProperties serverProperties;
-    private final Jt808ServerSimpleMetricsHolder collector;
 
-    public BuiltinJt808ServerEndpoint(XtreamJt808ServerProperties serverProperties, Jt808ServerSimpleMetricsHolder collector) {
-        this.collector = collector;
+    public BuiltinJt808ServerEndpoint(XtreamJt808ServerProperties serverProperties) {
         this.serverProperties = serverProperties;
     }
 
     @ReadOperation
     public List<String> types() {
-        return List.of("metrics", "config");
+        return List.of("config");
     }
 
     @ReadOperation
     public Object type(@Selector String type) {
-        return switch (type) {
-            case "metrics" -> collector;
-            case "config" -> this.serverProperties;
-            default -> throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        };
+        if (type.equals("config")) {
+            return this.serverProperties;
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
 

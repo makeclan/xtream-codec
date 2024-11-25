@@ -18,7 +18,6 @@ package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration;
 
 import io.github.hylexus.xtream.codec.ext.jt808.boot.actuator.BuiltinJt808ServerEndpoint;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.context.annotation.Bean;
 
@@ -29,8 +28,8 @@ import org.springframework.context.annotation.Bean;
 public class BuiltinJt808ServerActuatorConfiguration {
 
     @Bean
-    BuiltinJt808ServerEndpoint builtinJt808ServerEndpoint(XtreamJt808ServerProperties serverProperties, Jt808ServerSimpleMetricsHolder holder) {
-        return new BuiltinJt808ServerEndpoint(serverProperties, holder);
+    BuiltinJt808ServerEndpoint builtinJt808ServerEndpoint(XtreamJt808ServerProperties serverProperties) {
+        return new BuiltinJt808ServerEndpoint(serverProperties);
     }
 
 }
