@@ -41,7 +41,7 @@ article: false
 新增两个子模块:
 
 - **xtream-codec-server-reactive**: 和具体协议格式无关的 **纯异步**、<font color="red">非阻塞</font> 的服务端
-- **xtream-codec-ext-jt-808-server-spring-boot-starter**: 基于 **xtream-codec-server-reactive** 实现的 **JT/T 808** 服务端扩展
+- **jt-808-server-spring-boot-starter-reactive**: 基于 **xtream-codec-server-reactive** 实现的 **JT/T 808** 服务端扩展
 
 ### ⚠️ Breaking Changes
 

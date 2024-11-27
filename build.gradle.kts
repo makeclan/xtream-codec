@@ -26,8 +26,8 @@ val mavenRepoConfig = getMavenRepoConfig()
 val mavenPublications = setOf(
     "xtream-codec-core",
     "xtream-codec-server-reactive",
-    "xtream-codec-ext-jt-808-server-spring-boot-starter",
-    "xtream-codec-ext-jt-808-server-dashboard-spring-boot-starter",
+    "jt-808-server-spring-boot-starter-reactive",
+    "jt-808-server-dashboard-spring-boot-starter-reactive",
 )
 
 // region Java
@@ -324,8 +324,9 @@ fun isJavaProject(project: Project): Boolean {
                 "xtream-codec-core-debug",
                 "xtream-codec-server-reactive-debug-tcp",
                 "xtream-codec-server-reactive-debug-udp",
-                "jt-808-server-spring-boot-starter-debug",
+                "jt-808-server-spring-boot-starter-reactive-debug",
                 "jt-808-server-quick-start",
+                "jt-808-server-quick-start-with-dashboard",
             ).contains(project.name))
 }
 

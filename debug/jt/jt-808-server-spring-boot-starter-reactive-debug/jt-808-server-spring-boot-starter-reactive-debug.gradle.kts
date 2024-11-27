@@ -22,8 +22,8 @@ dependencies {
 
     // 加解密
     api("org.bouncycastle:bcprov-jdk18on")
-//    api(project(":ext:jt:xtream-codec-ext-jt-808-server-spring-boot-starter"))
-    api(project(":ext:jt:xtream-codec-ext-jt-808-server-dashboard-spring-boot-starter"))
+//    api(project(":ext:jt:jt-808-server-spring-boot-starter-reactive"))
+    api(project(":ext:jt:jt-808-server-dashboard-spring-boot-starter-reactive"))
     api("org.springframework.boot:spring-boot-starter-webflux")
     api("org.springframework.boot:spring-boot-starter-validation")
     api("org.springframework.boot:spring-boot-starter-logging")
