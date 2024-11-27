@@ -1,3 +1,5 @@
+import org.cadixdev.gradle.licenser.LicenseExtension
+
 dependencies {
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
@@ -23,4 +25,53 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.mockito:mockito-core")
+}
+
+val jt808DashboardUiStaticDir = project.file("src/main/resources/static")
+// 前端打包生成的文件 不检测 License
+extensions.configure(LicenseExtension::class.java) {
+    exclude {
+        it.file.startsWith(jt808DashboardUiStaticDir)
+    }
+}
+
+// ./gradlew clean build -P buildJt808DashboardUi=true
+val buildDebugUi = project.findProperty("buildJt808DashboardUi") == "true"
+val dashboardUiDir = file("../jt-808-server-dashboard-ui")
+val jt808DashboardUiGroup = "jt808-dashboard-ui"
+tasks.register<Exec>("buildJt808DashboardUi") {
+    onlyIf { buildDebugUi }
+    group = jt808DashboardUiGroup
+    description = "构建jt808-dashboard-ui"
+    workingDir = file(dashboardUiDir)
+
+    commandLine(
+        "sh", "-c",
+        """
+        pnpm install --registry https://registry.npmmirror.com \
+        && pnpm run build
+        """.trimIndent()
+    )
+}
+
+tasks.register<Copy>("copyJt808DashboardUiDist") {
+    onlyIf { buildDebugUi }
+    group = jt808DashboardUiGroup
+    description = "复制jt808-dashboard-ui构建输出"
+    from("${dashboardUiDir}/dist")
+    into("src/main/resources/static")
+    include("**/*")
+}
+
+tasks.named("processResources").configure {
+    if (buildDebugUi) {
+        dependsOn(tasks.named("copyJt808DashboardUiDist"))
+    }
+}
+
+tasks.named("build").configure {
+    if (buildDebugUi) {
+        dependsOn(tasks.named("buildJt808DashboardUi"))
+        dependsOn(tasks.named("copyJt808DashboardUiDist"))
+    }
 }

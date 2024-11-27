@@ -23,7 +23,7 @@ import reactor.netty.NettyInbound;
 /**
  * @author hylexus
  * @see io.github.hylexus.xtream.codec.ext.jt808.extensions.listener.Jt808RequestLoggerListener#afterRequestDecoded(NettyInbound, ByteBuf, Jt808Request)
- * @see io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.RequestInfoCollector#afterRequestDecoded(NettyInbound, ByteBuf, Jt808Request)
+ * @see "io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.RequestInfoCollector#afterRequestDecoded(NettyInbound, ByteBuf, Jt808Request)"
  */
 public interface Jt808MessageDescriptionRegistry {
 
