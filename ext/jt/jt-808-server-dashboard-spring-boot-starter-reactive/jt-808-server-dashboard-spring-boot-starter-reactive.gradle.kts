@@ -36,11 +36,12 @@ extensions.configure(LicenseExtension::class.java) {
 }
 
 // ./gradlew clean build -P buildJt808DashboardUi=true
-val buildDebugUi = project.findProperty("buildJt808DashboardUi") == "true"
+val buildJt808DashboardUi = getConfigAsBoolean("buildJt808DashboardUi") || project.findProperty("buildJt808DashboardUi") == "true"
 val dashboardUiDir = file("../jt-808-server-dashboard-ui")
 val jt808DashboardUiGroup = "jt808-dashboard-ui"
+
 tasks.register<Exec>("buildJt808DashboardUi") {
-    onlyIf { buildDebugUi }
+    onlyIf { buildJt808DashboardUi }
     group = jt808DashboardUiGroup
     description = "构建jt808-dashboard-ui"
     workingDir = file(dashboardUiDir)
@@ -55,23 +56,32 @@ tasks.register<Exec>("buildJt808DashboardUi") {
 }
 
 tasks.register<Copy>("copyJt808DashboardUiDist") {
-    onlyIf { buildDebugUi }
+    onlyIf { buildJt808DashboardUi }
     group = jt808DashboardUiGroup
     description = "复制jt808-dashboard-ui构建输出"
     from("${dashboardUiDir}/dist")
     into("src/main/resources/static")
     include("**/*")
+
+    doFirst {
+        delete("src/main/resources/static")
+    }
+
+    // 始终重新执行任务
+    outputs.upToDateWhen { false }
 }
 
 tasks.named("processResources").configure {
-    if (buildDebugUi) {
+    if (buildJt808DashboardUi) {
         dependsOn(tasks.named("copyJt808DashboardUiDist"))
     }
 }
 
 tasks.named("build").configure {
-    if (buildDebugUi) {
+    if (buildJt808DashboardUi) {
         dependsOn(tasks.named("buildJt808DashboardUi"))
         dependsOn(tasks.named("copyJt808DashboardUiDist"))
     }
 }
+
+fun getConfigAsBoolean(key: String) = project.ext.get(key)?.toString()?.toBoolean() ?: false
