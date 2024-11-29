@@ -13,6 +13,7 @@ import { Button } from "@nextui-org/button";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import {
   Dispatch,
+  FC,
   SetStateAction,
   useEffect,
   useMemo,
@@ -23,23 +24,72 @@ import {
   EventSourceMessage,
   fetchEventSource,
 } from "@microsoft/fetch-event-source";
-
-import Message from "./message.tsx";
+import { Card, CardBody } from "@nextui-org/card";
+import clsx from "clsx";
+import { Avatar } from "@nextui-org/avatar";
 
 import { ChevronDownIcon } from "@/components/icons.tsx";
 import { subtitle } from "@/components/primitives.ts";
 import { Event, EventType, Session } from "@/types";
+const SESSION_MAX_LENGTH = "100";
 
-export default function Index({
-  row,
-  isOpen,
-  setIsOpen,
-}: {
+interface MessageProps {
+  item: Event;
+  className?: string;
+}
+const Message: FC<MessageProps> = ({ item, className }) => {
+  const rowDisplay = useMemo(() => {
+    return [
+      EventType.AFTER_REQUEST_RECEIVED,
+      EventType.AFTER_SUB_REQUEST_MERGED,
+    ].includes(Number(item.type))
+      ? {
+          name: "C",
+          flexRow: "",
+        }
+      : {
+          name: "S",
+          flexRow: "flex-row-reverse",
+        };
+  }, [item]);
+
+  return [
+    EventType.AFTER_SESSION_CREATED,
+    EventType.BEFORE_SESSION_CLOSED,
+  ].includes(Number(item.type)) ? (
+    <div className="flex m-4 justify-center">
+      <Card className="flex-grow-0 max-w-2xl">
+        <CardBody>
+          <p className="text-primary line-clamp-2 text-sm">{`Session${EventType.BEFORE_SESSION_CLOSED ? " closed" : " opened"} at: ${item.eventTime} remoteAddress: ${item.remoteAddress} reason: ${item.reason}`}</p>
+        </CardBody>
+      </Card>
+    </div>
+  ) : (
+    <div className={clsx(className, "flex m-4", rowDisplay.flexRow)}>
+      <Avatar className="flex-shrink-0" name={rowDisplay.name} />
+      <Spacer x={2} />
+      <Card className="flex-grow-0 max-w-2xl">
+        <CardBody>
+          {Object.keys(item).map((e, i) => (
+            <p key={i}>{`${e}: ${item[e as keyof Event]}`}</p>
+          ))}
+        </CardBody>
+      </Card>
+    </div>
+  );
+};
+
+export interface SessionMonitorProps {
   row: Session | null;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-}) {
-  const [max, setMax] = useState("100");
+}
+export const SessionMonitor: FC<SessionMonitorProps> = ({
+  row,
+  isOpen,
+  setIsOpen,
+}) => {
+  const [max, setMax] = useState(SESSION_MAX_LENGTH);
   const [selected, setSelected] = useState<SharedSelection>("all");
   const [linkData, setLinkData] = useState<Event[]>([]);
 
@@ -182,4 +232,4 @@ export default function Index({
       </ModalContent>
     </Modal>
   );
-}
+};

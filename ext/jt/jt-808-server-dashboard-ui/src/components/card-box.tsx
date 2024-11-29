@@ -20,7 +20,7 @@ import {
 
 import { Metrics, ServerInfo } from "@/types";
 
-export default function CardBox() {
+export const CardBox = () => {
   const { config } = useRouteLoaderData("root") as { config: ServerInfo };
   const [data, setData] = useState<Metrics>({});
 
@@ -179,4 +179,4 @@ export default function CardBox() {
       </div>
     </>
   );
-}
+};

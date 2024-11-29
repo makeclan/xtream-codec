@@ -1,5 +1,5 @@
-import SessionTable from "@/components/session-table";
+import { SessionTable } from "@/components/session-table.tsx";
 
-export default function InstructionPage() {
+export const InstructionPage = () => {
   return <SessionTable type="instruction" />;
-}
+};

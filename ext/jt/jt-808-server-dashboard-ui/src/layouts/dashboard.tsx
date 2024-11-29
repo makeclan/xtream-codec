@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
 
 import { Navbar } from "@/components/navbar";
-import SideNav from "@/components/sidenav.tsx";
+import { SideNav } from "@/components/sidenav.tsx";
 import { Provider } from "@/provider.tsx";
 
-export default function DashboardLayout() {
+export const DashboardLayout = () => {
   return (
     <Provider>
       <div className=" flex text-foreground bg-background h-screen flex-col md:flex-row md:overflow-hidden">
@@ -20,4 +20,4 @@ export default function DashboardLayout() {
       </div>
     </Provider>
   );
-}
+};

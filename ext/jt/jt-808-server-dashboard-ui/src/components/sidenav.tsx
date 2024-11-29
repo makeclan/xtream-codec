@@ -1,9 +1,9 @@
 import { Link } from "@nextui-org/link";
 
 import { LogoIcon } from "@/components/icons";
-import NavLinks from "@/components/nav-links.tsx";
+import { NavLinks } from "@/components/nav-links.tsx";
 
-export default function SideNav() {
+export const SideNav = () => {
   return (
     <div className="flex h-full flex-col px-3 py-4 md:px-2 bg-#060606">
       <Link
@@ -20,4 +20,4 @@ export default function SideNav() {
       </div>
     </div>
   );
-}
+};

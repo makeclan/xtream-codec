@@ -1,3 +1,3 @@
-export default function DebugPage() {
+export const DebugPage = () => {
   return <div>Debug</div>;
-}
+};

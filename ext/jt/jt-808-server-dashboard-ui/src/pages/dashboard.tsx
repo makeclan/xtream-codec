@@ -1,5 +1,5 @@
-import CardBox from "@/components/card-box.tsx";
+import { CardBox } from "@/components/card-box.tsx";
 
-export default function DashboardPage() {
+export const DashboardPage = () => {
   return <CardBox />;
-}
+};

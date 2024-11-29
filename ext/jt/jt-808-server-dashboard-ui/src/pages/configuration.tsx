@@ -3,7 +3,7 @@ import { Code } from "@nextui-org/code";
 
 import { ServerInfo } from "@/types";
 
-export default function ConfigurationPage() {
+export const ConfigurationPage = () => {
   const { config } = useRouteLoaderData("root") as { config: ServerInfo };
 
   return (
@@ -11,4 +11,4 @@ export default function ConfigurationPage() {
       <pre>{JSON.stringify(config.configuration, null, 2)}</pre>
     </Code>
   );
-}
+};

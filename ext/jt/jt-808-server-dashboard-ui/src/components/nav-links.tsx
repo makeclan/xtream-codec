@@ -4,7 +4,7 @@ import clsx from "clsx";
 
 import { siteConfig } from "@/config/site";
 
-export default function NavLinks() {
+export const NavLinks = () => {
   const location = useLocation();
 
   return (
@@ -36,4 +36,4 @@ export default function NavLinks() {
       })}
     </>
   );
-}
+};

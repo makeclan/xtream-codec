@@ -5,12 +5,21 @@ import {
   NavbarContent,
   NavbarItem,
 } from "@nextui-org/navbar";
+import confetti from "canvas-confetti";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { GithubIcon, HeartFilledIcon } from "@/components/icons";
 
 export const Navbar = () => {
+  const handleConfetti = () => {
+    confetti({
+      particleCount: 100,
+      spread: 100,
+      origin: { y: 0.6 },
+    });
+  };
+
   return (
     <NextUINavbar maxWidth="xl" position="sticky">
       <NavbarContent
@@ -25,12 +34,10 @@ export const Navbar = () => {
         </NavbarItem>
         <NavbarItem className="hidden md:flex">
           <Button
-            isExternal
-            as={Link}
             className="text-sm font-normal text-default-600 bg-default-100"
-            href={siteConfig.links.sponsor}
             startContent={<HeartFilledIcon className="text-danger" />}
             variant="flat"
+            onPress={handleConfetti}
           >
             Sponsor
           </Button>

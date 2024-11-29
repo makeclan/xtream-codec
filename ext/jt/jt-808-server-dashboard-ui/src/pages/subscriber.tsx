@@ -12,8 +12,8 @@ import { Pagination } from "@nextui-org/pagination";
 
 import { usePageList } from "@/hooks/use-page-list.ts";
 
-export default function SubscribePage() {
-  const path = `event-publisher/subscribers`;
+export const SubscribePage = () => {
+  const path = "event-publisher/subscribers";
   const { setPage, page, pages, tableData, isLoading } = usePageList(path);
 
   const loadingState =
@@ -72,4 +72,4 @@ export default function SubscribePage() {
       </Table>
     </>
   );
-}
+};
