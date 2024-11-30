@@ -8,44 +8,48 @@ import { ConfigurationPage } from "@/pages/configuration.tsx";
 import { DashboardLayout } from "@/layouts/dashboard.tsx";
 import { SubscribePage } from "@/pages/subscriber.tsx";
 import { loader as rootLoader } from "@/routes/root.tsx";
-const router = createBrowserRouter([
-  {
-    path: "/",
-    id: "root",
-    element: <DashboardLayout />,
-    loader: rootLoader,
-    children: [
-      {
-        index: true,
-        element: <DashboardPage />,
-      },
-      {
-        path: "dashboard",
-        element: <DashboardPage />,
-      },
-      {
-        path: "instruction",
-        element: <InstructionPage />,
-      },
-      {
-        path: "attachment",
-        element: <AttachmentPage />,
-      },
-      {
-        path: "debug",
-        element: <DebugPage />,
-      },
-      {
-        path: "subscriber",
-        element: <SubscribePage />,
-      },
-      {
-        path: "configuration",
-        element: <ConfigurationPage />,
-      },
-    ],
-  },
-]);
+
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      id: "root",
+      element: <DashboardLayout />,
+      loader: rootLoader,
+      children: [
+        {
+          index: true,
+          element: <DashboardPage />,
+        },
+        {
+          path: "dashboard",
+          element: <DashboardPage />,
+        },
+        {
+          path: "instruction",
+          element: <InstructionPage />,
+        },
+        {
+          path: "attachment",
+          element: <AttachmentPage />,
+        },
+        {
+          path: "debug",
+          element: <DebugPage />,
+        },
+        {
+          path: "subscriber",
+          element: <SubscribePage />,
+        },
+        {
+          path: "configuration",
+          element: <ConfigurationPage />,
+        },
+      ],
+    },
+  ],
+  { basename: import.meta.env.BASE_URL },
+);
 
 function App() {
   return <RouterProvider router={router} />;

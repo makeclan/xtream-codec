@@ -24,6 +24,16 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.server.RouterFunction;
+import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Mono;
+
+import java.net.URI;
+
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
+import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @AutoConfiguration
 @Import({
@@ -36,9 +46,37 @@ import org.springframework.context.annotation.Import;
 @ConditionalOnProperty(prefix = "jt808-server.dashboard", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class XtreamExtJt808ServerAutoConfiguration {
 
-    @Bean
-    Jt808ServerDashboardWebFluxConfigurer jt808ServerDashboardWebFluxConfigurer() {
-        return new Jt808ServerDashboardWebFluxConfigurer();
+    private final XtreamJt808ServerDashboardProperties dashboardProperties;
+
+    public XtreamExtJt808ServerAutoConfiguration(XtreamJt808ServerDashboardProperties dashboardProperties) {
+        this.dashboardProperties = dashboardProperties;
     }
 
+    @Bean
+    Jt808ServerDashboardWebFluxConfigurer jt808ServerDashboardWebFluxConfigurer() {
+        return new Jt808ServerDashboardWebFluxConfigurer(this.dashboardProperties);
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> dashboardRoutes() {
+        final String basePath = this.dashboardProperties.getFormatedBasePath();
+        final Mono<ServerResponse> dashboardIndex = ServerResponse.ok()
+                .contentType(MediaType.TEXT_HTML)
+                .bodyValue(new ClassPathResource(Jt808ServerDashboardWebFluxConfigurer.DASHBOARD_STATIC_RESOURCE_DIR + "index.html"));
+        // `/dashboard-ui/` ==> index.html
+        RouterFunction<ServerResponse> routerFunction = route(GET(basePath), request -> dashboardIndex);
+        if ("/".equals(basePath)) {
+            return routerFunction;
+        }
+        // `/dashboard-ui` ==> index.html
+        routerFunction = routerFunction.and(route(GET(basePath.substring(0, basePath.length() - 1)), request -> dashboardIndex));
+        if (this.dashboardProperties.isRedirectRootToBasePath()) {
+            // `/` ==> redirect to `/dashboard-ui/`
+            routerFunction = routerFunction.and(route(GET("/"), request ->
+                    ServerResponse.temporaryRedirect(URI.create(basePath)).build()
+            ));
+        }
+
+        return routerFunction;
+    }
 }

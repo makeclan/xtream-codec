@@ -105,7 +105,7 @@ public class DefaultJt808ResponseEncoder implements Jt808ResponseEncoder {
             final int length = (i == subPackageCount - 1)
                     ? Math.min(subPackageBodySize, messageBodyLength - offset)
                     : subPackageBodySize;
-            final ByteBuf bodyData = body.slice(offset, length);
+            final ByteBuf bodyData = body.retainedSlice(offset, length);
             final CompositeByteBuf subPackage = this.buildPackage(describer, bodyData, subPackageCount, i + 1, flowIds[i]);
             allResponseBytes.addComponents(true, subPackage);
         }

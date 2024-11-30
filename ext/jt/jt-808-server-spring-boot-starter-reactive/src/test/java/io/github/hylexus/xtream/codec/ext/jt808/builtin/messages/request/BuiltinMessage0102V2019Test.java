@@ -31,8 +31,6 @@ class BuiltinMessage0102V2019Test extends BaseCodecTest {
 
         final BuiltinMessage0102V2019 entity = new BuiltinMessage0102V2019();
         final String authCode = "这是鉴权码111";
-        final int length = authCode.getBytes(XtreamConstants.CHARSET_GBK).length;
-        entity.setAuthenticationCodeLength((short) length);
         entity.setAuthenticationCode(authCode);
         entity.setImei("111111111111111");
         final byte[] bytes = XtreamBytes.appendSuffixIfNecessary(
@@ -51,8 +49,6 @@ class BuiltinMessage0102V2019Test extends BaseCodecTest {
         final BuiltinMessage0102V2019 entity = decodeAsEntity(BuiltinMessage0102V2019.class, "01024031010000000001391234432900000dd5e2cac7bcf8c8a8c2eb313131313131313131313131313131313131312e322e333031300000000000000000000000003c");
 
         final String authCode = "这是鉴权码111";
-        final int length = authCode.getBytes(XtreamConstants.CHARSET_GBK).length;
-        assertEquals(length, entity.getAuthenticationCodeLength());
         assertEquals(authCode, entity.getAuthenticationCode());
         assertEquals("111111111111111", entity.getImei());
         assertEquals("1.2.3010", entity.getFormatedSoftwareVersion());

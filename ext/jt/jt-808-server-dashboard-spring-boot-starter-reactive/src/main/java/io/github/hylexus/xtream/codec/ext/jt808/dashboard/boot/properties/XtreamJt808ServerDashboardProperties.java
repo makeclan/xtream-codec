@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.boot.properties;
 
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.utils.DashboardWebUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -24,9 +25,25 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Getter
 @Setter
 @ToString
-@ConfigurationProperties(prefix = "jt808-server.dashboard")
+@ConfigurationProperties(prefix = "jt808-server.features.dashboard")
 public class XtreamJt808ServerDashboardProperties {
 
     private boolean enabled = true;
+    // 暂时不支持动态配置
+    private final String basePath = "/dashboard-ui/";
+    /**
+     * 将 `/` 307 到 `/dashboard-ui/`
+     */
+    private boolean redirectRootToBasePath = true;
+    /**
+     * 将 `base-path` 开头的 404 请求转发到 `index.html`
+     * <p>
+     * 如果不开启这个配置，刷新 dashboard 页面时会出现404(也就是说只能刷新 `base-path` 根路由，其他子路由刷新会 404)
+     */
+    private boolean forwardNotFoundToIndex = true;
+
+    public String getFormatedBasePath() {
+        return DashboardWebUtils.formatBasePath(this.getBasePath());
+    }
 
 }

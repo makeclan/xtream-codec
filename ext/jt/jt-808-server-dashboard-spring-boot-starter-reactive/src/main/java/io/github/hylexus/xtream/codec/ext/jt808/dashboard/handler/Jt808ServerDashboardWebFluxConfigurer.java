@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler;
 
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.boot.properties.XtreamJt808ServerDashboardProperties;
 import jakarta.annotation.Nonnull;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -33,24 +34,40 @@ import java.util.List;
  * @author hylexus
  */
 public class Jt808ServerDashboardWebFluxConfigurer implements WebFluxConfigurer {
+    public static final String DASHBOARD_STATIC_RESOURCE_DIR = "/static/dashboard/808/";
+    private final String basePth;
+    private final XtreamJt808ServerDashboardProperties dashboardProperties;
+
+    public Jt808ServerDashboardWebFluxConfigurer(XtreamJt808ServerDashboardProperties dashboardProperties) {
+        this.dashboardProperties = dashboardProperties;
+        this.basePth = dashboardProperties.getBasePath();
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:/static/")
+        registry.addResourceHandler(this.basePth + "**")
+                .addResourceLocations("classpath:" + DASHBOARD_STATIC_RESOURCE_DIR)
                 .resourceChain(true)
-                .addResolver(new JtDashboardStaticResourceResolver());
+                .addResolver(new JtDashboardStaticResourceResolver(this.dashboardProperties.isForwardNotFoundToIndex()));
     }
 
     private static class JtDashboardStaticResourceResolver implements ResourceResolver {
         private final PathResourceResolver defaultResolver = new PathResourceResolver();
+        private final boolean forward404ToIndex;
+
+        public JtDashboardStaticResourceResolver(boolean forward404ToIndex) {
+            this.forward404ToIndex = forward404ToIndex;
+        }
 
         @Override
         @Nonnull
         public Mono<Resource> resolveResource(ServerWebExchange exchange, @Nonnull String requestPath, @Nonnull List<? extends Resource> locations, @Nonnull ResourceResolverChain chain) {
-            return defaultResolver
-                    .resolveResource(exchange, requestPath, locations, chain)
-                    .switchIfEmpty(Mono.just(new ClassPathResource("/static/index.html")));
+            final Mono<Resource> resource = defaultResolver.resolveResource(exchange, requestPath, locations, chain);
+            if (this.forward404ToIndex) {
+                // 404 ==> index.html
+                return resource.switchIfEmpty(Mono.just(new ClassPathResource(DASHBOARD_STATIC_RESOURCE_DIR + "index.html")));
+            }
+            return resource;
         }
 
         @Override

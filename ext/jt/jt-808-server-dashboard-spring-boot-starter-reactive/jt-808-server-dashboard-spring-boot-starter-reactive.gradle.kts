@@ -45,7 +45,8 @@ tasks.register<Exec>("buildJt808DashboardUi") {
     group = jt808DashboardUiGroup
     description = "构建jt808-dashboard-ui"
     workingDir = file(dashboardUiDir)
-
+    // @see io.github.hylexus.xtream.codec.ext.jt808.dashboard.boot.properties.XtreamJt808ServerDashboardProperties.basePath
+    environment("VITE_BASE_PATH", "/dashboard-ui/")
     commandLine(
         "sh", "-c",
         """
@@ -60,11 +61,11 @@ tasks.register<Copy>("copyJt808DashboardUiDist") {
     group = jt808DashboardUiGroup
     description = "复制jt808-dashboard-ui构建输出"
     from("${dashboardUiDir}/dist")
-    into("src/main/resources/static")
+    into("src/main/resources/static/dashboard/808/")
     include("**/*")
 
     doFirst {
-        delete("src/main/resources/static")
+        delete("src/main/resources/static/dashboard/808/")
     }
 
     // 始终重新执行任务

@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
+import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,16 +34,13 @@ import lombok.experimental.Accessors;
 @ToString
 @Accessors(chain = true)
 public class BuiltinMessage0102V2019 {
-    /**
-     * byte[0,1)    BYTE    鉴权码长度
-     */
-    @Preset.JtStyle.Byte
-    private short authenticationCodeLength;
 
     /**
      * byte[1,n)    STRING  鉴权码内容
+     * <p>
+     * prependLengthFieldType: 前置一个 u8 字段表示鉴权码长度
      */
-    @Preset.JtStyle.Str(lengthExpression = "getAuthenticationCodeLength()")
+    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8)
     private String authenticationCode;
 
     /**
@@ -58,16 +56,6 @@ public class BuiltinMessage0102V2019 {
      */
     @Preset.JtStyle.Str(length = 20)
     private String softwareVersion;
-
-    /**
-     * 其他 getter 方法由 lombok 生成，不再列出
-     * <p>
-     * 该方法在表达式中用到了，所以这里单独列出来，方便调试
-     */
-    @SuppressWarnings("lombok")
-    public short getAuthenticationCodeLength() {
-        return authenticationCodeLength;
-    }
 
     /**
      * @return 去掉可能存在的后补 `0x00` 的字符串

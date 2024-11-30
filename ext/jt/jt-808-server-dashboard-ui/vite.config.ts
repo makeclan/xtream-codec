@@ -5,6 +5,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
+  base: process.env.VITE_BASE_PATH || "/dashboard-ui/",
   server: {
     proxy: {
       "/dashboard-api": {
