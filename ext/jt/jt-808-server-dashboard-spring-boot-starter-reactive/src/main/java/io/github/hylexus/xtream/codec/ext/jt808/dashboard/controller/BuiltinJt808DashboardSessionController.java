@@ -48,12 +48,12 @@ public class BuiltinJt808DashboardSessionController {
         this.attachmentSessionManager = attachmentSessionManager;
     }
 
-    @GetMapping("/instruction-session/list")
+    @GetMapping("/instruction-sessions")
     public PageableVo<Jt808SessionVo> instructionSessionList(Jt808SessionQueryDto dto) {
         return this.doSearch(dto, this.sessionManager);
     }
 
-    @GetMapping("/attachment-session/list")
+    @GetMapping("/attachment-sessions")
     public PageableVo<Jt808SessionVo> attachmentSessionList(Jt808SessionQueryDto dto) {
         return this.doSearch(dto, this.attachmentSessionManager);
     }

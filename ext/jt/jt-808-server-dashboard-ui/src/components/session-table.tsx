@@ -36,7 +36,7 @@ const SessionCell: FC<CellProps> = ({
     case "operation":
       return (
         <div className="flex">
-          <Tooltip content="Monitor">
+          <Tooltip content="链路监控">
             <button
               className="text-lg text-default-400 cursor-pointer active:opacity-50"
               onClick={() => handleMonitor(session)}
@@ -45,7 +45,7 @@ const SessionCell: FC<CellProps> = ({
             </button>
           </Tooltip>
           <Spacer x={4} />
-          <Tooltip content="Delete">
+          <Tooltip content="删除会话">
             <button
               className="text-lg text-default-400 cursor-pointer active:opacity-50"
               onClick={() => handleDel(session)}
@@ -64,7 +64,7 @@ export interface SessionTableProps {
   type: SessionType;
 }
 export const SessionTable: FC<SessionTableProps> = ({ type }) => {
-  const path = `session/${type}-session/list`;
+  const path = `session/${type}-sessions`;
   const { setPage, page, pages, tableData, isLoading, mutate } =
     usePageList(path);
   const [isOpen, setIsOpen] = useState<boolean>(false);
