@@ -13,16 +13,16 @@ export const siteConfig = {
   name: "Xtream",
   description: "Xtream",
   sidenav: [
-    { name: "Dashboard", href: "/dashboard", icon: DashboardIcon },
+    { name: "仪表盘", href: "/dashboard", icon: DashboardIcon },
+    { name: "808服务", href: "/instruction", icon: SessionIcon },
     {
-      name: "Attachment",
+      name: "附件服务",
       href: "/attachment",
       icon: AttachmentIcon,
     },
-    { name: "Instruction", href: "/instruction", icon: SessionIcon },
-    { name: "Subscriber", href: "/subscriber", icon: SubIcon },
-    { name: "Debug", href: "/debug", icon: CommandIcon },
-    { name: "Configuration", href: "/configuration", icon: ConfigIcon },
+    { name: "订阅", href: "/subscriber", icon: SubIcon },
+    { name: "配置", href: "/configuration", icon: ConfigIcon },
+    { name: "调试", href: "/debug", icon: CommandIcon },
   ],
   links: {
     github: "https://github.com/hylexus/jt-framework",

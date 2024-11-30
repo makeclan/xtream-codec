@@ -1,4 +1,5 @@
 import { Card, CardBody, CardFooter, CardHeader } from "@nextui-org/card";
+import {Chip} from "@nextui-org/chip";
 import { useEffect, useState } from "react";
 import {
   EventSourceMessage,
@@ -25,16 +26,56 @@ export const CardBox = () => {
   const [data, setData] = useState<Metrics>({});
 
   const listCount = [
-    "tcpInstructionSession",
-    "tcpAttachmentSession",
-    "udpInstructionSession",
-    "udpAttachmentSession",
+    {
+      key: "tcpInstructionSession",
+      name: "808服务会话数",
+      protocolType: "TCP",
+      serverRole: "指令服务器",
+    },
+    {
+      key: "tcpAttachmentSession",
+      name: "附件服务会话数",
+      protocolType: "TCP",
+      serverRole: "附件服务器",
+    },
+    {
+      key: "udpInstructionSession",
+      name: "808服务会话数",
+      protocolType: "UDP",
+      serverRole: "指令服务器",
+    },
+    {
+      key: "udpAttachmentSession",
+      name: "附件服务会话数",
+      protocolType: "UDP",
+      serverRole: "附件服务器",
+    },
   ];
   const listRequest = [
-    "tcpInstructionRequest",
-    "tcpAttachmentRequest",
-    "udpInstructionRequest",
-    "udpAttachmentRequest",
+    {
+      key: "tcpInstructionRequest",
+      name: "808服务请求数",
+      protocolType: "TCP",
+      serverRole: "指令服务器",
+    },
+    {
+      key: "tcpAttachmentRequest",
+      name: "附件服务请求数",
+      protocolType: "TCP",
+      serverRole: "附件服务器",
+    },
+    {
+      key: "udpInstructionRequest",
+      name: "808服务请求数",
+      protocolType: "UDP",
+      serverRole: "指令服务器",
+    },
+    {
+      key: "udpAttachmentRequest",
+      name: "附件服务请求数",
+      protocolType: "UDP",
+      serverRole: "附件服务器",
+    },
   ];
 
   useEffect(() => {
@@ -60,7 +101,7 @@ export const CardBox = () => {
       <div className="gap-4 grid grid-cols-1 sm:grid-cols-3">
         <Card shadow="sm">
           <CardHeader>
-            <p>Version</p>
+            <p>版本</p>
           </CardHeader>
           <CardBody className="overflow-visible p-4">
             <p>{config.xtreamCodecVersion}</p>
@@ -68,7 +109,7 @@ export const CardBox = () => {
         </Card>
         <Card shadow="sm">
           <CardHeader>
-            <p>serverStartupTime</p>
+            <p>服务启动时间</p>
           </CardHeader>
           <CardBody className="overflow-visible p-4">
             <p className="text-default-500">{config.serverStartupTime}</p>
@@ -76,7 +117,7 @@ export const CardBox = () => {
         </Card>
         <Card shadow="sm">
           <CardHeader className="flex">
-            <p>subscriber</p>
+            <p>订阅者</p>
           </CardHeader>
           <CardBody className="overflow-visible p-4">
             <p className="text-default-500">
@@ -85,7 +126,7 @@ export const CardBox = () => {
           </CardBody>
           <CardFooter className="text-small justify-between">
             <Link color="primary" href={"/subscriber"}>
-              detail
+              查看详情
             </Link>
           </CardFooter>
         </Card>
@@ -102,15 +143,25 @@ export const CardBox = () => {
             }}
           >
             <CardHeader className="text-small justify-between">
-              <b>{item}</b>
+              <b>会话数</b>
+              <Chip
+                color={item.serverRole === "附件服务器" ? "warning" : "success"}
+              >
+                {item.serverRole}
+              </Chip>
+              <Chip
+                color={item.protocolType === "TCP" ? "primary" : "secondary"}
+              >
+                {item.protocolType}
+              </Chip>
             </CardHeader>
             <CardBody className="overflow-visible p-4">
               <p className="text-default-500">
-                current: {data?.[item]?.current}
+                当前: {data?.[item.key]?.current}
               </p>
             </CardBody>
             <CardFooter className="text-small justify-between">
-              <b>max: {data[item]?.max}</b>
+              <b>峰值: {data[item.key]?.max}</b>
             </CardFooter>
           </Card>
         ))}
@@ -124,13 +175,23 @@ export const CardBox = () => {
             }}
           >
             <CardHeader className="text-small justify-between">
-              <b>{item}</b>
+              <b>请求数</b>
+              <Chip
+                color={item.serverRole === "附件服务器" ? "warning" : "success"}
+              >
+                {item.serverRole}
+              </Chip>
+              <Chip
+                color={item.protocolType === "TCP" ? "primary" : "secondary"}
+              >
+                {item.protocolType}
+              </Chip>
             </CardHeader>
             <CardBody className="overflow-visible p-4">
-              {data[item]?.total > 0 && (
+              {data[item.key]?.total > 0 && (
                 <Popover placement="right">
                   <PopoverTrigger>
-                    <Button>detail</Button>
+                    <Button>详情</Button>
                   </PopoverTrigger>
                   <PopoverContent>
                     <Table
@@ -142,26 +203,22 @@ export const CardBox = () => {
                       shadow="none"
                     >
                       <TableHeader>
-                        <TableColumn>messageId</TableColumn>
-                        <TableColumn>desc</TableColumn>
-                        <TableColumn>count</TableColumn>
-                        <TableColumn>messageIdAsHexString</TableColumn>
+                        <TableColumn>消息ID</TableColumn>
+                        <TableColumn>消息描述</TableColumn>
+                        <TableColumn>总数</TableColumn>
                       </TableHeader>
                       <TableBody>
-                        {data[item] &&
-                          Object.keys(data[item].details).map((e, i) => (
+                        {data[item.key] &&
+                          Object.keys(data[item.key].details).map((e, i) => (
                             <TableRow key={i}>
                               <TableCell>
-                                {data[item].details[e].messageId}
+                                {data[item.key].details[e].messageIdAsHexString}
                               </TableCell>
                               <TableCell>
-                                {data[item].details[e].desc}
+                                {data[item.key].details[e].desc}
                               </TableCell>
                               <TableCell>
-                                {data[item].details[e].count}
-                              </TableCell>
-                              <TableCell>
-                                {data[item].details[e].messageIdAsHexString}
+                                {data[item.key].details[e].count}
                               </TableCell>
                             </TableRow>
                           ))}
@@ -172,7 +229,7 @@ export const CardBox = () => {
               )}
             </CardBody>
             <CardFooter className="text-small justify-between">
-              <b>total: {data[item]?.total}</b>
+              <b>总请求数: {data[item.key]?.total}</b>
             </CardFooter>
           </Card>
         ))}

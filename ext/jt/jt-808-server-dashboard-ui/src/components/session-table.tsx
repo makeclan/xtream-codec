@@ -74,13 +74,13 @@ export const SessionTable: FC<SessionTableProps> = ({ type }) => {
     isLoading && tableData?.data?.length === 0 ? "loading" : "idle";
 
   const columns = [
-    { key: "terminalId", label: "terminalId" },
-    { key: "serverType", label: "serverType" },
-    { key: "protocolVersion", label: "protocolVersion" },
-    { key: "protocolType", label: "protocolType" },
-    { key: "creationTime", label: "creationTime" },
-    { key: "lastCommunicateTime", label: "lastCommunicateTime" },
-    { key: "operation", label: "operation" },
+    { key: "terminalId", label: "终端手机号" },
+    { key: "serverType", label: "服务类型" },
+    { key: "protocolVersion", label: "808协议版本" },
+    { key: "protocolType", label: "协议" },
+    { key: "creationTime", label: "创建时间" },
+    { key: "lastCommunicateTime", label: "最近一次通信时间" },
+    { key: "operation", label: "操作" },
   ];
 
   const handleMonitor = (item: Session) => {

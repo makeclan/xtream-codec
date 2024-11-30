@@ -20,10 +20,10 @@ export const SubscribePage = () => {
     isLoading && tableData?.data?.length === 0 ? "loading" : "idle";
 
   const columns = [
-    { key: "id", label: "id" },
-    { key: "interestedEvents", label: "interestedEvents" },
-    { key: "createdAt", label: "createdAt" },
-    { key: "metadata", label: "metadata" },
+    { key: "id", label: "ID" },
+    { key: "interestedEvents", label: "订阅事件" },
+    { key: "createdAt", label: "创建时间" },
+    { key: "metadata", label: "元数据" },
   ];
 
   return (
