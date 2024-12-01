@@ -1,3 +1,19 @@
+## 0.0.1-beta.6(2024-12-01)
+
+### ⭐ New Features
+
+- 新增 `jt-808-server-dashboard-spring-boot-starter-reactive` 模块
+- 新增 `jt-808-server-dashboard-ui` 模块
+
+### ⚠️ Breaking Changes
+
+- `xtream-codec-ext-jt-808-server-spring-boot-starter` 重名为 `jt-808-server-spring-boot-starter-reactive`
+
+### ❤️ Contributors
+
+- [@dfEric](https://github.com/dfEric)
+- [@hylexus](https://github.com/hylexus)
+
 ## 0.0.1-beta.5
 
 ### ⭐ New Features
