@@ -11,6 +11,7 @@ import { Pagination } from "@nextui-org/pagination";
 import React, { FC, useState } from "react";
 import { Tooltip } from "@nextui-org/tooltip";
 import { Spacer } from "@nextui-org/spacer";
+import { Chip } from "@nextui-org/chip";
 
 import { usePageList } from "@/hooks/use-page-list.ts";
 import { Session, SessionType } from "@/types";
@@ -24,6 +25,11 @@ interface CellProps {
   session: Session;
   columnKey: React.Key;
 }
+const ServerMap = {
+  INSTRUCTION_SERVER: "808 服务",
+  ATTACHMENT_SERVER: "附件服务",
+};
+
 const SessionCell: FC<CellProps> = ({
   handleMonitor,
   handleDel,
@@ -33,6 +39,12 @@ const SessionCell: FC<CellProps> = ({
   const cellValue = session[columnKey as keyof Session];
 
   switch (columnKey) {
+    case "serverType":
+      return ServerMap[cellValue as keyof typeof ServerMap];
+    case "protocolVersion":
+      return cellValue.replace("VERSION_", "");
+    case "protocolType":
+      return <Chip color="primary">{cellValue}</Chip>;
     case "operation":
       return (
         <div className="flex">
@@ -129,7 +141,7 @@ export const SessionTable: FC<SessionTableProps> = ({ type }) => {
           )}
         </TableHeader>
         <TableBody
-          emptyContent={"No rows to display."}
+          emptyContent={"暂无数据"}
           items={tableData?.data ?? []}
           loadingContent={<Spinner />}
           loadingState={loadingState}

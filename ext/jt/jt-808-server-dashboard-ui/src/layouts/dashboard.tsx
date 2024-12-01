@@ -7,7 +7,7 @@ import { Provider } from "@/provider.tsx";
 export const DashboardLayout = () => {
   return (
     <Provider>
-      <div className=" flex text-foreground bg-background h-screen flex-col md:flex-row md:overflow-hidden">
+      <div className=" flex max-w-8xl mx-auto h-screen flex-col md:flex-row md:overflow-hidden">
         <div className=" w-full flex-none md:w-64">
           <SideNav />
         </div>

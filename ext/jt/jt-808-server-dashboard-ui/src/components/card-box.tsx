@@ -1,6 +1,6 @@
 import { Card, CardBody, CardFooter, CardHeader } from "@nextui-org/card";
-import {Chip} from "@nextui-org/chip";
-import { useEffect, useState } from "react";
+import { Chip } from "@nextui-org/chip";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import {
   EventSourceMessage,
   fetchEventSource,
@@ -20,6 +20,26 @@ import {
 } from "@nextui-org/table";
 
 import { Metrics, ServerInfo } from "@/types";
+import { useMouseMove } from "@/hooks/use-mouse-move.ts";
+const SpotlightCard = ({ children }: { children: ReactNode }) => {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const { x, y } = useMouseMove(ref);
+
+  return (
+    <Card
+      ref={ref}
+      shadow="sm"
+      style={{
+        background:
+          x > 0 || y > 0
+            ? `radial-gradient(450px at ${x}px ${y}px, rgba(120, 40, 200, 0.5), transparent 80%)`
+            : "",
+      }}
+    >
+      {children}
+    </Card>
+  );
+};
 
 export const CardBox = () => {
   const { config } = useRouteLoaderData("root") as { config: ServerInfo };
@@ -99,49 +119,46 @@ export const CardBox = () => {
   return (
     <>
       <div className="gap-4 grid grid-cols-1 sm:grid-cols-3">
-        <Card shadow="sm">
+        <SpotlightCard>
           <CardHeader>
             <p>版本</p>
           </CardHeader>
           <CardBody className="overflow-visible p-4">
-            <p>{config.xtreamCodecVersion}</p>
+            <p className="text-default-500 text-2xl">
+              {config.xtreamCodecVersion}
+            </p>
           </CardBody>
-        </Card>
-        <Card shadow="sm">
+        </SpotlightCard>
+        <SpotlightCard>
           <CardHeader>
             <p>服务启动时间</p>
           </CardHeader>
           <CardBody className="overflow-visible p-4">
-            <p className="text-default-500">{config.serverStartupTime}</p>
+            <p className="text-default-500 text-2xl">
+              {config.serverStartupTime}
+            </p>
           </CardBody>
-        </Card>
-        <Card shadow="sm">
+        </SpotlightCard>
+        <SpotlightCard>
           <CardHeader className="flex">
             <p>订阅者</p>
           </CardHeader>
           <CardBody className="overflow-visible p-4">
-            <p className="text-default-500">
+            <p className="text-default-500 text-2xl">
               {data.eventPublisher?.subscriber?.total}
             </p>
           </CardBody>
           <CardFooter className="text-small justify-between">
             <Link color="primary" href={"/subscriber"}>
-              查看详情
+              详情
             </Link>
           </CardFooter>
-        </Card>
+        </SpotlightCard>
       </div>
       <Spacer y={4} />
       <div className="gap-4 grid grid-cols-2 sm:grid-cols-4">
         {listCount.map((item, index) => (
-          <Card
-            key={index}
-            isPressable
-            shadow="sm"
-            onPress={() => {
-              // TODO
-            }}
-          >
+          <SpotlightCard key={index}>
             <CardHeader className="text-small justify-between">
               <b>会话数</b>
               <Chip
@@ -163,17 +180,10 @@ export const CardBox = () => {
             <CardFooter className="text-small justify-between">
               <b>峰值: {data[item.key]?.max}</b>
             </CardFooter>
-          </Card>
+          </SpotlightCard>
         ))}
         {listRequest.map((item, index) => (
-          <Card
-            key={index}
-            isPressable
-            shadow="sm"
-            onPress={() => {
-              // TODO
-            }}
-          >
+          <SpotlightCard key={index}>
             <CardHeader className="text-small justify-between">
               <b>请求数</b>
               <Chip
@@ -231,7 +241,7 @@ export const CardBox = () => {
             <CardFooter className="text-small justify-between">
               <b>总请求数: {data[item.key]?.total}</b>
             </CardFooter>
-          </Card>
+          </SpotlightCard>
         ))}
       </div>
     </>
