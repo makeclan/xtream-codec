@@ -32,7 +32,7 @@ const SpotlightCard = ({ children }: { children: ReactNode }) => {
       style={{
         background:
           x > 0 || y > 0
-            ? `radial-gradient(450px at ${x}px ${y}px, rgba(120, 40, 200, 0.5), transparent 80%)`
+            ? `radial-gradient(450px at ${x}px ${y}px, rgba(120, 40, 200, 0.4), transparent 80%)`
             : "",
       }}
     >

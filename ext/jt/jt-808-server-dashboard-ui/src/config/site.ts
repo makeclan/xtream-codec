@@ -25,7 +25,8 @@ export const siteConfig = {
     { name: "调试", href: "/debug", icon: CommandIcon },
   ],
   links: {
-    github: "https://github.com/hylexus/jt-framework",
+    gitee: "https://gitee.com/hylexus/xtream-codec",
+    github: "https://github.com/hylexus/xtream-codec",
     sponsor: "https://github.com/hylexus/jt-framework",
   },
 };

@@ -1,0 +1,46 @@
+.blue-gradient-background {
+    --a: #d8eeff;
+    --b: #e5eaff;
+    --c: #e0dcff;
+    background: radial-gradient(circle farthest-side at 28% 54%, var(--a), transparent 36%), radial-gradient(circle farthest-side at 65% 45%, var(--b), transparent 50%), radial-gradient(circle farthest-side at 60% 65%, var(--c), transparent 50%);
+}
+
+@supports (color: color(display-p3 0 0 0)) {
+    .blue-gradient-background {
+        --a: color(display-p3 .800137 .93663 1.1109);
+        --b: color(display-p3 .842014 .896322 1.21293);
+        --c: color(display-p3 .867574 .815585 1.21692);
+    }
+}
+
+@supports (color: lab(0% 0 0)) {
+    .blue-gradient-background {
+        --a: lab(92.8794% -6.93044 -27.7876);
+        --b: lab(91.9961% 8.41609 -43.575);
+        --c: lab(87.7564% 23.3031 -51.0633);
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .blue-gradient-background {
+        --a: #024;
+        --b: #191d42;
+        --c: #221f58;
+    }
+
+    @supports (color: color(display-p3 0 0 0)) {
+        .blue-gradient-background {
+            --a: color(display-p3 .0201025 .130591 .26369);
+            --b: color(display-p3 .0997912 .11353 .25126);
+            --c: color(display-p3 .129899 .120944 .332196);
+        }
+    }
+
+    @supports (color: lab(0% 0 0)) {
+        .blue-gradient-background {
+            --a: lab(12.4988% -.302218 -26.6987);
+            --b: lab(12.1637% 8.21996 -24.8506);
+            --c: lab(15.0086% 16.3237 -34.9575);
+        }
+    }
+}

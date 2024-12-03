@@ -13,6 +13,9 @@ module.exports = {
     extend: {
         maxWidth: {
           '8xl': '96rem',
+        },
+        backgroundImage: {
+            'regal-blue': 'radial-gradient(50% 50% at 50% 50%, rgba(147, 83, 211, 0.8) 0%, rgba(125, 78, 255, 0) 100%)',
         }
     },
   },

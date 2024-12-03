@@ -9,7 +9,7 @@ import confetti from "canvas-confetti";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { GithubIcon, HeartFilledIcon } from "@/components/icons";
+import { GiteeIcon, GithubIcon, HeartFilledIcon } from "@/components/icons";
 
 export const Navbar = () => {
   const handleConfetti = () => {
@@ -21,7 +21,7 @@ export const Navbar = () => {
   };
 
   return (
-    <NextUINavbar maxWidth="xl" position="sticky">
+    <NextUINavbar className="bg-transparent" maxWidth="xl" position="sticky">
       <NavbarContent
         className="hidden sm:flex basis-1/5 sm:basis-full"
         justify="end"
@@ -29,6 +29,9 @@ export const Navbar = () => {
         <NavbarItem className="hidden sm:flex gap-2">
           <Link isExternal href={siteConfig.links.github} title="GitHub">
             <GithubIcon className="text-default-500" />
+          </Link>
+          <Link isExternal href={siteConfig.links.gitee} title="Gitee">
+            <GiteeIcon className="text-default-500" />
           </Link>
           <ThemeSwitch />
         </NavbarItem>
@@ -47,6 +50,9 @@ export const Navbar = () => {
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
         <Link isExternal href={siteConfig.links.github}>
           <GithubIcon className="text-default-500" />
+        </Link>
+        <Link isExternal href={siteConfig.links.gitee} title="Gitee">
+          <GiteeIcon className="text-default-500" />
         </Link>
         <ThemeSwitch />
       </NavbarContent>
