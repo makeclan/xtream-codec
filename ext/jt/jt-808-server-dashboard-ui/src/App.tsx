@@ -7,6 +7,7 @@ import { DashboardPage } from "@/pages/dashboard.tsx";
 import { ConfigurationPage } from "@/pages/configuration.tsx";
 import { DashboardLayout } from "@/layouts/dashboard.tsx";
 import { SubscribePage } from "@/pages/subscriber.tsx";
+import { MappingsPage } from "@/pages/mappings.tsx";
 import { loader as rootLoader } from "@/routes/root.tsx";
 
 const router = createBrowserRouter(
@@ -36,6 +37,10 @@ const router = createBrowserRouter(
         {
           path: "debug",
           element: <DebugPage />,
+        },
+        {
+          path: "mappings",
+          element: <MappingsPage />,
         },
         {
           path: "subscriber",
