@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
@@ -45,6 +46,8 @@ public abstract class AbstractXtreamSessionManager<S extends XtreamSession> impl
     private static final Logger log = LoggerFactory.getLogger(AbstractXtreamSessionManager.class);
     protected final XtreamSessionIdGenerator sessionIdGenerator;
     protected final ConcurrentMap<String, S> sessions = new ConcurrentHashMap<>();
+    private final AtomicLong tcpSessionCount = new AtomicLong(0);
+    private final AtomicLong udpSessionCount = new AtomicLong(0);
     protected final XtreamIntervalChecker checker;
     private final Duration maxIdleTime;
     private final Clock clock = Clock.system(ZoneId.of("Asia/Shanghai"));
@@ -129,7 +132,11 @@ public abstract class AbstractXtreamSessionManager<S extends XtreamSession> impl
     public Mono<S> createSession(String sessionId, XtreamExchange exchange) {
         final S session = this.doCreateSession(sessionId, exchange);
         this.sessions.put(sessionId, session);
-
+        if (session.type() == XtreamInbound.Type.TCP) {
+            this.tcpSessionCount.incrementAndGet();
+        } else {
+            this.udpSessionCount.incrementAndGet();
+        }
         this.invokeListener(listener -> listener.afterSessionCreate(session));
 
         return Mono.just(session);
@@ -170,6 +177,11 @@ public abstract class AbstractXtreamSessionManager<S extends XtreamSession> impl
     }
 
     protected void doClose(S session, XtreamSessionEventListener.SessionCloseReason reason) {
+        if (session.type() == XtreamInbound.Type.TCP) {
+            this.tcpSessionCount.decrementAndGet();
+        } else {
+            this.udpSessionCount.decrementAndGet();
+        }
         invokeListener(listener -> listener.beforeSessionClose(session, reason));
         session.outbound().withConnection(connection -> {
             try {
@@ -193,6 +205,16 @@ public abstract class AbstractXtreamSessionManager<S extends XtreamSession> impl
     @Override
     public long count() {
         return this.sessions.size();
+    }
+
+    @Override
+    public long countTcp() {
+        return this.tcpSessionCount.get();
+    }
+
+    @Override
+    public long countUdp() {
+        return this.udpSessionCount.get();
     }
 
     @Override

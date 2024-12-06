@@ -55,7 +55,11 @@ public class DefaultTcpXtreamNettyHandlerAdapter implements TcpXtreamNettyHandle
                 return Mono.empty();
             }
             final InetSocketAddress remoteAddress = this.initTcpRemoteAddress(nettyInbound);
-            return this.handleSingleRequest(nettyInbound, nettyOutbound, byteBuf, remoteAddress);
+            return this.handleSingleRequest(nettyInbound, nettyOutbound, byteBuf, remoteAddress)
+                    .onErrorResume(Throwable.class, throwable -> {
+                        log.error("Unexpected Exception", throwable);
+                        return Mono.empty();
+                    });
         }).onErrorResume(throwable -> {
             log.error("Unexpected Error", throwable);
             return Mono.empty();
@@ -70,12 +74,7 @@ public class DefaultTcpXtreamNettyHandlerAdapter implements TcpXtreamNettyHandle
     protected Mono<Void> doTcpExchange(XtreamExchange exchange) {
         return exchange.session().flatMap(session -> {
             session.lastCommunicateTime(Instant.now());
-            return xtreamHandler
-                    .handle(exchange)
-                    .doOnError(Throwable.class, throwable -> {
-                        // ...
-                        log.error(throwable.getMessage(), throwable);
-                    });
+            return xtreamHandler.handle(exchange);
         });
     }
 

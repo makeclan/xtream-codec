@@ -32,6 +32,24 @@ public abstract class AbstractXtreamRequestMappingHandlerMapping implements Xtre
         this.blockingHandlerMethodPredicate = blockingHandlerMethodPredicate;
     }
 
+    protected String determineSchedulerName(XtreamHandlerMethod handlerMethod, String methodLevelScheduler, String blockingScheduler, String nonBlockingScheduler) {
+        if (StringUtils.hasText(methodLevelScheduler)) {
+            return methodLevelScheduler;
+        }
+        if (this.blockingHandlerMethodPredicate.isBlockingHandlerMethod(handlerMethod)) {
+            if (StringUtils.hasText(blockingScheduler)) {
+                return blockingScheduler;
+            }
+            throw new IllegalArgumentException("Cannot determine `blockingScheduler`. Because `schedulerName` is EMPTY");
+        }
+        handlerMethod.setNonBlocking(true);
+        if (StringUtils.hasText(nonBlockingScheduler)) {
+            return nonBlockingScheduler;
+        }
+
+        throw new IllegalArgumentException("Cannot determine `nonBlockingScheduler`. Because `schedulerName` is EMPTY");
+    }
+
     protected Scheduler determineScheduler(XtreamHandlerMethod handlerMethod, String methodLevelScheduler, String blockingScheduler, String nonBlockingScheduler) {
         if (StringUtils.hasText(methodLevelScheduler)) {
             return this.getSchedulerOrThrow(methodLevelScheduler);

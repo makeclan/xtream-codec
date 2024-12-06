@@ -49,9 +49,10 @@ public class DemoJt808RequestHandler {
      * 终端通用应答
      */
     @Jt808RequestHandlerMapping(messageIds = 0x0001)
-    public Mono<Void> processMessage0001(Jt808Request request, @Jt808RequestBody BuiltinMessage0001 requestBody) {
+    // public Mono<Void> processMessage0001(Jt808Request request, @Jt808RequestBody BuiltinMessage0001 requestBody) {
+    public void processMessage0001(Jt808Request request, @Jt808RequestBody BuiltinMessage0001 requestBody) {
         log.info("receive message [0x0001]: {}", requestBody);
-        return Mono.empty();
+        // return Mono.empty();
     }
 
     /**

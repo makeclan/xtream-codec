@@ -16,7 +16,6 @@
 
 package io.github.hylexus.xtream.debug.ext.jt808;
 
-import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.exception.RequestHandlerNotFoundException;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamRequestExceptionHandler;
@@ -34,7 +33,7 @@ public class GlobalXtreamServerExceptionHandler implements XtreamRequestExceptio
     @Override
     public Mono<Void> handleRequestException(XtreamExchange exchange, @Nonnull Throwable ex) {
         if (ex instanceof RequestHandlerNotFoundException) {
-            log.info("receive unknown msg: {}", FormatUtils.toHexString(exchange.request().payload()));
+            log.error("receive unknown msg: {}", exchange.request());
             return Mono.empty();
         }
         log.error("Error: ", ex);

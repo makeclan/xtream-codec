@@ -16,14 +16,16 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.hylexus.xtream.codec.common.XtreamVersion;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.ServerInfoVo;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardMappingService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
+import java.util.Map;
 
 /**
  * @author hylexus
@@ -31,23 +33,26 @@ import java.time.Instant;
 @RestController
 @RequestMapping("/dashboard-api/v1")
 public class BuiltinJt808DashboardCommonController {
+
     private final Instant serverStartupTime = Instant.now();
-    private final XtreamJt808ServerProperties serverProperties;
     private final String version = XtreamVersion.getVersion("Unknown");
 
-    public BuiltinJt808DashboardCommonController(XtreamJt808ServerProperties serverProperties) {
+    private final XtreamJt808ServerProperties serverProperties;
+    private final Jt808DashboardMappingService dashboardMappingService;
+
+    public BuiltinJt808DashboardCommonController(XtreamJt808ServerProperties serverProperties, Jt808DashboardMappingService dashboardMappingService) {
         this.serverProperties = serverProperties;
+        this.dashboardMappingService = dashboardMappingService;
     }
 
-    @GetMapping("/config")
-    public Config config() {
-        return new Config(this.version, this.serverStartupTime, this.serverProperties);
+    @GetMapping({"/config", "/info"})
+    public ServerInfoVo serverInfo() {
+        return new ServerInfoVo(this.version, this.serverStartupTime, this.serverProperties);
     }
 
-    public record Config(
-            String xtreamCodecVersion,
-            @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "GMT+8") Instant serverStartupTime,
-            XtreamJt808ServerProperties configuration) {
+    @GetMapping("/mappings")
+    public Map<String, Object> mappings() {
+        return this.dashboardMappingService.getJt808HandlerMappings();
     }
 
 }

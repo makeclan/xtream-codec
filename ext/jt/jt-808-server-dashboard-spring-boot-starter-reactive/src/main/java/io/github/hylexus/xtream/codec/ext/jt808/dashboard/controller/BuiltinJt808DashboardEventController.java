@@ -69,7 +69,7 @@ public class BuiltinJt808DashboardEventController {
 
         // final Predicate<XtreamEvent> filter = this.createTypeFilter(interestedEvents).and(this.createTerminalIdFilter(dto));
 
-        final String clientIp = JtWebUtils.getClientIp(exchange.getRequest().getHeaders()::getFirst).orElse("unknown");
+        final String clientIp = JtWebUtils.getClientIp(exchange.getRequest().getHeaders()::getFirst, exchange.getRequest().getRemoteAddress()).orElse("unknown");
         return this.eventPublisher.subscribe(
                         XtreamEventSubscriberInfo.of(
                                 interestedEvents,

@@ -18,6 +18,7 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin;
 
 import io.github.hylexus.xtream.codec.core.annotation.OrderedComponent;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
+import io.github.hylexus.xtream.codec.server.reactive.spec.exception.RequestHandlerNotFoundException;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamRequestExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,15 +26,18 @@ import reactor.core.publisher.Mono;
 
 public class LoggingXtreamRequestExceptionHandler implements XtreamRequestExceptionHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(XtreamRequestExceptionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(LoggingXtreamRequestExceptionHandler.class);
 
     public LoggingXtreamRequestExceptionHandler() {
     }
 
     @Override
     public Mono<Void> handleRequestException(XtreamExchange exchange, Throwable ex) {
-        log.error("[LoggingXtreamRequestExceptionHandler] ", ex);
-        return Mono.empty();
+        if (ex instanceof RequestHandlerNotFoundException notFoundException) {
+            log.error("[LoggingXtreamRequestExceptionHandler] RequestHandlerNotFoundException: {}", notFoundException.getExchange());
+            return Mono.empty();
+        }
+        return Mono.error(ex);
     }
 
     @Override

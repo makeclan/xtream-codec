@@ -16,8 +16,12 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -68,6 +72,75 @@ public final class SimpleTypes {
         public SessionInfo setCurrent(long current) {
             this.current = current;
             return this;
+        }
+
+        @Override
+        public String toString() {
+            return new StringJoiner(", ", SessionInfo.class.getSimpleName() + "[", "]")
+                    .add("max=" + max)
+                    .add("current=" + current)
+                    .toString();
+        }
+    }
+
+    public record SimpleJvmThreadMetrics(int peak, int daemon, int live, long started, Map<String, Long> states) {
+    }
+
+    public record Vendor(String name, String version) {
+    }
+
+    public record Runtime(String name, String version) {
+    }
+
+    public record Jvm(String name, String vendor, String version) {
+    }
+
+    public record OsInfo(String name, String version, String arch) {
+        public static final OsInfo INSTANCE;
+
+        static {
+            INSTANCE = new OsInfo(
+                    System.getProperty("os.name", "unknown"),
+                    System.getProperty("os.version", "unknown"),
+                    System.getProperty("os.arch", "unknown")
+            );
+        }
+    }
+
+    public record JavaInfo(
+            String version,
+            Vendor vendor,
+            Runtime runtime,
+            Jvm jvm) {
+        public static final JavaInfo INSTANCE;
+
+        static {
+            INSTANCE = new JavaInfo(
+                    System.getProperty("java.version", "unknown"),
+                    new Vendor(
+                            System.getProperty("java.vendor", "unknown"),
+                            System.getProperty("java.vendor.version", "unknown")
+                    ),
+                    new Runtime(
+                            System.getProperty("java.runtime.name", "unknown"),
+                            System.getProperty("java.runtime.version", "unknown")
+                    ),
+                    new Jvm(
+                            System.getProperty("java.vm.name", "unknown"),
+                            System.getProperty("java.vm.vendor", "unknown"),
+                            System.getProperty("java.vm.version", "unknown")
+                    )
+            );
+        }
+    }
+
+    public record TimeSeries<T>(
+            @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "GMT+8")
+            LocalDateTime time,
+            T value) {
+
+        public static <T> TimeSeries<T> of(LocalDateTime time, T value) {
+            return new TimeSeries<>(time, value);
         }
     }
 }

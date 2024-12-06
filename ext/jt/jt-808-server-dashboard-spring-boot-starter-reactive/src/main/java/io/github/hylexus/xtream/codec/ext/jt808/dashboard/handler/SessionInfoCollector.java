@@ -92,18 +92,16 @@ public class SessionInfoCollector implements XtreamSessionEventListener {
     private void updateCount(XtreamInbound.Type type, Jt808ServerType role) {
         switch (role) {
             case INSTRUCTION_SERVER -> {
-                final long count = this.sessionManager.count();
                 switch (type) {
-                    case TCP -> this.doUpdateCount(metricsHolder.getTcpInstructionSession(), count);
-                    case UDP -> this.doUpdateCount(metricsHolder.getUdpInstructionSession(), count);
+                    case TCP -> this.doUpdateCount(metricsHolder.getTcpInstructionSession(), this.sessionManager.countTcp());
+                    case UDP -> this.doUpdateCount(metricsHolder.getUdpInstructionSession(), this.sessionManager.countUdp());
                     default -> throw new IllegalStateException("Unexpected value: " + type);
                 }
             }
             case ATTACHMENT_SERVER -> {
-                final long count = this.attachmentSessionManager.count();
                 switch (type) {
-                    case TCP -> this.doUpdateCount(metricsHolder.getTcpAttachmentSession(), count);
-                    case UDP -> this.doUpdateCount(metricsHolder.getUdpAttachmentSession(), count);
+                    case TCP -> this.doUpdateCount(metricsHolder.getTcpAttachmentSession(), this.sessionManager.countTcp());
+                    case UDP -> this.doUpdateCount(metricsHolder.getUdpAttachmentSession(), this.sessionManager.countUdp());
                     default -> throw new IllegalStateException("Unexpected value: " + type);
                 }
             }

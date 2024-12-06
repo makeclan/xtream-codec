@@ -21,7 +21,6 @@ import io.github.hylexus.xtream.codec.core.annotation.OrderedComponent;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamRequestExceptionHandler;
-import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.LoggingXtreamRequestExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
@@ -45,12 +44,6 @@ public class ExceptionHandlingXtreamHandler implements XtreamHandler {
         this.delegateHandler = delegateHandler;
 
         final List<XtreamRequestExceptionHandler> list = new ArrayList<>();
-        if (exceptionHandlers.isEmpty()) {
-            log.warn("No [{}] instance configured. Add [{}] as default.",
-                    XtreamRequestExceptionHandler.class.getSimpleName(),
-                    LoggingXtreamRequestExceptionHandler.class.getSimpleName());
-            list.add(new LoggingXtreamRequestExceptionHandler());
-        }
         list.add(new XtreamRequestExceptionHandler.CheckpointInsertingXtreamRequestExceptionHandler());
         list.addAll(exceptionHandlers);
         this.exceptionHandlers = OrderedComponent.sort(list);

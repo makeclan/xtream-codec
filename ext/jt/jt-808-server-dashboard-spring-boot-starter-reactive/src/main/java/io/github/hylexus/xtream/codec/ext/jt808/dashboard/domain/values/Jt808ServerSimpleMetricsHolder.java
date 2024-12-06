@@ -16,10 +16,8 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values;
 
-import org.springframework.boot.actuate.endpoint.OperationResponseBody;
-
 @SuppressWarnings("all")
-public class Jt808ServerSimpleMetricsHolder implements OperationResponseBody {
+public class Jt808ServerSimpleMetricsHolder {
     private final SimpleTypes.SessionInfo tcpInstructionSession;
     private final SimpleTypes.SessionInfo tcpAttachmentSession;
     private final SimpleTypes.SessionInfo udpInstructionSession;

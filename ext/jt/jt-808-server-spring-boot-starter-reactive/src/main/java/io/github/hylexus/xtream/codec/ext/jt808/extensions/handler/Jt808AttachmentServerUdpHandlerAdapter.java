@@ -73,11 +73,7 @@ public class Jt808AttachmentServerUdpHandlerAdapter extends Jt808InstructionServ
             final Jt808Request jt808Request = simulateJt808Request(allocator, nettyInbound, payload, session, remoteAddress);
             final DefaultXtreamResponse response = new DefaultXtreamResponse(allocator, nettyOutbound, XtreamInbound.Type.UDP, remoteAddress);
             final XtreamExchange simulatedExchange = new DefaultXtreamExchange(this.exchangeCreator.sessionManager(), jt808Request, response);
-            return this.attachmentHandler.handle(simulatedExchange)
-                    .doOnError(Throwable.class, throwable -> {
-                        // ...
-                        log.error(throwable.getMessage(), throwable);
-                    });
+            return this.attachmentHandler.handle(simulatedExchange);
         });
     }
 

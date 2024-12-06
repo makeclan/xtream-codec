@@ -34,7 +34,6 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamBlockin
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMethodArgumentResolver;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMethodHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.DelegateXtreamHandlerMethodArgumentResolver;
-import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.LoggingXtreamRequestExceptionHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -50,13 +49,6 @@ import java.util.List;
         BuiltinJt808ServerActuatorConfiguration.class,
 })
 public class BuiltinJt808ServerHandlerConfiguration {
-
-    // region exceptionHandlers
-    @Bean
-    LoggingXtreamRequestExceptionHandler loggingXtreamRequestExceptionHandler() {
-        return new LoggingXtreamRequestExceptionHandler();
-    }
-    // endregion exceptionHandlers
 
     // region filters
     @Bean

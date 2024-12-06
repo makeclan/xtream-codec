@@ -51,7 +51,11 @@ public class DefaultUdpXtreamNettyHandlerAdapter implements UdpXtreamNettyHandle
     public Publisher<Void> apply(NettyInbound nettyInbound, NettyOutbound nettyOutbound) {
         return nettyInbound.receiveObject().flatMap(object -> {
             if (object instanceof DatagramPacket datagramPacket) {
-                return handleRequest(nettyInbound, nettyOutbound, datagramPacket);
+                return handleRequest(nettyInbound, nettyOutbound, datagramPacket)
+                        .onErrorResume(Throwable.class, throwable -> {
+                            log.error("Unexpected Exception", throwable);
+                            return Mono.empty();
+                        });
             } else {
                 return Mono.error(new IllegalStateException("Cannot handle message. type = [" + object.getClass() + "]"));
             }
@@ -70,12 +74,7 @@ public class DefaultUdpXtreamNettyHandlerAdapter implements UdpXtreamNettyHandle
     protected Mono<Void> doUdpExchange(XtreamExchange exchange) {
         return exchange.session().flatMap(session -> {
             session.lastCommunicateTime(Instant.now());
-            return xtreamHandler
-                    .handle(exchange)
-                    .doOnError(Throwable.class, throwable -> {
-                        // ...
-                        log.error(throwable.getMessage(), throwable);
-                    });
+            return xtreamHandler.handle(exchange);
         });
     }
 }

@@ -22,6 +22,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 
 /**
  * @author hylexus
@@ -64,4 +65,12 @@ public class DefaultXtreamExchange implements XtreamExchange {
     public Map<String, Object> attributes() {
         return new HashMap<>();
     }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", DefaultXtreamExchange.class.getSimpleName() + "[", "]")
+                .add("request=" + request)
+                .toString();
+    }
+
 }

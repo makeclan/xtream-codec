@@ -17,11 +17,13 @@
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo;
 
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
 
 public class SimpleMetricsVo extends Jt808ServerSimpleMetricsHolder {
     private EventPublisherMetrics eventPublisher;
+    private SimpleTypes.SimpleJvmThreadMetrics threads;
 
-    public SimpleMetricsVo(Jt808ServerSimpleMetricsHolder holder, int subscriberCount) {
+    public SimpleMetricsVo(Jt808ServerSimpleMetricsHolder holder, int subscriberCount, SimpleTypes.SimpleJvmThreadMetrics threads) {
         super(
                 holder.getTcpInstructionSession(),
                 holder.getTcpAttachmentSession(),
@@ -33,6 +35,7 @@ public class SimpleMetricsVo extends Jt808ServerSimpleMetricsHolder {
                 holder.getUdpAttachmentRequest()
         );
         this.eventPublisher = new EventPublisherMetrics(new EventSubscriberMetrics(subscriberCount));
+        this.threads = threads;
     }
 
     public record EventPublisherMetrics(EventSubscriberMetrics subscriber) {
@@ -47,6 +50,15 @@ public class SimpleMetricsVo extends Jt808ServerSimpleMetricsHolder {
 
     public SimpleMetricsVo setEventPublisher(EventPublisherMetrics eventPublisher) {
         this.eventPublisher = eventPublisher;
+        return this;
+    }
+
+    public SimpleTypes.SimpleJvmThreadMetrics getThreads() {
+        return threads;
+    }
+
+    public SimpleMetricsVo setThreads(SimpleTypes.SimpleJvmThreadMetrics threads) {
+        this.threads = threads;
         return this;
     }
 }

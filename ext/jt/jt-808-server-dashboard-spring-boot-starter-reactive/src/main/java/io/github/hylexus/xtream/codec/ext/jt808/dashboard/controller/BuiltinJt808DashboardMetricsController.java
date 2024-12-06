@@ -16,9 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller;
 
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.SimpleMetricsVo;
-import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardMetricsService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.slf4j.Logger;
@@ -32,18 +30,16 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;
-import java.util.function.Supplier;
 
 @RestController
 @RequestMapping("/dashboard-api/v1/metrics")
 public class BuiltinJt808DashboardMetricsController {
     private static final Logger log = LoggerFactory.getLogger(BuiltinJt808DashboardMetricsController.class);
-    private final XtreamEventPublisher eventPublisher;
-    private final Jt808ServerSimpleMetricsHolder metricsHolder;
 
-    public BuiltinJt808DashboardMetricsController(XtreamEventPublisher eventPublisher, Jt808ServerSimpleMetricsHolder metricsHolder) {
-        this.eventPublisher = eventPublisher;
-        this.metricsHolder = metricsHolder;
+    private final Jt808DashboardMetricsService jt808DashboardMetricsService;
+
+    public BuiltinJt808DashboardMetricsController(Jt808DashboardMetricsService jt808DashboardMetricsService) {
+        this.jt808DashboardMetricsService = jt808DashboardMetricsService;
     }
 
     /**
@@ -56,11 +52,20 @@ public class BuiltinJt808DashboardMetricsController {
             @Max(message = "`duration` must be letter than or equal to 60", value = 60)
             @RequestParam(value = "duration", required = false, defaultValue = "5") long duration) {
 
-        final Supplier<SimpleMetricsVo> supplier = () -> new SimpleMetricsVo(metricsHolder, this.eventPublisher.subscriberCount());
+        return this.jt808DashboardMetricsService.getBasicMetrics(Duration.ofSeconds(duration));
+    }
 
-        return Flux.just(supplier.get())
-                .concatWith(Flux.interval(Duration.ofSeconds(duration)).map(ignore -> supplier.get()))
-                .map(metricsHolder -> ServerSentEvent.<Object>builder(metricsHolder).build());
+    /**
+     * @see <a href="https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events">https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events</a>
+     */
+    @RequestMapping(value = "/thread-dump", method = {RequestMethod.GET, RequestMethod.POST})
+    public Flux<ServerSentEvent<Object>> threadDump(
+            @Validated
+            @Min(message = "`duration` must be greater than or equal to 5", value = 5)
+            @Max(message = "`duration` must be letter than or equal to 60", value = 60)
+            @RequestParam(value = "duration", required = false, defaultValue = "5") long duration) {
+
+        return this.jt808DashboardMetricsService.getThreadDumpMetrics(Duration.ofSeconds(duration));
     }
 
 }

@@ -76,6 +76,10 @@ public interface XtreamSessionManager<S extends XtreamSession> {
         return this.list().filter(filter).count();
     }
 
+    long countTcp();
+
+    long countUdp();
+
     Stream<S> list();
 
     default Stream<S> list(int page, int pageSize, Predicate<S> filter, Comparator<S> sorter) {

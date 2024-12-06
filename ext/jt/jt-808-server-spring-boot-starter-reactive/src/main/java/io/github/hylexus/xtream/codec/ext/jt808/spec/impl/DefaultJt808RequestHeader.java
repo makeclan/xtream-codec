@@ -92,7 +92,7 @@ public class DefaultJt808RequestHeader implements Jt808RequestHeader {
         return "HeaderSpec{"
                 + "version=" + version
                 + ", terminalId='" + terminalId + '\''
-                + ", messageId=" + messageId + "(0x" + FormatUtils.toHexString(messageId, 2) + ")"
+                + ", messageId=" + messageId + "(0x" + FormatUtils.toHexString(messageId, 4) + ")"
                 + ", flowId=" + flowId
                 + ", messageBodyProps=" + messageBodyProps
                 + '}';

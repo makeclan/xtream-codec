@@ -37,6 +37,9 @@ public abstract class XtreamHandlerMethod {
     protected final Method method;
     protected final XtreamMethodParameter[] parameters;
     protected Scheduler scheduler;
+    protected String schedulerName;
+    protected String desc;
+    protected boolean nonBlocking;
 
     public XtreamHandlerMethod(Class<?> containerClass, Method method) {
         this.containerClass = containerClass;
@@ -89,8 +92,35 @@ public abstract class XtreamHandlerMethod {
         return scheduler;
     }
 
+    public XtreamHandlerMethod setSchedulerName(String schedulerName) {
+        this.schedulerName = schedulerName;
+        return this;
+    }
+
+    public String getSchedulerName() {
+        return schedulerName;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public XtreamHandlerMethod setDesc(String desc) {
+        this.desc = desc;
+        return this;
+    }
+
     public XtreamHandlerMethod setScheduler(Scheduler scheduler) {
         this.scheduler = scheduler;
         return this;
+    }
+
+    public XtreamHandlerMethod setNonBlocking(boolean nonBlocking) {
+        this.nonBlocking = nonBlocking;
+        return this;
+    }
+
+    public boolean isNonBlocking() {
+        return nonBlocking;
     }
 }

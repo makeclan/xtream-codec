@@ -19,6 +19,8 @@ package io.github.hylexus.xtream.codec.ext.jt808.utils;
 
 import io.micrometer.common.util.StringUtils;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.Optional;
 
 /**
@@ -50,7 +52,7 @@ public final class JtWebUtils {
             "REMOTE_ADDR"
     };
 
-    public static Optional<String> getClientIp(HttpRequestHeaderProvider headerProvider) {
+    public static Optional<String> getClientIp(HttpRequestHeaderProvider headerProvider, InetSocketAddress remoteAddress) {
         for (String headerName : IP_HEADER_NAMES) {
             String ip = headerProvider.get(headerName);
             if (StringUtils.isNotEmpty(ip) && !"unknown".equalsIgnoreCase(ip)) {
@@ -61,6 +63,8 @@ public final class JtWebUtils {
                 return Optional.of(ip);
             }
         }
-        return Optional.empty();
+        return Optional.ofNullable(remoteAddress)
+                .map(InetSocketAddress::getAddress)
+                .map(InetAddress::getHostAddress);
     }
 }

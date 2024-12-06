@@ -84,13 +84,16 @@ public class Jt808RequestMappingHandlerMapping extends AbstractXtreamRequestMapp
                         final XtreamHandlerMethod handlerMethod = new ReactiveXtreamHandlerMethod(cls, method);
                         handlerMethod.setContainerInstance(instance);
                         final Jt808RequestHandlerMapping annotation = Objects.requireNonNull(AnnotatedElementUtils.getMergedAnnotation(method, Jt808RequestHandlerMapping.class));
-                        final Scheduler scheduler = this.determineScheduler(
+                        final String schedulerName = this.determineSchedulerName(
                                 handlerMethod,
                                 annotation.scheduler(),
                                 classLevelAnnotation.blockingScheduler(),
                                 classLevelAnnotation.nonBlockingScheduler()
                         );
+                        final Scheduler scheduler = this.getSchedulerOrThrow(schedulerName);
                         handlerMethod.setScheduler(scheduler);
+                        handlerMethod.setSchedulerName(schedulerName);
+                        handlerMethod.setDesc(annotation.desc());
                         final int[] messageIds = annotation.messageIds();
                         for (final int messageId : messageIds) {
                             final Map<Jt808ProtocolVersion, XtreamHandlerMethod> map = this.mappings.computeIfAbsent(messageId, k -> new HashMap<>());
@@ -119,5 +122,9 @@ public class Jt808RequestMappingHandlerMapping extends AbstractXtreamRequestMapp
     public int order() {
         // 0
         return super.order();
+    }
+
+    public Map<Integer, Map<Jt808ProtocolVersion, XtreamHandlerMethod>> getMappings() {
+        return mappings;
     }
 }

@@ -17,20 +17,29 @@
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.boot.configuration;
 
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.mapping.DispatcherHandlerXtreamMappingDescriptionProvider;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.mapping.XtreamMappingDescriptionProvider;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.*;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.Jt808DashboardRequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.RequestInfoCollector;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.SessionInfoCollector;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardMappingService;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardMetricsService;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl.DefaultJt808DashboardMappingService;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl.DefaultJt808DashboardMetricsService;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808AttachmentSessionManager;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriptionRegistry;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
+import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMapping;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -74,15 +83,33 @@ public class BuiltinJt808DashboardConfiguration {
     }
 
     @Bean
-    BuiltinJt808DashboardMetricsController builtinJt808DashboardMetricsController(
+    Jt808DashboardMetricsService jt808DashboardMetricsService(
+            XtreamJt808ServerProperties serverProperties,
             XtreamEventPublisher eventPublisher,
             Jt808ServerSimpleMetricsHolder metricsHolder) {
-        return new BuiltinJt808DashboardMetricsController(eventPublisher, metricsHolder);
+        return new DefaultJt808DashboardMetricsService(serverProperties, eventPublisher, metricsHolder);
     }
 
     @Bean
-    BuiltinJt808DashboardCommonController builtinJt808DashboardCommonController(XtreamJt808ServerProperties serverProperties) {
-        return new BuiltinJt808DashboardCommonController(serverProperties);
+    BuiltinJt808DashboardMetricsController builtinJt808DashboardMetricsController(Jt808DashboardMetricsService metricsService) {
+        return new BuiltinJt808DashboardMetricsController(metricsService);
+    }
+
+    @Bean
+    XtreamMappingDescriptionProvider dispatcherHandlerXtreamMappingDescriptionProvider(
+            Jt808MessageDescriptionRegistry descriptionRegistry,
+            List<XtreamHandlerMapping> handlerMappingList) {
+        return new DispatcherHandlerXtreamMappingDescriptionProvider(handlerMappingList, descriptionRegistry);
+    }
+
+    @Bean
+    Jt808DashboardMappingService jt808DashboardMappingService(ObjectProvider<XtreamMappingDescriptionProvider> mappingDescriptionProviders) {
+        return new DefaultJt808DashboardMappingService(mappingDescriptionProviders.orderedStream().toList());
+    }
+
+    @Bean
+    BuiltinJt808DashboardCommonController builtinJt808DashboardCommonController(XtreamJt808ServerProperties serverProperties, Jt808DashboardMappingService dashboardMappingService) {
+        return new BuiltinJt808DashboardCommonController(serverProperties, dashboardMappingService);
     }
 
     @Bean
