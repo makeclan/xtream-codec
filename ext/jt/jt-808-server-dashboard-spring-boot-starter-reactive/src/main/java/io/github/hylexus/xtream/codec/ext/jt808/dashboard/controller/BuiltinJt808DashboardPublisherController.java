@@ -59,7 +59,8 @@ public class BuiltinJt808DashboardPublisherController {
     }
 
     public record EventPublisherInfo(
-            String id, Set<EventDescription> interestedEvents,
+            String id,
+            Set<EventDescription> interestedEvents,
             @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "GMT+8") Instant createdAt,
             Map<String, Object> metadata) {
     }

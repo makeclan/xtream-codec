@@ -16,7 +16,6 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller;
 
-import io.github.hylexus.xtream.codec.common.XtreamVersion;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.ServerInfoVo;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardMappingService;
@@ -35,7 +34,6 @@ import java.util.Map;
 public class BuiltinJt808DashboardCommonController {
 
     private final Instant serverStartupTime = Instant.now();
-    private final String version = XtreamVersion.getVersion("Unknown");
 
     private final XtreamJt808ServerProperties serverProperties;
     private final Jt808DashboardMappingService dashboardMappingService;
@@ -45,12 +43,12 @@ public class BuiltinJt808DashboardCommonController {
         this.dashboardMappingService = dashboardMappingService;
     }
 
-    @GetMapping({"/config", "/info"})
+    @GetMapping("/server-info")
     public ServerInfoVo serverInfo() {
-        return new ServerInfoVo(this.version, this.serverStartupTime, this.serverProperties);
+        return new ServerInfoVo(this.serverStartupTime, this.serverProperties);
     }
 
-    @GetMapping("/mappings")
+    @GetMapping("/actuator/mappings")
     public Map<String, Object> mappings() {
         return this.dashboardMappingService.getJt808HandlerMappings();
     }

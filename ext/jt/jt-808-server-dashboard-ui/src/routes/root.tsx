@@ -1,12 +1,14 @@
 import { request } from "@/utils/request.ts";
-import { ServerInfo } from "@/types";
+import { Dependencies, JavaInfo, OsInfo, ServerInfo } from "@/types";
 
 export async function loader() {
-  const path = `config`;
+  const path = `server-info`;
   let data: ServerInfo = {
-    xtreamCodecVersion: "Unknown",
+    dependencies: {} as Dependencies,
     serverStartupTime: "",
-    configuration: {},
+    jt808ServerConfig: {},
+    java: {} as JavaInfo,
+    os: {} as OsInfo,
   };
 
   try {

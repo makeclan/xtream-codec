@@ -125,7 +125,7 @@ export const CardBox = () => {
           </CardHeader>
           <CardBody className="overflow-visible p-4">
             <p className="text-default-500 text-2xl">
-              {config.xtreamCodecVersion}
+              {config.dependencies?.xtreamCodec?.version}
             </p>
           </CardBody>
         </SpotlightCard>

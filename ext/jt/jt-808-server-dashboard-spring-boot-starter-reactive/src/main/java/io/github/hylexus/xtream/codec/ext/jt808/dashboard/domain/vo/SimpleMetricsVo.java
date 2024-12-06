@@ -19,46 +19,36 @@ package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
 
-public class SimpleMetricsVo extends Jt808ServerSimpleMetricsHolder {
-    private EventPublisherMetrics eventPublisher;
-    private SimpleTypes.SimpleJvmThreadMetrics threads;
+public record SimpleMetricsVo(
+        SimpleTypes.SessionInfo tcpInstructionSession,
+        SimpleTypes.SessionInfo tcpAttachmentSession,
+        SimpleTypes.SessionInfo udpInstructionSession,
+        SimpleTypes.SessionInfo udpAttachmentSession,
+        SimpleTypes.RequestInfo tcpInstructionRequest,
+        SimpleTypes.RequestInfo tcpAttachmentRequest,
+        SimpleTypes.RequestInfo udpInstructionRequest,
+        SimpleTypes.RequestInfo udpAttachmentRequest,
+        EventPublisherMetrics eventPublisher,
+        SimpleTypes.SimpleJvmThreadMetrics threads) {
 
-    public SimpleMetricsVo(Jt808ServerSimpleMetricsHolder holder, int subscriberCount, SimpleTypes.SimpleJvmThreadMetrics threads) {
-        super(
-                holder.getTcpInstructionSession(),
-                holder.getTcpAttachmentSession(),
-                holder.getUdpInstructionSession(),
-                holder.getUdpAttachmentSession(),
-                holder.getTcpInstructionRequest(),
-                holder.getTcpAttachmentRequest(),
-                holder.getUdpInstructionRequest(),
-                holder.getUdpAttachmentRequest()
+    public SimpleMetricsVo(Jt808ServerSimpleMetricsHolder simpleMetricsHolder, long subscriberCount, SimpleTypes.SimpleJvmThreadMetrics threads) {
+        this(
+                simpleMetricsHolder.getTcpInstructionSession(),
+                simpleMetricsHolder.getTcpAttachmentSession(),
+                simpleMetricsHolder.getUdpInstructionSession(),
+                simpleMetricsHolder.getUdpAttachmentSession(),
+                simpleMetricsHolder.getTcpInstructionRequest(),
+                simpleMetricsHolder.getTcpAttachmentRequest(),
+                simpleMetricsHolder.getUdpInstructionRequest(),
+                simpleMetricsHolder.getUdpAttachmentRequest(),
+                new EventPublisherMetrics(new EventSubscriberMetrics(subscriberCount)),
+                threads
         );
-        this.eventPublisher = new EventPublisherMetrics(new EventSubscriberMetrics(subscriberCount));
-        this.threads = threads;
     }
 
     public record EventPublisherMetrics(EventSubscriberMetrics subscriber) {
     }
 
     public record EventSubscriberMetrics(long total) {
-    }
-
-    public EventPublisherMetrics getEventPublisher() {
-        return eventPublisher;
-    }
-
-    public SimpleMetricsVo setEventPublisher(EventPublisherMetrics eventPublisher) {
-        this.eventPublisher = eventPublisher;
-        return this;
-    }
-
-    public SimpleTypes.SimpleJvmThreadMetrics getThreads() {
-        return threads;
-    }
-
-    public SimpleMetricsVo setThreads(SimpleTypes.SimpleJvmThreadMetrics threads) {
-        this.threads = threads;
-        return this;
     }
 }

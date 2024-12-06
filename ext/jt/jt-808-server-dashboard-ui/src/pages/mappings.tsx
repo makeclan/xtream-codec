@@ -21,7 +21,7 @@ export const MappingsPage = () => {
     "mappings",
     () =>
       request({
-        path: "mappings",
+        path: "actuator/mappings",
         method: "GET",
       }),
     {},
@@ -40,14 +40,14 @@ export const MappingsPage = () => {
       return acc;
     }, []);
   const columns = [
-    { key: "handlerName", label: "handler" },
-    { key: "handlerField", label: "handlerField" },
-    { key: "handlerDesc", label: "handlerDesc" },
-    { key: "messageId", label: "messageId" },
-    { key: "messageIdAsHexString", label: "messageIdAsHexString" },
-    { key: "messageIdDesc", label: "messageIdDesc" },
-    { key: "version", label: "version" },
-    { key: "scheduler", label: "scheduler" },
+    // { key: "messageId", label: "messageId" },
+    { key: "messageIdAsHexString", label: "消息ID" },
+    { key: "messageIdDesc", label: "消息描述" },
+    { key: "version", label: "协议版本" },
+    { key: "scheduler", label: "调度器" },
+    { key: "handlerName", label: "处理器" },
+    // { key: "handlerField", label: "handlerField" },
+    { key: "handlerDesc", label: "备注" },
   ];
 
   interface CellProps {

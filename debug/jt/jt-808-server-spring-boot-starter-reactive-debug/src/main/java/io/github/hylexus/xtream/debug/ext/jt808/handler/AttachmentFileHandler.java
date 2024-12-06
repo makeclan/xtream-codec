@@ -110,7 +110,7 @@ public class AttachmentFileHandler {
     /**
      * 这里对应的是苏标附件上传的码流: 0x31326364(并不是 1078 协议中的码流)
      */
-    @Jt808RequestHandlerMapping(messageIds = 0x30316364)
+    @Jt808RequestHandlerMapping(messageIds = 0x30316364, desc = "苏标扩展码流")
     public Mono<Void> processMsg30316364(Jt808Request request, @Jt808RequestBody BuiltinMessage30316364 body, @Nullable Jt808Session session) {
         if (session == null) {
             log.warn("session == null, 附件上传之前没有没有发送 0x1210,0x1211 消息???");

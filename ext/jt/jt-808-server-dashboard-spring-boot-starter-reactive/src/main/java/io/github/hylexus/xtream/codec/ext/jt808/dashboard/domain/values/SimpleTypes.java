@@ -143,4 +143,7 @@ public final class SimpleTypes {
             return new TimeSeries<>(time, value);
         }
     }
+
+    public record DependencyInfo(String name, String version) {
+    }
 }

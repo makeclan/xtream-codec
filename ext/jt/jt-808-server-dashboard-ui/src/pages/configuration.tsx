@@ -8,7 +8,7 @@ export const ConfigurationPage = () => {
 
   return (
     <div>
-      <JsonPreview json={config.configuration} />
+      <JsonPreview json={config.jt808ServerConfig} />
     </div>
   );
 };

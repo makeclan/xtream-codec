@@ -52,11 +52,52 @@ export interface Metrics {
   [key: string]: any;
 }
 
+export interface JavaRuntime {
+  name: String;
+  version: String;
+}
+
+export interface JavaVendor {
+  name: String;
+  version: String;
+}
+
+export interface JvmInfo {
+  name: String;
+  vendor: String;
+  version: String;
+}
+
+export interface JavaInfo {
+  version: String;
+  jvm: JvmInfo;
+  runtime: JavaRuntime;
+  vendor: JavaVendor;
+}
+
+export interface OsInfo {
+  name: String;
+  arch: string;
+  version: string;
+}
+
+export interface DependencyInfo {
+  name: string;
+  version: string;
+}
+
+export interface Dependencies {
+  spring: DependencyInfo;
+  springBoot: DependencyInfo;
+  xtreamCodec: DependencyInfo;
+}
+
 export interface ServerInfo {
-  // xtream-codec 版本
-  xtreamCodecVersion: string;
+  dependencies: Dependencies;
   // 服务启动时间
   serverStartupTime: string;
   // 服务配置(application.yaml#jt808-server.*)
-  configuration: {};
+  jt808ServerConfig: {};
+  java: JavaInfo;
+  os: OsInfo;
 }
