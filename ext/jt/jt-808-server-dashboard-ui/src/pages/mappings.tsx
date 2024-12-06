@@ -9,6 +9,8 @@ import {
 import { Spinner } from "@nextui-org/spinner";
 import React, { FC } from "react";
 import useSWR from "swr";
+import { Tooltip } from "@nextui-org/tooltip";
+import clsx from "clsx";
 
 import { request } from "@/utils/request.ts";
 
@@ -26,10 +28,9 @@ export const MappingsPage = () => {
   );
   const tableData = (data?.dispatcherXtreamHandler ?? [])
     .map((e) => ({
-      handler: e.handler.match(/[^.]+$/)?.[0] ?? "",
-      detail: {
-        ...e,
-      },
+      handlerName: e.handler.match(/[^.]+$/)?.[0] ?? "",
+      handlerField: e.handler.match(/^(.*)\./)?.[0] ?? "",
+      ...e,
     }))
     .reduce((acc, cur) => {
       if (!acc.find((e) => e.handler === cur.handler)) {
@@ -39,8 +40,14 @@ export const MappingsPage = () => {
       return acc;
     }, []);
   const columns = [
-    { key: "handler", label: "handler" },
-    { key: "detail", label: "detail" },
+    { key: "handlerName", label: "handler" },
+    { key: "handlerField", label: "handlerField" },
+    { key: "handlerDesc", label: "handlerDesc" },
+    { key: "messageId", label: "messageId" },
+    { key: "messageIdAsHexString", label: "messageIdAsHexString" },
+    { key: "messageIdDesc", label: "messageIdDesc" },
+    { key: "version", label: "version" },
+    { key: "scheduler", label: "scheduler" },
   ];
 
   interface CellProps {
@@ -51,12 +58,8 @@ export const MappingsPage = () => {
     const cellValue = item[columnKey as keyof typeof item];
 
     switch (columnKey) {
-      case "detail":
-        return Object.keys(cellValue).map((item) => (
-          <div key={item}>
-            <div>{cellValue[item as keyof typeof cellValue]}</div>
-          </div>
-        ));
+      case "handlerField":
+        return <Tooltip content={cellValue}>{cellValue.slice(0, 10)}</Tooltip>;
       default:
         return cellValue;
     }
@@ -64,7 +67,10 @@ export const MappingsPage = () => {
 
   return (
     <div>
-      <Table aria-label="Example table with dynamic content">
+      <Table
+        aria-label="Example table with dynamic content"
+        defaultSelectedKeys={[""]}
+      >
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn key={column.key}>{column.label}</TableColumn>
@@ -77,7 +83,10 @@ export const MappingsPage = () => {
           loadingState={isLoading}
         >
           {(item) => (
-            <TableRow key={item?.handler}>
+            <TableRow
+              key={item?.handler}
+              className={clsx(item.nonBlocking ? "" : "bg-danger")}
+            >
               {(columnKey) => (
                 <TableCell>
                   <RenderCell columnKey={columnKey} item={item} />

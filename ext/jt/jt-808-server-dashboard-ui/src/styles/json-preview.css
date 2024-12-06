@@ -1,7 +1,7 @@
 /* dark styling of the editor */
 div.jsoneditor,
 div.jsoneditor-menu {
-    border-color: hsl(var(--nextui-background));
+    border: none;
 }
 div.jsoneditor-menu {
     background-color: hsl(var(--nextui-default));
@@ -9,7 +9,7 @@ div.jsoneditor-menu {
 div.jsoneditor-tree,
 div.jsoneditor-mode-code,
 div.jsoneditor textarea.jsoneditor-text {
-    background-color: hsl(var(--nextui-background));
+    background-color: transparent;
     color: hsl(var(--nextui-foreground));
 }
 div.jsoneditor-field,
@@ -76,4 +76,8 @@ div.jsoneditor-value.jsoneditor-null {
 }
 div.jsoneditor-value.jsoneditor-invalid {
     color: hsl(var(--nextui-foreground));
+}
+
+div.jsoneditor-field, div.jsoneditor-value, div.jsoneditor td, div.jsoneditor th, div.jsoneditor textarea, pre.jsoneditor-preview, .jsoneditor-schema-error, .jsoneditor-popover {
+    font-size: var(--nextui-font-size-medium);
 }
