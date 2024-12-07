@@ -162,13 +162,13 @@ public class XtreamJt808ServerProperties {
         @NestedConfigurationProperty
         private XtreamServerSchedulerProperties eventPublisher = new XtreamServerSchedulerProperties();
 
-        private Map<String, CustomXtreamServerSchedulerProperties> customSchedulers = new LinkedHashMap<>();
+        private Map<String, NamedXtreamServerSchedulerProperties> customSchedulers = new LinkedHashMap<>();
     }
 
     @Getter
     @Setter
     @ToString
-    public static class CustomXtreamServerSchedulerProperties extends XtreamServerSchedulerProperties {
+    public static class NamedXtreamServerSchedulerProperties extends XtreamServerSchedulerProperties {
         private String name;
     }
 

@@ -163,6 +163,10 @@ jt808-server:
     ## [非阻塞型]处理器的调度器
     non-blocking-handler:
       type: parallel
+      metrics-prefix: "demo0"
+      metrics-enabled: true
+      metadata:
+        desc: demo0
       bounded-elastic:
         thread-name-prefix: bounded-elastic
         thread-capacity: 10
@@ -182,6 +186,10 @@ jt808-server:
     ## [阻塞型]处理器的调度器
     blocking-handler:
       type: bounded_elastic
+      metrics-prefix: "demo1"
+      metrics-enabled: true
+      metadata:
+        desc: demo0
       bounded-elastic:
         thread-name-prefix: blocking-bounded-elastic
         thread-capacity: 10

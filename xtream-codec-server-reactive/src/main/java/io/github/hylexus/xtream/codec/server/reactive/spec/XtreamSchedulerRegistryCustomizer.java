@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler;
+package io.github.hylexus.xtream.codec.server.reactive.spec;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+public interface XtreamSchedulerRegistryCustomizer {
 
-@Getter
-@Setter
-@ToString
-public class SingleProperties {
-    private String threadNamePrefix = "single";
-    private boolean daemon = true;
-    private boolean rejectBlockingTask = true;
+    void customize(XtreamSchedulerRegistry registry);
+
 }

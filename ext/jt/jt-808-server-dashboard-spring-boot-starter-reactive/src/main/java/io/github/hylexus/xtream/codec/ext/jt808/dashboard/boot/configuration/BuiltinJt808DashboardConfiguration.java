@@ -32,8 +32,10 @@ import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl.DefaultJt
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808AttachmentSessionManager;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriptionRegistry;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMapping;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -85,9 +87,11 @@ public class BuiltinJt808DashboardConfiguration {
     @Bean
     Jt808DashboardMetricsService jt808DashboardMetricsService(
             XtreamJt808ServerProperties serverProperties,
+            @Autowired(required = false) MeterRegistry meterRegistry,
+            XtreamSchedulerRegistry schedulerRegistry,
             XtreamEventPublisher eventPublisher,
             Jt808ServerSimpleMetricsHolder metricsHolder) {
-        return new DefaultJt808DashboardMetricsService(serverProperties, eventPublisher, metricsHolder);
+        return new DefaultJt808DashboardMetricsService(serverProperties, eventPublisher, metricsHolder, meterRegistry, schedulerRegistry);
     }
 
     @Bean

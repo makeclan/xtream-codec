@@ -17,13 +17,16 @@
 package io.github.hylexus.xtream.codec.server.reactive.spec.resources;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistryCustomizer;
 import jakarta.annotation.Nullable;
 import reactor.core.scheduler.Scheduler;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
 
 /**
  * @author hylexus
@@ -36,12 +39,29 @@ public class DefaultXtreamSchedulerRegistry implements XtreamSchedulerRegistry {
     protected final Scheduler defaultBlockingScheduler;
     protected final Scheduler eventPublisherScheduler;
     protected final ConcurrentHashMap<String, Scheduler> schedulerMap = new ConcurrentHashMap<>();
+    protected final ConcurrentHashMap<String, SchedulerConfig> schedulerConfigMap = new ConcurrentHashMap<>();
+    protected final BiFunction<SchedulerConfig, Scheduler, Scheduler> wrapper;
+
+    public DefaultXtreamSchedulerRegistry(List<XtreamSchedulerRegistryCustomizer> customizers, BiFunction<SchedulerConfig, Scheduler, Scheduler> wrapper) {
+        this.wrapper = wrapper;
+        for (final XtreamSchedulerRegistryCustomizer customizer : customizers) {
+            customizer.customize(this);
+        }
+        this.requestDispatcherScheduler = this.getScheduler(SCHEDULER_NAME_REQUEST_DISPATCHER).orElse(null);
+        this.defaultNonBlockingScheduler = this.getScheduler(SCHEDULER_NAME_NON_BLOCKING)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot determine default non-blocking scheduler"));
+        this.defaultBlockingScheduler = this.getScheduler(SCHEDULER_NAME_BLOCKING)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot determine default blocking scheduler"));
+        this.eventPublisherScheduler = this.getScheduler(SCHEDULER_NAME_EVENT_PUBLISHER)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot determine default eventPublisher scheduler"));
+    }
 
     public DefaultXtreamSchedulerRegistry(Scheduler defaultNonBlockingScheduler, Scheduler defaultBlockingScheduler, Scheduler eventPublisherScheduler) {
         this(null, defaultNonBlockingScheduler, defaultBlockingScheduler, eventPublisherScheduler);
     }
 
     public DefaultXtreamSchedulerRegistry(@Nullable Scheduler requestDispatcherScheduler, Scheduler defaultNonBlockingScheduler, Scheduler defaultBlockingScheduler, Scheduler eventPublisherScheduler) {
+        this.wrapper = (config, scheduler) -> scheduler;
         this.requestDispatcherScheduler = requestDispatcherScheduler;
         this.defaultNonBlockingScheduler = defaultNonBlockingScheduler;
         this.defaultBlockingScheduler = defaultBlockingScheduler;
@@ -82,9 +102,14 @@ public class DefaultXtreamSchedulerRegistry implements XtreamSchedulerRegistry {
     }
 
     @Override
-    public boolean registerScheduler(String name, Scheduler scheduler) {
-        final Scheduler v = this.schedulerMap.putIfAbsent(name, scheduler);
-        return v == null;
+    public synchronized boolean registerScheduler(SchedulerConfig config, Scheduler scheduler) {
+        final String name = config.name();
+        final Scheduler v = this.schedulerMap.putIfAbsent(name, this.wrapper.apply(config, scheduler));
+        final boolean registered = v == null;
+        if (registered) {
+            this.schedulerConfigMap.put(name, config);
+        }
+        return registered;
     }
 
     @Override
@@ -94,12 +119,18 @@ public class DefaultXtreamSchedulerRegistry implements XtreamSchedulerRegistry {
         }
 
         final Scheduler v = this.schedulerMap.remove(name);
+        this.schedulerConfigMap.remove(name);
         return v != null;
     }
 
     @Override
     public Map<String, Scheduler> asMapView() {
         return Collections.unmodifiableMap(this.schedulerMap);
+    }
+
+    @Override
+    public Map<String, SchedulerConfig> schedulerConfigAsMapView() {
+        return Collections.unmodifiableMap(this.schedulerConfigMap);
     }
 
 }

@@ -19,9 +19,11 @@ package io.github.hylexus.xtream.codec.server.reactive.spec;
 import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamRequestHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamRequestHandlerMapping;
 import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamServerConstants;
+import io.github.hylexus.xtream.codec.server.reactive.spec.resources.DefaultSchedulerConfig;
 import jakarta.annotation.Nullable;
 import reactor.core.scheduler.Scheduler;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Optional;
 
@@ -85,7 +87,11 @@ public interface XtreamSchedulerRegistry {
      * @param scheduler 要注册的调度器
      * @return {@code true}: 成功注册; {@code false}: 已经存在同名调度器
      */
-    boolean registerScheduler(String name, Scheduler scheduler);
+    default boolean registerScheduler(String name, Scheduler scheduler) {
+        return this.registerScheduler(SchedulerConfig.ofDefault(name), scheduler);
+    }
+
+    boolean registerScheduler(SchedulerConfig config, Scheduler scheduler);
 
     /**
      * @param name 要移除的调度器名称
@@ -99,4 +105,48 @@ public interface XtreamSchedulerRegistry {
      */
     Map<String, Scheduler> asMapView();
 
+    Map<String, SchedulerConfig> schedulerConfigAsMapView();
+
+    interface SchedulerConfig {
+
+        String name();
+
+        boolean metricsEnabled();
+
+        String metricsPrefix();
+
+        String remark();
+
+        Map<String, Serializable> metadata();
+
+        @Override
+        String toString();
+
+        static SchedulerConfig ofDefault(String name) {
+            return newBuilder()
+                    .name(name)
+                    .metricsEnabled(false)
+                    .metricsPrefix(name)
+                    .build();
+        }
+
+        static SchedulerConfigBuilder newBuilder() {
+            return new DefaultSchedulerConfig.DefaultSchedulerConfigBuilder();
+        }
+
+    }
+
+    interface SchedulerConfigBuilder {
+        SchedulerConfigBuilder name(String name);
+
+        SchedulerConfigBuilder metricsEnabled(boolean metricsEnabled);
+
+        SchedulerConfigBuilder metricsPrefix(String metricsPrefix);
+
+        SchedulerConfigBuilder remark(String remark);
+
+        SchedulerConfigBuilder metadata(Map<String, Serializable> metadata);
+
+        SchedulerConfig build();
+    }
 }

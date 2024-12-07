@@ -23,6 +23,7 @@ dependencies {
     // runtime
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("jakarta.annotation:jakarta.annotation-api")
+    implementation("io.projectreactor:reactor-core-micrometer")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.mockito:mockito-core")

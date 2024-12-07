@@ -18,5 +18,6 @@ dependencies {
     }
 
     implementation("jakarta.annotation:jakarta.annotation-api")
+    implementation("io.projectreactor:reactor-core-micrometer")
 
 }

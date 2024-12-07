@@ -16,29 +16,46 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.boot.properties;
 
-import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler.BoundedElasticProperties;
-import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler.ParallelProperties;
-import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler.SchedulerType;
-import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler.SingleProperties;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
+import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.scheduler.BoundedElasticProperties;
+import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.scheduler.ParallelProperties;
+import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.scheduler.SchedulerType;
+import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.scheduler.SingleProperties;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Getter
 @Setter
 @ToString
 public class XtreamServerSchedulerProperties {
 
-    private SchedulerType type = SchedulerType.BOUNDED_ELASTIC;
+    protected SchedulerType type = SchedulerType.BOUNDED_ELASTIC;
+    protected boolean metricsEnabled = false;
+    protected String metricsPrefix;
+    protected Map<String, Serializable> metadata = new LinkedHashMap<>();
 
     @NestedConfigurationProperty
-    private BoundedElasticProperties boundedElastic = new BoundedElasticProperties();
+    protected BoundedElasticProperties boundedElastic = new BoundedElasticProperties();
 
     @NestedConfigurationProperty
-    private ParallelProperties parallel = new ParallelProperties();
+    protected ParallelProperties parallel = new ParallelProperties();
 
     @NestedConfigurationProperty
-    private SingleProperties single = new SingleProperties();
+    protected SingleProperties single = new SingleProperties();
+
+    public XtreamSchedulerRegistry.SchedulerConfig toSchedulerConfig(String name) {
+        return XtreamSchedulerRegistry.SchedulerConfig.newBuilder()
+                .name(name)
+                .metricsEnabled(this.metricsEnabled)
+                .metricsPrefix(this.metricsPrefix)
+                .metadata(this.metadata)
+                .build();
+    }
 
 }

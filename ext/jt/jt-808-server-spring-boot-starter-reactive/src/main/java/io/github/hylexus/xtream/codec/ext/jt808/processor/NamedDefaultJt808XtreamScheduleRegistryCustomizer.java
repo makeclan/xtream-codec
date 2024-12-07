@@ -14,23 +14,14 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler;
+package io.github.hylexus.xtream.codec.ext.jt808.processor;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 
-import java.time.Duration;
+public class NamedDefaultJt808XtreamScheduleRegistryCustomizer extends DefaultJt808XtreamScheduleRegistryCustomizer {
 
-@Getter
-@Setter
-@ToString
-public class BoundedElasticProperties {
-    private String threadNamePrefix = "bounded-elastic";
-    private boolean daemon = true;
-    private boolean rejectBlockingTask = true;
+    public NamedDefaultJt808XtreamScheduleRegistryCustomizer(XtreamJt808ServerProperties.NamedXtreamServerSchedulerProperties schedulerProperties) {
+        super(schedulerProperties.getName(), schedulerProperties);
+    }
 
-    private int threadCapacity = Math.max(16, Runtime.getRuntime().availableProcessors() * 2);
-    private int queuedTaskCapacity = 512;
-    private Duration ttl = Duration.ofMinutes(1);
 }

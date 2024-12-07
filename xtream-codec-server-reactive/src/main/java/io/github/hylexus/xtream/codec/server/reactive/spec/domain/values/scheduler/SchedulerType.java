@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler;
+package io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.scheduler;
 
 import reactor.core.scheduler.Schedulers;
 

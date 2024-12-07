@@ -68,4 +68,17 @@ public class BuiltinJt808DashboardMetricsController {
         return this.jt808DashboardMetricsService.getThreadDumpMetrics(Duration.ofSeconds(duration));
     }
 
+    /**
+     * @see <a href="https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events">https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events</a>
+     */
+    @RequestMapping(value = "/schedulers", method = {RequestMethod.GET, RequestMethod.POST})
+    public Flux<ServerSentEvent<Object>> schedulers(
+            @Validated
+            @Min(message = "`duration` must be greater than or equal to 5", value = 5)
+            @Max(message = "`duration` must be letter than or equal to 60", value = 60)
+            @RequestParam(value = "duration", required = false, defaultValue = "5") long duration) {
+
+        return this.jt808DashboardMetricsService.getSchedulerMetrics(Duration.ofSeconds(duration));
+    }
+
 }

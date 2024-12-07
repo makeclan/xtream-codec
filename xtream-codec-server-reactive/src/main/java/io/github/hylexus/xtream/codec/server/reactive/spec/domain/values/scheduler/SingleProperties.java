@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.dashboard.service;
+package io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.scheduler;
 
-import org.springframework.http.codec.ServerSentEvent;
-import reactor.core.publisher.Flux;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-import java.time.Duration;
-
-public interface Jt808DashboardMetricsService {
-
-    Flux<ServerSentEvent<Object>> getBasicMetrics(Duration duration);
-
-    Flux<ServerSentEvent<Object>> getThreadDumpMetrics(Duration duration);
-
-    Flux<ServerSentEvent<Object>> getSchedulerMetrics(Duration duration);
-
+@Getter
+@Setter
+@ToString
+public class SingleProperties {
+    private String threadNamePrefix = "single";
+    private boolean daemon = true;
+    private boolean rejectBlockingTask = true;
 }

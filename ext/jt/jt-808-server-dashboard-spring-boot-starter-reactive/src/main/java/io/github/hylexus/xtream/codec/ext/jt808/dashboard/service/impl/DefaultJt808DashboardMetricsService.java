@@ -19,10 +19,16 @@ package io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamServerSchedulerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SchedulerMetrics;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.SimpleMetricsVo;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardMetricsService;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.LongTaskTimer;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.springframework.http.codec.ServerSentEvent;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -32,21 +38,23 @@ import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class DefaultJt808DashboardMetricsService implements Jt808DashboardMetricsService {
     private final XtreamEventPublisher eventPublisher;
     private final Jt808ServerSimpleMetricsHolder metricsHolder;
     private final Map<String, String> threadGroupMapping;
+    private final MeterRegistry meterRegistry;
+    private final XtreamSchedulerRegistry schedulerRegistry;
 
-    public DefaultJt808DashboardMetricsService(XtreamJt808ServerProperties serverProperties, XtreamEventPublisher eventPublisher, Jt808ServerSimpleMetricsHolder metricsHolder) {
+    public DefaultJt808DashboardMetricsService(XtreamJt808ServerProperties serverProperties, XtreamEventPublisher eventPublisher, Jt808ServerSimpleMetricsHolder metricsHolder, MeterRegistry meterRegistry, XtreamSchedulerRegistry schedulerRegistry) {
         this.eventPublisher = eventPublisher;
         this.metricsHolder = metricsHolder;
         this.threadGroupMapping = this.initThreadGroupMapping(serverProperties);
+        this.meterRegistry = meterRegistry;
+        this.schedulerRegistry = schedulerRegistry;
     }
 
     @Override
@@ -65,6 +73,50 @@ public class DefaultJt808DashboardMetricsService implements Jt808DashboardMetric
                 .concatWith(Flux.interval(duration)
                         .flatMap(ignored -> threadDumpMetricsFlux())
                 );
+    }
+
+    @Override
+    public Flux<ServerSentEvent<Object>> getSchedulerMetrics(Duration duration) {
+        return this.schedulerMetrics()
+                .concatWith(Flux.interval(duration)
+                        .flatMap(ignored -> this.schedulerMetrics())
+                );
+    }
+
+    private Flux<ServerSentEvent<Object>> schedulerMetrics() {
+        final LocalDateTime now = LocalDateTime.now();
+        final Stream<Object> stream = this.schedulerRegistry.schedulerConfigAsMapView().values().stream()
+                .filter(XtreamSchedulerRegistry.SchedulerConfig::metricsEnabled)
+                .map(it -> {
+                    final LongTaskTimer activeMeter = this.meterRegistry.get(it.metricsPrefix() + ".scheduler.tasks.active").longTaskTimer();
+                    final Timer completedMeter = this.meterRegistry.get(it.metricsPrefix() + ".scheduler.tasks.completed").timer();
+                    final LongTaskTimer pendingMeter = this.meterRegistry.get(it.metricsPrefix() + ".scheduler.tasks.pending").longTaskTimer();
+                    final SchedulerMetrics.Submitted submitted = this.createSubmittedMetrics(it);
+                    final SchedulerMetrics metrics = new SchedulerMetrics(it, activeMeter, completedMeter, pendingMeter, submitted);
+                    return new SimpleTypes.TimeSeries<>(now, metrics);
+                });
+        return Flux.fromStream(stream)
+                .map(it -> ServerSentEvent.builder(it).event("schedulerMetrics").build());
+    }
+
+    private SchedulerMetrics.Submitted createSubmittedMetrics(XtreamSchedulerRegistry.SchedulerConfig it) {
+        long direct = 0;
+        long delayed = 0;
+        long periodicIteration = 0;
+        long periodicInitial = 0;
+        final Collection<Counter> meters = this.meterRegistry.get(it.metricsPrefix() + ".scheduler.tasks.submitted").counters();
+        for (Counter counter : meters) {
+            final String tag = counter.getId().getTag("submission.type");
+            switch (tag) {
+                case "direct" -> direct = (long) counter.count();
+                case "delayed" -> delayed = (long) counter.count();
+                case "periodic_iteration" -> periodicIteration = (long) counter.count();
+                case "periodic_initial" -> periodicInitial = (long) counter.count();
+                case null, default -> {
+                }
+            }
+        }
+        return new SchedulerMetrics.Submitted(direct, delayed, periodicIteration, periodicInitial);
     }
 
     private Flux<ServerSentEvent<Object>> threadDumpMetricsFlux() {

@@ -14,19 +14,23 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.boot.properties.scheduler;
+package io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.scheduler;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.Duration;
+
 @Getter
 @Setter
 @ToString
-public class ParallelProperties {
-    private String threadNamePrefix = "parallel";
+public class BoundedElasticProperties {
+    private String threadNamePrefix = "bounded-elastic";
     private boolean daemon = true;
     private boolean rejectBlockingTask = true;
 
-    private int parallelism = Runtime.getRuntime().availableProcessors() * 2;
+    private int threadCapacity = Math.max(16, Runtime.getRuntime().availableProcessors() * 2);
+    private int queuedTaskCapacity = 512;
+    private Duration ttl = Duration.ofMinutes(1);
 }
