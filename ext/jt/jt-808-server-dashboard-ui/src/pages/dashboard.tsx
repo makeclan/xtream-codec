@@ -1,4 +1,4 @@
-import { CardBox } from "@/components/card-box.tsx";
+import { CardBox } from "@/components/dashboard/card-box.tsx";
 
 export const DashboardPage = () => {
   return <CardBox />;

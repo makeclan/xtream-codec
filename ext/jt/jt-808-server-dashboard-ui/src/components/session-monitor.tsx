@@ -71,9 +71,7 @@ const Message: FC<MessageProps> = ({ item, className }) => {
       <Card className="flex-grow-0 max-w-2xl">
         <CardBody>
           {Object.keys(item)
-            .filter((k) =>
-              ["messageId", "rawHexString", "eventTime"].includes(k),
-            )
+            .filter((k) => ["messageId", "hexString", "eventTime"].includes(k))
             .map((e, i) => (
               <p key={i}>{`${e}: ${item[e as keyof Event]}`}</p>
             ))}

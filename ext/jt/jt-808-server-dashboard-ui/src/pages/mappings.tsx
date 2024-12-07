@@ -26,29 +26,22 @@ export const MappingsPage = () => {
       }),
     {},
   );
-  const tableData = (data?.dispatcherXtreamHandler ?? [])
-    .map((e) => ({
-      handlerName: e.handler.match(/[^.]+$/)?.[0] ?? "",
-      handlerField: e.handler.match(/^(.*)\./)?.[0] ?? "",
-      ...e,
-    }))
-    .reduce((acc, cur) => {
-      if (!acc.find((e) => e.handler === cur.handler)) {
-        acc.push(cur);
-      }
-
-      return acc;
-    }, []);
   const columns = [
+    { key: "handlerName", label: "处理器" },
     // { key: "messageId", label: "messageId" },
     { key: "messageIdAsHexString", label: "消息ID" },
     { key: "messageIdDesc", label: "消息描述" },
     { key: "version", label: "协议版本" },
     { key: "scheduler", label: "调度器" },
-    { key: "handlerName", label: "处理器" },
-    // { key: "handlerField", label: "handlerField" },
     { key: "handlerDesc", label: "备注" },
   ];
+  const tableData = (data?.dispatcherXtreamHandler ?? []).map((e, i) => ({
+    handlerName: e.handler.match(/[^.]+$/)?.[0] ?? "",
+    key: i,
+    ...e,
+  }));
+  const loadingState =
+    isLoading && tableData?.length === 0 ? "loading" : "idle";
 
   interface CellProps {
     item: any;
@@ -58,8 +51,12 @@ export const MappingsPage = () => {
     const cellValue = item[columnKey as keyof typeof item];
 
     switch (columnKey) {
-      case "handlerField":
-        return <Tooltip content={cellValue}>{cellValue.slice(0, 10)}</Tooltip>;
+      case "handlerName":
+        return (
+          <Tooltip color="primary" content={item.handler}>
+            {cellValue}
+          </Tooltip>
+        );
       default:
         return cellValue;
     }
@@ -80,11 +77,11 @@ export const MappingsPage = () => {
           emptyContent={"暂无数据"}
           items={tableData}
           loadingContent={<Spinner />}
-          loadingState={isLoading}
+          loadingState={loadingState}
         >
           {(item) => (
             <TableRow
-              key={item?.handler}
+              key={item.key}
               className={clsx(item.nonBlocking ? "" : "bg-danger")}
             >
               {(columnKey) => (

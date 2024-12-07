@@ -76,9 +76,9 @@ export interface SessionTableProps {
   type: SessionType;
 }
 export const SessionTable: FC<SessionTableProps> = ({ type }) => {
-  const path = `session/${type}-sessions`;
-  const { setPage, page, pages, tableData, isLoading, mutate } =
-    usePageList(path);
+  const { setPage, page, pages, tableData, isLoading, mutate } = usePageList(
+    `session/${type}-sessions`,
+  );
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedRow, setSelectedRow] = useState<Session | null>(null);
 
@@ -102,7 +102,7 @@ export const SessionTable: FC<SessionTableProps> = ({ type }) => {
   const handleDel = async (session: Session) => {
     try {
       const res: any = await request({
-        path: `session/instruction-session/${session.id}`,
+        path: `session/${type}-session/${session.id}`,
         method: "DELETE",
       });
 
