@@ -18,14 +18,14 @@ tag:
 <dependency>
     <groupId>io.github.hylexus.xtream</groupId>
     <artifactId>xtream-codec-core</artifactId>
-    <version>0.0.1-beta.6</version>
+    <version>0.0.1-beta.7</version>
 </dependency>
 ```
 
 @tab:active gradle
 
 ```groovy
-implementation 'io.github.hylexus.xtream:xtream-codec-core:0.0.1-beta.6'
+implementation 'io.github.hylexus.xtream:xtream-codec-core:0.0.1-beta.7'
 ```
 
 :::

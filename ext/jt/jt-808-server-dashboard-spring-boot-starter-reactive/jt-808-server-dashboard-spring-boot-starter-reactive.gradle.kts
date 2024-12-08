@@ -20,7 +20,7 @@ dependencies {
     api("org.springframework.boot:spring-boot-starter-validation")
 
     // runtime
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    compileOnly("org.springframework.boot:spring-boot-starter-actuator")
     implementation("jakarta.annotation:jakarta.annotation-api")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")

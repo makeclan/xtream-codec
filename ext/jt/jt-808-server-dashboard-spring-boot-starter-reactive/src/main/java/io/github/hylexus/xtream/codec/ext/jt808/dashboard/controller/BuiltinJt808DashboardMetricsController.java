@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller;
 
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardMetricsService;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardMetricsServiceWithMicroMeter;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.slf4j.Logger;
@@ -37,9 +38,11 @@ public class BuiltinJt808DashboardMetricsController {
     private static final Logger log = LoggerFactory.getLogger(BuiltinJt808DashboardMetricsController.class);
 
     private final Jt808DashboardMetricsService jt808DashboardMetricsService;
+    private final Jt808DashboardMetricsServiceWithMicroMeter jt808DashboardMetricsServiceWithMicroMeter;
 
-    public BuiltinJt808DashboardMetricsController(Jt808DashboardMetricsService jt808DashboardMetricsService) {
+    public BuiltinJt808DashboardMetricsController(Jt808DashboardMetricsService jt808DashboardMetricsService, Jt808DashboardMetricsServiceWithMicroMeter jt808DashboardMetricsServiceWithMicroMeter) {
         this.jt808DashboardMetricsService = jt808DashboardMetricsService;
+        this.jt808DashboardMetricsServiceWithMicroMeter = jt808DashboardMetricsServiceWithMicroMeter;
     }
 
     /**
@@ -78,7 +81,7 @@ public class BuiltinJt808DashboardMetricsController {
             @Max(message = "`duration` must be letter than or equal to 60", value = 60)
             @RequestParam(value = "duration", required = false, defaultValue = "5") long duration) {
 
-        return this.jt808DashboardMetricsService.getSchedulerMetrics(Duration.ofSeconds(duration));
+        return this.jt808DashboardMetricsServiceWithMicroMeter.getSchedulerMetrics(Duration.ofSeconds(duration));
     }
 
 }

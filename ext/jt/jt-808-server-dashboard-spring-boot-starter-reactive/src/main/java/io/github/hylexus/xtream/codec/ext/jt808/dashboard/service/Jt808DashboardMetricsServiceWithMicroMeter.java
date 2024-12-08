@@ -21,10 +21,8 @@ import reactor.core.publisher.Flux;
 
 import java.time.Duration;
 
-public interface Jt808DashboardMetricsService {
+public interface Jt808DashboardMetricsServiceWithMicroMeter {
 
-    Flux<ServerSentEvent<Object>> getBasicMetrics(Duration duration);
-
-    Flux<ServerSentEvent<Object>> getThreadDumpMetrics(Duration duration);
+    Flux<ServerSentEvent<Object>> getSchedulerMetrics(Duration duration);
 
 }

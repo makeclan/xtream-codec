@@ -36,9 +36,13 @@ import java.util.Map;
 public class XtreamServerSchedulerProperties {
 
     protected SchedulerType type = SchedulerType.BOUNDED_ELASTIC;
-    protected boolean metricsEnabled = false;
-    protected String metricsPrefix;
+
     protected Map<String, Serializable> metadata = new LinkedHashMap<>();
+    protected String remark;
+    /**
+     * @see <a href="https://projectreactor.io/docs/core/milestone/reference/metrics.html">https://projectreactor.io/docs/core/milestone/reference/metrics.html</a>
+     */
+    protected MetricsProps metrics = new MetricsProps();
 
     @NestedConfigurationProperty
     protected BoundedElasticProperties boundedElastic = new BoundedElasticProperties();
@@ -52,10 +56,20 @@ public class XtreamServerSchedulerProperties {
     public XtreamSchedulerRegistry.SchedulerConfig toSchedulerConfig(String name) {
         return XtreamSchedulerRegistry.SchedulerConfig.newBuilder()
                 .name(name)
-                .metricsEnabled(this.metricsEnabled)
-                .metricsPrefix(this.metricsPrefix)
-                .metadata(this.metadata)
+                .metricsEnabled(this.getMetrics().isEnabled())
+                .metricsPrefix(this.getMetrics().getPrefix())
+                .metadata(this.getMetadata())
+                .remark(this.getRemark())
                 .build();
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class MetricsProps {
+        private boolean enabled = false;
+        // todo prefix 格式验证
+        private String prefix;
     }
 
 }

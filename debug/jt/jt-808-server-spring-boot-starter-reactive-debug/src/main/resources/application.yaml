@@ -163,8 +163,10 @@ jt808-server:
     ## [非阻塞型]处理器的调度器
     non-blocking-handler:
       type: parallel
-      metrics-prefix: "demo0"
-      metrics-enabled: true
+      metrics:
+        enabled: true
+        ## xnbh: xtream-non-blocking-handler
+        prefix: xnbh
       metadata:
         desc: demo0
       bounded-elastic:
@@ -186,8 +188,10 @@ jt808-server:
     ## [阻塞型]处理器的调度器
     blocking-handler:
       type: bounded_elastic
-      metrics-prefix: "demo1"
-      metrics-enabled: true
+      metrics:
+        enabled: true
+        ## xbh: xtream-blocking-handler
+        prefix: "xbh"
       metadata:
         desc: demo0
       bounded-elastic:
@@ -209,6 +213,10 @@ jt808-server:
     ## [事件发布器]的调度器
     event-publisher:
       type: bounded_elastic
+      metrics:
+        enabled: true
+        ## xep: xtream-event-publisher
+        prefix: xep
       bounded-elastic:
         thread-name-prefix: event-publisher1
         thread-capacity: 10
@@ -232,11 +240,17 @@ jt808-server:
         # name可以不配置(默认使用 Key)
         # name: my-scheduler-1
         type: parallel
+        metrics:
+          enabled: true
+          prefix: custom1
         parallel:
           daemon: true
       my-scheduler-2:
         name: my-scheduler-2
         type: bounded_elastic
+        metrics:
+          enabled: true
+          prefix: custom2
         bounded-elastic:
           thread-name-prefix: my-scheduler-2
 

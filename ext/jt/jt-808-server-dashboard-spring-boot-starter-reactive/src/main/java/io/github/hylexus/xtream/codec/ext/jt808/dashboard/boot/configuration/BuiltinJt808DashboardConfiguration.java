@@ -27,19 +27,20 @@ import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.RequestInfoCol
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.SessionInfoCollector;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardMappingService;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardMetricsService;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardMetricsServiceWithMicroMeter;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl.DefaultJt808DashboardMappingService;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl.DefaultJt808DashboardMetricsService;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808AttachmentSessionManager;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriptionRegistry;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMapping;
-import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -48,6 +49,9 @@ import java.util.concurrent.atomic.LongAdder;
 /**
  * @author hylexus
  */
+@Import({
+        BuiltinJt808DashboardConfigurationWithMicroMeter.class
+})
 public class BuiltinJt808DashboardConfiguration {
 
     @Bean
@@ -85,18 +89,19 @@ public class BuiltinJt808DashboardConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     Jt808DashboardMetricsService jt808DashboardMetricsService(
             XtreamJt808ServerProperties serverProperties,
-            @Autowired(required = false) MeterRegistry meterRegistry,
-            XtreamSchedulerRegistry schedulerRegistry,
             XtreamEventPublisher eventPublisher,
             Jt808ServerSimpleMetricsHolder metricsHolder) {
-        return new DefaultJt808DashboardMetricsService(serverProperties, eventPublisher, metricsHolder, meterRegistry, schedulerRegistry);
+        return new DefaultJt808DashboardMetricsService(serverProperties, eventPublisher, metricsHolder);
     }
 
     @Bean
-    BuiltinJt808DashboardMetricsController builtinJt808DashboardMetricsController(Jt808DashboardMetricsService metricsService) {
-        return new BuiltinJt808DashboardMetricsController(metricsService);
+    BuiltinJt808DashboardMetricsController builtinJt808DashboardMetricsController(
+            @Autowired(required = false) Jt808DashboardMetricsServiceWithMicroMeter metricsServiceWithMicroMeter,
+            Jt808DashboardMetricsService metricsService) {
+        return new BuiltinJt808DashboardMetricsController(metricsService, metricsServiceWithMicroMeter);
     }
 
     @Bean

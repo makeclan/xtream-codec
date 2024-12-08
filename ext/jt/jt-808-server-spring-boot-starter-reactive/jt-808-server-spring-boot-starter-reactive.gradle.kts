@@ -21,9 +21,9 @@ dependencies {
     compileOnly("org.bouncycastle:bcprov-jdk18on")
 
     // runtime
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    compileOnly("org.springframework.boot:spring-boot-starter-actuator")
+    compileOnly("io.projectreactor:reactor-core-micrometer")
     implementation("jakarta.annotation:jakarta.annotation-api")
-    implementation("io.projectreactor:reactor-core-micrometer")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.mockito:mockito-core")

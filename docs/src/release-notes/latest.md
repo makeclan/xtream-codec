@@ -4,6 +4,22 @@ article: false
 
 # 发版记录
 
+## 0.0.1-beta.7(2024-12-08)
+
+### ⭐ New Features
+
+- `jt-808-server-dashboard-ui` 优化
+- 集成 `reactor-core-micrometer`
+
+### 🐞 Bug Fixes
+
+- 修改部分 `Scheduler` 配置未生效的问题
+
+### ❤️ Contributors
+
+- [@dfEric](https://github.com/dfEric)
+- [@hylexus](https://github.com/hylexus)
+
 ## 0.0.1-beta.6(2024-12-01)
 
 ### ⭐ New Features
