@@ -52,7 +52,10 @@ public class DefaultJt808DashboardMetricsService implements Jt808DashboardMetric
     @Override
     public Flux<ServerSentEvent<Object>> getBasicMetrics(Duration duration) {
 
-        final Supplier<SimpleMetricsVo> supplier = () -> new SimpleMetricsVo(metricsHolder, this.eventPublisher.subscriberCount(), this.simpleJvmThreadMetrics());
+        final Supplier<SimpleTypes.TimeSeries<SimpleMetricsVo>> supplier = () -> {
+            final LocalDateTime now = LocalDateTime.now();
+            return new SimpleTypes.TimeSeries<>(now, new SimpleMetricsVo(metricsHolder, this.eventPublisher.subscriberCount(), this.simpleJvmThreadMetrics()));
+        };
 
         return Flux.just(supplier.get())
                 .concatWith(Flux.interval(duration).map(ignore -> supplier.get()))
