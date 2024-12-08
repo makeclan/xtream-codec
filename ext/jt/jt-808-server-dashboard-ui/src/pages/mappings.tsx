@@ -63,36 +63,29 @@ export const MappingsPage = () => {
   };
 
   return (
-    <div>
-      <Table
-        aria-label="Example table with dynamic content"
-        defaultSelectedKeys={[""]}
+    <Table aria-label="Example table with dynamic content">
+      <TableHeader columns={columns}>
+        {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+      </TableHeader>
+      <TableBody
+        emptyContent={"暂无数据"}
+        items={tableData}
+        loadingContent={<Spinner />}
+        loadingState={loadingState}
       >
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn key={column.key}>{column.label}</TableColumn>
-          )}
-        </TableHeader>
-        <TableBody
-          emptyContent={"暂无数据"}
-          items={tableData}
-          loadingContent={<Spinner />}
-          loadingState={loadingState}
-        >
-          {(item) => (
-            <TableRow
-              key={item.key}
-              className={clsx(item.nonBlocking ? "" : "bg-danger")}
-            >
-              {(columnKey) => (
-                <TableCell>
-                  <RenderCell columnKey={columnKey} item={item} />
-                </TableCell>
-              )}
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
+        {(item) => (
+          <TableRow
+            key={item.key}
+            className={clsx(item.nonBlocking ? "" : "bg-danger")}
+          >
+            {(columnKey) => (
+              <TableCell>
+                <RenderCell columnKey={columnKey} item={item} />
+              </TableCell>
+            )}
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
   );
 };

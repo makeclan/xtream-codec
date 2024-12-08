@@ -24,6 +24,7 @@ export const siteConfig = {
     { name: "配置", href: "/configuration", icon: ConfigIcon },
     { name: "映射", href: "/mappings", icon: ConfigIcon },
     { name: "线程转储", href: "/dump", icon: ConfigIcon },
+    { name: "线程监控", href: "/threads", icon: ConfigIcon },
     { name: "调试", href: "/debug", icon: CommandIcon },
   ],
   links: {

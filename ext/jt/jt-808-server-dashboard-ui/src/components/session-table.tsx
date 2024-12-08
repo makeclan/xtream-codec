@@ -56,7 +56,7 @@ const SessionCell: FC<CellProps> = ({
               <EyeIcon />
             </button>
           </Tooltip>
-          <Spacer x={4} />
+          <Spacer x={2} />
           <Tooltip content="删除会话">
             <button
               className="text-lg text-default-400 cursor-pointer active:opacity-50"
@@ -137,7 +137,21 @@ export const SessionTable: FC<SessionTableProps> = ({ type }) => {
       >
         <TableHeader columns={columns}>
           {(column) => (
-            <TableColumn key={column.key}>{column.label}</TableColumn>
+            <TableColumn
+              key={column.key}
+              align={
+                [
+                  "serverType",
+                  "protocolVersion",
+                  "protocolType",
+                  "operation",
+                ].includes(column.key)
+                  ? "center"
+                  : "start"
+              }
+            >
+              {column.label}
+            </TableColumn>
           )}
         </TableHeader>
         <TableBody

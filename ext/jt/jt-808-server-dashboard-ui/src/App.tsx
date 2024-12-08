@@ -10,6 +10,7 @@ import { SubscribePage } from "@/pages/subscriber.tsx";
 import { MappingsPage } from "@/pages/mappings.tsx";
 import { DumpPage } from "@/pages/dump.tsx";
 import { loader as rootLoader } from "@/routes/root.tsx";
+import { ThreadsPage } from "@/pages/threads.tsx";
 
 const router = createBrowserRouter(
   [
@@ -46,6 +47,10 @@ const router = createBrowserRouter(
         {
           path: "dump",
           element: <DumpPage />,
+        },
+        {
+          path: "threads",
+          element: <ThreadsPage />,
         },
         {
           path: "subscriber",

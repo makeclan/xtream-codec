@@ -4,7 +4,7 @@ import { LogoIcon } from "@/components/icons";
 import { siteConfig } from "@/config/site.ts";
 export const Sidebar = () => {
   return (
-    <div className="flex h-full flex-col p-6">
+    <div className="flex h-full flex-col md:shrink-0 p-6 w-64">
       <Link
         className="mb-2 flex h-10  items-center justify-center md:h-20"
         href={siteConfig.links.github}

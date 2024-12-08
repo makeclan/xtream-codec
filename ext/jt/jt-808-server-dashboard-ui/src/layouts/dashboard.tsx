@@ -13,7 +13,7 @@ export const DashboardLayout = () => {
         <Sidebar />
         <div className=" flex-grow md:overflow-y-auto">
           <Navbar />
-          <main className="container mx-auto max-w-7xl px-6 py-8 flex-grow">
+          <main className="container mx-auto px-6 py-8">
             <Outlet />
           </main>
         </div>
