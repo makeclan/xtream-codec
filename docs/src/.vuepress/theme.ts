@@ -12,7 +12,7 @@ export default hopeTheme({
     },
 
     // https://theme-hope.vuejs.press/zh/guide/interface/icon.html
-    iconAssets: "iconfont",
+    iconAssets: "fontawesome",
 
     logo: "/logo.svg",
 

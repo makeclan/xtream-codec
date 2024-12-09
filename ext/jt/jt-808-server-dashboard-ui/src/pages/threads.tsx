@@ -3,8 +3,7 @@ import {
   EventSourceMessage,
   fetchEventSource,
 } from "@microsoft/fetch-event-source";
-import { Card, CardBody } from "@nextui-org/card";
-import { cloneDeep } from "lodash-es";
+import { Card, CardBody, CardHeader } from "@nextui-org/card";
 
 import { Thread } from "@/types";
 import { DynamicThreadsCharts } from "@/components/dashboard/dynamic-threads-charts.tsx";
@@ -22,33 +21,27 @@ export const ThreadsPage = () => {
         signal: ctrl.signal,
         onmessage: (event: EventSourceMessage) => {
           const data = JSON.parse(event.data);
-          const tmp_threads = cloneDeep(threads);
-          const index = threads.findIndex((e) => e.name === data.value.name);
 
-          if (index !== -1) {
-            tmp_threads[index] = {
+          setThreads((pre) => {
+            const tempThread = {
               time: data.time,
               name: data.value.name,
               value: {
-                peak: data.value.active.tasks,
-                daemon: data.value.completed.count,
-                live: data.value.pending.active,
-                started: data.value.submitted.direct,
+                "active.task": data.value.value.active.tasks,
+                "completed.count": data.value.value.completed.count,
+                "completed.max": data.value.value.completed.max,
+                "pending.active": data.value.value.pending.active,
+                "submitted.direct": data.value.value.submitted.direct,
               },
             };
-          } else {
-            tmp_threads.push({
-              time: data.time,
-              name: data.value.name,
-              value: {
-                peak: data.value.active.tasks,
-                daemon: data.value.completed.count,
-                live: data.value.pending.active,
-                started: data.value.submitted.direct,
-              },
-            });
-          }
-          setThreads(tmp_threads);
+            const index = pre.findIndex((e) => e.name === data.value.name);
+
+            if (index !== -1) {
+              return pre.toSpliced(index, 1, tempThread);
+            } else {
+              return pre.concat([tempThread]);
+            }
+          });
         },
       },
     ).then(() => {
@@ -61,11 +54,21 @@ export const ThreadsPage = () => {
   }, []);
 
   return (
-    <div className="gap-4 grid grid-cols-1 sm:grid-cols-3">
+    <div className="gap-4 grid grid-cols-1 sm:grid-cols-2">
       {threads.map((thread: Thread) => (
         <Card key={thread.name}>
+          <CardHeader>{thread.name}</CardHeader>
           <CardBody>
-            <DynamicThreadsCharts data={thread} />
+            <DynamicThreadsCharts
+              data={thread}
+              series={[
+                "active.task",
+                "completed.count",
+                "completed.max",
+                "pending.active",
+                "submitted.direct",
+              ]}
+            />
           </CardBody>
         </Card>
       ))}

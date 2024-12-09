@@ -257,12 +257,14 @@ export const CardBox = () => {
       <Spacer y={4} />
       <div className="gap-2 grid grid-cols-1">
         <Card>
+          <CardHeader>线程</CardHeader>
           <CardBody>
             <DynamicThreadsCharts
               data={{
                 time: data.time,
                 value: data.value.threads,
               }}
+              series={["peak", "daemon", "live", "started"]}
             />
           </CardBody>
         </Card>

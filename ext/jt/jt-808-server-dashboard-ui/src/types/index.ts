@@ -53,12 +53,9 @@ export interface Metrics {
 }
 export interface Thread {
   time: string;
-  name: string;
+  name?: string;
   value: {
-    peak: number;
-    daemon: number;
-    live: number;
-    started: number;
+    [key: string]: number;
   };
 }
 export interface JavaRuntime {
