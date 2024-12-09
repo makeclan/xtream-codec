@@ -10,7 +10,7 @@ import ReactECharts from "echarts-for-react";
 import { useEffect, useState } from "react";
 import { cloneDeep } from "lodash-es";
 
-import { Metrics } from "@/types";
+import { Thread } from "@/types";
 echarts.use([
   TitleComponent,
   TooltipComponent,
@@ -19,67 +19,54 @@ echarts.use([
   CanvasRenderer,
 ]);
 
-export const DynamicThreadsCharts = ({
-  data,
-}: {
-  data: { time: string; value: Metrics };
-}) => {
+export const DynamicThreadsCharts = ({ data }: { data: Thread }) => {
   const DEFAULT_OPTION = {
     tooltip: {
       trigger: "axis",
-    },
-    toolbox: {
-      show: true,
-      feature: {
-        restore: {},
-        saveAsImage: {},
+      borderWidth: 0,
+      backgroundColor: "rgba(50,50,50,0.5)",
+      textStyle: {
+        color: "#FFF",
+      },
+      axisPointer: {
+        type: "line",
+        lineStyle: {
+          color: "#008acd",
+        },
+        crossStyle: {
+          color: "#008acd",
+        },
+        shadowStyle: {
+          color: "rgba(200,200,200,0.2)",
+        },
       },
     },
-    grid: {
-      top: 60,
-      left: 30,
-      right: 60,
-      bottom: 30,
+    legend: {},
+    dataset: {
+      source: [["time"], ["peak"], ["daemon"], ["live"], ["started"]],
     },
-    dataZoom: {
-      show: false,
-      start: 0,
-      end: 100,
-    },
-    xAxis: {
-      type: "time",
-      splitLine: {
-        show: false,
-      },
-      data: [],
-    },
-    yAxis: {
-      type: "value",
-    },
+    xAxis: { type: "category" },
+    yAxis: { gridIndex: 0 },
     series: [
       {
-        name: "peak",
         type: "line",
-        stack: "thread",
-        data: [],
+        seriesLayoutBy: "row",
+        emphasis: { focus: "series" },
       },
       {
-        name: "daemon",
         type: "line",
-        stack: "thread",
-        data: [],
+        seriesLayoutBy: "row",
+        emphasis: { focus: "series" },
       },
       {
-        name: "live",
         type: "line",
-        stack: "thread",
-        data: [],
+        seriesLayoutBy: "row",
+        emphasis: { focus: "series" },
       },
       {
-        name: "started",
         type: "line",
-        stack: "thread",
-        data: [],
+        seriesLayoutBy: "row",
+        emphasis: { focus: "series" },
       },
     ],
   };
@@ -87,39 +74,16 @@ export const DynamicThreadsCharts = ({
   const [option, setOption] = useState(DEFAULT_OPTION);
 
   useEffect(() => {
-    if (!data.value.threads) return;
+    if (!data.value) return;
     const newOption = cloneDeep(option); // immutable
 
-    const data_peak: any[] = newOption.series[0].data;
-    const data_daemon: any[] = newOption.series[1].data;
-    const data_live: any[] = newOption.series[2].data;
-    const data_started: any[] = newOption.series[3].data;
+    const time = new Date(data.time);
 
-    if (data_peak.length > 100) {
-      data_peak.shift();
-      data_daemon.shift();
-      data_live.shift();
-      data_started.shift();
-      newOption.xAxis.data.shift();
-    }
-    // @ts-ignore
-    newOption.xAxis.data.push(data.time);
-    data_peak.push({
-      name: data.time,
-      value: data.value.threads.peak,
-    });
-    data_daemon.push({
-      name: data.time,
-      value: data.value.threads.daemon,
-    });
-    data_live.push({
-      name: data.time,
-      value: data.value.threads.live,
-    });
-    data_started.push({
-      name: data.time,
-      value: data.value.threads.started,
-    });
+    newOption.dataset.source[0].push(`${time.toTimeString().slice(0, 9)}`);
+    newOption.dataset.source[1].push(String(data.value.peak));
+    newOption.dataset.source[2].push(String(data.value.daemon));
+    newOption.dataset.source[3].push(String(data.value.live));
+    newOption.dataset.source[4].push(String(data.value.started));
     setOption(newOption);
   }, [data]);
 

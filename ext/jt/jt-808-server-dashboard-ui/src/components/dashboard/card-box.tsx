@@ -258,7 +258,12 @@ export const CardBox = () => {
       <div className="gap-2 grid grid-cols-1">
         <Card>
           <CardBody>
-            <DynamicThreadsCharts data={data} />
+            <DynamicThreadsCharts
+              data={{
+                time: data.time,
+                value: data.value.threads,
+              }}
+            />
           </CardBody>
         </Card>
       </div>

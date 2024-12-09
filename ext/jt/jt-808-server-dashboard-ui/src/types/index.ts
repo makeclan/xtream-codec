@@ -51,7 +51,16 @@ export enum EventType {
 export interface Metrics {
   [key: string]: any;
 }
-
+export interface Thread {
+  time: string;
+  name: string;
+  value: {
+    peak: number;
+    daemon: number;
+    live: number;
+    started: number;
+  };
+}
 export interface JavaRuntime {
   name: String;
   version: String;
