@@ -18,6 +18,9 @@ package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo;
 
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.XtreamServerErrorInfo;
+
+import java.util.Collection;
 
 public record SimpleMetricsVo(
         SimpleTypes.SessionInfo tcpInstructionSession,
@@ -29,9 +32,14 @@ public record SimpleMetricsVo(
         SimpleTypes.RequestInfo udpInstructionRequest,
         SimpleTypes.RequestInfo udpAttachmentRequest,
         EventPublisherMetrics eventPublisher,
-        SimpleTypes.SimpleJvmThreadMetrics threads) {
+        SimpleTypes.SimpleJvmThreadMetrics threads,
+        SimpleMetricsVo.ErrorMetrics error) {
 
-    public SimpleMetricsVo(Jt808ServerSimpleMetricsHolder simpleMetricsHolder, long subscriberCount, SimpleTypes.SimpleJvmThreadMetrics threads) {
+    public SimpleMetricsVo(
+            Jt808ServerSimpleMetricsHolder simpleMetricsHolder,
+            long subscriberCount,
+            SimpleTypes.SimpleJvmThreadMetrics threads,
+            SimpleMetricsVo.ErrorMetrics error) {
         this(
                 simpleMetricsHolder.getTcpInstructionSession(),
                 simpleMetricsHolder.getTcpAttachmentSession(),
@@ -42,7 +50,8 @@ public record SimpleMetricsVo(
                 simpleMetricsHolder.getUdpInstructionRequest(),
                 simpleMetricsHolder.getUdpAttachmentRequest(),
                 new EventPublisherMetrics(new EventSubscriberMetrics(subscriberCount)),
-                threads
+                threads,
+                error
         );
     }
 
@@ -50,5 +59,8 @@ public record SimpleMetricsVo(
     }
 
     public record EventSubscriberMetrics(long total) {
+    }
+
+    public record ErrorMetrics(long total, Collection<XtreamServerErrorInfo> details) {
     }
 }

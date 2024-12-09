@@ -19,6 +19,7 @@ package io.github.hylexus.xtream.codec.ext.jt808.dashboard.boot.configuration;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.mapping.DispatcherHandlerXtreamMappingDescriptionProvider;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.mapping.XtreamMappingDescriptionProvider;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.request.Jt808DashboardErrorStore;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.*;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
@@ -93,8 +94,9 @@ public class BuiltinJt808DashboardConfiguration {
     Jt808DashboardMetricsService jt808DashboardMetricsService(
             XtreamJt808ServerProperties serverProperties,
             XtreamEventPublisher eventPublisher,
-            Jt808ServerSimpleMetricsHolder metricsHolder) {
-        return new DefaultJt808DashboardMetricsService(serverProperties, eventPublisher, metricsHolder);
+            Jt808ServerSimpleMetricsHolder metricsHolder,
+            Jt808DashboardErrorStore errorStore) {
+        return new DefaultJt808DashboardMetricsService(serverProperties, eventPublisher, metricsHolder, errorStore);
     }
 
     @Bean

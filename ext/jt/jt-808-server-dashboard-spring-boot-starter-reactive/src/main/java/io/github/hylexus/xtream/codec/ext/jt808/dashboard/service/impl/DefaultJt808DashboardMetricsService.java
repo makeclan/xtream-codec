@@ -18,8 +18,10 @@ package io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl;
 
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamServerSchedulerProperties;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.request.Jt808DashboardErrorStore;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.XtreamServerErrorInfo;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.SimpleMetricsVo;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardMetricsService;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
@@ -36,17 +38,20 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Supplier;
 
 public class DefaultJt808DashboardMetricsService implements Jt808DashboardMetricsService {
     private final XtreamEventPublisher eventPublisher;
     private final Jt808ServerSimpleMetricsHolder metricsHolder;
     private final Map<String, String> threadGroupMapping;
+    private final Jt808DashboardErrorStore errorStore;
 
-    public DefaultJt808DashboardMetricsService(XtreamJt808ServerProperties serverProperties, XtreamEventPublisher eventPublisher, Jt808ServerSimpleMetricsHolder metricsHolder) {
+    public DefaultJt808DashboardMetricsService(XtreamJt808ServerProperties serverProperties, XtreamEventPublisher eventPublisher, Jt808ServerSimpleMetricsHolder metricsHolder, Jt808DashboardErrorStore errorStore) {
         this.eventPublisher = eventPublisher;
         this.metricsHolder = metricsHolder;
         this.threadGroupMapping = this.initThreadGroupMapping(serverProperties);
+        this.errorStore = errorStore;
     }
 
     @Override
@@ -54,12 +59,21 @@ public class DefaultJt808DashboardMetricsService implements Jt808DashboardMetric
 
         final Supplier<SimpleTypes.TimeSeries<SimpleMetricsVo>> supplier = () -> {
             final LocalDateTime now = LocalDateTime.now();
-            return new SimpleTypes.TimeSeries<>(now, new SimpleMetricsVo(metricsHolder, this.eventPublisher.subscriberCount(), this.simpleJvmThreadMetrics()));
+            final SimpleMetricsVo.ErrorMetrics errorMetrics = this.errorMetrics();
+            return new SimpleTypes.TimeSeries<>(now, new SimpleMetricsVo(metricsHolder, this.eventPublisher.subscriberCount(), this.simpleJvmThreadMetrics(), errorMetrics));
         };
 
         return Flux.just(supplier.get())
                 .concatWith(Flux.interval(duration).map(ignore -> supplier.get()))
                 .map(metricsHolder -> ServerSentEvent.<Object>builder(metricsHolder).build());
+    }
+
+    private SimpleMetricsVo.ErrorMetrics errorMetrics() {
+        final Map<String, XtreamServerErrorInfo> errorInfoMap = this.errorStore.asMapView();
+        return new SimpleMetricsVo.ErrorMetrics(
+                errorInfoMap.values().stream().map(XtreamServerErrorInfo::getCount).mapToLong(LongAdder::longValue).sum(),
+                errorInfoMap.values()
+        );
     }
 
     @Override

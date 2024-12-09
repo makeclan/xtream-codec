@@ -19,11 +19,16 @@ package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.actuator.BuiltinJt808ServerEndpoint;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 
 /**
  * @author hylexus
  */
+@ConditionalOnClass(name = {
+        "org.springframework.http.HttpStatus",
+        "org.springframework.boot.actuate.endpoint.annotation.Endpoint"
+})
 @ConditionalOnAvailableEndpoint(endpoint = BuiltinJt808ServerEndpoint.class)
 public class BuiltinJt808ServerActuatorConfiguration {
 

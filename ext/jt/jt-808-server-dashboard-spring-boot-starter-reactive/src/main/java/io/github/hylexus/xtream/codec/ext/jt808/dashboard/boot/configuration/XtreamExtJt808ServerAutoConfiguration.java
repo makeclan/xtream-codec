@@ -17,9 +17,14 @@
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.boot.configuration;
 
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.request.DefaultJt808DashboardErrorReporter;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.request.DefaultJt808DashboardErrorStore;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.request.Jt808DashboardErrorReporter;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.request.Jt808DashboardErrorStore;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.boot.properties.XtreamJt808ServerDashboardProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.Jt808ServerDashboardWebFluxConfigurer;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -79,4 +84,18 @@ public class XtreamExtJt808ServerAutoConfiguration {
 
         return routerFunction;
     }
+
+    // region error-reporter
+    @Bean
+    @ConditionalOnMissingBean
+    Jt808DashboardErrorStore jt808DashboardErrorStore() {
+        return new DefaultJt808DashboardErrorStore();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    Jt808DashboardErrorReporter jt808DashboardErrorReporter(Jt808DashboardErrorStore errorStore) {
+        return new DefaultJt808DashboardErrorReporter(errorStore);
+    }
+    // endregion error-reporter
 }

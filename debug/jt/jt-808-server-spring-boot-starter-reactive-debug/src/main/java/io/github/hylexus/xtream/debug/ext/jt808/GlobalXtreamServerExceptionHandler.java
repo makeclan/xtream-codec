@@ -16,22 +16,38 @@
 
 package io.github.hylexus.xtream.debug.ext.jt808;
 
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.request.Jt808DashboardErrorReporter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.exception.RequestHandlerNotFoundException;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamRequestExceptionHandler;
 import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+
+import java.util.function.Consumer;
 
 @Component
 public class GlobalXtreamServerExceptionHandler implements XtreamRequestExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalXtreamServerExceptionHandler.class);
+    private final Consumer<Throwable> errorReporter;
+
+    // TODO 优化
+    public GlobalXtreamServerExceptionHandler(@Autowired(required = false) Jt808DashboardErrorReporter jt808DashboardErrorReporter) {
+        if (jt808DashboardErrorReporter == null) {
+            this.errorReporter = throwable -> {
+            };
+        } else {
+            this.errorReporter = jt808DashboardErrorReporter::reportError;
+        }
+    }
 
     @Override
     public Mono<Void> handleRequestException(XtreamExchange exchange, @Nonnull Throwable ex) {
+        this.errorReporter.accept(ex);
         if (ex instanceof RequestHandlerNotFoundException) {
             log.error("receive unknown msg: {}", exchange.request());
             return Mono.empty();
