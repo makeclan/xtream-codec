@@ -52,7 +52,7 @@ export const SubscribePage = () => {
           )}
         </TableHeader>
         <TableBody
-          emptyContent={"No rows to display."}
+          emptyContent={"暂无数据"}
           items={tableData?.data ?? []}
           loadingContent={<Spinner />}
           loadingState={loadingState}

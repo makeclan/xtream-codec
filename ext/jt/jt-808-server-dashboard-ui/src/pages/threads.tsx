@@ -61,6 +61,7 @@ export const ThreadsPage = () => {
           <CardBody>
             <DynamicThreadsCharts
               data={thread}
+              maxLength={100}
               series={[
                 "active.task",
                 "completed.count",
