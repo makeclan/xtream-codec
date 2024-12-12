@@ -9,7 +9,7 @@ import confetti from "canvas-confetti";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { GiteeIcon, GithubIcon, HeartFilledIcon } from "@/components/icons";
+import { GiteeIcon, FaGithubIcon, FaHeatIcon } from "@/components/icons";
 
 export const Navbar = () => {
   const handleConfetti = () => {
@@ -28,7 +28,7 @@ export const Navbar = () => {
       >
         <NavbarItem className="hidden sm:flex gap-2">
           <Link isExternal href={siteConfig.links.github} title="GitHub">
-            <GithubIcon className="text-default-500" />
+            <FaGithubIcon className="text-default-500" size="xl" />
           </Link>
           <Link isExternal href={siteConfig.links.gitee} title="Gitee">
             <GiteeIcon className="text-default-500" />
@@ -38,7 +38,7 @@ export const Navbar = () => {
         <NavbarItem className="hidden md:flex">
           <Button
             className="text-sm font-normal text-default-600 bg-default-100"
-            startContent={<HeartFilledIcon className="text-danger" />}
+            startContent={<FaHeatIcon className="text-danger text-2xl" />}
             variant="flat"
             onPress={handleConfetti}
           >
@@ -49,7 +49,7 @@ export const Navbar = () => {
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
         <Link isExternal href={siteConfig.links.github}>
-          <GithubIcon className="text-default-500" />
+          <FaGithubIcon className="text-default-500" size="xl" />
         </Link>
         <Link isExternal href={siteConfig.links.gitee} title="Gitee">
           <GiteeIcon className="text-default-500" />

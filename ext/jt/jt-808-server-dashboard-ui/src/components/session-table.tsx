@@ -17,7 +17,7 @@ import { usePageList } from "@/hooks/use-page-list.ts";
 import { Session, SessionType } from "@/types";
 import { request } from "@/utils/request.ts";
 import { SessionMonitor } from "@/components/session-monitor.tsx";
-import { DelIcon, EyeIcon } from "@/components/icons.tsx";
+import { FaEyeIcon, FaTrashIcon } from "@/components/icons.tsx";
 
 interface CellProps {
   handleMonitor: Function;
@@ -53,7 +53,7 @@ const SessionCell: FC<CellProps> = ({
               className="text-lg text-default-400 cursor-pointer active:opacity-50"
               onClick={() => handleMonitor(session)}
             >
-              <EyeIcon />
+              <FaEyeIcon />
             </button>
           </Tooltip>
           <Spacer x={2} />
@@ -62,7 +62,7 @@ const SessionCell: FC<CellProps> = ({
               className="text-lg text-default-400 cursor-pointer active:opacity-50"
               onClick={() => handleDel(session)}
             >
-              <DelIcon />
+              <FaTrashIcon />
             </button>
           </Tooltip>
         </div>

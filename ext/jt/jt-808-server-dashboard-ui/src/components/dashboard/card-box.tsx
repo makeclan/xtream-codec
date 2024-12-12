@@ -10,7 +10,6 @@ import { Spacer } from "@nextui-org/spacer";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
 import { getKeyValue } from "@nextui-org/table";
 import { Button } from "@nextui-org/button";
-import { Badge } from "@nextui-org/badge";
 import { Link } from "@nextui-org/link";
 import { Tab, Tabs } from "@nextui-org/tabs";
 import { Accordion, AccordionItem } from "@nextui-org/accordion";
@@ -20,7 +19,7 @@ import { CountTime } from "./count-time.tsx";
 import { SpotlightCard } from "./spolight-card.tsx";
 
 import { Metrics, ServerInfo } from "@/types";
-import { ServerIcon } from "@/components/icons.tsx";
+import { FaServerIcon } from "@/components/icons.tsx";
 import { DynamicThreadsCharts } from "@/components/dashboard/dynamic-threads-charts.tsx";
 import { MsgMiniTable } from "@/components/dashboard/msg-mini-table.tsx";
 export const CardBox = () => {
@@ -105,7 +104,7 @@ export const CardBox = () => {
     <>
       <div className="gap-4 grid grid-cols-1 sm:grid-cols-3">
         <SpotlightCard>
-          <CardBody className="overflow-visible p-4">
+          <CardBody className="overflow-visible p-4 min-h-48">
             <Tabs fullWidth aria-label="Tabs sizes" variant="light">
               <Tab key="version" title="版本">
                 <p className="text-default-500 text-xl">
@@ -137,7 +136,7 @@ export const CardBox = () => {
           </CardBody>
         </SpotlightCard>
         <SpotlightCard>
-          <CardBody className="overflow-visible p-4">
+          <CardBody className="overflow-visible p-4 min-h-48">
             <p>服务启动时间</p>
             <p className="text-default-500 text-xl">
               {config.serverStartupTime}
@@ -150,10 +149,8 @@ export const CardBox = () => {
           </CardBody>
         </SpotlightCard>
         <SpotlightCard>
-          <CardHeader className="flex">
+          <CardBody className="overflow-visible p-4  min-h-48">
             <p>订阅者</p>
-          </CardHeader>
-          <CardBody className="overflow-visible p-4">
             <div className="flex justify-between">
               <p className="text-default-500 text-2xl">
                 <CountNumber
@@ -178,19 +175,18 @@ export const CardBox = () => {
       <Spacer y={4} />
       <div className="gap-4 grid grid-cols-2 sm:grid-cols-4">
         {listCount.map((item, index) => (
-          <SpotlightCard key={index}>
+          <SpotlightCard key={index} className="min-h-32">
             <CardHeader className="text-small">
               <b>会话数</b>
               <Spacer x={4} />
-              <Badge
+              <FaServerIcon />
+              <Spacer x={1} />
+              <Chip
                 color={item.serverRole === "附件服务器" ? "warning" : "success"}
-                content={item.serverRole === "附件服务器" ? "附件" : "指令"}
-                placement="bottom-right"
-                shape="circle"
                 size="sm"
               >
-                <ServerIcon />
-              </Badge>
+                {item.serverRole === "附件服务器" ? "附件" : "指令"}
+              </Chip>
               <Spacer x={4} />
               <Chip
                 color={item.protocolType === "TCP" ? "primary" : "secondary"}
@@ -209,19 +205,18 @@ export const CardBox = () => {
           </SpotlightCard>
         ))}
         {listRequest.map((item, index) => (
-          <SpotlightCard key={index}>
+          <SpotlightCard key={index} className="min-h-32">
             <CardHeader className="text-small">
               <b>请求数</b>
               <Spacer x={4} />
-              <Badge
+              <FaServerIcon />
+              <Spacer x={1} />
+              <Chip
                 color={item.serverRole === "附件服务器" ? "warning" : "success"}
-                content={item.serverRole === "附件服务器" ? "附件" : "指令"}
-                placement="bottom-right"
-                shape="circle"
                 size="sm"
               >
-                <ServerIcon />
-              </Badge>
+                {item.serverRole === "附件服务器" ? "附件" : "指令"}
+              </Chip>
               <Spacer x={4} />
               <Chip
                 color={item.protocolType === "TCP" ? "primary" : "secondary"}

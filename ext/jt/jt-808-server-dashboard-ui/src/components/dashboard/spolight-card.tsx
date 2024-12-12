@@ -3,7 +3,13 @@ import { Card } from "@nextui-org/card";
 
 import { useMouseMove } from "@/hooks/use-mouse-move.ts";
 
-export const SpotlightCard = ({ children }: { children: ReactNode }) => {
+export const SpotlightCard = ({
+  children,
+  ...props
+}: {
+  children: ReactNode;
+  className?: string;
+}) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const { x, y } = useMouseMove(ref);
 
@@ -17,6 +23,7 @@ export const SpotlightCard = ({ children }: { children: ReactNode }) => {
             ? `radial-gradient(450px at ${x}px ${y}px, rgba(120, 40, 200, 0.4), transparent 80%)`
             : "",
       }}
+      {...props}
     >
       {children}
     </Card>

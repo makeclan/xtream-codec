@@ -28,7 +28,7 @@ import { Card, CardBody } from "@nextui-org/card";
 import clsx from "clsx";
 import { Avatar } from "@nextui-org/avatar";
 
-import { ChevronDownIcon } from "@/components/icons.tsx";
+import { FaChevronDownIcon } from "@/components/icons.tsx";
 import { subtitle } from "@/components/primitives.ts";
 import { Event, EventType, Session } from "@/types";
 const SESSION_MAX_LENGTH = "100";
@@ -201,7 +201,7 @@ export const SessionMonitor: FC<SessionMonitorProps> = ({
               <Dropdown>
                 <DropdownTrigger className="hidden sm:flex">
                   <Button
-                    endContent={<ChevronDownIcon className="text-small" />}
+                    endContent={<FaChevronDownIcon className="text-small" />}
                     variant="flat"
                   >
                     Event
