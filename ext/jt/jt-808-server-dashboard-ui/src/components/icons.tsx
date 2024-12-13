@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import {
+  faBug,
   faChartSimple,
   faChevronDown,
   faCircleHalfStroke,
@@ -39,6 +40,9 @@ export const FaCircleHarfIcon = ({ ...props }) => {
 };
 export const FaGaugeIcon = ({ ...props }) => {
   return <FaIcon icon={faGauge} {...props} />;
+};
+export const FaBugIcon = ({ ...props }) => {
+  return <FaIcon icon={faBug} {...props} />;
 };
 export const FaCommentsIcon = ({ ...props }) => {
   return <FaIcon icon={faComments} {...props} />;
