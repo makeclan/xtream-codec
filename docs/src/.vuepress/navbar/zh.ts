@@ -4,8 +4,13 @@ export const zhNavbar = navbar([
     // "/",
     {
         text: "指南",
-        icon: "creative",
-        link: '/core/'
+        icon: "info",
+        link: '/guide/'
+    },
+    {
+        text: "扩展",
+        icon: "info",
+        link: '/ext/jt/jt808/'
     },
     {
         text: "FAQ",
@@ -14,7 +19,7 @@ export const zhNavbar = navbar([
     },
     {
         text: "发版记录",
-        icon: "branch",
+        icon: "info",
         link: '/release-notes/latest.md'
     },
     {
