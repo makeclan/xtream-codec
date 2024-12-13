@@ -4,7 +4,7 @@ export const zhNavbar = navbar([
     // "/",
     {
         text: "指南",
-        icon: "info",
+        icon: "gauge",
         link: '/guide/'
     },
     {
