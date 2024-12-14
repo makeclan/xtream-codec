@@ -1,6 +1,6 @@
 ---
 date: 2024-12-10
-icon: info
+icon: cube
 ---
 
 # 会话管理

@@ -1,8 +1,8 @@
 ---
-star: true
-icon: info
+article: false
+icon: ethernet
 tag:
   - JT/T 808
 ---
 
-# Extensions
+# 内置扩展

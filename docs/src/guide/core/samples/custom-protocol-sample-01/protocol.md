@@ -1,6 +1,6 @@
 ---
 date: 2024-03-09
-icon: info
+icon: file-lines
 author: hylexus
 contributors: true
 category:

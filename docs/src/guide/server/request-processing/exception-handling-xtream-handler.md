@@ -1,5 +1,5 @@
 ---
-icon: info
+icon: arrows-spin
 ---
 
 # ExceptionHandlingXtreamHandler
@@ -16,7 +16,7 @@ icon: info
 
 `ExceptionHandlingXtreamHandler` 内部维护着一堆 `XtreamRequestExceptionHandler` 和一个 `XtreamHandler`(实际上是`FilteringXtreamHandler`)。
 
-<img :src="$withBase('/img/server/request-processing/exception-handling-xtream-handler.png')" alt=""/>
+![](/img/server/request-processing/exception-handling-xtream-handler.png)
 
 实现比较直观，不再做过多的介绍。下面是源码：
 

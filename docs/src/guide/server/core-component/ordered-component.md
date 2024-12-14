@@ -1,5 +1,5 @@
 ---
-icon: info
+icon: cube
 ---
 
 # OrderedComponent

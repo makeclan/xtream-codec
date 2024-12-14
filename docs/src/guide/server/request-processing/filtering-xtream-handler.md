@@ -1,5 +1,5 @@
 ---
-icon: info
+icon: arrows-spin
 ---
 
 # FilteringXtreamHandler
@@ -20,7 +20,7 @@ icon: info
 
 `XtreamFilterChain` 内部维护着一个 `XtreamHandler`(实际上是 `DispatcherXtreamHandler`) 和 一堆的 `XtreamFilter`。
 
-<img :src="$withBase('/img/server/request-processing/filtering-xtream-handler.png')" alt=""/>
+![](/img/server/request-processing/filtering-xtream-handler.png)
 
 下面是 `XtreamFilterChain` 的默认实现的属性依赖：
 

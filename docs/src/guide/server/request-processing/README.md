@@ -1,7 +1,7 @@
 ---
-icon: info
+icon: microchip
+article: false
 ---
 
-# 请求处理流程
+# 内置请求处理流程
 
-<img :src="$withBase('/img/server/request-processing/request-processing.png')" alt=""/>

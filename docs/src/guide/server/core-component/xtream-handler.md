@@ -1,5 +1,5 @@
 ---
-icon: info
+icon: cube
 ---
 
 # XtreamHandler
@@ -10,7 +10,7 @@ icon: info
 
 本章节的 `XtreamHandler` 就是用来处理 `XtreamExchange` 的。
 
-<img :src="$withBase('/img/server/request-processing/request-flow-1.png')" width="500px" style="border: 1px solid #eeeeee;" alt=""/>
+![](/img/server/request-processing/request-flow-1.png)
 
 接口定义如下：
 
@@ -43,4 +43,4 @@ public interface XtreamHandler {
 
 下图是三个内置实现之间的依赖关系：
 
-<img :src="$withBase('/img/server/core-component/xtream-handler-0.png')" style="border: 1px solid #eeeeee;" alt=""/>
+![](/img/server/request-processing/exception-handling-xtream-handler.png)

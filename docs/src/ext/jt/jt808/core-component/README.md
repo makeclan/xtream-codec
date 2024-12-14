@@ -1,6 +1,6 @@
 ---
-star: true
-icon: info
+icon: layer-group
+article: false
 tag:
   - JT/T 808
 ---

@@ -1,8 +1,8 @@
 ---
-star: true
-icon: info
+article: false
+icon: location-dot
 tag:
   - JT/T 808
 ---
 
-# 介绍
+# 部标808

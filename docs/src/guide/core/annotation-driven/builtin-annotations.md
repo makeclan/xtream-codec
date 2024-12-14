@@ -129,7 +129,7 @@ tag:
 
 ::: details 点击查看 JT/T 808 官方文档中的数据类型声明
 
-<img :src="$withBase('/img/core/annotation/jt-808-data-types.png')">
+![](/img/core/annotation/jt-808-data-types.png)
 
 :::
 
@@ -194,7 +194,7 @@ tag:
 
 ::: details 点击查看 JT/T 808 官方文档中的数据类型声明
 
-<img :src="$withBase('/img/core/annotation/jt-808-data-types.png')">
+![](/img/core/annotation/jt-808-data-types.png)
 
 :::
 

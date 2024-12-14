@@ -3,13 +3,14 @@ import {sidebar} from "vuepress-theme-hope";
 export const zhSidebar = sidebar({
     "/guide/": [
         {
-            text: "Core",
+            text: "codec-core",
+            icon: "book",
             collapsible: true,
             children: [
                 {
-                    text: "入门", icon: 'info', collapsible: false,
+                    text: "入门", icon: 'rocket', collapsible: false,
                     children: [
-                        '/guide/core/index.md',
+                        '/guide/core/quick-start/intro.md',
                         '/guide/core/quick-start/quick-start.md',
                         '/guide/core/quick-start/code-analysis.md',
                     ]
@@ -32,18 +33,18 @@ export const zhSidebar = sidebar({
                     ]
                 },
                 {
-                    text: "示例", icon: "info", collapsible: false,
+                    text: "示例", icon: "server", collapsible: false,
                     children: [
                         {
-                            text: "示例1", icon: "info", collapsible: false, children: [
-                                '/guide/core/samples/custom-protocol-sample-01/index.md',
+                            text: "示例1", icon: "server", collapsible: false, children: [
+                                '/guide/core/samples/custom-protocol-sample-01/protocol.md',
                                 '/guide/core/samples/custom-protocol-sample-01/flatten-style-demo.md',
                                 '/guide/core/samples/custom-protocol-sample-01/nested-style-demo.md',
                             ]
                         },
                         {
-                            text: "示例2", icon: "info", collapsible: false, children: [
-                                '/guide/core/samples/custom-protocol-sample-02/index.md',
+                            text: "示例2", icon: "server", collapsible: false, children: [
+                                '/guide/core/samples/custom-protocol-sample-02/protocol.md',
                                 '/guide/core/samples/custom-protocol-sample-02/flatten-style-demo.md',
                                 '/guide/core/samples/custom-protocol-sample-02/nested-style-demo.md',
                             ]
@@ -53,19 +54,20 @@ export const zhSidebar = sidebar({
             ]
         },
         {
-            text: "Server",
-            collapsible: false,
+            text: "codec-server-reactive",
+            icon: "server",
+            collapsible: true,
             children: [
                 {
-                    text: "入门", icon: 'info', collapsible: false,
+                    text: "入门", icon: 'rocket', collapsible: false,
                     children: [
-                        '/guide/server/index.md',
+                        '/guide/server/quick-start/intro.md',
                         '/guide/server/quick-start/terminology.md',
                         '/guide/server/quick-start/code-analysis.md',
                     ]
                 },
                 {
-                    text: "核心组件", icon: 'info', collapsible: false, children: [
+                    text: "核心组件", icon: 'layer-group', collapsible: false, children: [
                         '/guide/server/core-component/netty-handler-adapter.md',
                         '/guide/server/core-component/xtream-handler.md',
                         '/guide/server/core-component/session-manager.md',
@@ -74,8 +76,8 @@ export const zhSidebar = sidebar({
                     ]
                 },
                 {
-                    text: "内置请求处理流程", icon: "info", collapsible: false, children: [
-                        '/guide/server/request-processing/README.md',
+                    text: "内置请求处理流程", icon: "microchip", collapsible: false, children: [
+                        '/guide/server/request-processing/intro.md',
                         '/guide/server/request-processing/dispatcher-handler.md',
                         '/guide/server/request-processing/filter.md',
                         '/guide/server/request-processing/filtering-xtream-handler.md',
@@ -95,41 +97,42 @@ export const zhSidebar = sidebar({
     "/ext/": [
         {
             text: "JT/T 808 扩展",
+            icon: "earth-asia",
             children: [
                 {
-                    text: "入门", icon: "info", collapsible: false, children: [
-                        '/ext/jt/jt808/README.md',
+                    text: "入门", icon: "rocket", collapsible: false, children: [
+                        '/ext/jt/jt808/quick-start/intro.md',
                         '/ext/jt/jt808/quick-start/quick-start.md',
                         '/ext/jt/jt808/quick-start/code-analysis.md',
                     ]
                 },
                 {
-                    text: "核心组件", icon: "info", collapsible: false, children: [
+                    text: "核心组件", icon: "layer-group", collapsible: false, children: [
                         '/ext/jt/jt808/core-component/README.md',
                     ]
                 },
                 {
-                    text: "辅助工具", icon: "info", collapsible: false, children: [
+                    text: "辅助工具", icon: "wrench", collapsible: false, children: [
                         '/ext/jt/jt808/utilities/README.md',
                     ]
                 },
                 {
-                    text: "定制化", icon: "info", collapsible: false, children: [
+                    text: "定制化", icon: "gear", collapsible: false, children: [
                         '/ext/jt/jt808/customization/README.md',
                     ]
                 },
                 {
-                    text: "地方标准", icon: "info", collapsible: false, children: [
+                    text: "地方标准", icon: "file-lines", collapsible: false, children: [
                         '/ext/jt/jt808/extension/jiangsu.md',
                     ]
                 },
                 {
-                    text: "Dashboard", icon: "info", collapsible: false, children: [
+                    text: "Dashboard", icon: "gauge", collapsible: false, children: [
                         '/ext/jt/jt808/dashboard/README.md',
                     ]
                 },
                 {
-                    text: "配置", icon: "info", collapsible: false, children: [
+                    text: "配置", icon: "gears", collapsible: false, children: [
                         '/ext/jt/jt808/configuration/README.md',
                     ]
                 },

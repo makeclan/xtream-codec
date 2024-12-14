@@ -1,6 +1,6 @@
 ---
-star: true
-icon: info
+article: false
+icon: gear
 tag:
   - JT/T 808
 ---

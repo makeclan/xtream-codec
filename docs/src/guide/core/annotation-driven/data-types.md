@@ -1,6 +1,6 @@
 ---
 date: 2024-03-10
-icon: info
+icon: list
 ---
 
 # 数据类型

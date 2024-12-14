@@ -1,8 +1,8 @@
 ---
-star: true
-icon: info
+article: false
+icon: earth-asia
 tag:
   - JT/T 808
 ---
 
-# JT/T
+# 部标

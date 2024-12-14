@@ -61,11 +61,11 @@ export default hopeTheme({
     // enable it to preview all changes in time
     hotReload: true,
     markdown: {
-        codetabs: true,
         component: true,
         figure: true,
         imgLazyload: true,
         imgSize: true,
+        imgMark: true,
         tabs: true,
         include: {
             resolvePath: (file) => {
@@ -95,22 +95,6 @@ export default hopeTheme({
         sub: true,
         sup: true,
         vPre: true,
-        slimsearch: {
-            // 索引全部内容
-            indexContent: true,
-            hotKeys: [{key: 'k', ctrl: true}],
-            // 为分类和标签添加索引
-            customFields: [
-                {
-                    getter: (page) => page.frontmatter.category,
-                    formatter: "分类：$content",
-                },
-                {
-                    getter: (page) => page.frontmatter.tag,
-                    formatter: "标签：$content",
-                },
-            ],
-        }
     },
     plugins: {
         blog: true,

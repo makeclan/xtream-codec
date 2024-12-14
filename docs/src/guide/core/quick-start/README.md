@@ -1,8 +1,7 @@
 ---
-icon: info
-article: false
+icon: circle-info
 ---
 
-# 介绍
+# 入门
 
 `xtream-codec` 是一个不依赖于特定协议的 **私有协议** 解析工具。

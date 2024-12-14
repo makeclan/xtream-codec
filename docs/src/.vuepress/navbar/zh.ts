@@ -8,31 +8,31 @@ export const zhNavbar = navbar([
         link: '/guide/'
     },
     {
-        text: "扩展",
-        icon: "info",
+        text: "内置扩展",
+        icon: "ethernet",
         link: '/ext/jt/jt808/'
     },
     {
         text: "FAQ",
-        icon: "question",
+        icon: "circle-question",
         link: '/frequently-asked-questions/'
     },
     {
         text: "发版记录",
-        icon: "info",
+        icon: "code-branch",
         link: '/release-notes/latest.md'
     },
     {
         text: '致谢',
-        icon: 'share',
+        icon: 'gift',
         children: [
             {text: 'Reactor Netty', link: 'https://projectreactor.io', icon: 'leaf'},
             {text: 'Netty', link: 'https://github.com/netty/netty', icon: 'leaf'},
             {text: 'Spring', icon: 'leaf', link: 'https://github.com/spring-projects'},
             {
                 text: 'Vue', children: [
-                    {text: 'VuePress', icon: 'vue', link: 'https://www.vuepress.cn/'},
-                    {text: 'vuepress-theme-hope', icon: 'vue', link: 'https://theme-hope.vuejs.press/zh/'},
+                    {text: 'VuePress', icon: 'vuejs', link: 'https://www.vuepress.cn/'},
+                    {text: 'vuepress-theme-hope', icon: 'vuejs', link: 'https://theme-hope.vuejs.press/zh/'},
                 ],
             },
         ]

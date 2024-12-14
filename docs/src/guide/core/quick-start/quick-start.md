@@ -1,6 +1,6 @@
 ---
 article: false
-icon: info
+icon: rocket
 tag:
   - Quick-Start
 ---

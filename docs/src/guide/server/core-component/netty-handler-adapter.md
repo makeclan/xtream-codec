@@ -1,6 +1,6 @@
 ---
 date: 2024-12-10
-icon: info
+icon: cube
 ---
 
 # NettyHandlerAdapter
@@ -9,7 +9,7 @@ icon: info
 
 下图是一个简化版的请求处理流程：
 
-<img :src="$withBase('/img/server/request-processing/request-flow-0.png')" width="500px" style="border: 1px solid #eeeeee;" alt=""/>
+![](/img/server/request-processing/request-flow-0.png)
 
 通过上图不难看出，`NettyHandlerAdapter` 是 **xtream** 中客户端请求的入口。
 也就是说，从这里开始，**Xtream** 接管了 `reactor-netty` 收到的客户端数据。
@@ -18,7 +18,7 @@ icon: info
 
 下图是 **reactor-netty** 官方文档中 [Consuming Data](https://projectreactor.io/docs/netty/release/reference/tcp-server.html#consuming-data) 章节的截图：
 
-<img :src="$withBase('/img/server/request-processing/reactor-netty-consuming-data.png')" width="700px" style="border: 1px solid #eeeeee;" alt=""/>
+![](/img/server/request-processing/reactor-netty-consuming-data.png)
 
 `NettyHandlerAdapter` 的角色就是上图中标红的 `handle()` 方法的参数。
 

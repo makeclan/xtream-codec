@@ -1,8 +1,8 @@
 ---
-star: true
-icon: info
+article: false
+icon: file-lines
 tag:
   - JT/T 808
 ---
 
-# JT/T 808 扩展协议
+# 地方标准

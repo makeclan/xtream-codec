@@ -1,6 +1,6 @@
 ---
 date: 2024-12-10
-icon: info
+icon: arrows-spin
 ---
 
 # DispatcherXtreamHandler
@@ -17,7 +17,7 @@ icon: info
 
 该实现聚合了 `XtreamHandlerMapping` 、 `XtreamHandlerAdapter` 和 `HandlerResultHandler`。
 
-<img :src="$withBase('/img/server/request-processing/dispatcher-handler.png')" alt=""/>
+![](/img/server/request-processing/dispatcher-handler.png)
 
 下面是三个组件的接口定义：
 

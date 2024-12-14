@@ -1,6 +1,6 @@
 ---
 date: 2024-03-09
-icon: info
+icon: file-lines
 author: hylexus
 contributors: true
 category:
@@ -78,9 +78,11 @@ byte[17-21) 	消息包封装项
 
 `0x0200` 消息的消息体如下图所示：
 
-<img :src="$withBase('/img/core/annotation/jt-808-0200-1.png')">
-<img :src="$withBase('/img/core/annotation/jt-808-0200-2.png')">
-<img :src="$withBase('/img/core/annotation/jt-808-0200-3.png')">
+![](/img/core/annotation/jt-808-0200-1.png)
+
+![](/img/core/annotation/jt-808-0200-2.png)
+
+![](/img/core/annotation/jt-808-0200-3.png)
 
 ## 编解码
 

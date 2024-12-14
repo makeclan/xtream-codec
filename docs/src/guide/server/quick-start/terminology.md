@@ -1,5 +1,5 @@
 ---
-icon: info
+icon: file-lines
 ---
 
 # 基本术语
