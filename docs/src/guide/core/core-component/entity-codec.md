@@ -1,5 +1,5 @@
 ---
-star: true
+article: false
 icon: change
 tag:
   - 编码

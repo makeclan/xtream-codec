@@ -7,9 +7,9 @@ import {
   FaGaugeIcon,
   FaCommentsIcon,
   FaGearIcon,
-  FaCloneIcon,
-  FaChartSimpleIcon,
-  FaBugIcon,
+  // FaCloneIcon,
+  // FaChartSimpleIcon,
+  // FaBugIcon,
 } from "@/components/icons.tsx";
 
 export const siteConfig = {
@@ -26,9 +26,9 @@ export const siteConfig = {
     { name: "订阅", href: "/subscriber", icon: FaTagsIcon },
     { name: "配置", href: "/configuration", icon: FaGearIcon },
     { name: "映射", href: "/mappings", icon: FaShuffleIcon },
-    { name: "线程转储", href: "/dump", icon: FaCloneIcon },
-    { name: "线程监控", href: "/threads", icon: FaChartSimpleIcon },
-    { name: "调试", href: "/debug", icon: FaBugIcon },
+    // { name: "线程转储", href: "/dump", icon: FaCloneIcon },
+    // { name: "线程监控", href: "/threads", icon: FaChartSimpleIcon },
+    // { name: "调试", href: "/debug", icon: FaBugIcon },
   ],
   links: {
     gitee: "https://gitee.com/hylexus/xtream-codec",

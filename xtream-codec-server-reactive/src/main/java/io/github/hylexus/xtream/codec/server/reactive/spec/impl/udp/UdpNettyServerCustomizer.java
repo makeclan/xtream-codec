@@ -33,7 +33,7 @@ public interface UdpNettyServerCustomizer extends NettyServerCustomizer<UdpServe
 
         @Override
         public UdpServer customize(UdpServer server) {
-            return server.host("0.0.0.0").port(3082);
+            return server.host("0.0.0.0").port(3721);
         }
 
         @Override

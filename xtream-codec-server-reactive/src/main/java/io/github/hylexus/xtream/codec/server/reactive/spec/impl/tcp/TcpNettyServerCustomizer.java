@@ -36,7 +36,7 @@ public interface TcpNettyServerCustomizer extends NettyServerCustomizer<TcpServe
         public TcpServer customize(TcpServer server) {
             return server
                     .host("0.0.0.0")
-                    .port(3081)
+                    .port(3927)
                     .option(ChannelOption.SO_BACKLOG, 2048)
                     .option(ChannelOption.SO_REUSEADDR, true)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);

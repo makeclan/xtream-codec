@@ -1,5 +1,6 @@
 ---
-#icon: at
+icon: at
+article: false
 tag:
   - 内置
   - 注解

@@ -12,7 +12,7 @@ export const zhSidebar = sidebar({
                     children: [
                         '/guide/core/quick-start/intro.md',
                         '/guide/core/quick-start/quick-start.md',
-                        '/guide/core/quick-start/code-analysis.md',
+                        // '/guide/core/quick-start/code-analysis.md',
                     ]
                 },
                 // {
@@ -63,7 +63,7 @@ export const zhSidebar = sidebar({
                     children: [
                         '/guide/server/quick-start/intro.md',
                         '/guide/server/quick-start/terminology.md',
-                        '/guide/server/quick-start/code-analysis.md',
+                        // '/guide/server/quick-start/code-analysis.md',
                     ]
                 },
                 {
@@ -72,6 +72,7 @@ export const zhSidebar = sidebar({
                         '/guide/server/core-component/xtream-handler.md',
                         '/guide/server/core-component/session-manager.md',
                         '/guide/server/core-component/command-sender.md',
+                        '/guide/server/core-component/scheduler-registry.md',
                         '/guide/server/core-component/ordered-component.md',
                     ]
                 },
@@ -103,7 +104,7 @@ export const zhSidebar = sidebar({
                     text: "入门", icon: "rocket", collapsible: false, children: [
                         '/ext/jt/jt808/quick-start/intro.md',
                         '/ext/jt/jt808/quick-start/quick-start.md',
-                        '/ext/jt/jt808/quick-start/code-analysis.md',
+                        // '/ext/jt/jt808/quick-start/code-analysis.md',
                     ]
                 },
                 {
@@ -118,24 +119,30 @@ export const zhSidebar = sidebar({
                 },
                 {
                     text: "定制化", icon: "gear", collapsible: false, children: [
-                        '/ext/jt/jt808/customization/README.md',
+                        '/ext/jt/jt808/customization/netty.md',
+                        '/ext/jt/jt808/customization/codec.md',
+                        '/ext/jt/jt808/customization/scheduler.md',
+                        '/ext/jt/jt808/customization/sub-package.md',
+                        '/ext/jt/jt808/customization/listener.md',
+                        '/ext/jt/jt808/customization/filter.md',
+                        '/ext/jt/jt808/customization/encryption.md',
                     ]
                 },
-                {
-                    text: "地方标准", icon: "file-lines", collapsible: false, children: [
-                        '/ext/jt/jt808/extension/jiangsu.md',
-                    ]
-                },
-                {
-                    text: "Dashboard", icon: "gauge", collapsible: false, children: [
-                        '/ext/jt/jt808/dashboard/README.md',
-                    ]
-                },
-                {
-                    text: "配置", icon: "gears", collapsible: false, children: [
-                        '/ext/jt/jt808/configuration/README.md',
-                    ]
-                },
+                // {
+                //     text: "地方标准", icon: "file-lines", collapsible: false, children: [
+                //         '/ext/jt/jt808/extension/jiangsu.md',
+                //     ]
+                // },
+                // {
+                //     text: "Dashboard", icon: "gauge", collapsible: false, children: [
+                //         '/ext/jt/jt808/dashboard/README.md',
+                //     ]
+                // },
+                // {
+                //     text: "配置", icon: "gears", collapsible: false, children: [
+                //         '/ext/jt/jt808/configuration/README.md',
+                //     ]
+                // },
             ]
         }
     ],

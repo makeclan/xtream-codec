@@ -4,6 +4,21 @@ article: false
 
 # 发版记录
 
+## 0.0.1-beta.8(2024-12-15)
+
+### ⭐ New Features
+
+- `jt-808-server-dashboard-ui` 优化
+
+### 📔 Documentation
+
+- 新增 `xtream-codec-server-reactive` 和 `jt-808-server-spring-boot-starter-reactive` 部分文档
+
+### ❤️ Contributors
+
+- [@dfEric](https://github.com/dfEric)
+- [@hylexus](https://github.com/hylexus)
+
 ## 0.0.1-beta.7(2024-12-08)
 
 ### ⭐ New Features

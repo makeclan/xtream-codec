@@ -36,7 +36,7 @@ tag:
 <dependency>
     <groupId>io.github.hylexus.xtream</groupId>
     <artifactId>jt-808-server-dashboard-spring-boot-starter-reactive</artifactId>
-    <version>0.0.1-beta.7</version>
+    <version>0.0.1-beta.8</version>
 </dependency>
 ```
 
@@ -44,7 +44,7 @@ tag:
 
 ```groovy
 
-api("io.github.hylexus.xtream:jt-808-server-spring-boot-starter-reactive:0.0.1-beta.7")
+api("io.github.hylexus.xtream:jt-808-server-spring-boot-starter-reactive:0.0.1-beta.8")
 ```
 
 :::
@@ -53,7 +53,7 @@ api("io.github.hylexus.xtream:jt-808-server-spring-boot-starter-reactive:0.0.1-b
 
 该示例中，你可以不用做任何额外配置。
 
-下面是几个比较关键配置(`application.yaml`)的默认值：
+下面是几个关键配置的默认值(`application.yaml`)：
 
 ```yaml
 jt808-server:
@@ -85,18 +85,22 @@ jt808-server:
 
 ## 编写消息处理器
 
-在 **spring-boot** 能扫描到的包中，随便新建一个 **java类**(本示例中命名为 `Jt808QuickStartRequestHandler.java`)。内容如下：
+在 **spring-boot** 能扫描到的包中，随便新建一个 **java类**
+
+本示例中命名为 `Jt808QuickStartRequestHandler.java`。内容如下：
 
 ```java
-@Component
-@Jt808RequestHandler
+@Component // spring 环境下自动为该类创建单实例
+@Jt808RequestHandler // 被该注解标记的类才会被扫描；类似于 spring 的 @Controller
 public class Jt808QuickStartRequestHandler {
 
     /**
      * 位置上报(V2019)
      */
+    // 类似于 spring 的 @RequestMapping；这里表示该方法支持处理 0x0200 指令，并且是 V2019 版本的指令
     @Jt808RequestHandlerMapping(messageIds = 0x0200, versions = Jt808ProtocolVersion.VERSION_2019)
-    @Jt808ResponseBody(messageId = 0x8001, maxPackageSize = 1000)
+    // 类似于 spring 的 @ResponseBody；这里表示该方法返回的数据将被封装成 0x8001 指令返回给客户端
+    @Jt808ResponseBody(messageId = 0x8001)
     public Mono<ServerCommonReplyMessage> processMessage0200V2019(
             Jt808Session session,
             Jt808Request request,
@@ -129,4 +133,25 @@ public class Jt808QuickStartRequestHandler {
 
 ### 发报文
 
+::: danger
+
+不管你使用的是什么发包工具，都请确保你的报文是以 <span style="color:red;">十六进制</span> 格式发送的。
+
+:::
+
+发送这条测试报文：
+
+```
+7e02004086010000000001893094655200E4000000000000000101D907F2073D336C000000000000211124114808010400000026030200003001153101002504000000001404000000011504000000FA160400000000170200001803000000EA10FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF02020000EF0400000000F31B017118000000000000000000000000000000000000000000000000567e
+```
+
+下图是 Mac 环境下使用 [NetworkCat](https://apps.apple.com/cn/app/networkcat/id6503148471?mt=12) 发送的 **808协议** 位置上报报文截图。
+
+![quick-start-app-startup](/img/ext/jt/jt808/quick-start/quick-start-app-network-cat-0200.png)
+
 ### 服务端日志
+
+发送报文之后，你应该会看到类似下图的日志：
+
+![quick-start-app-startup](/img/ext/jt/jt808/quick-start/quick-start-app-0200-log.png)
+

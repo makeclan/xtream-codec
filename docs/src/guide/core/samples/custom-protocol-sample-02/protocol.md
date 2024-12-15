@@ -3,13 +3,13 @@ date: 2024-03-09
 icon: file-lines
 author: hylexus
 contributors: true
+article: false
 category:
   - 示例
 tag:
   - Quick-Start
   - 编码
   - 解码
-  - JT/T 808
 ---
 
 # 协议格式说明
