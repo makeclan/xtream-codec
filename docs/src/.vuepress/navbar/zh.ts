@@ -31,8 +31,8 @@ export const zhNavbar = navbar([
             {text: 'Spring', icon: 'leaf', link: 'https://github.com/spring-projects'},
             {
                 text: 'Vue', children: [
-                    {text: 'VuePress', icon: 'vuejs', link: 'https://www.vuepress.cn/'},
-                    {text: 'vuepress-theme-hope', icon: 'vuejs', link: 'https://theme-hope.vuejs.press/zh/'},
+                    {text: 'VuePress', icon: 'fa-brands fa-vuejs', link: 'https://www.vuepress.cn/'},
+                    {text: 'vuepress-theme-hope', icon: 'fa-brands fa-vuejs', link: 'https://theme-hope.vuejs.press/zh/'},
                 ],
             },
         ]
