@@ -5,7 +5,7 @@ article: false
 
 # 概览
 
-**Xtream** 对 **JT/T 808** 消息的处理提供了一套注解，下面是一个基本示例：
+在 **Xtream** 中，基于注解的方式处理 **JT/T 808** 请求，大致像下面这样：
 
 ```java
 @Component
@@ -34,3 +34,5 @@ public class Jt808QuickStartRequestHandler {
     }
 }
 ```
+
+更多细节，请看后续文档。

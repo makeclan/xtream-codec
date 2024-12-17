@@ -1,6 +1,7 @@
 ---
 date: 2024-12-10
 icon: arrows-spin
+article: false
 ---
 
 # XtreamFilter

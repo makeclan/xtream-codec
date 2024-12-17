@@ -1,5 +1,6 @@
 ---
 icon: cube
+article: false
 ---
 
 # XtreamHandler

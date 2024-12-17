@@ -1,5 +1,6 @@
 ---
 icon: arrows-spin
+article: false
 ---
 
 # FilteringXtreamHandler

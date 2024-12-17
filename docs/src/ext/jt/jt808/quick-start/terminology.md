@@ -1,5 +1,6 @@
 ---
 icon: file-lines
+article: false
 ---
 
 # 基本术语

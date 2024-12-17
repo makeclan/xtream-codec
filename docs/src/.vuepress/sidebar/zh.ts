@@ -113,6 +113,7 @@ export const zhSidebar = sidebar({
                     text: "注解驱动开发", icon: "at", collapsible: false, children: [
                         '/ext/jt/jt808/annotation-driven/overview.md',
                         '/ext/jt/jt808/annotation-driven/request-message-mapping.md',
+                        '/ext/jt/jt808/annotation-driven/argument-resolver.md',
                         '/ext/jt/jt808/annotation-driven/response-message-mapping.md',
                         '/ext/jt/jt808/annotation-driven/builtin-message.md',
                     ]
@@ -132,6 +133,7 @@ export const zhSidebar = sidebar({
                         '/ext/jt/jt808/customization/listener.md',
                         '/ext/jt/jt808/customization/filter.md',
                         '/ext/jt/jt808/customization/encryption.md',
+                        '/ext/jt/jt808/customization/argument-resolver.md',
                         '/ext/jt/jt808/customization/request-handler.md',
                     ]
                 },
