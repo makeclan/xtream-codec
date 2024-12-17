@@ -104,17 +104,23 @@ export const zhSidebar = sidebar({
                     text: "入门", icon: "rocket", collapsible: false, children: [
                         '/ext/jt/jt808/quick-start/intro.md',
                         '/ext/jt/jt808/quick-start/quick-start.md',
+                        '/ext/jt/jt808/quick-start/terminology.md',
+                        '/ext/jt/jt808/quick-start/request-processing.md',
                         // '/ext/jt/jt808/quick-start/code-analysis.md',
                     ]
                 },
                 {
-                    text: "核心组件", icon: "layer-group", collapsible: false, children: [
-                        '/ext/jt/jt808/core-component/README.md',
+                    text: "注解驱动开发", icon: "at", collapsible: false, children: [
+                        '/ext/jt/jt808/annotation-driven/overview.md',
+                        '/ext/jt/jt808/annotation-driven/request-message-mapping.md',
+                        '/ext/jt/jt808/annotation-driven/response-message-mapping.md',
+                        '/ext/jt/jt808/annotation-driven/builtin-message.md',
                     ]
                 },
                 {
                     text: "辅助工具", icon: "wrench", collapsible: false, children: [
-                        '/ext/jt/jt808/utilities/README.md',
+                        '/ext/jt/jt808/utilities/bit-operator.md',
+                        '/ext/jt/jt808/utilities/response-encoder.md',
                     ]
                 },
                 {
@@ -126,6 +132,7 @@ export const zhSidebar = sidebar({
                         '/ext/jt/jt808/customization/listener.md',
                         '/ext/jt/jt808/customization/filter.md',
                         '/ext/jt/jt808/customization/encryption.md',
+                        '/ext/jt/jt808/customization/request-handler.md',
                     ]
                 },
                 // {
