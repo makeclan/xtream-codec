@@ -1,5 +1,5 @@
 ---
-icon: gauge
+icon: signs-post
 article: false
 ---
 
