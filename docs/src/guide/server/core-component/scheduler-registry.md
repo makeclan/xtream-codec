@@ -1,5 +1,5 @@
 ---
-icon: cube
+icon: table-list
 article: false
 ---
 

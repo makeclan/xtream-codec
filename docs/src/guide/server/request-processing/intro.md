@@ -1,5 +1,5 @@
 ---
-icon: arrows-spin
+icon: arrow-right-arrow-left
 article: false
 ---
 

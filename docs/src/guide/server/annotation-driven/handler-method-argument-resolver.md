@@ -1,6 +1,6 @@
 ---
 date: 2024-12-10
-icon: code
+icon: fa-brands fa-resolving
 ---
 
 # 参数解析器

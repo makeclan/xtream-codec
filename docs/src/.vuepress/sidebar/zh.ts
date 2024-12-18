@@ -137,21 +137,26 @@ export const zhSidebar = sidebar({
                         '/ext/jt/jt808/customization/request-handler.md',
                     ]
                 },
-                // {
-                //     text: "地方标准", icon: "file-lines", collapsible: false, children: [
-                //         '/ext/jt/jt808/extension/jiangsu.md',
-                //     ]
-                // },
-                // {
-                //     text: "Dashboard", icon: "gauge", collapsible: false, children: [
-                //         '/ext/jt/jt808/dashboard/README.md',
-                //     ]
-                // },
-                // {
-                //     text: "配置", icon: "gears", collapsible: false, children: [
-                //         '/ext/jt/jt808/configuration/README.md',
-                //     ]
-                // },
+                {
+                    text: "地方标准", icon: "file-lines", collapsible: false, children: [
+                        '/ext/jt/jt808/extension/jiangsu.md',
+                    ]
+                },
+                {
+                    text: "Dashboard", icon: "gauge", collapsible: false, children: [
+                        '/ext/jt/jt808/dashboard/intro.md',
+                        '/ext/jt/jt808/dashboard/quick-start.md',
+                    ]
+                },
+                {
+                    text: "配置", icon: "gears", collapsible: false, children: [
+                        '/ext/jt/jt808/configuration/overview.md',
+                        '/ext/jt/jt808/configuration/features.md',
+                        '/ext/jt/jt808/configuration/instruction-server.md',
+                        '/ext/jt/jt808/configuration/attachment-server.md',
+                        '/ext/jt/jt808/configuration/schedulers.md',
+                    ]
+                },
             ]
         }
     ],

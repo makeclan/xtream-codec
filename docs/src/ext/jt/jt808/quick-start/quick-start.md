@@ -35,7 +35,7 @@ tag:
 
 <dependency>
     <groupId>io.github.hylexus.xtream</groupId>
-    <artifactId>jt-808-server-dashboard-spring-boot-starter-reactive</artifactId>
+    <artifactId>jt-808-server-spring-boot-starter-reactive</artifactId>
     <version>0.0.1-beta.8</version>
 </dependency>
 ```

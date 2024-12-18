@@ -1,7 +1,7 @@
 import {hopeTheme} from "vuepress-theme-hope";
 import {zhNavbar} from "./navbar";
 import {zhSidebar} from "./sidebar";
-import { path } from "vuepress/utils"
+import {path} from "vuepress/utils"
 
 
 export default hopeTheme({
@@ -99,7 +99,7 @@ export default hopeTheme({
     plugins: {
         blog: true,
         components: {
-            components: ["Badge", "VPCard"],
+            components: ["Badge", "VPCard", "VPBanner"],
         },
     },
 });
