@@ -85,6 +85,47 @@ public Mono<ServerCommonReplyMessage> processMessage0002(Jt808Request request, @
 
 实现原理见 `Jt808ResponseBodyHandlerResultHandler` 。
 
+## Jt808ResponseEntity
+
+### 作用
+
+该类型的作用类似于 **WebFlux/WebMvc** 中的 `org.springframework.http.ResponseEntity`。
+
+::: tip
+
+当你的处理器返回 `Jt808ResponseEntity` 类型时，就不再需要 `@Jt808ResponseBody(messageId = 0x8001)` 这种注解指定响应头信息了。
+
+而是通过 `Jt808ResponseEntity` **动态设定** 响应头信息。
+
+当然，你加了 `@Jt808ResponseBody(messageId = 0x8001)` 也没关系(自动忽略)。
+
+:::
+
+### 示例
+
+```java {3,13-18}
+// 注意: 这里不再需要 @Jt808ResponseBody(messageId = 0x8001)
+@Jt808RequestHandlerMapping(messageIds = 0x0200, versions = Jt808ProtocolVersion.VERSION_2019)
+public Mono<Jt808ResponseEntity<ServerCommonReplyMessage>> processMessage0200V2019(
+        Jt808Session session,
+        Jt808Request request,
+        @Jt808RequestBody BuiltinMessage0200 body,
+        Jt808RequestEntity<BuiltinMessage0200> requestEntity) {
+    log.info("v2019-0x0200: {}", body);
+    log.info("v2019-0x0200: {}", requestEntity);
+
+    return this.locationService.processLocationMessage(session, body).map(result -> {
+        // ...
+        return Jt808ResponseEntity
+                // 这里动态指定响应消息中的属性
+                .messageId(0x8001)
+                .maxPackageSize(1000)
+                // 消息体
+                .body(ServerCommonReplyMessage.of(request, (byte) 0));
+    });
+}
+```
+
 ## 不回复消息
 
 有些时候，可能仅仅是处理请求，但并不需要给客户端回复。

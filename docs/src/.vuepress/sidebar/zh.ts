@@ -160,4 +160,8 @@ export const zhSidebar = sidebar({
             ]
         }
     ],
+    "/frequently-asked-questions/": [
+        '/frequently-asked-questions/project-positioning.md',
+        '/frequently-asked-questions/differences-between-xtream-codec-and-jt-framework.md',
+    ],
 });

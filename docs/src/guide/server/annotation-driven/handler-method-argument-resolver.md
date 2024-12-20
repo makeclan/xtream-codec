@@ -13,7 +13,7 @@ icon: fa-brands fa-resolving
 
 下面代码段中 `processMessage0200V2019` 方法的所有参数都是通过 `XtreamHandlerMethodArgumentResolver` 解析出来的：
 
-```java {8,9,10,11,12,13,14,15,16,17,18,19,20}
+```java {8-21}
 @Component
 @Jt808RequestHandler
 public class DemoJt808RequestHandler {
@@ -28,6 +28,7 @@ public class DemoJt808RequestHandler {
             DefaultXtreamRequest defaultXtreamRequest,
             XtreamResponse xtreamResponse,
             DefaultXtreamResponse defaultXtreamResponse,
+            Jt808RequestEntity<BuiltinMessage0200> requestEntity,
             @Jt808RequestBody DemoLocationMsg01 msg01,
             @Jt808RequestBody DemoLocationMsg02 msg02,
             @Jt808RequestBody ByteBuf buf01,

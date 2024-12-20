@@ -1,3 +1,22 @@
+## 0.0.1-beta.9
+
+### ⭐ New Features
+
+- `jt-808-server-dashboard-ui` 优化
+- `jt-808-server-spring-boot-starter-reactive`
+    - 新增 `Jt808MessageArgumentResolver`
+    - 新增 `Jt808RequestEntityArgumentResolver`
+    - 新增 `Jt808ResponseEntityHandlerResultHandler`
+
+### 📔 Documentation
+
+- 完善 `xtream-codec-server-reactive` 和 `jt-808-server-spring-boot-starter-reactive` 部分文档
+
+### ❤️ Contributors
+
+- [@dfEric](https://github.com/dfEric)
+- [@hylexus](https://github.com/hylexus)
+
 ## 0.0.1-beta.8(2024-12-15)
 
 ### ⭐ New Features

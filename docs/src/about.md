@@ -12,6 +12,13 @@ article: false
 
 ## 赞助
 
+```component VPBanner
+title: STAR
+content: 你的 star 也是我们前进的动力。
+background: var(--bg-10)
+color: var(--banner-text)
+```
+
 项目的发展离不开你的支持，请作者喝一杯🍺吧！
 
 ![有钱的捧个钱场 没钱的捧个人场](https://img.dferic.com/img/pay.png)

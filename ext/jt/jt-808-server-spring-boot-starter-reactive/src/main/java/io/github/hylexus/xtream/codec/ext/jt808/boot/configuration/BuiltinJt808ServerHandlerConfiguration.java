@@ -24,8 +24,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListe
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808ResponseEncoder;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.Jt808RequestLifecycleListenerComposite;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.filter.Jt808RequestCombinerFilter;
-import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestMappingHandlerMapping;
-import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBodyHandlerResultHandler;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.*;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.listener.Jt808RequestLoggerListener;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriptionRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
@@ -86,6 +85,16 @@ public class BuiltinJt808ServerHandlerConfiguration {
 
     // region handlerAdapters
     @Bean
+    XtreamHandlerMethodArgumentResolver jt808RequestEntityArgumentResolver(EntityCodec entityCodec) {
+        return new Jt808RequestEntityArgumentResolver(entityCodec);
+    }
+
+    @Bean
+    Jt808MessageArgumentResolver jt808MessageArgumentResolver(EntityCodec entityCodec) {
+        return new Jt808MessageArgumentResolver(entityCodec);
+    }
+
+    @Bean
     @Primary
     XtreamHandlerMethodArgumentResolver xtreamHandlerMethodArgumentResolver(
             List<XtreamHandlerMethodArgumentResolver> resolvers,
@@ -124,6 +133,11 @@ public class BuiltinJt808ServerHandlerConfiguration {
     @Primary
     Jt808RequestLifecycleListener jt808RequestLifecycleListenerComposite(List<Jt808RequestLifecycleListener> listeners) {
         return new Jt808RequestLifecycleListenerComposite(listeners);
+    }
+
+    @Bean
+    Jt808ResponseEntityHandlerResultHandler jt808ResponseEntityHandlerResultHandler(Jt808ResponseEncoder jt808ResponseEncoder, Jt808RequestLifecycleListener lifecycleListener) {
+        return new Jt808ResponseEntityHandlerResultHandler(jt808ResponseEncoder, lifecycleListener);
     }
 
     @Bean
