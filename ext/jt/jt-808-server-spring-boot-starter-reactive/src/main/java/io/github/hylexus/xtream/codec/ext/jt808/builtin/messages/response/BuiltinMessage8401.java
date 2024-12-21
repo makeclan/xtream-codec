@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
+import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
@@ -68,37 +69,20 @@ public class BuiltinMessage8401 {
          */
         @Preset.JtStyle.Byte
         private short flag;
-        /**
-         * 号码长度
-         */
-        @Preset.JtStyle.Byte
-        private short phoneNumberLength;
 
         /**
          * 电话号码
          */
-        @Preset.JtStyle.Str(lengthExpression = "getPhoneNumberLength()")
+        // prependLengthFieldType: 前置一个 u8类型的字段 表示 号码长度
+        @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8)
         private String phoneNumber;
 
         /**
-         * 联系人长度
+         * 联系人
          */
-        @Preset.JtStyle.Byte
-        private short contactsLength;
-        /**
-         * 联系人长度
-         */
-        @Preset.JtStyle.Str(lengthExpression = "getContactsLength()")
+        // prependLengthFieldType: 前置一个 u8类型的字段 表示 联系人长度
+        @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8)
         private String contacts;
 
-        @SuppressWarnings("lombok")
-        public short getPhoneNumberLength() {
-            return phoneNumberLength;
-        }
-
-        @SuppressWarnings("lombok")
-        public short getContactsLength() {
-            return contactsLength;
-        }
     }
 }

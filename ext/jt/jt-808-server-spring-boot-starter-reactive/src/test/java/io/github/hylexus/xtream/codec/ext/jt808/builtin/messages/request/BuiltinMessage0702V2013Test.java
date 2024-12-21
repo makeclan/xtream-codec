@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import static io.github.hylexus.xtream.codec.common.utils.XtreamBytes.gbkByteCount;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BuiltinMessage0702V2013Test extends BaseCodecTest {
@@ -38,10 +37,8 @@ class BuiltinMessage0702V2013Test extends BaseCodecTest {
         entity.setTime(time);
         entity.setIcCardReadResult((short) 0x00);
         entity.setDriverName("张无忌");
-        entity.setDriverNameLength((short) gbkByteCount(entity.getDriverName()));
         entity.setProfessionalLicenseNo("11335577992244668800");
         entity.setCertificateAuthorityName("没有名字");
-        entity.setCertificateAuthorityNameLength((short) gbkByteCount(entity.getCertificateAuthorityName()));
         entity.setCertificateExpiresDate(certificateExpiresDate);
 
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2013, terminalId2013, 0x0702);
@@ -59,6 +56,5 @@ class BuiltinMessage0702V2013Test extends BaseCodecTest {
         assertEquals("11335577992244668800", entity.getProfessionalLicenseNo());
         assertEquals("没有名字", entity.getCertificateAuthorityName());
         assertEquals(certificateExpiresDate, entity.getCertificateExpiresDate());
-        assertEquals(gbkByteCount(entity.getDriverName()), entity.getDriverNameLength());
     }
 }

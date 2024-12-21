@@ -16,7 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
-import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
+import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
@@ -68,15 +68,10 @@ public class BuiltinMessage8303 {
         private short type;
 
         /**
-         * 信息名称长度
-         */
-        @Preset.JtStyle.Word
-        private int itemLength;
-
-        /**
          * 信息名称
          */
-        @Preset.JtStyle.Str(lengthExpression = "getItemLength()")
+        // prependLengthFieldType: 前置一个 u16(Word)类型的字段 表示 信息名称长度
+        @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u16)
         private String content;
 
         public Item() {
@@ -84,13 +79,8 @@ public class BuiltinMessage8303 {
 
         public Item(short type, String content) {
             this.type = type;
-            this.itemLength = content.getBytes(XtreamConstants.CHARSET_GBK).length;
             this.content = content;
         }
 
-        @SuppressWarnings("lombok")
-        public int getItemLength() {
-            return itemLength;
-        }
     }
 }

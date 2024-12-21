@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
+import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
@@ -49,15 +50,10 @@ public class BuiltinMessage8302 {
     private short identifier;
 
     /**
-     * 问题内容长度
-     */
-    @Preset.JtStyle.Byte
-    private short questionLength;
-
-    /**
      * 问题
      */
-    @Preset.JtStyle.Str(lengthExpression = "getQuestionLength()")
+    // prependLengthFieldType: 前置一个 u8类型的字段 表示 问题内容长度
+    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8)
     private String question;
 
     /**
@@ -65,11 +61,6 @@ public class BuiltinMessage8302 {
      */
     @Preset.JtStyle.List
     private List<CandidateAnswer> candidateAnswerList;
-
-    @SuppressWarnings("lombok")
-    public short getQuestionLength() {
-        return questionLength;
-    }
 
     @Getter
     @Setter
@@ -83,20 +74,11 @@ public class BuiltinMessage8302 {
         private short answerId;
 
         /**
-         * 答案内容长度
-         */
-        @Preset.JtStyle.Word
-        private int answerLength;
-
-        /**
          * 答案内容
          */
-        @Preset.JtStyle.Str(lengthExpression = "getAnswerLength()")
+        // prependLengthFieldType: 前置一个 u16(Word)类型的字段 表示 答案内容
+        @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u16)
         private String answer;
 
-        @SuppressWarnings("lombok")
-        public int getAnswerLength() {
-            return answerLength;
-        }
     }
 }

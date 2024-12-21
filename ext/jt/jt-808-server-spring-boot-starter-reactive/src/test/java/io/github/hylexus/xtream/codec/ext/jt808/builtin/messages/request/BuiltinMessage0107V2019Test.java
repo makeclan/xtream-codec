@@ -39,9 +39,7 @@ class BuiltinMessage0107V2019Test extends BaseCodecTest {
                 .setTerminalType("terminalType123456781111122222")
                 .setTerminalId("123456789012345678901234567890")
                 .setIccid("11112233445566778899")
-                .setHardwareVersionLength((short) 9)
                 .setHardwareVersion("hd-v1.2.3")
-                .setFirmwareVersionLength((short) 9)
                 .setFirmwareVersion("fm-v3.2.1")
                 .setGnssModelProperty((short) 3)
                 .setCommunicationModelProperty((short) 2);
@@ -68,9 +66,7 @@ class BuiltinMessage0107V2019Test extends BaseCodecTest {
         assertEquals("terminalType123456781111122222", entity.getTerminalType());
         assertEquals("123456789012345678901234567890", entity.getTerminalId());
         assertEquals("11112233445566778899", entity.getIccid());
-        assertEquals(9, entity.getHardwareVersionLength());
         assertEquals("hd-v1.2.3", entity.getHardwareVersion());
-        assertEquals(9, entity.getFirmwareVersionLength());
         assertEquals("fm-v3.2.1", entity.getFirmwareVersion());
         assertEquals(3, entity.getGnssModelProperty());
         assertEquals(2, entity.getCommunicationModelProperty());

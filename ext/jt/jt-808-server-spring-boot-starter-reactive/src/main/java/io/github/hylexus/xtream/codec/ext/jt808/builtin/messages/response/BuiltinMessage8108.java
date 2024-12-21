@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
+import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
@@ -49,36 +50,17 @@ public class BuiltinMessage8108 {
     private String manufacturerId;
 
     /**
-     * 版本号长度
-     */
-    @Preset.JtStyle.Byte
-    private short versionLength;
-
-    /**
      * 版本号
      */
-    @Preset.JtStyle.Str(lengthExpression = "getVersionLength()")
+    // prependLengthFieldType: 前置一个 u8类型的字段 表示 版本号长度
+    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8)
     private String version;
-
-    /**
-     * 升级数据包长度
-     */
-    @Preset.JtStyle.Dword
-    private long dataSize;
 
     /**
      * 升级数据包
      */
-    @Preset.JtStyle.Bytes(lengthExpression = "getDataSize()")
+    // prependLengthFieldType: 前置一个 u32类型的字段 表示 升级数据包长度
+    @Preset.JtStyle.Bytes(prependLengthFieldType = PrependLengthFieldType.u32)
     private byte[] data;
 
-    @SuppressWarnings("lombok")
-    public short getVersionLength() {
-        return versionLength;
-    }
-
-    @SuppressWarnings("lombok")
-    public long getDataSize() {
-        return dataSize;
-    }
 }

@@ -29,11 +29,9 @@ class BuiltinMessage0702V2011Test extends BaseCodecTest {
     void testEncode() {
         final BuiltinMessage0702V2011 entity = new BuiltinMessage0702V2011();
         entity.setDriverName("张无忌");
-        entity.setDriverNameLength((short) gbkByteCount(entity.getDriverName()));
         entity.setDriverIdCardNo("11223344556677889900");
         entity.setProfessionalLicenseNo("11335577992244668800");
         entity.setCertificateAuthorityName("没有名字");
-        entity.setCertificateAuthorityNameLength((short) gbkByteCount(entity.getCertificateAuthorityName()));
 
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2011, terminalId2011, 0x0702);
         assertEquals("7e07020038013912344321000006d5c5cedebcc93131323233333434353536363737383839393030313133333535373739393232343436363838303008c3bbd3d0c3fbd7d6787e", hex);

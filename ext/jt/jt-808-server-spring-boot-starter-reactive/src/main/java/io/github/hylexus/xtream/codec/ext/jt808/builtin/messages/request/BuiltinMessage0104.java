@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
+import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.type.ByteArrayContainer;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.BuiltinMessage8103Sample1;
@@ -74,10 +75,8 @@ public class BuiltinMessage0104 {
         @Preset.JtStyle.Dword
         private long parameterId;
 
-        @Preset.JtStyle.Byte
-        private short parameterLength;
-
-        @Preset.JtStyle.Bytes(lengthExpression = "getParameterLength()")
+        // prependLengthFieldType: 前置一个 u8类型的字段 表示参数长度
+        @Preset.JtStyle.Bytes(prependLengthFieldType = PrependLengthFieldType.u8)
         private ByteArrayContainer parameterValue;
 
         public ParameterItem() {
@@ -85,13 +84,8 @@ public class BuiltinMessage0104 {
 
         public ParameterItem(long parameterId, ByteArrayContainer container) {
             this.parameterId = parameterId;
-            this.parameterLength = (short) container.length();
             this.parameterValue = container;
         }
 
-        @SuppressWarnings("lombok")
-        public short getParameterLength() {
-            return parameterLength;
-        }
     }
 }

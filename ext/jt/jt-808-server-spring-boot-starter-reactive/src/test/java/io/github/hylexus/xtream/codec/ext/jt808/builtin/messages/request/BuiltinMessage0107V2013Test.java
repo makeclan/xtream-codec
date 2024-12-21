@@ -39,9 +39,8 @@ class BuiltinMessage0107V2013Test extends BaseCodecTest {
                 .setTerminalType("terminalType12345678")
                 .setTerminalId("7654321")
                 .setIccid("11112233445566778899")
-                .setHardwareVersionLength((short) 9)
+                // .setHardwareVersionLength((short) 9)
                 .setHardwareVersion("hd-v1.2.3")
-                .setFirmwareVersionLength((short) 9)
                 .setFirmwareVersion("fm-v3.2.1");
 
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2013, terminalId2013, 0x0107);
@@ -65,9 +64,8 @@ class BuiltinMessage0107V2013Test extends BaseCodecTest {
         assertEquals("terminalType12345678", entity.getTerminalType());
         assertEquals("7654321", entity.getTerminalId());
         assertEquals("11112233445566778899", entity.getIccid());
-        assertEquals(9, entity.getHardwareVersionLength());
+        // assertEquals(9, entity.getHardwareVersionLength());
         assertEquals("hd-v1.2.3", entity.getHardwareVersion());
-        assertEquals(9, entity.getFirmwareVersionLength());
         assertEquals("fm-v3.2.1", entity.getFirmwareVersion());
     }
 }

@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
+import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import lombok.Getter;
 import lombok.Setter;
@@ -70,39 +71,17 @@ public class BuiltinMessage0107V2013 {
     private String iccid;
 
     /**
-     * 终端硬件版本号长度
-     */
-    @Preset.JtStyle.Byte
-    private short hardwareVersionLength;
-
-    /**
      * 终端硬件版本号
      */
-    // lengthExpression: 只有解码才会用到
-    @Preset.JtStyle.Str(lengthExpression = "getHardwareVersionLength()")
+    // prependLengthFieldType: 前置一个 u8类型的字段 表示 终端硬件版本号长度
+    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8)
     private String hardwareVersion;
-
-    /**
-     * 终端固件版本号长度
-     */
-    @Preset.JtStyle.Byte
-    private short firmwareVersionLength;
 
     /**
      * 终端固件版本号
      */
-    // lengthExpression: 只有解码才会用到
-    @Preset.JtStyle.Str(lengthExpression = "getFirmwareVersionLength()")
+    // prependLengthFieldType: 前置一个 u8类型的字段 表示 终端固件版本号长度
+    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8)
     private String firmwareVersion;
 
-    // ...
-    @SuppressWarnings("lombok")
-    public short getHardwareVersionLength() {
-        return hardwareVersionLength;
-    }
-
-    @SuppressWarnings("lombok")
-    public short getFirmwareVersionLength() {
-        return firmwareVersionLength;
-    }
 }

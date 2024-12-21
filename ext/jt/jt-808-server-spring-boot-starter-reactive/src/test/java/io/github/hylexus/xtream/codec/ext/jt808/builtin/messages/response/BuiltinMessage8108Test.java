@@ -29,9 +29,7 @@ class BuiltinMessage8108Test extends BaseCodecTest {
         final BuiltinMessage8108 entity = new BuiltinMessage8108();
         entity.setType((short) 52);
         entity.setManufacturerId("12345");
-        entity.setVersionLength((short) 7);
         entity.setVersion("v-1.2.3");
-        entity.setDataSize(4);
         entity.setData(new byte[]{1, 2, 3, 4});
 
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2013, terminalId2013);
@@ -46,9 +44,7 @@ class BuiltinMessage8108Test extends BaseCodecTest {
         assertNotNull(entity);
         assertEquals(52, entity.getType());
         assertEquals("12345", entity.getManufacturerId());
-        assertEquals(7, entity.getVersionLength());
         assertEquals("v-1.2.3", entity.getVersion());
-        assertEquals(4, entity.getDataSize());
         assertArrayEquals(new byte[]{1, 2, 3, 4}, entity.getData());
     }
 }

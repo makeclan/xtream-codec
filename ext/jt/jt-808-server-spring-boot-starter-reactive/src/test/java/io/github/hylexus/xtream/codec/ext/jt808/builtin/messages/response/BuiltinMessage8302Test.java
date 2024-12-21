@@ -16,7 +16,6 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
-import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.BaseCodecTest;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import org.junit.jupiter.api.Test;
@@ -33,17 +32,14 @@ class BuiltinMessage8302Test extends BaseCodecTest {
         entity.setIdentifier((short) 1);
 
         final String question = "你是谁?";
-        entity.setQuestionLength((short) question.getBytes(XtreamConstants.CHARSET_GBK).length);
         entity.setQuestion(question);
 
         entity.setCandidateAnswerList(List.of(
                 new BuiltinMessage8302.CandidateAnswer()
                         .setAnswerId((short) 1)
-                        .setAnswerLength((short) "张三".getBytes(XtreamConstants.CHARSET_GBK).length)
                         .setAnswer("张三"),
                 new BuiltinMessage8302.CandidateAnswer()
                         .setAnswerId((short) 2)
-                        .setAnswerLength((short) "李四".getBytes(XtreamConstants.CHARSET_GBK).length)
                         .setAnswer("李四")
         ));
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2013, terminalId2013);

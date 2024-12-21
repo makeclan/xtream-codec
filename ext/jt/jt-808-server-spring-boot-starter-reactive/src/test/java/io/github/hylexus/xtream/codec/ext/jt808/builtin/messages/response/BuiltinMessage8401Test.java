@@ -16,7 +16,6 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
-import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.BaseCodecTest;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import org.junit.jupiter.api.Test;
@@ -34,21 +33,15 @@ class BuiltinMessage8401Test extends BaseCodecTest {
         entity.setItemList(List.of(
                 new BuiltinMessage8401.Item()
                         .setFlag((short) 3)
-                        .setPhoneNumberLength((short) 11)
                         .setPhoneNumber("13911112222")
-                        .setContactsLength((short) "张三".getBytes(XtreamConstants.CHARSET_GBK).length)
                         .setContacts("张三"),
                 new BuiltinMessage8401.Item()
                         .setFlag((short) 2)
-                        .setPhoneNumberLength((short) 11)
                         .setPhoneNumber("13911113333")
-                        .setContactsLength((short) "张三疯子".getBytes(XtreamConstants.CHARSET_GBK).length)
                         .setContacts("张三疯子"),
                 new BuiltinMessage8401.Item()
                         .setFlag((short) 1)
-                        .setPhoneNumberLength((short) 11)
                         .setPhoneNumber("13911116666")
-                        .setContactsLength((short) "李四".getBytes(XtreamConstants.CHARSET_GBK).length)
                         .setContacts("李四")
         ));
         entity.setCount((short) entity.getItemList().size());
@@ -66,17 +59,14 @@ class BuiltinMessage8401Test extends BaseCodecTest {
         assertEquals(3, entity.getItemList().size());
 
         assertEquals(3, entity.getItemList().getFirst().getFlag());
-        assertEquals(11, entity.getItemList().getFirst().getPhoneNumberLength());
         assertEquals("13911112222", entity.getItemList().getFirst().getPhoneNumber());
         assertEquals("张三", entity.getItemList().getFirst().getContacts());
 
         assertEquals(2, entity.getItemList().get(1).getFlag());
-        assertEquals(11, entity.getItemList().get(1).getPhoneNumberLength());
         assertEquals("13911113333", entity.getItemList().get(1).getPhoneNumber());
         assertEquals("张三疯子", entity.getItemList().get(1).getContacts());
 
         assertEquals(1, entity.getItemList().get(2).getFlag());
-        assertEquals(11, entity.getItemList().get(2).getPhoneNumberLength());
         assertEquals("13911116666", entity.getItemList().get(2).getPhoneNumber());
         assertEquals("李四", entity.getItemList().get(2).getContacts());
     }

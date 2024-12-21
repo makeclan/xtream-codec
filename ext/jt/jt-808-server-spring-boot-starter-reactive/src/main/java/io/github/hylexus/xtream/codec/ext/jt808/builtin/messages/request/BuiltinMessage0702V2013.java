@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
+import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import lombok.Getter;
 import lombok.Setter;
@@ -64,16 +65,12 @@ public class BuiltinMessage0702V2013 {
      */
     @Preset.JtStyle.Byte
     private short icCardReadResult;
-    /**
-     * 驾驶员姓名长度
-     */
-    @Preset.JtStyle.Byte
-    private short driverNameLength;
 
     /**
      * 驾驶员姓名
      */
-    @Preset.JtStyle.Str(lengthExpression = "getDriverNameLength()")
+    // prependLengthFieldType: 前置一个 u8类型的字段 表示 驾驶员姓名长度
+    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8)
     private String driverName;
 
     /**
@@ -82,25 +79,11 @@ public class BuiltinMessage0702V2013 {
     @Preset.JtStyle.Str(length = 20)
     private String professionalLicenseNo;
 
-    /**
-     * 发证机构名称长度
-     */
-    @Preset.JtStyle.Byte
-    private short certificateAuthorityNameLength;
-
-    @Preset.JtStyle.Str(lengthExpression = "getCertificateAuthorityNameLength()")
+    // prependLengthFieldType: 前置一个 u8类型的字段 表示 发证机构名称长度
+    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8)
     private String certificateAuthorityName;
 
     @Preset.JtStyle.BcdDateTime(length = 4, pattern = "yyyyMMdd")
     private LocalDate certificateExpiresDate;
 
-    @SuppressWarnings("lombok")
-    public short getDriverNameLength() {
-        return driverNameLength;
-    }
-
-    @SuppressWarnings("lombok")
-    public short getCertificateAuthorityNameLength() {
-        return certificateAuthorityNameLength;
-    }
 }

@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
+import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
@@ -72,29 +73,18 @@ public class BuiltinMessage8301 {
         private short eventId;
 
         /**
-         * 事件内容长度
-         */
-        @Preset.JtStyle.Byte
-        private short eventContentLength;
-
-        /**
          * 事件内容(GBK)
          */
-        @Preset.JtStyle.Str(lengthExpression = "getEventContentLength()")
+        // prependLengthFieldType: 前置一个 u8类型的字段 表示 事件内容长度
+        @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8)
         private String eventContent;
 
         public EventItem() {
         }
 
-        public EventItem(short eventId, short eventContentLength, String eventContent) {
+        public EventItem(short eventId, String eventContent) {
             this.eventId = eventId;
-            this.eventContentLength = eventContentLength;
             this.eventContent = eventContent;
-        }
-
-        @SuppressWarnings("lombok")
-        public short getEventContentLength() {
-            return eventContentLength;
         }
     }
 
