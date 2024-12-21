@@ -7,6 +7,7 @@
     - 新增 `Jt808MessageArgumentResolver`
     - 新增 `Jt808RequestEntityArgumentResolver`
     - 新增 `Jt808ResponseEntityHandlerResultHandler`
+    - 使用 `@XtreamField.prependLengthFieldType` 属性简化部分内置消息的注解配置
 
 ### 📔 Documentation
 

@@ -5,6 +5,16 @@ article: false
 
 # 项目定位
 
+## 项目名来源
+
+`xtream-codec == xtream + codec`
+
+- `xtream == Extensible + Stream`(发音特点合成)
+    - `Extensible`: 可扩展
+    - `Stream`: <span style="color:red;font-weight:bold;">非阻塞</span>
+      的流式编程([projectreactor](https://projectreactor.io))
+- `codec == Coder + Decoder`
+
 ## 项目定位
 
 该项目的定位是一个 **和具体协议无关的** `TCP/UDP` 编解码库。

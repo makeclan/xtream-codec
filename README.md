@@ -18,11 +18,29 @@
     </a>
 </p>
 
+## ProjectNaming
+
+项目名来源: `xtream-codec == xtream + codec`
+
+- `xtream == Extensible + Stream`(发音特点合成)
+    - `Extensible`: 可扩展
+    - `Stream`: <span style="color:red;font-weight:bold;">非阻塞</span>
+      的流式编程([projectreactor](https://projectreactor.io))
+- `codec == Coder + Decoder`
+
 ## Intro
 
 该项目是一个基于 [projectreactor](https://projectreactor.io/) 的、和具体协议无关的、异步的、<span style="color:red;">非阻塞的</span>、TCP/UDP 服务端实现。
 
-同时提供了一个基于 [xtream-codec-server-reactive](xtream-codec-server-reactive) 的 [JT/T 808 协议](ext/jt/jt-808-server-spring-boot-starter-reactive) 服务端实现。
+同时提供了一个基于 [xtream-codec-server-reactive](xtream-codec-server-reactive) 的 [JT/T 808 协议](ext/jt/jt-808-server-spring-boot-starter-reactive) 服务端实现：
+
+- 支持多版本(**V2013,V2019**)
+- 支持分包
+- 支持加解密
+- 支持指令下发
+- 支持苏标附件服务
+- 支持链路数据订阅
+- 提供了一个基于 **Spring Boot** 的 **Dashboard**
 
 ## Modules
 
@@ -50,16 +68,16 @@
 ## Docs
 
 - Github: https://hylexus.github.io/xtream-codec/
-- Gitee: https://hylexus.gitee.io/xtream-codec/
+- ~~Gitee: https://hylexus.gitee.io/xtream-codec/~~ (Gitee 暂停 Pages 服务，尚不确定后续能否恢复服务)
 
 ## QuickStart
 
 - **自定义** 协议示例
     - Github: https://hylexus.github.io/xtream-codec/core/samples/custom-protocol-sample-01/
-    - Gitee: https://hylexus.gitee.io/xtream-codec/core/samples/custom-protocol-sample-01/
+    - ~~Gitee: https://hylexus.gitee.io/xtream-codec/core/samples/custom-protocol-sample-01/~~  (Gitee 暂停 Pages 服务，尚不确定后续能否恢复服务)
 - **JT/T 808** 协议示例
     - Github: https://hylexus.github.io/xtream-codec/core/samples/custom-protocol-sample-02/
-    - Gitee: https://hylexus.gitee.io/xtream-codec/core/samples/custom-protocol-sample-02/
+    - ~~Gitee: https://hylexus.gitee.io/xtream-codec/core/samples/custom-protocol-sample-02/~~  (Gitee 暂停 Pages 服务，尚不确定后续能否恢复服务)
 
 ## License
 

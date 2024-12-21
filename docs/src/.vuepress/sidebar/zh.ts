@@ -13,7 +13,7 @@ export const zhSidebar = sidebar({
                         '/guide/core/quick-start/intro.md',
                         '/guide/core/quick-start/quick-start.md',
                         '/guide/core/quick-start/building-from-source.md',
-                        // '/guide/core/quick-start/code-analysis.md',
+                        '/guide/core/quick-start/code-analysis.md',
                     ]
                 },
                 // {
@@ -65,7 +65,7 @@ export const zhSidebar = sidebar({
                         '/guide/server/quick-start/intro.md',
                         '/guide/server/quick-start/terminology.md',
                         '/guide/server/quick-start/building-from-source.md',
-                        // '/guide/server/quick-start/code-analysis.md',
+                        '/guide/server/quick-start/code-analysis.md',
                     ]
                 },
                 {
@@ -109,7 +109,7 @@ export const zhSidebar = sidebar({
                         '/ext/jt/jt808/quick-start/terminology.md',
                         '/ext/jt/jt808/quick-start/request-processing.md',
                         '/ext/jt/jt808/quick-start/building-from-source.md',
-                        // '/ext/jt/jt808/quick-start/code-analysis.md',
+                        '/ext/jt/jt808/quick-start/code-analysis.md',
                     ]
                 },
                 {
@@ -167,5 +167,6 @@ export const zhSidebar = sidebar({
         '/frequently-asked-questions/project-positioning.md',
         '/frequently-asked-questions/differences-between-xtream-codec-and-jt-framework.md',
         '/frequently-asked-questions/building-from-source.md',
+        '/frequently-asked-questions/code-analysis.md',
     ],
 });
