@@ -4,22 +4,13 @@ import java.util.*
 
 plugins {
     id("java-library")
-    id("org.springframework.boot") version "3.3.6" apply(false)
-    id("io.spring.dependency-management") version "1.1.6"
+    id("io.spring.dependency-management")
     id("maven-publish")
     id("signing")
     id("checkstyle")
-    id("com.github.joschi.licenser") version "0.6.0"
-    id("com.github.jk1.dependency-license-report") version "2.5"
-    id("com.namics.oss.gradle.license-enforce-plugin") version "1.7.0"
-}
-
-repositories {
-    mavenLocal()
-    extraMavenRepositoryUrls().forEach {
-        maven(it)
-    }
-    mavenCentral()
+    id("com.github.joschi.licenser")
+    id("com.github.jk1.dependency-license-report")
+    id("com.namics.oss.gradle.license-enforce-plugin")
 }
 
 val mavenRepoConfig = getMavenRepoConfig()
@@ -364,6 +355,8 @@ fun extraMavenRepositoryUrls(): List<String> {
         "https://maven.aliyun.com/repository/public",
         "https://maven.aliyun.com/repository/google",
         "https://maven.aliyun.com/repository/spring",
+        // Central
+        "https://repo1.maven.org/maven2",
         "https://maven.aliyun.com/repository/spring-plugin",
         "https://maven.aliyun.com/repository/gradle-plugin",
         "https://maven.aliyun.com/repository/grails-core",
