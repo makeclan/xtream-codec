@@ -253,7 +253,7 @@ export const CardBox = () => {
       <div className="gap-2 grid grid-cols-1">
         <Card>
           <CardHeader>线程</CardHeader>
-          <CardBody>
+          <CardBody className="h-96">
             <DynamicThreadsCharts />
             {/*  data={{*/}
             {/*  time: data.time,*/}

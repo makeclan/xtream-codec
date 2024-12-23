@@ -6,7 +6,6 @@ import {
 import { Card, CardBody, CardHeader } from "@nextui-org/card";
 
 import { Thread } from "@/types";
-import { DynamicThreadsCharts } from "@/components/dashboard/dynamic-threads-charts.tsx";
 
 export const ThreadsPage = () => {
   const [threads, setThreads] = useState<Thread[]>([]);
@@ -58,18 +57,7 @@ export const ThreadsPage = () => {
       {threads.map((thread: Thread) => (
         <Card key={thread.name}>
           <CardHeader>{thread.name}</CardHeader>
-          <CardBody>
-            <DynamicThreadsCharts />
-            {/*  data={thread}*/}
-            {/*  maxLength={100}*/}
-            {/*  series={[*/}
-            {/*  "active.task",*/}
-            {/*  "completed.count",*/}
-            {/*  "completed.max",*/}
-            {/*  "pending.active",*/}
-            {/*  "submitted.direct",*/}
-            {/*]}*/}
-          </CardBody>
+          <CardBody>这里是线程卡片</CardBody>
         </Card>
       ))}
     </div>
