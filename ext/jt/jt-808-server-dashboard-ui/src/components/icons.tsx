@@ -4,14 +4,15 @@ import {
   faBug,
   faChartSimple,
   faChevronDown,
-  faCircleHalfStroke,
   faClone,
   faEye,
   faFileCirclePlus,
   faGear,
   faHeart,
+  faMoon,
   faServer,
   faShuffle,
+  faSun,
   faTags,
   faTrash,
   IconDefinition,
@@ -35,8 +36,11 @@ const FaIcon = ({ icon, ...props }: { icon: IconDefinition }) => {
 export const FaGithubIcon = ({ ...props }) => {
   return <FaIcon icon={faGithub} {...props} />;
 };
-export const FaCircleHarfIcon = ({ ...props }) => {
-  return <FaIcon icon={faCircleHalfStroke} {...props} />;
+export const FaSunIcon = ({ ...props }) => {
+  return <FaIcon icon={faSun} {...props} />;
+};
+export const FaMoonIcon = ({ ...props }) => {
+  return <FaIcon icon={faMoon} {...props} />;
 };
 export const FaGaugeIcon = ({ ...props }) => {
   return <FaIcon icon={faGauge} {...props} />;

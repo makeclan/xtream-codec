@@ -48,6 +48,7 @@ export enum EventType {
 //   total: number;
 //   details: any;
 // }
+
 export interface Metrics {
   [key: string]: any;
 }

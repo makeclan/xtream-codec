@@ -1,3 +1,5 @@
+/**
+
 import * as echarts from "echarts/core";
 import { LineChart } from "echarts/charts";
 import {
@@ -23,7 +25,7 @@ echarts.use([
   CanvasRenderer,
 ]);
 // interface chartProps {}
-export const DumpCharts = () => {
+export const _deprecated_dumpCharts = () => {
   const renderItem = (params: any, api: any) => {
     const categoryIndex = api.value(0);
     const start = api.coord([api.value(1), categoryIndex]);
@@ -198,3 +200,5 @@ export const DumpCharts = () => {
 
   return <ReactECharts option={option} style={{ height: 900 }} />;
 };
+
+*/

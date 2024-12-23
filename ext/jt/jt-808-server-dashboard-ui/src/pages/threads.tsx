@@ -59,17 +59,16 @@ export const ThreadsPage = () => {
         <Card key={thread.name}>
           <CardHeader>{thread.name}</CardHeader>
           <CardBody>
-            <DynamicThreadsCharts
-              data={thread}
-              maxLength={100}
-              series={[
-                "active.task",
-                "completed.count",
-                "completed.max",
-                "pending.active",
-                "submitted.direct",
-              ]}
-            />
+            <DynamicThreadsCharts />
+            {/*  data={thread}*/}
+            {/*  maxLength={100}*/}
+            {/*  series={[*/}
+            {/*  "active.task",*/}
+            {/*  "completed.count",*/}
+            {/*  "completed.max",*/}
+            {/*  "pending.active",*/}
+            {/*  "submitted.direct",*/}
+            {/*]}*/}
           </CardBody>
         </Card>
       ))}
