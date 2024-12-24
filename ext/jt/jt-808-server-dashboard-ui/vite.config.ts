@@ -23,35 +23,12 @@ export default defineConfig({
       output: {
         manualChunks: (id) => {
           if (
-            [
-              "@nextui-org/system",
-              "@nextui-org/theme",
-              "@nextui-org/accordion",
-              "@nextui-org/badge",
-              "@nextui-org/button",
-              "@nextui-org/card",
-              "@nextui-org/switch",
-              "@nextui-org/kbd",
-              "@nextui-org/scroll-shadow",
-              "@nextui-org/tooltip",
-              "@nextui-org/modal",
-              "framer-motion",
-            ].some((e) => id.includes(e))
-          ) {
-            return "vendors1";
-          } else if (
-            ["@nextui-org/", "@fortawesome/", "@visx/"].some(
-              (e) =>
-                id.includes(e) ||
-                [
-                  "canvas-confetti",
-                  "react-countup",
-                  "swr",
-                  "axios",
-                  "framer-motion",
-                ].includes(id),
+            ["@nextui-org/accordion", "@nextui-org/avatar"].some((e) =>
+              id.includes(e),
             )
           ) {
+            return "vendors1";
+          } else if (id.includes("@visx/")) {
             return "vendors2";
           }
         },

@@ -254,12 +254,12 @@ export const CardBox = () => {
         <Card>
           <CardHeader>线程</CardHeader>
           <CardBody className="h-96">
-            <DynamicThreadsCharts />
-            {/*  data={{*/}
-            {/*  time: data.time,*/}
-            {/*  value: data.value.threads,*/}
-            {/*}}*/}
-            {/*  series={["peak", "daemon", "live", "started"]}*/}
+            <DynamicThreadsCharts
+              data={{
+                date: data.time.slice(11, 19),
+                ...data.value.threads,
+              }}
+            />
           </CardBody>
         </Card>
       </div>

@@ -39,20 +39,6 @@ export const MsgMiniTable: FC<{ data: any }> = ({ data }) => {
             )}
           </TableRow>
         )}
-        {/*{data &&*/}
-        {/*  Object.keys(data).map((e, i) => (*/}
-        {/*    <TableRow key={i}>*/}
-        {/*      <TableCell>*/}
-        {/*        {getKeyValue(data, item.key)?.details[e].messageIdAsHexString}*/}
-        {/*      </TableCell>*/}
-        {/*      <TableCell>*/}
-        {/*        {getKeyValue(data.value, item.key)?.details[e].desc}*/}
-        {/*      </TableCell>*/}
-        {/*      <TableCell>*/}
-        {/*        {getKeyValue(data.value, item.key)?.details[e].count}*/}
-        {/*      </TableCell>*/}
-        {/*    </TableRow>*/}
-        {/*  ))}*/}
       </TableBody>
     </Table>
   );

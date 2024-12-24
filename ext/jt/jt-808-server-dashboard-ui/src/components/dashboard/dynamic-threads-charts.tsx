@@ -1,136 +1,171 @@
-import React, { useCallback, useRef } from "react";
-import { extent, max } from "@visx/vendor/d3-array";
-import { Group } from "@visx/group";
-import { LinePath } from "@visx/shape";
-import { scaleTime, scaleLinear } from "@visx/scale";
-import { MarkerCircle } from "@visx/marker";
-import { Tooltip, withTooltip } from "@visx/tooltip";
-import generateDateValue, {
-  DateValue,
-} from "@visx/mock-data/lib/generators/genDateValue";
 import { ParentSize } from "@visx/responsive";
+import {
+  AnimatedGrid,
+  AnimatedAxis,
+  AnimatedLineSeries,
+  XYChart,
+} from "@visx/xychart";
+import { lightTheme, darkTheme, XYChartTheme, Tooltip } from "@visx/xychart";
+import { FC, useEffect, useState } from "react";
+import { ThemeProps, useTheme } from "@nextui-org/use-theme";
 import { curveLinear } from "@visx/curve";
-import { localPoint } from "@visx/event";
-import { WithTooltipProvidedProps } from "@visx/tooltip/lib/enhancers/withTooltip";
 
-const lineCount = 5;
-const series = new Array(lineCount).fill(null).map((_, i) =>
-  // vary each series value deterministically
-  generateDateValue(25, /* seed= */ i / 72).sort(
-    (a: DateValue, b: DateValue) => a.date.getTime() - b.date.getTime(),
-  ),
-);
-const allData = series.reduce((rec, d) => rec.concat(d), []);
+interface Threads {
+  date: string;
+  started: number;
+  peak: number;
+  live: number;
+  daemon: number;
+}
 
-// data accessors
-const getX = (d: DateValue) => d.date;
-const getY = (d: DateValue) => d.value;
-
-// scales
-const xScale = scaleTime<number>({
-  domain: extent(allData, getX) as [Date, Date],
-});
-const yScale = scaleLinear<number>({
-  domain: [0, max(allData, getY) as number],
-});
-
-export type CurveProps = {
+export type XYChartProps = {
   width: number;
   height: number;
-  showControls?: boolean;
+  data: Threads[];
 };
-let tooltipTimeout: number;
 
-const LineCharts = withTooltip<CurveProps, WithTooltipProvidedProps<any>>(
-  ({
-    width,
-    height,
-    showTooltip,
-    hideTooltip,
-    tooltipData,
-    tooltipTop = 0,
-    tooltipLeft = 0,
-  }) => {
-    const svgRef = useRef<SVGSVGElement>(null);
-    const svgHeight = height;
-    const lineHeight = svgHeight / lineCount;
+interface chartProps {
+  data: Threads;
+  maxLength?: number;
+}
 
-    // update scale output ranges
-    xScale.range([0, width - 50]);
-    yScale.range([lineHeight - 2, 0]);
-    // event handlers
-    const handleMouseMove = useCallback(
-      (event: React.MouseEvent | React.TouchEvent) => {
-        if (tooltipTimeout) clearTimeout(tooltipTimeout);
-        if (!svgRef.current) return;
+export const LineCharts = ({ width, height, data }: XYChartProps) => {
+  const [theme, setTheme] = useState<XYChartTheme>(darkTheme);
+  const WebTheme = useTheme();
 
-        // find the nearest polygon to the current mouse position
-        const point = localPoint(svgRef.current, event);
+  useEffect(() => {
+    if (WebTheme.theme === ThemeProps.LIGHT) {
+      setTheme(lightTheme);
+    }
+  }, [WebTheme]);
 
-        if (!point) return;
-        showTooltip({
-          tooltipLeft: point.x,
-          tooltipTop: point.y,
-          tooltipData: "x",
-        });
-      },
-      [xScale, yScale, showTooltip],
-    );
+  const config = {
+    x: { type: "band", paddingInner: 0.3 } as const,
+    y: { type: "linear" } as const,
+  };
 
-    const handleMouseLeave = useCallback(() => {
-      tooltipTimeout = window.setTimeout(() => {
-        hideTooltip();
-      }, 300);
-    }, [hideTooltip]);
+  return (
+    <XYChart
+      captureEvents={true}
+      height={height}
+      theme={theme}
+      width={width}
+      xScale={config.x}
+      yScale={config.y}
+    >
+      <AnimatedGrid
+        key="grid-min" // force animate on update
+        animationTrajectory="min"
+        columns={false}
+        numTicks={4}
+        rows={true}
+      />
+      <>
+        <AnimatedLineSeries
+          curve={curveLinear}
+          data={data}
+          dataKey="started"
+          xAccessor={(d: Threads) => d.date}
+          yAccessor={(d: Threads) => d.started}
+        />
+        <AnimatedLineSeries
+          curve={curveLinear}
+          data={data}
+          dataKey="live"
+          xAccessor={(d: Threads) => d.date}
+          yAccessor={(d: Threads) => d.live}
+        />
+        <AnimatedLineSeries
+          curve={curveLinear}
+          data={data}
+          dataKey="daemon"
+          xAccessor={(d: Threads) => d.date}
+          yAccessor={(d: Threads) => d.daemon}
+        />
+        <AnimatedLineSeries
+          curve={curveLinear}
+          data={data}
+          dataKey="peak"
+          xAccessor={(d: Threads) => d.date}
+          yAccessor={(d: Threads) => d.peak}
+        />
+      </>
+      <AnimatedAxis
+        key="time-axis-min-false"
+        animationTrajectory="min"
+        numTicks={4}
+        orientation="bottom"
+      />
+      <AnimatedAxis
+        key="temp-axis-min-false"
+        animationTrajectory="min"
+        numTicks={4}
+        orientation="left"
+      />
+      <Tooltip<Threads>
+        renderTooltip={({ tooltipData, colorScale }) => (
+          <>
+            {tooltipData?.nearestDatum?.datum.date || "No date"}
+            <br />
+            <br />
+            {Object.keys(tooltipData?.datumByKey ?? {})
+              .filter((type) => type)
+              .map((type) => {
+                const count =
+                  tooltipData?.nearestDatum?.datum[type as keyof Threads];
 
-    return (
-      <div className="visx-curves-demo">
-        <svg ref={svgRef} height={svgHeight} width={width}>
-          <MarkerCircle fill="#333" id="marker-circle" refX={2} size={2} />
-          <rect
-            fill="transparent"
-            height={svgHeight}
-            rx={14}
-            ry={14}
-            width={width}
-          />
-          {width > 8 &&
-            series.map((lineData, i) => {
-              return (
-                <Group key={`lines-${i}`} left={13} top={i * lineHeight}>
-                  <LinePath<DateValue>
-                    curve={curveLinear}
-                    data={lineData}
-                    markerEnd="url(#marker-circle)"
-                    markerMid="url(#marker-circle)"
-                    markerStart="url(#marker-circle)"
-                    shapeRendering="geometricPrecision"
-                    stroke="#333"
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    x={(d) => xScale(getX(d)) ?? 0}
-                    y={(d) => yScale(getY(d)) ?? 0}
-                    onMouseLeave={handleMouseLeave}
-                    onMouseMove={handleMouseMove}
-                  />
-                </Group>
-              );
-            })}
-        </svg>
-        <Tooltip left={tooltipLeft + 10} top={tooltipTop + 10}>
-          <div>
-            <strong>y:</strong> {tooltipData}
-          </div>
-        </Tooltip>
-      </div>
-    );
-  },
-);
+                return (
+                  <div key={type}>
+                    <em
+                      style={{
+                        color: colorScale?.(type),
+                        textDecoration:
+                          tooltipData?.nearestDatum?.key === type
+                            ? "underline"
+                            : undefined,
+                      }}
+                    >
+                      {type}
+                    </em>{" "}
+                    {count == null || Number.isNaN(count) ? "–" : `${count}`}
+                  </div>
+                );
+              })}
+          </>
+        )}
+        showDatumGlyph={true}
+        showHorizontalCrosshair={true}
+        showSeriesGlyphs={true}
+        showVerticalCrosshair={true}
+        snapTooltipToDatumX={true}
+        snapTooltipToDatumY={true}
+      />
+    </XYChart>
+  );
+};
 
-export const DynamicThreadsCharts = () => {
+export const DynamicThreadsCharts: FC<chartProps> = ({
+  data,
+  maxLength = 500,
+}) => {
+  const [chartData, setChartData] = useState<Threads[]>([]);
+
+  useEffect(() => {
+    if (!data) return;
+    setChartData((prevState) => {
+      return prevState.toSpliced(
+        -1,
+        prevState.length > maxLength ? 1 : 0,
+        data,
+      );
+    });
+  }, [data]);
+
   return (
     <ParentSize>
-      {({ width, height }) => <LineCharts height={height} width={width} />}
+      {({ width, height }) => (
+        <LineCharts data={chartData} height={height} width={width} />
+      )}
     </ParentSize>
   );
 };

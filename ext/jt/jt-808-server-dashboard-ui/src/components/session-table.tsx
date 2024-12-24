@@ -11,6 +11,7 @@ import { Pagination } from "@nextui-org/pagination";
 import React, { FC, useState } from "react";
 import { Tooltip } from "@nextui-org/tooltip";
 import { Spacer } from "@nextui-org/spacer";
+import { Button } from "@nextui-org/button";
 import { Chip } from "@nextui-org/chip";
 
 import { usePageList } from "@/hooks/use-page-list.ts";
@@ -49,21 +50,21 @@ const SessionCell: FC<CellProps> = ({
       return (
         <div className="flex">
           <Tooltip content="链路监控">
-            <button
+            <Button
               className="text-lg text-default-400 cursor-pointer active:opacity-50"
-              onClick={() => handleMonitor(session)}
+              onPress={() => handleMonitor(session)}
             >
               <FaEyeIcon />
-            </button>
+            </Button>
           </Tooltip>
           <Spacer x={2} />
           <Tooltip content="删除会话">
-            <button
+            <Button
               className="text-lg text-default-400 cursor-pointer active:opacity-50"
-              onClick={() => handleDel(session)}
+              onPress={() => handleDel(session)}
             >
               <FaTrashIcon />
-            </button>
+            </Button>
           </Tooltip>
         </div>
       );

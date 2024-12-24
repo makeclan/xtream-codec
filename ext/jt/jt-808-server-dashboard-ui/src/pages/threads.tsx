@@ -4,6 +4,7 @@ import {
   fetchEventSource,
 } from "@microsoft/fetch-event-source";
 import { Card, CardBody, CardHeader } from "@nextui-org/card";
+import { Code } from "@nextui-org/code";
 
 import { Thread } from "@/types";
 
@@ -25,13 +26,7 @@ export const ThreadsPage = () => {
             const tempThread = {
               time: data.time,
               name: data.value.name,
-              value: {
-                "active.task": data.value.value.active.tasks,
-                "completed.count": data.value.value.completed.count,
-                "completed.max": data.value.value.completed.max,
-                "pending.active": data.value.value.pending.active,
-                "submitted.direct": data.value.value.submitted.direct,
-              },
+              value: data.value.value,
             };
             const index = pre.findIndex((e) => e.name === data.value.name);
 
@@ -53,11 +48,22 @@ export const ThreadsPage = () => {
   }, []);
 
   return (
-    <div className="gap-4 grid grid-cols-1 sm:grid-cols-2">
+    <div className="gap-4 grid grid-cols-2 sm:grid-cols-3">
       {threads.map((thread: Thread) => (
         <Card key={thread.name}>
           <CardHeader>{thread.name}</CardHeader>
-          <CardBody>这里是线程卡片</CardBody>
+          <CardBody>
+            <p>time: {thread.time}</p>
+            {/*TODO start 数据展示UI重新设计*/}
+            <Code>
+              <pre>
+                {JSON.stringify(thread.value, null, 2)
+                  .replace(/["{},]/g, "")
+                  .replace(/\n {2}\n/g, "\n")}
+              </pre>
+            </Code>
+            {/*end 数据展示UI重新设计*/}
+          </CardBody>
         </Card>
       ))}
     </div>
