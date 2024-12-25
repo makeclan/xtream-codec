@@ -19,14 +19,15 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.schedu
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import reactor.core.scheduler.Schedulers;
 
 @Getter
 @Setter
 @ToString
 public class ParallelProperties {
-    private String threadNamePrefix = "parallel";
+    private String threadNamePrefix = "x-parallel";
     private boolean daemon = true;
     private boolean rejectBlockingTask = true;
 
-    private int parallelism = Runtime.getRuntime().availableProcessors() * 2;
+    private int parallelism = Schedulers.DEFAULT_POOL_SIZE + 2;
 }

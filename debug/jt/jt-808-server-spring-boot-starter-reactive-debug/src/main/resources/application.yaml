@@ -39,6 +39,7 @@ jt808-server:
   ## 内置功能
   features:
     ### 转发请求时使用指定的调度器(而不是上游默认的Reactor调度器)
+    ### @see jt808-server.schedulers.request-dispatcher
     request-dispatcher-scheduler:
       enabled: true
     ### 请求日志(仅仅用于调试)
@@ -51,6 +52,7 @@ jt808-server:
       sub-package-storage:
         maximum-size: 1024
         ttl: 45s
+    ### Dashboard 配置
     dashboard:
       ### 是否启用 Dashboard
       enabled: true
@@ -79,9 +81,12 @@ jt808-server:
         all-idle-time: 10m
       ## 请求处理线程
       loop-resources:
-        select-count: 1
-        worker-count: 10
-        thread-name-prefix: xtream-tcp
+        ## @default reactor.netty.resources.LoopResources.DEFAULT_IO_SELECT_COUNT: -1
+        # select-count: 1
+        ## @default reactor.netty.resources.LoopResources.DEFAULT_IO_WORKER_COUNT
+        # worker-count: 10
+        ## x8i: xtream-jt808-instruction
+        thread-name-prefix: x8i-tcp
         daemon: true
         colocate: true
         prefer-native: true
@@ -100,9 +105,12 @@ jt808-server:
         check-backoff-time: 10s
       ## 请求处理线程
       loop-resources:
-        select-count: 1
-        worker-count: 10
-        thread-name-prefix: xtream-udp
+        ## @default reactor.netty.resources.LoopResources.DEFAULT_IO_SELECT_COUNT: -1
+        # select-count: 1
+        ## @default reactor.netty.resources.LoopResources.DEFAULT_IO_WORKER_COUNT
+        # worker-count: 10
+        ## x8i: xtream-jt808-instruction
+        thread-name-prefix: x8i-udp
         daemon: true
         colocate: true
         prefer-native: true
@@ -126,9 +134,12 @@ jt808-server:
         all-idle-time: 10m
       ## 请求处理线程
       loop-resources:
-        select-count: 1
-        worker-count: 10
-        thread-name-prefix: xtream-tcp
+        ## @default reactor.netty.resources.LoopResources.DEFAULT_IO_SELECT_COUNT: -1
+        # select-count: 1
+        ## @default reactor.netty.resources.LoopResources.DEFAULT_IO_WORKER_COUNT
+        # worker-count: 10
+        ## x8a: xtream-jt808-attachment
+        thread-name-prefix: x8a-tcp
         daemon: true
         colocate: true
         prefer-native: true
@@ -146,111 +157,171 @@ jt808-server:
         check-backoff-time: 10s
       ## 请求处理线程
       loop-resources:
-        select-count: 1
-        worker-count: 10
-        thread-name-prefix: xtream-udp
+        ## @default reactor.netty.resources.LoopResources.DEFAULT_IO_SELECT_COUNT: -1
+        # select-count: 1
+        ## @default reactor.netty.resources.LoopResources.DEFAULT_IO_WORKER_COUNT
+        # worker-count: 10
+        ## x8a: xtream-jt808-attachment
+        thread-name-prefix: x8a-udp
         daemon: true
         colocate: true
         prefer-native: true
   ## Reactor 用到的调度器配置
   schedulers:
     ## [转发请求]的调度器
+    ## 当且仅当 jt808-server.features.request-dispatcher-scheduler.enabled == true 时生效
     request-dispatcher:
+      ## xrd: Xtream-request-dispatcher
+      metrics:
+        enabled: false
+        prefix: "xrd"
+      metadata:
+        desc: "Xtream request dispatcher"
+      remark: "Builtin Xtream request dispatcher"
       type: parallel
-      parallel:
+      ## 当且仅当 jt808-server.schedulers.request-dispatcher.type == bounded_elastic 时生效
+      bounded-elastic:
+        thread-name-prefix: xrd-bounded-elastic
+        ## @default reactor.core.scheduler.Schedulers.DEFAULT_BOUNDED_ELASTIC_SIZE
+        # thread-capacity: 10
+        ## @default reactor.core.scheduler.Schedulers.DEFAULT_BOUNDED_ELASTIC_QUEUESIZE
+        # queued-task-capacity: 100000
+        reject-blocking-task: true
         daemon: true
-        thread-name-prefix: dispatcher
+        ttl: 1m
+      ## 当且仅当 jt808-server.schedulers.request-dispatcher.type == parallel 时生效
+      parallel:
+        thread-name-prefix: xrd-parallel
+        ## @default reactor.core.scheduler.Schedulers.DEFAULT_POOL_SIZE + 2
+        # parallelism: 10
+        daemon: true
+        reject-blocking-task: true
+      ## !!!仅仅用于测试!!!
+      ## 当且仅当 jt808-server.schedulers.request-dispatcher.type == single 时生效
+      single:
+        thread-name-prefix: xrd-single
+        daemon: true
+        reject-blocking-task: false
     ## [非阻塞型]处理器的调度器
     non-blocking-handler:
-      type: parallel
+      ## xnbh: Xtream-non-blocking-handler
       metrics:
-        enabled: true
-        ## xnbh: xtream-non-blocking-handler
+        enabled: false
         prefix: xnbh
       metadata:
-        desc: demo0
+        desc: "Xtream non-blocking handler"
+      remark: "Builtin Xtream non-blocking handler"
+      type: parallel
+      ## 当且仅当 jt808-server.schedulers.non-blocking-handler.type == bounded_elastic 时生效
       bounded-elastic:
-        thread-name-prefix: bounded-elastic
-        thread-capacity: 10
-        queued-task-capacity: 1024
+        thread-name-prefix: xnbh-bounded-elastic
+        ## @default reactor.core.scheduler.Schedulers.DEFAULT_BOUNDED_ELASTIC_SIZE
+        # thread-capacity: 10
+        ## @default reactor.core.scheduler.Schedulers.DEFAULT_BOUNDED_ELASTIC_QUEUESIZE
+        # queued-task-capacity: 100000
         reject-blocking-task: true
         daemon: true
         ttl: 1m
+      ## 当且仅当 jt808-server.schedulers.non-blocking-handler.type == parallel 时生效
       parallel:
-        thread-name-prefix: parallel
-        parallelism: 10
+        thread-name-prefix: xnbh-parallel
+        ## @default reactor.core.scheduler.Schedulers.DEFAULT_POOL_SIZE + 2
+        # parallelism: 10
         daemon: true
         reject-blocking-task: true
+      ## !!!仅仅用于测试!!!
+      ## 当且仅当 jt808-server.schedulers.non-blocking-handler.type == single 时生效
       single:
         daemon: true
         reject-blocking-task: true
-        thread-name-prefix: single
+        thread-name-prefix: xnbh-single
     ## [阻塞型]处理器的调度器
     blocking-handler:
-      type: bounded_elastic
+      ## xbh: Xtream-blocking-handler
       metrics:
-        enabled: true
-        ## xbh: xtream-blocking-handler
+        enabled: false
         prefix: "xbh"
       metadata:
-        desc: demo0
+        desc: "Xtream blocking handler"
+      remark: "Builtin Xtream blocking handler"
+      type: bounded_elastic
+      ## 当且仅当 jt808-server.schedulers.blocking-handler.type == bounded_elastic 时生效
       bounded-elastic:
-        thread-name-prefix: blocking-bounded-elastic
-        thread-capacity: 10
-        queued-task-capacity: 1024
-        reject-blocking-task: true
+        thread-name-prefix: xbh-bounded-elastic
+        ## @default reactor.core.scheduler.Schedulers.DEFAULT_BOUNDED_ELASTIC_SIZE
+        # thread-capacity: 10
+        ## @default reactor.core.scheduler.Schedulers.DEFAULT_BOUNDED_ELASTIC_QUEUESIZE
+        # queued-task-capacity: 100000
+        reject-blocking-task: false
         daemon: true
         ttl: 1m
+      ## 当且仅当 jt808-server.schedulers.blocking-handler.type == parallel 时生效
       parallel:
-        thread-name-prefix: blocking-parallel
-        parallelism: 10
+        thread-name-prefix: xbh-parallel
+        ## @default reactor.core.scheduler.Schedulers.DEFAULT_POOL_SIZE + 2
+        # parallelism: 10
         daemon: true
-        reject-blocking-task: true
+        reject-blocking-task: false
+      ## !!!仅仅用于测试!!!
+      ## 当且仅当 jt808-server.schedulers.blocking-handler.type == single 时生效
       single:
+        thread-name-prefix: xbh-single
         daemon: true
-        reject-blocking-task: true
-        thread-name-prefix: blocking-single
+        reject-blocking-task: false
     ## [事件发布器]的调度器
     event-publisher:
-      type: bounded_elastic
+      ## xep: xtream-event-publisher
       metrics:
-        enabled: true
-        ## xep: xtream-event-publisher
+        enabled: false
         prefix: xep
+      metadata:
+        desc: "Xtream event publisher"
+      remark: "Builtin Xtream event publisher"
+      type: bounded_elastic
+      ## 当且仅当 jt808-server.schedulers.event-publisher.type == bounded_elastic 时生效
       bounded-elastic:
-        thread-name-prefix: event-publisher1
-        thread-capacity: 10
-        queued-task-capacity: 1024
+        thread-name-prefix: xep-bounded-elastic
+        ## @default reactor.core.scheduler.Schedulers.DEFAULT_BOUNDED_ELASTIC_SIZE
+        # thread-capacity: 10
+        ## @default reactor.core.scheduler.Schedulers.DEFAULT_BOUNDED_ELASTIC_QUEUESIZE
+        # queued-task-capacity: 100000
         reject-blocking-task: true
         daemon: true
         ttl: 1m
+      ## 当且仅当 jt808-server.schedulers.event-publisher.type == parallel 时生效
       parallel:
-        thread-name-prefix: event-publisher1
-        parallelism: 10
+        thread-name-prefix: xep-parallel
+        ## @default reactor.core.scheduler.Schedulers.DEFAULT_POOL_SIZE + 2
+        # parallelism: 10
         daemon: true
         reject-blocking-task: true
+      ## !!!仅仅用于测试!!!
+      ## 当且仅当 jt808-server.schedulers.event-publisher.type == single 时生效
       single:
+        thread-name-prefix: xep-single
         daemon: true
         reject-blocking-task: true
-        thread-name-prefix: event-publisher1
     # 上面 3 个 Scheduler 是必须的
     # 下面 是自定义 Scheduler 的初始化(非必须)
     custom-schedulers:
       my-scheduler-1:
         # name可以不配置(默认使用 Key)
         # name: my-scheduler-1
-        type: parallel
         metrics:
           enabled: true
           prefix: custom1
+        remark: "My custom scheduler 1"
+        type: parallel
         parallel:
           daemon: true
       my-scheduler-2:
+        # name可以不配置(默认使用 Key)
         name: my-scheduler-2
-        type: bounded_elastic
         metrics:
           enabled: true
           prefix: custom2
+        remark: "My custom scheduler 2"
+        type: bounded_elastic
         bounded-elastic:
           thread-name-prefix: my-scheduler-2
 

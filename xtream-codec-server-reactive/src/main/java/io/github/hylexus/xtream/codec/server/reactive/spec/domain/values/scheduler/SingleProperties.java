@@ -24,7 +24,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class SingleProperties {
-    private String threadNamePrefix = "single";
+    private String threadNamePrefix = "x-single";
     private boolean daemon = true;
     private boolean rejectBlockingTask = true;
 }

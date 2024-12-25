@@ -56,7 +56,7 @@ configure(subprojects) {
     }
 
     repositories {
-        mavenLocal()
+//        mavenLocal()
         extraMavenRepositoryUrls().forEach {
             maven(it)
         }
