@@ -4,12 +4,16 @@ import {
   faBug,
   faChartSimple,
   faChevronDown,
+  faCircleCheck,
   faClone,
+  faCube,
   faEye,
   faFileCirclePlus,
   faGear,
+  faHashtag,
   faHeart,
   faMoon,
+  faQuoteRight,
   faServer,
   faShuffle,
   faSun,
@@ -17,9 +21,11 @@ import {
   faTrash,
   IconDefinition,
 } from "@fortawesome/free-solid-svg-icons";
-import { faGauge } from "@fortawesome/free-solid-svg-icons";
-import { faComments } from "@fortawesome/free-solid-svg-icons";
-import { faTerminal } from "@fortawesome/free-solid-svg-icons";
+import {
+  faGauge,
+  faComments,
+  faTerminal,
+} from "@fortawesome/free-solid-svg-icons";
 import * as React from "react";
 
 import { IconSvgProps } from "@/types";
@@ -87,6 +93,19 @@ export const FaChartSimpleIcon = ({ ...props }) => {
 export const FaServerIcon = ({ ...props }) => {
   return <FaIcon icon={faServer} {...props} />;
 };
+export const FaHashtagIcon = ({ ...props }) => {
+  return <FaIcon icon={faHashtag} {...props} />;
+};
+export const FaQuoteRightIcon = ({ ...props }) => {
+  return <FaIcon icon={faQuoteRight} {...props} />;
+};
+export const FaCubeIcon = ({ ...props }) => {
+  return <FaIcon icon={faCube} {...props} />;
+};
+export const FaCircleCheckIcon = ({ ...props }) => {
+  return <FaIcon icon={faCircleCheck} {...props} />;
+};
+
 export const LogoIcon: React.FC<IconSvgProps> = ({
   size = 36,
   height,

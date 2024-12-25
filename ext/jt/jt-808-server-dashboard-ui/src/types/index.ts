@@ -108,3 +108,6 @@ export interface ServerInfo {
   java: JavaInfo;
   os: OsInfo;
 }
+export interface Dic {
+  [key: string]: any;
+}
