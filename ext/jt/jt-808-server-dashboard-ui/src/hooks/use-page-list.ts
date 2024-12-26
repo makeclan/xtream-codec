@@ -4,10 +4,9 @@ import useSWR from "swr";
 import { Session } from "@/types";
 import { request } from "@/utils/request.ts";
 
-export const usePageList = (path: string) => {
+export const usePageList = (path: string, initPerPage?: number) => {
   const [page, setPage] = useState(1);
-  const rowsPerPage = 10;
-
+  const rowsPerPage = initPerPage || 10;
   const { data, isLoading, mutate } = useSWR<{
     total: number;
     data: Session[];

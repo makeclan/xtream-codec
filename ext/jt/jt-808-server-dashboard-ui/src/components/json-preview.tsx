@@ -60,7 +60,7 @@ const generateData = (json: Object, _preKey: string) => {
         key: curKey,
         icon: valueIcon(item),
         title: (
-          <div className="inline-flex justify-between w-1/2">
+          <div className="inline-flex gap-x-12">
             <span>
               {key + (annotation[key] ? `（${annotation[key]}）` : "")}
             </span>
@@ -85,10 +85,10 @@ export const JsonPreview: FC<JSONPreviewProps> = ({ json }) => {
       theme={{
         token: {
           // @ts-ignore
-          fontSize: "var(--nextui-font-size-medium)",
-          colorBgContainer: "var(--nextui-background)",
-          titleHeight: "var(--nextui-line-height-large)",
-          colorText: "var(--nextui-content1)",
+          fontSize: "var(--xc-font-size-medium)",
+          colorBgContainer: "var(--xc-background)",
+          titleHeight: "var(--xc-line-height-large)",
+          colorText: "var(--xc-content1)",
         },
       }}
     >

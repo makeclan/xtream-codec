@@ -20,5 +20,7 @@ export default {
     },
   },
   darkMode: "class",
-  plugins: [nextui()],
+  plugins: [nextui({
+    prefix: "xc",
+  })],
 };

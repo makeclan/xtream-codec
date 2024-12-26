@@ -7,6 +7,7 @@ import {
   faCircleCheck,
   faClone,
   faCube,
+  faDesktop,
   faEye,
   faFileCirclePlus,
   faGear,
@@ -14,6 +15,7 @@ import {
   faHeart,
   faMoon,
   faQuoteRight,
+  faRobot,
   faServer,
   faShuffle,
   faSun,
@@ -92,6 +94,12 @@ export const FaChartSimpleIcon = ({ ...props }) => {
 };
 export const FaServerIcon = ({ ...props }) => {
   return <FaIcon icon={faServer} {...props} />;
+};
+export const FaDesktopIcon = ({ ...props }) => {
+  return <FaIcon icon={faDesktop} {...props} />;
+};
+export const FaRobotIcon = ({ ...props }) => {
+  return <FaIcon icon={faRobot} {...props} />;
 };
 export const FaHashtagIcon = ({ ...props }) => {
   return <FaIcon icon={faHashtag} {...props} />;

@@ -8,16 +8,15 @@ import {
 } from "@nextui-org/table";
 import { Spinner } from "@nextui-org/spinner";
 import { Pagination } from "@nextui-org/pagination";
-import React, { FC, useState } from "react";
+import React, { FC, useMemo, useState } from "react";
 import { Tooltip } from "@nextui-org/tooltip";
-import { Spacer } from "@nextui-org/spacer";
-import { Button } from "@nextui-org/button";
 import { Chip } from "@nextui-org/chip";
+
+import { SessionMonitor } from "./session-monitor.tsx";
 
 import { usePageList } from "@/hooks/use-page-list.ts";
 import { Session, SessionType } from "@/types";
 import { request } from "@/utils/request.ts";
-import { SessionMonitor } from "@/components/session-monitor.tsx";
 import { FaEyeIcon, FaTrashIcon } from "@/components/icons.tsx";
 
 interface CellProps {
@@ -45,26 +44,25 @@ const SessionCell: FC<CellProps> = ({
     case "protocolVersion":
       return cellValue.replace("VERSION_", "");
     case "protocolType":
-      return <Chip color="primary">{cellValue}</Chip>;
+      return (
+        <Chip color="primary" size="sm">
+          {cellValue}
+        </Chip>
+      );
     case "operation":
       return (
-        <div className="flex">
+        <div className="relative flex items-center gap-2">
           <Tooltip content="链路监控">
-            <Button
+            <FaEyeIcon
               className="text-lg text-default-400 cursor-pointer active:opacity-50"
-              onPress={() => handleMonitor(session)}
-            >
-              <FaEyeIcon />
-            </Button>
+              onClick={() => handleMonitor(session)}
+            />
           </Tooltip>
-          <Spacer x={2} />
           <Tooltip content="删除会话">
-            <Button
-              className="text-lg text-default-400 cursor-pointer active:opacity-50"
-              onPress={() => handleDel(session)}
-            >
-              <FaTrashIcon />
-            </Button>
+            <FaTrashIcon
+              className="text-lg text-danger cursor-pointer active:opacity-50"
+              onClick={() => handleDel(session)}
+            />
           </Tooltip>
         </div>
       );
@@ -115,26 +113,37 @@ export const SessionTable: FC<SessionTableProps> = ({ type }) => {
       console.error(_e);
     }
   };
+  const bottomContent = useMemo(() => {
+    return (
+      pages > 0 && (
+        <div className="flex w-full justify-center">
+          <Pagination
+            isCompact
+            showControls
+            showShadow
+            color="secondary"
+            page={page}
+            total={pages}
+            onChange={(page) => setPage(page)}
+          />
+        </div>
+      )
+    );
+  }, [page, pages]);
+
+  const topContent = useMemo(() => {
+    // TODO 筛选
+    return <p>总数： {tableData?.total}</p>;
+  }, [tableData?.total]);
 
   return (
     <>
       <Table
         aria-label="Example table with dynamic content"
-        bottomContent={
-          pages > 0 && (
-            <div className="flex w-full justify-center">
-              <Pagination
-                isCompact
-                showControls
-                showShadow
-                color="secondary"
-                page={page}
-                total={pages}
-                onChange={(page) => setPage(page)}
-              />
-            </div>
-          )
-        }
+        bottomContent={bottomContent}
+        bottomContentPlacement="outside"
+        topContent={topContent}
+        topContentPlacement="outside"
       >
         <TableHeader columns={columns}>
           {(column) => (

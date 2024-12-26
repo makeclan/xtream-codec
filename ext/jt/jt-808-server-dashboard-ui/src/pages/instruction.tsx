@@ -1,4 +1,4 @@
-import { SessionTable } from "@/components/session-table.tsx";
+import { SessionTable } from "@/components/sessions/session-table.tsx";
 
 export const InstructionPage = () => {
   return <SessionTable type="instruction" />;

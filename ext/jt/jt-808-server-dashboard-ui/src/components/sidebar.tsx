@@ -1,35 +1,74 @@
 import { Link } from "@nextui-org/link";
+import { useState } from "react";
+import { Listbox, ListboxItem } from "@nextui-org/listbox";
+import { ReactNode } from "react";
+import clsx from "clsx";
 
-import { LogoIcon } from "@/components/icons";
+import { FaChevronDownIcon, LogoIcon } from "@/components/icons";
 import { siteConfig } from "@/config/site.ts";
-export const Sidebar = () => {
+
+const ListboxWrapper = ({
+  isOpen,
+  children,
+}: {
+  isOpen: boolean;
+  children: ReactNode;
+}) => (
+  <div
+    className={clsx(
+      "h-full transition-width px-2 py-2 flex flex-col items-center",
+      isOpen ? "w-64" : "w-16",
+    )}
+  >
+    {children}
+  </div>
+);
+
+const TopContent = () => {
   return (
-    <div className="flex h-full flex-col md:shrink-0 p-6 w-64">
-      <Link
-        className="mb-2 flex h-10  items-center justify-center md:h-20"
-        href={siteConfig.links.github}
+    <Link
+      className="flex items-center px-3 justify-center gap-0"
+      href={siteConfig.links.github}
+    >
+      <LogoIcon />
+    </Link>
+  );
+};
+
+export const Sidebar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <ListboxWrapper isOpen={isOpen}>
+      <Listbox
+        bottomContent={
+          <FaChevronDownIcon
+            className="fa-rotate-270"
+            onClick={() => setIsOpen(!isOpen)}
+          />
+        }
+        disabledKeys={["/debug"]}
+        items={siteConfig.sidenav}
+        topContent={<TopContent />}
       >
-        <LogoIcon />
-        <p>{siteConfig.name}</p>
-      </Link>
-      <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
-        {siteConfig.sidenav.map((link) => {
+        {(link) => {
           const LinkIcon = link.icon;
+          const iconClasses =
+            "text-xl text-default-500 pointer-events-none flex-shrink-0 xw-6 mx-1";
 
           return (
-            <Link
-              key={link.name}
-              isBlock
-              className="py-2 md:px-10 text-default-500 selected:text-foreground active:bg-default-100 hover:transition-colors"
+            <ListboxItem
+              key={link.href}
+              className="py-2 text-default-500 selected:text-foreground active:bg-default-100 hover:transition-colors"
+              color={link.href === "/debug" ? "danger" : "default"}
               href={link.href}
+              startContent={<LinkIcon className={iconClasses} />}
             >
-              <LinkIcon className="xw-6 mx-1" />
-              <p className="hidden md:block px-2">{link.name}</p>
-            </Link>
+              {link.name}
+            </ListboxItem>
           );
-        })}
-        <div className="hidden h-auto w-full grow rounded-md md:block" />
-      </div>
-    </div>
+        }}
+      </Listbox>
+    </ListboxWrapper>
   );
 };

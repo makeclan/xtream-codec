@@ -1,6 +1,11 @@
 import type { SharedSelection } from "@nextui-org/system";
 
-import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/modal";
+import {
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerHeader,
+} from "@nextui-org/drawer";
 import { Input } from "@nextui-org/input";
 import { Spacer } from "@nextui-org/spacer";
 import {
@@ -28,7 +33,12 @@ import { Card, CardBody } from "@nextui-org/card";
 import clsx from "clsx";
 import { Avatar } from "@nextui-org/avatar";
 
-import { FaChevronDownIcon } from "@/components/icons.tsx";
+import {
+  FaChevronDownIcon,
+  FaDesktopIcon,
+  FaRobotIcon,
+  FaServerIcon,
+} from "@/components/icons.tsx";
 import { subtitle } from "@/components/primitives.ts";
 import { Event, EventType, Session } from "@/types";
 const SESSION_MAX_LENGTH = "100";
@@ -45,11 +55,13 @@ const Message: FC<MessageProps> = ({ item, className }) => {
     ].includes(Number(item.type))
       ? {
           name: "C",
-          flexRow: "",
+          avatar: <FaServerIcon className="text-green-500 fa-fade" />,
+          bg: " bg-content3",
         }
       : {
           name: "S",
-          flexRow: "flex-row-reverse",
+          avatar: <FaDesktopIcon className="text-blue-500 fa-beat" />,
+          bg: " bg-content2",
         };
   }, [item]);
 
@@ -57,18 +69,23 @@ const Message: FC<MessageProps> = ({ item, className }) => {
     EventType.AFTER_SESSION_CREATED,
     EventType.BEFORE_SESSION_CLOSED,
   ].includes(Number(item.type)) ? (
-    <div className="flex m-4 justify-center">
-      <Card className="flex-grow-0 max-w-2xl">
-        <CardBody>
+    <div className="flex gap-3">
+      <div className="w-12">
+        <Avatar icon={<FaRobotIcon className="text-primary" />} />
+      </div>
+      <Card className="w-full">
+        <CardBody className="text-center">
           <p className="text-primary line-clamp-2 text-sm">{`Session${EventType.BEFORE_SESSION_CLOSED ? " closed" : " opened"} at: ${item.eventTime} remoteAddress: ${item.remoteAddress} reason: ${item.reason}`}</p>
         </CardBody>
+        <div className="w-12" />
       </Card>
     </div>
   ) : (
-    <div className={clsx(className, "flex m-4", rowDisplay.flexRow)}>
-      <Avatar className="flex-shrink-0" name={rowDisplay.name} />
-      <Spacer x={2} />
-      <Card className="flex-grow-0 max-w-2xl">
+    <div className={clsx(className, "flex gap-3")}>
+      <div className="w-12">
+        {rowDisplay.name === "C" && <Avatar icon={rowDisplay.avatar} />}
+      </div>
+      <Card className={clsx("flex-grow-0 w-full", rowDisplay.bg)}>
         <CardBody>
           {Object.keys(item)
             .filter((k) => ["messageId", "hexString", "eventTime"].includes(k))
@@ -77,6 +94,9 @@ const Message: FC<MessageProps> = ({ item, className }) => {
             ))}
         </CardBody>
       </Card>
+      <div className="w-12">
+        {rowDisplay.name === "S" && <Avatar icon={rowDisplay.avatar} />}
+      </div>
     </div>
   );
 };
@@ -175,19 +195,19 @@ export const SessionMonitor: FC<SessionMonitorProps> = ({
   }, [filteredLinkData, isOpen]);
 
   return (
-    <Modal
+    <Drawer
       backdrop="blur"
       isOpen={isOpen}
       scrollBehavior="inside"
-      size="4xl"
+      size="5xl"
       onClose={onClose}
     >
-      <ModalContent>
+      <DrawerContent>
         <>
-          <ModalHeader className="flex justify-between gap-1">
+          <DrawerHeader className="flex justify-between gap-1">
             <div className={subtitle()}>terminalId: {row?.terminalId}</div>
-          </ModalHeader>
-          <ModalBody>
+          </DrawerHeader>
+          <DrawerBody>
             <div className=" flex items-center">
               <Input
                 className="w-1/6"
@@ -223,15 +243,15 @@ export const SessionMonitor: FC<SessionMonitorProps> = ({
                 </DropdownMenu>
               </Dropdown>
             </div>
-            <ScrollShadow hideScrollBar>
+            <ScrollShadow hideScrollBar className="flex flex-col gap-4 px-1">
               {filteredLinkData?.map((item: any, index: number) => (
                 <Message key={index} className="message-card" item={item} />
               ))}
               <div ref={listBottomRef} />
             </ScrollShadow>
-          </ModalBody>
+          </DrawerBody>
         </>
-      </ModalContent>
-    </Modal>
+      </DrawerContent>
+    </Drawer>
   );
 };

@@ -1,4 +1,4 @@
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
+import { CardBody, CardHeader } from "@nextui-org/card";
 import { Chip } from "@nextui-org/chip";
 import { useEffect, useState } from "react";
 import {
@@ -251,7 +251,7 @@ export const CardBox = () => {
       </div>
       <Spacer y={4} />
       <div className="gap-2 grid grid-cols-1">
-        <Card>
+        <SpotlightCard>
           <CardHeader>线程</CardHeader>
           <CardBody className="h-96">
             <DynamicThreadsCharts
@@ -261,7 +261,7 @@ export const CardBox = () => {
               }}
             />
           </CardBody>
-        </Card>
+        </SpotlightCard>
       </div>
     </>
   );

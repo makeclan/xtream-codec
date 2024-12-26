@@ -2,7 +2,6 @@ import { ReactNode, useRef } from "react";
 import { Card } from "@nextui-org/card";
 
 import { useMouseMove } from "@/hooks/use-mouse-move.ts";
-
 export const SpotlightCard = ({
   children,
   ...props
@@ -16,6 +15,7 @@ export const SpotlightCard = ({
   return (
     <Card
       ref={ref}
+      className="border-default-100 border-1"
       shadow="sm"
       style={{
         background:

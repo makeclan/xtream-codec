@@ -1,4 +1,4 @@
-import { SessionTable } from "@/components/session-table.tsx";
+import { SessionTable } from "@/components/sessions/session-table.tsx";
 
 export const AttachmentPage = () => {
   return <SessionTable type="attachment" />;
