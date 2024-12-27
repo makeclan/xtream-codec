@@ -73,12 +73,12 @@ const Message: FC<MessageProps> = ({ item, className }) => {
       <div className="w-12">
         <Avatar icon={<FaRobotIcon className="text-primary" />} />
       </div>
-      <Card className="w-full">
+      <Card className=" flex-grow-0 w-full">
         <CardBody className="text-center">
           <p className="text-primary line-clamp-2 text-sm">{`Session${EventType.BEFORE_SESSION_CLOSED ? " closed" : " opened"} at: ${item.eventTime} remoteAddress: ${item.remoteAddress} reason: ${item.reason}`}</p>
         </CardBody>
-        <div className="w-12" />
       </Card>
+      <div className="w-12" />
     </div>
   ) : (
     <div className={clsx(className, "flex gap-3")}>
@@ -90,7 +90,9 @@ const Message: FC<MessageProps> = ({ item, className }) => {
           {Object.keys(item)
             .filter((k) => ["messageId", "hexString", "eventTime"].includes(k))
             .map((e, i) => (
-              <p key={i}>{`${e}: ${item[e as keyof Event]}`}</p>
+              <p
+                key={i}
+              >{`${e}: ${e === "messageId" ? "0x0" + item[e as keyof Event].toString(16) : item[e as keyof Event]}`}</p>
             ))}
         </CardBody>
       </Card>

@@ -4,9 +4,9 @@ import {
   fetchEventSource,
 } from "@microsoft/fetch-event-source";
 import { Card, CardBody, CardHeader } from "@nextui-org/card";
-import { Code } from "@nextui-org/code";
 
 import { Thread } from "@/types";
+import { JsonPreview } from "@/components/json-preview.tsx";
 
 export const ThreadsPage = () => {
   const [threads, setThreads] = useState<Thread[]>([]);
@@ -48,21 +48,13 @@ export const ThreadsPage = () => {
   }, []);
 
   return (
-    <div className="gap-4 grid grid-cols-2 sm:grid-cols-3">
+    <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {threads.map((thread: Thread) => (
         <Card key={thread.name}>
           <CardHeader>{thread.name}</CardHeader>
           <CardBody>
-            <p>time: {thread.time}</p>
-            {/*TODO start 数据展示UI重新设计*/}
-            <Code>
-              <pre>
-                {JSON.stringify(thread.value, null, 2)
-                  .replace(/["{},]/g, "")
-                  .replace(/\n {2}\n/g, "\n")}
-              </pre>
-            </Code>
-            {/*end 数据展示UI重新设计*/}
+            <p className="mb-2">time: {thread.time.slice(0, -4)}</p>
+            <JsonPreview json={thread.value} page="threads" />
           </CardBody>
         </Card>
       ))}

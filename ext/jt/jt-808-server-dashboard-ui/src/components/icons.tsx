@@ -4,6 +4,7 @@ import {
   faBug,
   faChartSimple,
   faChevronDown,
+  faChevronRight,
   faCircleCheck,
   faClone,
   faCube,
@@ -112,6 +113,9 @@ export const FaCubeIcon = ({ ...props }) => {
 };
 export const FaCircleCheckIcon = ({ ...props }) => {
   return <FaIcon icon={faCircleCheck} {...props} />;
+};
+export const FaChevronRightIcon = ({ ...props }) => {
+  return <FaIcon icon={faChevronRight} {...props} />;
 };
 
 export const LogoIcon: React.FC<IconSvgProps> = ({

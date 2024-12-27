@@ -10,7 +10,7 @@ import { Spinner } from "@nextui-org/spinner";
 import React, { FC } from "react";
 import useSWR from "swr";
 import { Tooltip } from "@nextui-org/tooltip";
-import clsx from "clsx";
+import { Chip } from "@nextui-org/chip";
 
 import { request } from "@/utils/request.ts";
 
@@ -27,8 +27,8 @@ export const MappingsPage = () => {
     {},
   );
   const columns = [
+    { key: "nonBlocking", label: "状态" },
     { key: "handlerName", label: "处理器" },
-    // { key: "messageId", label: "messageId" },
     { key: "messageIdAsHexString", label: "消息ID" },
     { key: "messageIdDesc", label: "消息描述" },
     { key: "version", label: "协议版本" },
@@ -52,10 +52,17 @@ export const MappingsPage = () => {
 
     switch (columnKey) {
       case "handlerName":
+        return <Tooltip content={item.handler}>{cellValue}</Tooltip>;
+      case "nonBlocking":
         return (
-          <Tooltip color="primary" content={item.handler}>
-            {cellValue}
-          </Tooltip>
+          <Chip
+            className="capitalize border-none gap-1 text-default-600"
+            color={item.nonBlocking ? "success" : "danger"}
+            size="sm"
+            variant="dot"
+          >
+            {item.nonBlocking ? "正常" : "阻塞"}
+          </Chip>
         );
       default:
         return cellValue;
@@ -63,9 +70,16 @@ export const MappingsPage = () => {
   };
 
   return (
-    <Table aria-label="Example table with dynamic content">
+    <Table aria-label="table">
       <TableHeader columns={columns}>
-        {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+        {(column) => (
+          <TableColumn
+            key={column.key}
+            align={["nonBlocking"].includes(column.key) ? "center" : "start"}
+          >
+            {column.label}
+          </TableColumn>
+        )}
       </TableHeader>
       <TableBody
         emptyContent={"暂无数据"}
@@ -74,10 +88,7 @@ export const MappingsPage = () => {
         loadingState={loadingState}
       >
         {(item) => (
-          <TableRow
-            key={item.key}
-            className={clsx(item.nonBlocking ? "" : "bg-danger")}
-          >
+          <TableRow key={item.key}>
             {(columnKey) => (
               <TableCell>
                 <RenderCell columnKey={columnKey} item={item} />

@@ -21,11 +21,12 @@ export const Navbar = () => {
   };
 
   return (
-    <NextUINavbar className="bg-transparent" maxWidth="xl" position="sticky">
-      <NavbarContent
-        className="hidden sm:flex basis-1/5 sm:basis-full"
-        justify="end"
-      >
+    <NextUINavbar
+      className="flex bg-transparent items-center gap-3 px-4"
+      maxWidth="full"
+      position="sticky"
+    >
+      <NavbarContent className="hidden sm:flex" justify="end">
         <NavbarItem className="hidden sm:flex gap-2">
           <Link isExternal href={siteConfig.links.github} title="GitHub">
             <FaGithubIcon className="text-default-500" size="xl" />

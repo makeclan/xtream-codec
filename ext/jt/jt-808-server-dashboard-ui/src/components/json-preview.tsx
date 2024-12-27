@@ -2,6 +2,7 @@ import type { TreeDataNode } from "antd";
 
 import { Tree, ConfigProvider } from "antd";
 import { FC } from "react";
+import clsx from "clsx";
 
 import {
   FaChevronDownIcon,
@@ -37,7 +38,7 @@ const valueIcon = (item: string | number | boolean) => {
       return <FaQuoteRightIcon className="text-small" />;
   }
 };
-const generateData = (json: Object, _preKey: string) => {
+const generateData = (json: Object, _preKey: string, page?: string) => {
   const tree: TreeDataNode[] = [];
 
   Object.keys(json).forEach((key, index) => {
@@ -49,22 +50,36 @@ const generateData = (json: Object, _preKey: string) => {
         key: curKey,
         icon: <FaCubeIcon className="text-small" />,
         title: (
-          <div className="inline-flex w-1/2">
-            {key + (annotation[key] ? `（${annotation[key]}）` : "")}
+          <div
+            className={clsx(
+              "inline-flex gap-x-12",
+              page === "threads" ? "justify-between" : "justify-normal",
+            )}
+          >
+            <span>{key}</span>
+            {annotation[key] && (
+              <span className="text-small text-default-300">
+                {annotation[key]}
+              </span>
+            )}
           </div>
         ),
-        children: generateData(item, curKey),
+        children: generateData(item, curKey, page),
       });
     } else {
       tree.push({
         key: curKey,
         icon: valueIcon(item),
         title: (
-          <div className="inline-flex gap-x-12">
-            <span>
-              {key + (annotation[key] ? `（${annotation[key]}）` : "")}
-            </span>
+          <div
+            className={clsx(
+              "inline-flex gap-x-12 w-[80%] flex-grow",
+              page === "threads" ? "justify-between" : "justify-normal",
+            )}
+          >
+            <span>{key}</span>
             <span className={valueColor(item)}>{String(item)}</span>
+            {annotation[key] && <span>{annotation[key]}</span>}
           </div>
         ),
       });
@@ -76,9 +91,10 @@ const generateData = (json: Object, _preKey: string) => {
 
 export interface JSONPreviewProps {
   json: Object;
+  page?: string;
 }
-export const JsonPreview: FC<JSONPreviewProps> = ({ json }) => {
-  const treeData: TreeDataNode[] = generateData(json, "0");
+export const JsonPreview: FC<JSONPreviewProps> = ({ json, page }) => {
+  const treeData: TreeDataNode[] = generateData(json, "0", page);
 
   return (
     <ConfigProvider
@@ -95,9 +111,9 @@ export const JsonPreview: FC<JSONPreviewProps> = ({ json }) => {
       <Tree
         blockNode
         showIcon
-        showLine
         defaultExpandedKeys={["0-0", "0-1", "0-2", "0-3"]}
         selectable={false}
+        showLine={page !== "threads"}
         switcherIcon={(props) =>
           props.expanded ? (
             <FaChevronDownIcon />
