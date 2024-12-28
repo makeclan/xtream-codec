@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.quickstart.ext.jt808dashboard;
+package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage;
 
 import io.netty.util.ResourceLeakDetector;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Jt808ServerQuickStartWithDashboardApp {
+public class Jt808ServerQuickStartWithStorageApp {
 
     public static void main(String[] args) {
         // FIXME 如果你不了解 ResourceLeakDetector 是做什么的,请务必注释掉下面这行代码!!!
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
-        SpringApplication.run(Jt808ServerQuickStartWithDashboardApp.class, args);
+        SpringApplication.run(Jt808ServerQuickStartWithStorageApp.class, args);
     }
+
 }

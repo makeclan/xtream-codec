@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--
+    Copyright 2024 the original author or authors.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<mapper namespace="io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.postgres.Jt808RequestTraceLogMapperPostgres">
+    <insert id="insert">
+        insert into jt_808_request_trace_log
+        (id, received_at, net_type, trace_id, terminal_id, message_id, version, flow_id, message_body_length, message_body_property, total_package,
+         current_package_no, is_subpackage, raw_hex, escaped_hex, created_at)
+        values (#{id}, #{receivedAt}, #{netType}, #{traceId}, #{terminalId}, #{messageId}, #{version}, #{flowId}, #{messageBodyLength}, #{messageBodyProperty}, #{totalPackage},
+                #{currentPackageNo}, #{isSubpackage}, #{rawHex}, #{escapedHex}, #{createdAt})
+    </insert>
+</mapper>
