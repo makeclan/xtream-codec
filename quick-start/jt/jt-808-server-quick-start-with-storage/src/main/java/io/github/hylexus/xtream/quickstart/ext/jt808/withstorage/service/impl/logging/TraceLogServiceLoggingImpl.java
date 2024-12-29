@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl;
+package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl.logging;
 
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.event.Jt808EventPayloads;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.TraceLogService;
@@ -27,9 +27,9 @@ import reactor.core.publisher.Mono;
  * @author hylexus
  */
 @Service
-public class TraceLogServiceConsoleImpl implements TraceLogService {
+public class TraceLogServiceLoggingImpl implements TraceLogService {
 
-    private static final Logger log = LoggerFactory.getLogger(TraceLogServiceConsoleImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(TraceLogServiceLoggingImpl.class);
 
     @Override
     public Mono<Boolean> afterRequestDecode(Jt808EventPayloads.Jt808ReceiveEvent event) {

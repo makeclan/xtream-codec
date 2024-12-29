@@ -25,7 +25,6 @@ import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestH
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,21 +65,8 @@ public class Jt808QuickStartRequestHandler {
         return Mono.empty();
     }
 
-    /**
-     * 终端注册(V2019)
-     * <p>
-     * 不分包:
-     * <p>
-     * 7E010060240100000000013912344329000000030001000B00026964393837363534333231747970653030313233343536373831323334353637277E7E010060240100000000013912344329000100030002383837363534333231494430303030313233343536373831323334353637383837363534357E7E0100600E010000000001391234432900020003000333323101B8CA4A2D313233343539347E
-     * <p>
-     * 分包:
-     * <p>
-     * 7E010060240100000000013912344329000000030001000B00026964393837363534333231747970653030313233343536373831323334353637277E
-     * 7E010060240100000000013912344329000100030002383837363534333231494430303030313233343536373831323334353637383837363534357E
-     * 7E0100600E010000000001391234432900020003000333323101B8CA4A2D313233343539347E
-     */
     @Jt808RequestHandlerMapping(messageIds = 0x0100, versions = Jt808ProtocolVersion.VERSION_2019)
-    @Jt808ResponseBody(messageId = 0x8100, maxPackageSize = 1000)
+    @Jt808ResponseBody(messageId = 0x8100)
     public Mono<BuiltinMessage8100> processMessage0x0100V2019(Jt808Request request, @Jt808RequestBody BuiltinMessage0100V2019 requestBody) {
         log.info("receive message [0x0100-v2019]: {}", requestBody);
         log.info("{}", Thread.currentThread());
@@ -127,33 +113,6 @@ public class Jt808QuickStartRequestHandler {
         log.info("receive message [0x0100-(v2011 or v2013)]: {}", requestBody);
         final ServerCommonReplyMessage responseBody = ServerCommonReplyMessage.success(request);
         return Mono.just(responseBody);
-    }
-
-
-    /**
-     * 位置上报(V2019)
-     * <p>
-     * 7e02004086010000000001893094655200E4000000000000000101D907F2073D336C000000000000211124114808010400000026030200003001153101002504000000001404000000011504000000FA160400000000170200001803000000EA10FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF02020000EF0400000000F31B017118000000000000000000000000000000000000000000000000567e
-     */
-    @Jt808RequestHandlerMapping(messageIds = 0x0200, versions = Jt808ProtocolVersion.VERSION_2019)
-    @Jt808ResponseBody(messageId = 0x8001, maxPackageSize = 1000)
-    public Mono<ServerCommonReplyMessage> processMessage0200V2019(
-            Jt808Session session,
-            Jt808Request request,
-            @Jt808RequestBody BuiltinMessage0200 body) {
-        log.info("v2019-0x0200: {}", body);
-        return this.processLocationMessage(session, body).map(result -> {
-            // ...
-            return ServerCommonReplyMessage.of(request, result);
-        });
-    }
-
-    /**
-     * 0:成功/确认; 1:失败; 2:消息有误; 3:不支持; 4:报警处理确认
-     */
-    private Mono<Byte> processLocationMessage(Jt808Session session, BuiltinMessage0200 body) {
-        // 业务逻辑...
-        return Mono.just((byte) 0);
     }
 
 }

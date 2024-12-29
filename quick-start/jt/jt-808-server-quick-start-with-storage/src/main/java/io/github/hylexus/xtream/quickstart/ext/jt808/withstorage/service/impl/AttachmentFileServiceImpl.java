@@ -18,11 +18,16 @@ package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl;
 
 
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1210;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1212;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage30316364;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.AlarmIdentifier;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestEntity;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.props.DemoAppProps;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.AttachmentFileService;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.AttachmentInfoService;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.ObjectStorageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
@@ -33,9 +38,10 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.Future;
 
@@ -46,29 +52,86 @@ import java.util.concurrent.Future;
 public class AttachmentFileServiceImpl implements AttachmentFileService {
 
     public static final Scheduler SCHEDULER = Schedulers.boundedElastic();
+    private static final Logger log = LoggerFactory.getLogger(AttachmentFileServiceImpl.class);
     private final DemoAppProps appProps;
+    private final ObjectStorageService minioService;
+    private final String remoteStorageBucketName;
+    private final AttachmentInfoService attachmentInfoService;
 
-    public AttachmentFileServiceImpl(DemoAppProps appProps) {
+    public AttachmentFileServiceImpl(DemoAppProps appProps, ObjectStorageService minioService, AttachmentInfoService attachmentInfoService) {
         this.appProps = appProps;
+        this.minioService = minioService;
+        this.remoteStorageBucketName = appProps.getAttachmentServer().getRemoteStorageBucketName();
+        this.attachmentInfoService = attachmentInfoService;
+    }
+
+    private String generateAlarmFilePath(String terminalId, BuiltinMessage1210.AttachmentItem attachmentItem) {
+        final String time = DateTimeFormatter.ofPattern("yyyyMMddHH").format(attachmentItem.getGroup().getAlarmIdentifier().getTime());
+        return time + File.separator
+               + terminalId + File.separator
+               + attachmentItem.getGroup().getAlarmNo() + File.separator
+               + attachmentItem.getFileName();
+    }
+
+    // OSS中的存储路径
+    private String generateAlarmFileRemotePath(String terminalId, BuiltinMessage1210.AttachmentItem attachmentItem) {
+        return this.generateAlarmFilePath(terminalId, attachmentItem);
+    }
+
+    // 本地临时文件路径
+    private String generateAlarmFileLocalPath(String terminalId, BuiltinMessage1210.AttachmentItem attachmentItem) {
+        return appProps.getAttachmentServer().getTemporaryPath() + File.separator
+               + "alarm" + File.separator
+               + this.generateAlarmFilePath(terminalId, attachmentItem);
     }
 
     @Override
-    public Mono<Integer> writeDataFragmentAsync(Jt808Session session, BuiltinMessage30316364 body, BuiltinMessage1210 group) {
-        final AlarmIdentifier alarmIdentifier = group.getAlarmIdentifier();
-        final LocalDateTime localDateTime = alarmIdentifier.getTime();
-        // 这里就瞎写了一个路径  看你需求随便改
-        final String filePath = appProps.getAttachmentService().getTemporaryPath() + File.separator
-                                + DateTimeFormatter.ofPattern("yyyyMMddHH").format(localDateTime) + File.separator
-                                + session.terminalId() + File.separator
-                                + group.getMessageType() + File.separator
-                                + group.getAlarmNo() + File.separator
-                                + DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(localDateTime) + "-" + group.getAlarmNo() + File.separator
-                                + body.getFileName().trim();
+    public Mono<Integer> writeDataFragmentAsync(Jt808Session session, BuiltinMessage30316364 body, BuiltinMessage1210.AttachmentItem attachmentItem) {
+        // 本地临时文件路径
+        final String filePath = this.generateAlarmFileLocalPath(session.terminalId(), attachmentItem);
 
         // 使用 AsynchronousFileChannel
         // return this.writeDataWithAsynchronousFileChannel(body, filePath);
         // 使用 RandomAccessFile
         return this.writeDataWithRandomAccessFile(body, filePath);
+    }
+
+    public Mono<Boolean> moveFileToRemoteStorage(Jt808RequestEntity<BuiltinMessage1212> requestEntity, BuiltinMessage1210.AttachmentItem attachmentItem, boolean deleteLocalFile) {
+        final String terminalId = requestEntity.getHeader().terminalId();
+        final String localFilePath = this.generateAlarmFileLocalPath(terminalId, attachmentItem);
+        final String remoteFilePath = this.generateAlarmFileRemotePath(terminalId, attachmentItem);
+        if (deleteLocalFile) {
+            log.info("Moving file(DeleteLocalFile) from {} to remote storage: {}", localFilePath, remoteFilePath);
+        } else {
+            log.info("Moving file(RetainLocalFile) from {} to remote storage: {}", localFilePath, remoteFilePath);
+        }
+        return this.attachmentInfoService.saveAlarmInfo(terminalId, remoteFilePath, attachmentItem)
+                .then(this.uploadToMinio(deleteLocalFile, localFilePath, remoteFilePath));
+    }
+
+    private Mono<Boolean> uploadToMinio(boolean deleteLocalFile, String localFilePath, String remoteFilePath) {
+        return this.minioService.uploadFile(this.remoteStorageBucketName, localFilePath, remoteFilePath, null)
+                .then(Mono.defer(() -> {
+                    if (deleteLocalFile) {
+                        return Mono.fromCallable(
+                                        () -> {
+                                            // 阻塞操作 调度到其他 Scheduler 上
+                                            Files.delete(Paths.get(localFilePath));
+                                            return true;
+                                        }
+                                )
+                                // 这里示例性地使用 Schedulers.boundedElastic()，你可以自定义自己的 Scheduler
+                                .subscribeOn(Schedulers.boundedElastic())
+                                .onErrorResume(e -> {
+                                    log.error("Failed to delete local file: {}", localFilePath);
+                                    log.error("Failed to delete local file", e);
+                                    return Mono.just(false);
+                                });
+                    } else {
+                        return Mono.just(true);
+                    }
+                }))
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
     private Mono<Integer> writeDataWithRandomAccessFile(BuiltinMessage30316364 body, String filePath) {

@@ -29,8 +29,10 @@ import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestH
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestHandlerMapping;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestEntity;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ServerType;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.props.DemoAppProps;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.AttachmentFileService;
 import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
@@ -40,10 +42,13 @@ import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
+ * 苏标附件服务处理器
+ *
  * @author hylexus
  */
 @Component
@@ -52,59 +57,86 @@ public class AttachmentFileHandler {
     private static final Logger log = LoggerFactory.getLogger(AttachmentFileHandler.class);
     // <terminalId, <fileName, AttachmentItem>>
     // 只是个示例而已 看你需求自己改造
-    private final Cache<String, Map<String, BuiltinMessage1210.AttachmentItem>> attachmentItemCache = Caffeine.newBuilder()
+    private final Cache<String, ConcurrentMap<String, BuiltinMessage1210.AttachmentItem>> attachmentItemCache = Caffeine.newBuilder()
             .expireAfterWrite(Duration.ofMinutes(5))
             .build();
+    private final DemoAppProps demoAppProps;
 
     private final AttachmentFileService attachmentFileService;
 
-    public AttachmentFileHandler(AttachmentFileService attachmentFileService) {
+    public AttachmentFileHandler(DemoAppProps demoAppProps, AttachmentFileService attachmentFileService) {
+        this.demoAppProps = demoAppProps;
         this.attachmentFileService = attachmentFileService;
     }
 
     @Jt808RequestHandlerMapping(messageIds = 0x1210)
     @Jt808ResponseBody(messageId = 0x8001)
-    public Mono<ServerCommonReplyMessage> processMsg0x1210(Jt808Request request, Jt808Session session, @Jt808RequestBody BuiltinMessage1210 body) {
+    public Mono<ServerCommonReplyMessage> processMsg0x1210(Jt808RequestEntity<BuiltinMessage1210> requestEntity) {
+        final BuiltinMessage1210 body = requestEntity.getBody();
         log.info("0x1210 ==> {}", body);
-        if (request.serverType() == Jt808ServerType.INSTRUCTION_SERVER) {
+        if (requestEntity.getServerType() == Jt808ServerType.INSTRUCTION_SERVER) {
             log.error("{}", "0x1210 不应该由指令服务器对应的端口处理");
         }
-        final Map<String, BuiltinMessage1210.AttachmentItem> itemMap = this.attachmentItemCache.get(session.terminalId(), key -> new HashMap<>());
+        final Map<String, BuiltinMessage1210.AttachmentItem> itemMap = this.attachmentItemCache.get(requestEntity.getHeader().terminalId(), key -> new ConcurrentHashMap<>());
         for (final BuiltinMessage1210.AttachmentItem item : body.getAttachmentItemList()) {
             item.setGroup(body);
             itemMap.put(item.getFileName().trim(), item);
         }
-        return Mono.just(ServerCommonReplyMessage.success(request.header().flowId(), request.header().messageId()));
+        return Mono.just(ServerCommonReplyMessage.success(requestEntity));
     }
 
     @Jt808RequestHandlerMapping(messageIds = 0x1211)
     @Jt808ResponseBody(messageId = 0x8001)
-    public Mono<ServerCommonReplyMessage> processMsg0x1211(Jt808Request request, @Jt808RequestBody BuiltinMessage1211 body) {
-        log.info("0x1211 ==> {}", body);
-        if (request.serverType() == Jt808ServerType.INSTRUCTION_SERVER) {
+    public Mono<ServerCommonReplyMessage> processMsg0x1211(Jt808RequestEntity<BuiltinMessage1211> requestEntity) {
+        log.info("0x1211 ==> {}", requestEntity.getBody());
+        if (requestEntity.getServerType() == Jt808ServerType.INSTRUCTION_SERVER) {
             log.error("{}", "0x1211 不应该由指令服务器对应的端口处理");
         }
-        return Mono.just(ServerCommonReplyMessage.success(request.header().flowId(), request.header().messageId()));
+        final Map<String, BuiltinMessage1210.AttachmentItem> items = this.attachmentItemCache.getIfPresent(requestEntity.getHeader().terminalId());
+        if (items == null) {
+            return Mono.just(ServerCommonReplyMessage.success(requestEntity));
+        }
+        final BuiltinMessage1210.AttachmentItem attachmentItem = items.get(requestEntity.getBody().getFileName().trim());
+        if (attachmentItem != null) {
+            attachmentItem.setFileType(requestEntity.getBody().getFileType());
+        }
+        return Mono.just(ServerCommonReplyMessage.success(requestEntity));
     }
 
     @Jt808RequestHandlerMapping(messageIds = 0x1212)
     @Jt808ResponseBody(messageId = 0x9212)
-    public Mono<BuiltinMessage9212> processMsg0x1212(Jt808Request request, @Jt808RequestBody BuiltinMessage1212 body) {
+    public Mono<BuiltinMessage9212> processMsg0x1212(Jt808RequestEntity<BuiltinMessage1212> requestEntity) {
+        final BuiltinMessage1212 body = requestEntity.getBody();
         log.info("0x1212 ==> {}", body);
-        if (request.serverType() == Jt808ServerType.INSTRUCTION_SERVER) {
+        if (requestEntity.getServerType() == Jt808ServerType.INSTRUCTION_SERVER) {
             log.error("{}", "0x1212 不应该由指令服务器对应的端口处理");
         }
-        final BuiltinMessage9212 responseMessageBody = new BuiltinMessage9212();
-        responseMessageBody.setFileNameLength(body.getFileNameLength());
-        responseMessageBody.setFileName(body.getFileName());
-        responseMessageBody.setFileType(body.getFileType());
-        // 0x00：完成
-        // 0x01：需要补传
-        responseMessageBody.setUploadResult((short) 0x00);
-        responseMessageBody.setPackageCountToReTransmit((short) 0);
-        responseMessageBody.setRetransmitItemList(Collections.emptyList());
-
-        return Mono.just(responseMessageBody);
+        final ConcurrentMap<String, BuiltinMessage1210.AttachmentItem> items = this.attachmentItemCache.getIfPresent(requestEntity.getHeader().terminalId());
+        // 这里可能会出现空指针(示例项目里不做处理，你自己看情况处理)
+        assert items != null;
+        final BuiltinMessage1210.AttachmentItem attachmentItem = items.get(body.getFileName());
+        final boolean retainLocalTemporaryFile = this.demoAppProps.getAttachmentServer().isRetainLocalTemporaryFile();
+        return this.attachmentFileService.moveFileToRemoteStorage(requestEntity, attachmentItem, !retainLocalTemporaryFile)
+                .onErrorResume(Throwable.class, throwable -> {
+                    log.error("Error occurred while moveFileToRemoteStorage", throwable);
+                    return Mono.just(false);
+                })
+                .then(Mono.defer(() -> {
+                    final BuiltinMessage9212 responseMessageBody = new BuiltinMessage9212();
+                    responseMessageBody.setFileName(body.getFileName());
+                    responseMessageBody.setFileType(body.getFileType());
+                    // 0x00：完成
+                    // 0x01：需要补传
+                    responseMessageBody.setUploadResult((short) 0x00);
+                    responseMessageBody.setPackageCountToReTransmit((short) 0);
+                    responseMessageBody.setRetransmitItemList(Collections.emptyList());
+                    return Mono.just(responseMessageBody);
+                }))
+                .doFinally(signalType -> {
+                    final String filename = body.getFileName().trim();
+                    log.info("0x1212 ==> 删除缓存 {}", filename);
+                    items.remove(filename);
+                });
     }
 
     /**
@@ -130,9 +162,8 @@ public class AttachmentFileHandler {
             return Mono.empty();
         }
 
-        // 这里的示例都是随便瞎写的 存储到本地磁盘了
-        // 实际场景中看你自己需求  比如存储到 OSS、AWS、Minio……
-        return this.attachmentFileService.writeDataFragmentAsync(session, body, item.getGroup())
+        // 写入本地文件
+        return this.attachmentFileService.writeDataFragmentAsync(session, body, item)
                 .flatMap(dataSize -> {
                     // ...
                     return Mono.empty();

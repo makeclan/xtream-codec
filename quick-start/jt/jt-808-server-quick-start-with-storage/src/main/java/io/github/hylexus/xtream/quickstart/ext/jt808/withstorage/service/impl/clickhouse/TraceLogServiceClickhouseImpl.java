@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl;
+package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl.clickhouse;
 
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.converter.Jt808EntityConverter;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.entity.Jt808RequestTraceLogEntity;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.entity.Jt808ResponseTraceLogEntity;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.event.Jt808EventPayloads;
-import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.postgres.Jt808RequestTraceLogMapperPostgres;
-import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.postgres.Jt808ResponseTraceLogMapperPostgres;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.clickhouse.Jt808RequestTraceLogMapperClickhouse;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.clickhouse.Jt808ResponseTraceLogMapperClickhouse;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.TraceLogService;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.utils.DatabaseRouter;
 import org.springframework.stereotype.Service;
@@ -31,12 +31,12 @@ import reactor.core.publisher.Mono;
  * @author hylexus
  */
 @Service
-public class TraceLogServicePostgresImpl implements TraceLogService {
+public class TraceLogServiceClickhouseImpl implements TraceLogService {
 
-    private final Jt808RequestTraceLogMapperPostgres requestTraceLogMapper;
-    private final Jt808ResponseTraceLogMapperPostgres responseTraceLogMapper;
+    private final Jt808RequestTraceLogMapperClickhouse requestTraceLogMapper;
+    private final Jt808ResponseTraceLogMapperClickhouse responseTraceLogMapper;
 
-    public TraceLogServicePostgresImpl(Jt808RequestTraceLogMapperPostgres requestTraceLogMapper, Jt808ResponseTraceLogMapperPostgres responseTraceLogMapper) {
+    public TraceLogServiceClickhouseImpl(Jt808RequestTraceLogMapperClickhouse requestTraceLogMapper, Jt808ResponseTraceLogMapperClickhouse responseTraceLogMapper) {
         this.requestTraceLogMapper = requestTraceLogMapper;
         this.responseTraceLogMapper = responseTraceLogMapper;
     }
@@ -45,14 +45,15 @@ public class TraceLogServicePostgresImpl implements TraceLogService {
     public Mono<Boolean> afterRequestDecode(Jt808EventPayloads.Jt808ReceiveEvent event) {
         final Jt808RequestTraceLogEntity entity = Jt808EntityConverter.toRequestLogEntity(event);
         final Mono<Void> insertOperation = this.requestTraceLogMapper.insert(entity);
-        return DatabaseRouter.TRACE_LOG_POSTGRES.executeMono(insertOperation)
+        return DatabaseRouter.TRACE_LOG_CLICKHOUSE.executeMono(insertOperation)
                 .then(Mono.just(true));
     }
 
     @Override
     public Mono<Boolean> beforeResponseSend(Jt808EventPayloads.Jt808SendEvent event) {
         final Jt808ResponseTraceLogEntity entity = Jt808EntityConverter.toResponseLogEntity(event);
-        return DatabaseRouter.TRACE_LOG_POSTGRES.executeMono(this.responseTraceLogMapper.insert(entity))
+        return DatabaseRouter.TRACE_LOG_CLICKHOUSE.executeMono(this.responseTraceLogMapper.insert(entity))
                 .then(Mono.just(true));
     }
+
 }

@@ -35,3 +35,22 @@ create table jt_808_response_trace_log
     escaped_hex text        null comment '转义之后的报文',
     created_at  datetime    null comment '数据插入时间'
 );
+
+
+drop table if exists jt_808_alarm_attachment_info;
+create table jt_808_alarm_attachment_info
+(
+    id               varchar(36) comment 'uuid' primary key,
+    terminal_id      varchar(36) comment '终端手机号',
+    alarm_no         varchar(64) comment '平台分配的报警唯一编号',
+    alarm_time       datetime comment '报警时间',
+    attachment_count int comment '报警附件数量',
+    file_name        varchar(256) comment '文件名称',
+    file_type        int comment '文件类型 PICTURE=0,AUDIO=1,VIDEO=2,TEXT=3,OTHERS=4',
+    file_size        bigint comment '文件大小',
+    file_path        varchar(256) comment '文件路径',
+    alarm_sequence   int comment '同一时间点报警的序号，从0循环累加',
+    client_id        varchar(64) comment '终端 ID 7个字节，由大写字母和数字组成',
+    created_at       DATETIME comment '数据插入时间'
+);
+

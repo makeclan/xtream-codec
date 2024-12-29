@@ -28,7 +28,7 @@ demo-app-config:
     # 附件服务器的IP
     # 应该是一个公网IP(设备能访问的IP)
     server-ip: 192.168.71.54
-    temporary-path: /tmp/attachment
+    temporary-path: /tmp/jt-808/attachment
 
 ########################################################
 ### xtream-codec-server-reactive 配置####################

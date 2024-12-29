@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl;
+package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl.composite;
 
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.event.Jt808EventPayloads;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.TraceLogService;
@@ -47,6 +47,10 @@ public class TraceLogServiceComposite implements TraceLogService {
                                 log.error("error occurred while do traceLog", throwable);
                             });
                 })
+                .onErrorResume(Throwable.class, throwable -> {
+                    log.error("error occurred while do traceLog", throwable);
+                    return Mono.just(true);
+                })
                 .then(Mono.just(true));
     }
 
@@ -60,6 +64,10 @@ public class TraceLogServiceComposite implements TraceLogService {
                                 // ...
                                 log.error("error occurred while do traceLog", throwable);
                             });
+                })
+                .onErrorResume(Throwable.class, throwable -> {
+                    log.error("error occurred while do traceLog", throwable);
+                    return Mono.just(true);
                 })
                 .then(Mono.just(true));
     }

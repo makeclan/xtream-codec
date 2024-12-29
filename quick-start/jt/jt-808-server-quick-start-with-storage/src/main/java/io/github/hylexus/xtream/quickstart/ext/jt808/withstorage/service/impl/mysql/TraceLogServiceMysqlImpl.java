@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl;
+package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl.mysql;
 
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.converter.Jt808EntityConverter;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.entity.Jt808RequestTraceLogEntity;

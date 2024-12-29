@@ -51,6 +51,7 @@ public final class ContentTypeDetector {
         CONTENT_TYPE_MAPPING.put("xml", "application/xml");
         CONTENT_TYPE_MAPPING.put("zip", "application/zip");
         CONTENT_TYPE_MAPPING.put("gz", "application/gzip");
+        CONTENT_TYPE_MAPPING.put("mp4", "video/mp4");
     }
 
     public static String detectContentType(String fileName) {

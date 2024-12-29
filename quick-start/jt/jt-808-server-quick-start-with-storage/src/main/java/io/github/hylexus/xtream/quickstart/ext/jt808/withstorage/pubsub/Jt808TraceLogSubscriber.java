@@ -55,7 +55,10 @@ public class Jt808TraceLogSubscriber {
                             Jt808EventType.RECEIVE_PACKAGE,
                             Jt808EventType.SEND_PACKAGE
                     ),
-                    Map.of("desc", "jt-808-server-quick-start-with-storage")
+                    Map.of(
+                            "source", "jt-808-server-quick-start-with-storage",
+                            "desc", "订阅报文并写入数据库"
+                    )
             );
             this.eventPublisher.subscribe(subscriberInfo)
                     .publishOn(Schedulers.parallel())

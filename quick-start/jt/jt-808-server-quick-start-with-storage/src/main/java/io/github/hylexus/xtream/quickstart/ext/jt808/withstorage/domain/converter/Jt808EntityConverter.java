@@ -16,6 +16,8 @@
 
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.converter;
 
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1210;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.entity.Jt808AlarmAttachmentInfoEntity;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.entity.Jt808RequestTraceLogEntity;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.entity.Jt808ResponseTraceLogEntity;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.event.Jt808EventPayloads;
@@ -59,5 +61,23 @@ public class Jt808EntityConverter {
                 .setTerminalId(event.terminalId())
                 .setEscapedHex(event.hexString())
                 .setCreatedAt(LocalDateTime.now());
+    }
+
+    public static Jt808AlarmAttachmentInfoEntity toAlarmInfoEntity(String terminalId, String filePath, BuiltinMessage1210.AttachmentItem attachmentItem) {
+        final BuiltinMessage1210 group = attachmentItem.getGroup();
+        return new Jt808AlarmAttachmentInfoEntity()
+                .setId(UUID.randomUUID().toString())
+                .setTerminalId(terminalId)
+                .setAlarmNo(group.getAlarmNo())
+                .setAlarmTime(group.getAlarmIdentifier().getTime())
+                .setAlarmSequence(group.getAlarmIdentifier().getSequence())
+                .setAttachmentCount(group.getAttachmentCount())
+                .setClientId(group.getAlarmIdentifier().getTerminalId())
+                .setFileName(attachmentItem.getFileName())
+                .setFileType(attachmentItem.getFileType())
+                .setFileSize(attachmentItem.getFileSize())
+                .setFilePath(filePath)
+                .setCreatedAt(LocalDateTime.now())
+                ;
     }
 }

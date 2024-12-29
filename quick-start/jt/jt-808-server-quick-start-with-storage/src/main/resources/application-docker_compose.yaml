@@ -19,8 +19,17 @@ demo-app-with-storage:
     endpoint: http://localhost:9000
     access-key: minioadmin
     secret-key: minioadmin
-  attachment-service:
-    bucket-name: jt_attachment
+  # 示例性的附件服务器配置
+  attachment-server:
+    # 附件服务器的IP 应该是一个公网IP(设备能访问的IP)
+    server-ip: 192.168.71.7
+    # 用来存放附件文件的临时路径
+    temporary-path: /tmp/jt-808/attachment
+    # 将本地文件上传到远程存储后，是否保留本地文件
+    retain-local-temporary-file: false
+    # 远程存储的 bucket 名称(对应上面 minio 的 bucketName)
+    # 项目启动时会自动创建(为简化示例，会自动将 bucket 改为可匿名访问)
+    remote-storage-bucket-name: jt-attachment
 spring:
   application:
     name: jt-808-server-quick-start-with-storage

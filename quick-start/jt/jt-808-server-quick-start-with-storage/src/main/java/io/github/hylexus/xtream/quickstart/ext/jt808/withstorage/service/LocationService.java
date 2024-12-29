@@ -16,20 +16,12 @@
 
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service;
 
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1210;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1212;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage30316364;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestEntity;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.BuiltinMessage0200;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import reactor.core.publisher.Mono;
 
-/**
- * @author hylexus
- */
-public interface AttachmentFileService {
+public interface LocationService {
 
-    Mono<Integer> writeDataFragmentAsync(Jt808Session session, BuiltinMessage30316364 body, BuiltinMessage1210.AttachmentItem attachmentItem);
-
-    Mono<Boolean> moveFileToRemoteStorage(Jt808RequestEntity<BuiltinMessage1212> requestEntity, BuiltinMessage1210.AttachmentItem attachmentItem, boolean deleteLocalFile);
+    Mono<Byte> processLocationMessage(Jt808Session session, BuiltinMessage0200 body);
 
 }

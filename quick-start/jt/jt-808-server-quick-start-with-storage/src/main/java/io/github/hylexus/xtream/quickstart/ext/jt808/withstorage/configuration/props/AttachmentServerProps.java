@@ -23,8 +23,21 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class AttachmentServiceProps {
+public class AttachmentServerProps {
+    /**
+     * 附件服务器的IP，应该是一个公网IP(设备能访问的IP)
+     */
     private String serverIp;
+    /**
+     * 本地文件临时存储路径
+     */
     private String temporaryPath;
-    private String bucketName = "jt_attachment";
+    /**
+     * 远程文件存 bucketName
+     */
+    private String remoteStorageBucketName = "jt-attachment";
+    /**
+     * 将本地文件上传到远程存储后，是否保留本地文件
+     */
+    private boolean retainLocalTemporaryFile = true;
 }

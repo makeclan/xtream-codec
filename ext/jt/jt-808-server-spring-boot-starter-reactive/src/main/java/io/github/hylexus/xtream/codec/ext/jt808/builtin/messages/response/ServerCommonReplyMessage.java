@@ -18,6 +18,7 @@ package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestEntity;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
 
 /**
@@ -30,6 +31,11 @@ import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
 @Jt808ResponseBody(messageId = 0x8001)
 public class ServerCommonReplyMessage extends BuiltinMessage8001 {
 
+    public static ServerCommonReplyMessage success(Jt808RequestEntity<?> requestEntity) {
+        final Jt808RequestHeader header = requestEntity.getHeader();
+        return of(header.messageId(), header.flowId(), (byte) 0);
+    }
+
     public static ServerCommonReplyMessage success(Jt808Request request) {
         final Jt808RequestHeader header = request.header();
         return of(header.messageId(), header.flowId(), (byte) 0);
@@ -41,6 +47,10 @@ public class ServerCommonReplyMessage extends BuiltinMessage8001 {
 
     public static ServerCommonReplyMessage of(Jt808Request request, byte result) {
         return of(request.header().messageId(), request.header().flowId(), result);
+    }
+
+    public static ServerCommonReplyMessage of(Jt808RequestEntity<?> requestEntity, byte result) {
+        return of(requestEntity.getHeader().messageId(), requestEntity.getHeader().flowId(), result);
     }
 
     public static ServerCommonReplyMessage of(int clientMessageId, int clientFlowId, byte result) {

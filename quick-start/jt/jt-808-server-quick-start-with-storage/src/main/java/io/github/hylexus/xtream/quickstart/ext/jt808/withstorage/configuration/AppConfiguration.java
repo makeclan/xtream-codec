@@ -17,8 +17,12 @@
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration;
 
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.pubsub.Jt808TraceLogSubscriber;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.AttachmentInfoService;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.ObjectStorageService;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.TraceLogService;
-import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl.TraceLogServiceComposite;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl.composite.AttachmentInfoServiceComposite;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl.composite.ObjectStorageServiceComposite;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl.composite.TraceLogServiceComposite;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,6 +40,18 @@ public class AppConfiguration {
     @Primary
     TraceLogService traceLogService(List<TraceLogService> traceLogServiceList) {
         return new TraceLogServiceComposite(traceLogServiceList);
+    }
+
+    @Bean
+    @Primary
+    AttachmentInfoService attachmentInfoService(List<AttachmentInfoService> attachmentInfoServices) {
+        return new AttachmentInfoServiceComposite(attachmentInfoServices);
+    }
+
+    @Bean
+    @Primary
+    ObjectStorageService objectStorageService(List<ObjectStorageService> objectStorageServices) {
+        return new ObjectStorageServiceComposite(objectStorageServices);
     }
 
     @Bean

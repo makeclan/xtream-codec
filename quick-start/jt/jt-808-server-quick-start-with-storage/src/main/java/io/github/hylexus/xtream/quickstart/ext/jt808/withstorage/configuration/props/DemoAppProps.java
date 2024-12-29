@@ -35,6 +35,6 @@ public class DemoAppProps {
     private MinioProps minio = new MinioProps();
 
     @NestedConfigurationProperty
-    private AttachmentServiceProps attachmentService = new AttachmentServiceProps();
+    private AttachmentServerProps attachmentServer = new AttachmentServerProps();
 
 }
