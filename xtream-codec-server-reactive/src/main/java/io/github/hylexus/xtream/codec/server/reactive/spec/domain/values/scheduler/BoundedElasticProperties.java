@@ -19,6 +19,7 @@ package io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.schedu
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
 
@@ -26,11 +27,11 @@ import java.time.Duration;
 @Setter
 @ToString
 public class BoundedElasticProperties {
-    private String threadNamePrefix = "bounded-elastic";
+    private String threadNamePrefix = "x-bounded-elastic";
     private boolean daemon = true;
     private boolean rejectBlockingTask = true;
 
-    private int threadCapacity = Math.max(16, Runtime.getRuntime().availableProcessors() * 2);
-    private int queuedTaskCapacity = 512;
+    private int threadCapacity = Math.max(16, Schedulers.DEFAULT_BOUNDED_ELASTIC_SIZE);
+    private int queuedTaskCapacity = Schedulers.DEFAULT_BOUNDED_ELASTIC_QUEUESIZE;
     private Duration ttl = Duration.ofMinutes(1);
 }

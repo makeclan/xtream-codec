@@ -56,3 +56,4 @@ node_modules/
 /ext/jt/jt-808-server-dashboard-spring-boot-starter-reactive/src/main/resources/static/dashboard/
 /dev-tools-local/
 /debug/jt/jt-808-server-spring-boot-starter-reactive-debug/src/main/resources/application-node3.yaml
+/quick-start/jt/jt-808-server-quick-start-with-storage/src/main/resources/application-node3.yaml

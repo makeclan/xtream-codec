@@ -95,7 +95,6 @@ public class AttachmentFileHandler {
             log.error("{}", "0x1212 不应该由指令服务器对应的端口处理");
         }
         final BuiltinMessage9212 responseMessageBody = new BuiltinMessage9212();
-        responseMessageBody.setFileNameLength(body.getFileNameLength());
         responseMessageBody.setFileName(body.getFileName());
         responseMessageBody.setFileType(body.getFileType());
         // 0x00：完成

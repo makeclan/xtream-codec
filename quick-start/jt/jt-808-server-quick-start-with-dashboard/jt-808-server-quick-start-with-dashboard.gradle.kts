@@ -4,7 +4,7 @@ plugins {
 }
 
 application {
-    mainClass.set("io.github.hylexus.xtream.quickstart.ext.jt808dashboard.Jt808ServerQuickStartWithDashboardApp")
+    mainClass.set("io.github.hylexus.xtream.quickstart.ext.jt808.withdashboard.Jt808ServerQuickStartWithDashboardApp")
 }
 
 dependencies {

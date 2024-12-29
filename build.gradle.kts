@@ -56,7 +56,7 @@ configure(subprojects) {
     }
 
     repositories {
-        mavenLocal()
+//        mavenLocal()
         extraMavenRepositoryUrls().forEach {
             maven(it)
         }
@@ -318,6 +318,7 @@ fun isJavaProject(project: Project): Boolean {
                 "jt-808-server-spring-boot-starter-reactive-debug",
                 "jt-808-server-quick-start",
                 "jt-808-server-quick-start-with-dashboard",
+                "jt-808-server-quick-start-with-storage",
             ).contains(project.name))
 }
 

@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages;
 
+import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import lombok.Data;
 import lombok.Getter;
@@ -34,12 +35,14 @@ import java.util.List;
 @Accessors(chain = true)
 public class BuiltinMessage9212 {
 
-    // BYTE
-    @Preset.JtStyle.Byte
-    private short fileNameLength;
+    // // BYTE
+    // @Preset.JtStyle.Byte
+    // private short fileNameLength;
 
     // 文件名称
-    @Preset.JtStyle.Str
+    // @Preset.JtStyle.Str
+    // prependLengthFieldType: 前置一个 u8 类型的字段，表示文件名称长度
+    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8)
     private String fileName;
 
     // 0x00：图片
