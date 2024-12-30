@@ -20,7 +20,7 @@ import { SpotlightCard } from "./spolight-card.tsx";
 
 import { Metrics, ServerInfo } from "@/types";
 import { FaServerIcon } from "@/components/icons.tsx";
-import { DynamicThreadsCharts } from "@/components/dashboard/dynamic-threads-charts.tsx";
+import { ThreadsCharts } from "@/components/dashboard/threads-charts.tsx";
 import { MsgMiniTable } from "@/components/dashboard/msg-mini-table.tsx";
 export const CardBox = () => {
   const { config } = useRouteLoaderData("root") as { config: ServerInfo };
@@ -254,7 +254,7 @@ export const CardBox = () => {
         <SpotlightCard>
           <CardHeader>线程</CardHeader>
           <CardBody className="h-96">
-            <DynamicThreadsCharts
+            <ThreadsCharts
               data={{
                 date: data.time.slice(11, 19),
                 ...data.value.threads,

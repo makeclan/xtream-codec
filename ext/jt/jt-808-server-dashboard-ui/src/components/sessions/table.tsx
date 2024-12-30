@@ -12,7 +12,7 @@ import React, { FC, useMemo, useState } from "react";
 import { Tooltip } from "@nextui-org/tooltip";
 import { Chip } from "@nextui-org/chip";
 
-import { SessionMonitor } from "./session-monitor.tsx";
+import { SessionMonitor } from "./monitor.tsx";
 
 import { usePageList } from "@/hooks/use-page-list.ts";
 import { Session, SessionType } from "@/types";

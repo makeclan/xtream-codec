@@ -1,12 +1,5 @@
-import { Card, CardBody } from "@nextui-org/card";
+import { DumpGroup } from "@/components/dump/group.tsx";
 
 export const DumpPage = () => {
-  return (
-    <Card>
-      <CardBody>
-        dump
-        {/*<DumpCharts />*/}
-      </CardBody>
-    </Card>
-  );
+  return <DumpGroup />;
 };

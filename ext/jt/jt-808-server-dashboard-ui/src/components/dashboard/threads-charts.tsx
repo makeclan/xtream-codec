@@ -28,6 +28,7 @@ interface chartProps {
   data: Threads;
   maxLength?: number;
 }
+const getDate = (d: Threads) => d.date;
 
 export const LineCharts = ({ width, height, data }: XYChartProps) => {
   const [theme, setTheme] = useState<XYChartTheme>(darkTheme);
@@ -65,28 +66,28 @@ export const LineCharts = ({ width, height, data }: XYChartProps) => {
           curve={curveLinear}
           data={data}
           dataKey="started"
-          xAccessor={(d: Threads) => d.date}
+          xAccessor={getDate}
           yAccessor={(d: Threads) => d.started}
         />
         <AnimatedLineSeries
           curve={curveLinear}
           data={data}
           dataKey="live"
-          xAccessor={(d: Threads) => d.date}
+          xAccessor={getDate}
           yAccessor={(d: Threads) => d.live}
         />
         <AnimatedLineSeries
           curve={curveLinear}
           data={data}
           dataKey="daemon"
-          xAccessor={(d: Threads) => d.date}
+          xAccessor={getDate}
           yAccessor={(d: Threads) => d.daemon}
         />
         <AnimatedLineSeries
           curve={curveLinear}
           data={data}
           dataKey="peak"
-          xAccessor={(d: Threads) => d.date}
+          xAccessor={getDate}
           yAccessor={(d: Threads) => d.peak}
         />
       </>
@@ -144,10 +145,7 @@ export const LineCharts = ({ width, height, data }: XYChartProps) => {
   );
 };
 
-export const DynamicThreadsCharts: FC<chartProps> = ({
-  data,
-  maxLength = 500,
-}) => {
+export const ThreadsCharts: FC<chartProps> = ({ data, maxLength = 500 }) => {
   const [chartData, setChartData] = useState<Threads[]>([]);
 
   useEffect(() => {
