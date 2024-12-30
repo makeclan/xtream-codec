@@ -15,6 +15,32 @@
 #
 
 demo-app-with-storage:
+  # 示例项目的开关配置
+  feature-control:
+    # 数据库开关(请求日志、苏标附件文件信息会写入数据库)
+    ## 可以同时启用多个
+    database:
+      ## 仅仅打了个日志用来调试
+      logging:
+        enabled: true
+      ## 存储到 Clickhouse 中
+      clickhouse:
+        enabled: true
+      ## 存储到 MySQL 中
+      mysql:
+        enabled: false
+      ## 存储到 Postgres 中
+      postgres:
+        enabled: false
+    # OSS(对象存储服务)开关(苏标附件文件会上传到启用的OSS中)
+    ## 可以同时启用多个
+    oss:
+      ## 仅仅打了个附件文件信息日志用来调试
+      logging:
+        enabled: true
+      ## 文件会存储到Minio中
+      minio:
+        enabled: true
   minio:
     endpoint: http://localhost:9000
     access-key: minioadmin
@@ -22,7 +48,7 @@ demo-app-with-storage:
   # 示例性的附件服务器配置
   attachment-server:
     # 附件服务器的IP 应该是一个公网IP(设备能访问的IP)
-    server-ip: 192.168.71.7
+    server-ip: 192.168.71.169
     # 用来存放附件文件的临时路径
     temporary-path: /tmp/jt-808/attachment
     # 将本地文件上传到远程存储后，是否保留本地文件

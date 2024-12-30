@@ -32,7 +32,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestEntity;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ServerType;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
-import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.props.DemoAppProps;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.props.QuickStartAppProps;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.AttachmentFileService;
 import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
@@ -60,12 +60,12 @@ public class AttachmentFileHandler {
     private final Cache<String, ConcurrentMap<String, BuiltinMessage1210.AttachmentItem>> attachmentItemCache = Caffeine.newBuilder()
             .expireAfterWrite(Duration.ofMinutes(5))
             .build();
-    private final DemoAppProps demoAppProps;
+    private final QuickStartAppProps quickStartAppProps;
 
     private final AttachmentFileService attachmentFileService;
 
-    public AttachmentFileHandler(DemoAppProps demoAppProps, AttachmentFileService attachmentFileService) {
-        this.demoAppProps = demoAppProps;
+    public AttachmentFileHandler(QuickStartAppProps quickStartAppProps, AttachmentFileService attachmentFileService) {
+        this.quickStartAppProps = quickStartAppProps;
         this.attachmentFileService = attachmentFileService;
     }
 
@@ -115,7 +115,7 @@ public class AttachmentFileHandler {
         // 这里可能会出现空指针(示例项目里不做处理，你自己看情况处理)
         assert items != null;
         final BuiltinMessage1210.AttachmentItem attachmentItem = items.get(body.getFileName());
-        final boolean retainLocalTemporaryFile = this.demoAppProps.getAttachmentServer().isRetainLocalTemporaryFile();
+        final boolean retainLocalTemporaryFile = this.quickStartAppProps.getAttachmentServer().isRetainLocalTemporaryFile();
         return this.attachmentFileService.moveFileToRemoteStorage(requestEntity, attachmentItem, !retainLocalTemporaryFile)
                 .onErrorResume(Throwable.class, throwable -> {
                     log.error("Error occurred while moveFileToRemoteStorage", throwable);

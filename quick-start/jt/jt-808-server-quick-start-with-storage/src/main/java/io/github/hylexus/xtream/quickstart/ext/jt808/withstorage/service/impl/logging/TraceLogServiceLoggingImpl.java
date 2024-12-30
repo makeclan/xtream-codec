@@ -20,13 +20,11 @@ import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.event.Jt
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.TraceLogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 /**
  * @author hylexus
  */
-@Service
 public class TraceLogServiceLoggingImpl implements TraceLogService {
 
     private static final Logger log = LoggerFactory.getLogger(TraceLogServiceLoggingImpl.class);

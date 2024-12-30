@@ -29,7 +29,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Setter
 @ToString
 @ConfigurationProperties(prefix = "demo-app-with-storage")
-public class DemoAppProps {
+public class QuickStartAppProps {
 
     @NestedConfigurationProperty
     private MinioProps minio = new MinioProps();
@@ -37,4 +37,42 @@ public class DemoAppProps {
     @NestedConfigurationProperty
     private AttachmentServerProps attachmentServer = new AttachmentServerProps();
 
+    @NestedConfigurationProperty
+    private FeatureControl featureControl = new FeatureControl();
+
+    @Getter
+    @Setter
+    public static class FeatureControl {
+        @NestedConfigurationProperty
+        private DatabaseControl database = new DatabaseControl();
+
+        @NestedConfigurationProperty
+        private OssControl oss = new OssControl();
+    }
+
+    @Getter
+    @Setter
+    public static class OssControl {
+
+        @NestedConfigurationProperty
+        private Switchable minio = new Switchable();
+
+        @NestedConfigurationProperty
+        private Switchable logging = new Switchable();
+    }
+
+    @Getter
+    @Setter
+    public static class DatabaseControl {
+        private Switchable clickhouse = new Switchable();
+        private Switchable mysql = new Switchable();
+        private Switchable postgres = new Switchable();
+        private Switchable logging = new Switchable();
+    }
+
+    @Getter
+    @Setter
+    public static class Switchable {
+        private boolean enabled = true;
+    }
 }

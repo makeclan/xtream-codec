@@ -22,10 +22,8 @@ import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.entity.J
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.clickhouse.Jt808AlarmAttachmentInfoMapperClickhouse;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.AttachmentInfoService;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.utils.DatabaseRouter;
-import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-@Service
 public class AttachmentInfoServiceClickhouseImpl implements AttachmentInfoService {
     private final Jt808AlarmAttachmentInfoMapperClickhouse mapper;
 

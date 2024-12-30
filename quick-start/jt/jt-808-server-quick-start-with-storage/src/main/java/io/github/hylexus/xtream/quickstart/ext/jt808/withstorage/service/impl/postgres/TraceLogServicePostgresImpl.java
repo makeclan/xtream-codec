@@ -24,13 +24,11 @@ import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.postgres
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.postgres.Jt808ResponseTraceLogMapperPostgres;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.TraceLogService;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.utils.DatabaseRouter;
-import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 /**
  * @author hylexus
  */
-@Service
 public class TraceLogServicePostgresImpl implements TraceLogService {
 
     private final Jt808RequestTraceLogMapperPostgres requestTraceLogMapper;

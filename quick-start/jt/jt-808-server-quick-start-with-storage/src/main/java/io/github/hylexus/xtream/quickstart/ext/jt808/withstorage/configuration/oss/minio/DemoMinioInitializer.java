@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.minio;
+package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.oss.minio;
 
-import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.props.DemoAppProps;
-import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.ObjectStorageService;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.props.QuickStartAppProps;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.MinioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
 
 /**
  * 当前类是为了给 Minio 做初始化
@@ -38,31 +37,30 @@ import org.springframework.stereotype.Component;
  *
  * @author hylexus
  */
-@Component
-public class MinioInitializer implements CommandLineRunner {
-    private static final Logger log = LoggerFactory.getLogger(MinioInitializer.class);
-    private final DemoAppProps demoAppProps;
-    private final ObjectStorageService minioService;
+public class DemoMinioInitializer implements CommandLineRunner {
+    private static final Logger log = LoggerFactory.getLogger(DemoMinioInitializer.class);
+    private final QuickStartAppProps quickStartAppProps;
+    private final MinioService ossService;
 
-    public MinioInitializer(DemoAppProps demoAppProps, ObjectStorageService minioService) {
-        this.demoAppProps = demoAppProps;
-        this.minioService = minioService;
+    public DemoMinioInitializer(QuickStartAppProps quickStartAppProps, MinioService ossService) {
+        this.quickStartAppProps = quickStartAppProps;
+        this.ossService = ossService;
     }
 
     @Override
     public void run(String... args) {
         // 注意：这里是在项目启动阶段，所以可以调用 .block() 这种[阻塞]方法
         // 运行时，请不要直接或间接调用阻塞方法
-        final String attachmentFileBucket = this.demoAppProps.getAttachmentServer().getRemoteStorageBucketName();
-        if (Boolean.TRUE.equals(this.minioService.bucketExists(attachmentFileBucket).block())) {
+        final String attachmentFileBucket = this.quickStartAppProps.getAttachmentServer().getRemoteStorageBucketName();
+        if (Boolean.TRUE.equals(this.ossService.bucketExists(attachmentFileBucket).block())) {
             log.info("Bucket [{}] already exists", attachmentFileBucket);
         } else {
             log.info("Bucket [{}] does not exist, creating it ...", attachmentFileBucket);
-            this.minioService.makeBucket(attachmentFileBucket).block();
+            this.ossService.makeBucket(attachmentFileBucket).block();
             log.info("Bucket [{}] created", attachmentFileBucket);
 
             log.info("Setting bucket [{}]] policy(accessible with anonymous for debug purpose) ...", attachmentFileBucket);
-            this.minioService.makeBucketAccessibleWithAnonymous(attachmentFileBucket).block();
+            this.ossService.makeBucketAccessibleWithAnonymous(attachmentFileBucket).block();
             log.info("Bucket [{}] accessible with anonymous", attachmentFileBucket);
         }
     }

@@ -22,7 +22,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMess
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage30316364;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestEntity;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
-import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.props.DemoAppProps;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.props.QuickStartAppProps;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.AttachmentFileService;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.AttachmentInfoService;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.ObjectStorageService;
@@ -53,14 +53,14 @@ public class AttachmentFileServiceImpl implements AttachmentFileService {
 
     public static final Scheduler SCHEDULER = Schedulers.boundedElastic();
     private static final Logger log = LoggerFactory.getLogger(AttachmentFileServiceImpl.class);
-    private final DemoAppProps appProps;
-    private final ObjectStorageService minioService;
+    private final QuickStartAppProps appProps;
+    private final ObjectStorageService ossService;
     private final String remoteStorageBucketName;
     private final AttachmentInfoService attachmentInfoService;
 
-    public AttachmentFileServiceImpl(DemoAppProps appProps, ObjectStorageService minioService, AttachmentInfoService attachmentInfoService) {
+    public AttachmentFileServiceImpl(QuickStartAppProps appProps, ObjectStorageService ossService, AttachmentInfoService attachmentInfoService) {
         this.appProps = appProps;
-        this.minioService = minioService;
+        this.ossService = ossService;
         this.remoteStorageBucketName = appProps.getAttachmentServer().getRemoteStorageBucketName();
         this.attachmentInfoService = attachmentInfoService;
     }
@@ -106,11 +106,11 @@ public class AttachmentFileServiceImpl implements AttachmentFileService {
             log.info("Moving file(RetainLocalFile) from {} to remote storage: {}", localFilePath, remoteFilePath);
         }
         return this.attachmentInfoService.saveAlarmInfo(terminalId, remoteFilePath, attachmentItem)
-                .then(this.uploadToMinio(deleteLocalFile, localFilePath, remoteFilePath));
+                .then(this.uploadToOss(deleteLocalFile, localFilePath, remoteFilePath));
     }
 
-    private Mono<Boolean> uploadToMinio(boolean deleteLocalFile, String localFilePath, String remoteFilePath) {
-        return this.minioService.uploadFile(this.remoteStorageBucketName, localFilePath, remoteFilePath, null)
+    private Mono<Boolean> uploadToOss(boolean deleteLocalFile, String localFilePath, String remoteFilePath) {
+        return this.ossService.uploadFile(this.remoteStorageBucketName, localFilePath, remoteFilePath, null)
                 .then(Mono.defer(() -> {
                     if (deleteLocalFile) {
                         return Mono.fromCallable(

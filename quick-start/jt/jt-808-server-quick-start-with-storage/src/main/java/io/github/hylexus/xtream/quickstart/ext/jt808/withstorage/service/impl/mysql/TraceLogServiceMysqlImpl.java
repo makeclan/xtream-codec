@@ -24,13 +24,11 @@ import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.mysql.Jt
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.mysql.Jt808ResponseTraceLogMapperMysql;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.TraceLogService;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.utils.DatabaseRouter;
-import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 /**
  * @author hylexus
  */
-@Service
 public class TraceLogServiceMysqlImpl implements TraceLogService {
 
     private final Jt808RequestTraceLogMapperMysql requestTraceLogMapper;

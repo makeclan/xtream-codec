@@ -20,10 +20,8 @@ import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.ObjectS
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-@Service
 public class ObjectStorageServiceLoggingImpl implements ObjectStorageService {
 
     private static final Logger log = LoggerFactory.getLogger(ObjectStorageServiceLoggingImpl.class);
@@ -31,7 +29,7 @@ public class ObjectStorageServiceLoggingImpl implements ObjectStorageService {
     @Override
     public Mono<Boolean> bucketExists(String bucketName) {
         log.info("loggingImpl#bucketExists: {}", bucketName);
-        return Mono.just(true);
+        return Mono.just(false);
     }
 
     @Override

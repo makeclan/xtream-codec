@@ -16,7 +16,7 @@
 
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl;
 
-import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.props.DemoAppProps;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.props.QuickStartAppProps;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.props.MinioProps;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.MinioService;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.utils.ContentTypeDetector;
@@ -25,8 +25,6 @@ import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -37,14 +35,12 @@ import java.nio.file.Paths;
 /**
  * @author hylexus
  */
-@Service
-@EnableConfigurationProperties(DemoAppProps.class)
 public class MinioServiceImpl implements MinioService {
     private static final Logger log = LoggerFactory.getLogger(MinioServiceImpl.class);
     private final MinioAsyncClient minioAsyncClient;
 
-    public MinioServiceImpl(DemoAppProps demoAppProps) {
-        final MinioProps minioProps = demoAppProps.getMinio();
+    public MinioServiceImpl(QuickStartAppProps quickStartAppProps) {
+        final MinioProps minioProps = quickStartAppProps.getMinio();
         this.minioAsyncClient = MinioAsyncClient.builder()
                 .endpoint(minioProps.getEndpoint())
                 .credentials(minioProps.getAccessKey(), minioProps.getSecretKey())

@@ -22,7 +22,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.*;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.BuiltinMessage0200;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808CommandSender;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
-import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.props.DemoAppProps;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.props.QuickStartAppProps;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.LocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,9 +39,9 @@ public class LocationServiceImpl implements LocationService {
     private static final Logger log = LoggerFactory.getLogger(LocationServiceImpl.class);
     private final XtreamJt808ServerProperties serverProperties;
     private final Jt808CommandSender commandSender;
-    private final DemoAppProps demoAppConfigProperties;
+    private final QuickStartAppProps demoAppConfigProperties;
 
-    public LocationServiceImpl(XtreamJt808ServerProperties serverProperties, Jt808CommandSender commandSender, DemoAppProps demoAppConfigProperties) {
+    public LocationServiceImpl(XtreamJt808ServerProperties serverProperties, Jt808CommandSender commandSender, QuickStartAppProps demoAppConfigProperties) {
         this.serverProperties = serverProperties;
         this.commandSender = commandSender;
         this.demoAppConfigProperties = demoAppConfigProperties;

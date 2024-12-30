@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.clickhouse;
+package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.database.clickhouse.adapter;
 
-import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.R2dbcConfiguration;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.r2dbc.DemoR2dbcConfiguration;
 import pro.chenggang.project.reactive.mybatis.support.r2dbc.executor.placeholder.dialect.NamePlaceholderDialect;
 
 import java.util.Objects;
@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  *
  * @author <a href="https://github.com/chenggangpro/reactive-mybatis-support/issues/165#issuecomment-2563816570">chenggangpro</a>
  * @see <a href="https://github.com/chenggangpro/reactive-mybatis-support/issues/165">https://github.com/chenggangpro/reactive-mybatis-support/issues/165</a>
- * @see R2dbcConfiguration#r2dbcMybatisConfigurationCustomizer()
+ * @see DemoR2dbcConfiguration#r2dbcMybatisConfigurationCustomizer()
  */
 public class ClickhousePlaceholderDialect implements NamePlaceholderDialect {
 

@@ -24,13 +24,11 @@ import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.clickhou
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.clickhouse.Jt808ResponseTraceLogMapperClickhouse;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.TraceLogService;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.utils.DatabaseRouter;
-import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 /**
  * @author hylexus
  */
-@Service
 public class TraceLogServiceClickhouseImpl implements TraceLogService {
 
     private final Jt808RequestTraceLogMapperClickhouse requestTraceLogMapper;

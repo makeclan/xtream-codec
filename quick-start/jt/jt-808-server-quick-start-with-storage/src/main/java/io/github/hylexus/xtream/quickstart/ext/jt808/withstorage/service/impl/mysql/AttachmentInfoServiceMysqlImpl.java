@@ -22,13 +22,11 @@ import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.entity.J
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.mysql.Jt808AlarmAttachmentInfoMapperMysql;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.AttachmentInfoService;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.utils.DatabaseRouter;
-import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 /**
  * @author hylexus
  */
-@Service
 public class AttachmentInfoServiceMysqlImpl implements AttachmentInfoService {
     private final Jt808AlarmAttachmentInfoMapperMysql mapper;
 

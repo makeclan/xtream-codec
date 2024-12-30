@@ -22,13 +22,11 @@ import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.entity.J
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.AttachmentInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 /**
  * @author hylexus
  */
-@Service
 public class AttachmentInfoServiceLoggingImpl implements AttachmentInfoService {
 
     private static final Logger log = LoggerFactory.getLogger(AttachmentInfoServiceLoggingImpl.class);

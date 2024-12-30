@@ -16,7 +16,7 @@
 
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.adapter;
 
-import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.R2dbcConfiguration;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.r2dbc.DemoR2dbcConfiguration;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.values.Jt808NetType;
 import io.r2dbc.spi.Readable;
 import io.r2dbc.spi.ReadableMetadata;
@@ -26,7 +26,7 @@ import pro.chenggang.project.reactive.mybatis.support.r2dbc.executor.type.R2dbcT
 
 /**
  * @author hylexus
- * @see R2dbcConfiguration#r2dbcMybatisConfigurationCustomizer()
+ * @see DemoR2dbcConfiguration#r2dbcMybatisConfigurationCustomizer()
  * @see <a href="https://github.com/chenggangpro/reactive-mybatis-support/wiki/TypeHandlerAssociations">https://github.com/chenggangpro/reactive-mybatis-support/wiki/TypeHandlerAssociations</a>
  */
 public class Jt808NetTypeHandlerAdapter implements R2dbcTypeHandlerAdapter<Jt808NetType> {

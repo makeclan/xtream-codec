@@ -22,13 +22,11 @@ import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.entity.J
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.postgres.Jt808AlarmAttachmentInfoMapperPostgres;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.AttachmentInfoService;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.utils.DatabaseRouter;
-import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 /**
  * @author hylexus
  */
-@Service
 public class AttachmentInfoServicePostgresImpl implements AttachmentInfoService {
     private final Jt808AlarmAttachmentInfoMapperPostgres mapper;
 

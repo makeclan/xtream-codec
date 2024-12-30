@@ -16,6 +16,9 @@
 
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration;
 
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.database.DemoDatabaseAutoConfiguration;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.oss.DemoOssAutoConfiguration;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.props.QuickStartAppProps;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.pubsub.Jt808TraceLogSubscriber;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.AttachmentInfoService;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.ObjectStorageService;
@@ -24,8 +27,10 @@ import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl.co
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl.composite.ObjectStorageServiceComposite;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl.composite.TraceLogServiceComposite;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 
 import java.util.List;
@@ -34,6 +39,13 @@ import java.util.List;
  * @author hylexus
  */
 @Configuration
+@Import({
+        DemoDatabaseAutoConfiguration.class,
+        DemoOssAutoConfiguration.class,
+})
+@EnableConfigurationProperties({
+        QuickStartAppProps.class,
+})
 public class AppConfiguration {
 
     @Bean

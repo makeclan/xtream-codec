@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration;
+package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.r2dbc;
 
-import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.clickhouse.ClickhousePlaceholderDialect;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.database.clickhouse.adapter.ClickhousePlaceholderDialect;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.adapter.Jt808NetTypeHandlerAdapter;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.adapter.Jt808VersionHandlerAdapter;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +28,7 @@ import pro.chenggang.project.reactive.mybatis.support.r2dbc.spring.support.R2dbc
  * @author hylexus
  */
 @Configuration
-public class R2dbcConfiguration {
+public class DemoR2dbcConfiguration {
 
     @Bean
     public R2dbcMybatisConfigurationCustomizer r2dbcMybatisConfigurationCustomizer() {
