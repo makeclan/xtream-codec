@@ -1,222 +1,211 @@
-import { BarStackHorizontal } from "@visx/shape";
-import { SeriesPoint } from "@visx/shape/lib/types";
-import { Group } from "@visx/group";
-import { AxisBottom, AxisLeft } from "@visx/axis";
-import { scaleBand, scaleOrdinal } from "@visx/scale";
-import { timeParse, timeFormat } from "@visx/vendor/d3-time-format";
-import { withTooltip, Tooltip, defaultStyles } from "@visx/tooltip";
-import { WithTooltipProvidedProps } from "@visx/tooltip/lib/enhancers/withTooltip";
-import { ParentSize } from "@visx/responsive";
-import { LegendOrdinal } from "@visx/legend";
-const dataGroup = [
-  {
-    time: "2024-12-30 10:24:09",
-    "x8a-udp-nio-8": { group: "others", threadState: "WAITING" },
-    "x9a-udp-nio-9": { group: "others", threadState: "RUNNABLE" },
-    "reactor-http-nio-8": {
-      group: "reactor_loop_resources_attachment_udp",
-      threadState: "RUNNABLE",
-    },
-    "parallel-8": {
-      group: "reactor_loop_resources_attachment_udp",
-      threadState: "WAITING",
-    },
-  },
-  {
-    time: "2024-12-30 10:24:14",
-    "x8a-udp-nio-8": { group: "others", threadState: "WAITING" },
-    "x9a-udp-nio-9": { group: "others", threadState: "RUNNABLE" },
-    "reactor-http-nio-8": {
-      group: "reactor_loop_resources_attachment_udp",
-      threadState: "RUNNABLE",
-    },
-    "parallel-8": {
-      group: "reactor_loop_resources_attachment_udp",
-      threadState: "WAITING",
-    },
-  },
-];
+import { Accordion, AccordionItem } from "@nextui-org/accordion";
+import {
+  EventSourceMessage,
+  fetchEventSource,
+} from "@microsoft/fetch-event-source";
+import { useEffect, useState } from "react";
+import { Axis, AxisTop } from "@visx/axis";
+import { timeFormat } from "@visx/vendor/d3-time-format";
+import { coerceNumber, scaleUtc } from "@visx/scale";
 
-type TooltipData = {
-  bar: SeriesPoint<typeof dataGroup>;
-  key: string;
-  index: number;
-  height: number;
-  width: number;
-  x: number;
-  y: number;
-  color: string;
+interface Dump {
+  time: string;
+  value: {
+    group: string;
+    dumpInfo: {
+      threadName: string;
+      threadId: number;
+      blockedTime: number;
+      blockedCount: number;
+      waitedTime: number;
+      waitedCount: number;
+      lockName: string;
+      lockOwnerId: number;
+      lockOwnerName: string;
+      daemon: boolean;
+      inNative: boolean;
+      suspended: boolean;
+      threadState:
+        | "NEW"
+        | "RUNNABLE"
+        | "BLOCKED"
+        | "WAITING"
+        | "TIMED_WAITING"
+        | "TERMINATED";
+      priority: number;
+      stackTrace: any;
+      lockedMonitors: any[];
+      lockedSynchronizers: any[];
+      lockInfo: any;
+    };
+  };
+}
+const types = {
+  NEW: { color: "#7b9ce1" },
+  RUNNABLE: { color: "#bd6d6c" },
+  BLOCKED: { color: "#75d874" },
+  WAITING: { color: "#e0bc78" },
+  TIMED_WAITING: { color: "#dc77dc" },
+  TERMINATED: { color: "#72b362" },
 };
 
-export type BarStackHorizontalProps = {
-  width: number;
-  height: number;
-  margin?: { top: number; right: number; bottom: number; left: number };
-  events?: boolean;
-};
-
-export const purple3 = "#a44afe";
-export const background = "#eaedff";
-const defaultMargin = { top: 40, left: 50, right: 40, bottom: 100 };
-const tooltipStyles = {
-  ...defaultStyles,
-  minWidth: 60,
-  backgroundColor: "rgba(0,0,0,0.9)",
-  color: "white",
-};
-
-const keys = ["WAITING", "RUN"];
-const parseDate = timeParse("%Y-%m-%d %H:%m:%s");
-const format = timeFormat("%H:%m:%s");
-const formatDate = (date: string) => format(parseDate(date) as Date);
-// accessors
-const getDate = (d: any) => d.time;
-
-const threadScale = scaleBand<string>({
-  domain: Object.keys(dataGroup[0]).filter((e) => e !== "time"),
-  padding: 0.2,
-});
-const dateScale = scaleBand<string>({
-  domain: dataGroup.map(getDate),
-  padding: 0.2,
-});
-const colorScale = scaleOrdinal<string, string>({
-  domain: keys,
-  range: ["green", "red", purple3],
-});
-
-let tooltipTimeout: number;
-
-export const DumpCharts = withTooltip<BarStackHorizontalProps, TooltipData>(
-  ({
-    width,
-    height,
-    events = false,
-    margin = defaultMargin,
-    tooltipOpen,
-    tooltipLeft,
-    tooltipTop,
-    tooltipData,
-    hideTooltip,
-    showTooltip,
-  }: BarStackHorizontalProps & WithTooltipProvidedProps<TooltipData>) => {
-    // bounds
-    const xMax = width - margin.left - margin.right;
-    const yMax = height - margin.top - margin.bottom;
-
-    dateScale.rangeRound([0, xMax]);
-
-    return width < 10 ? null : (
-      <div>
-        <svg height={height} width={width}>
-          <rect fill={background} height={height} rx={14} width={width} />
-          <Group left={margin.left} top={margin.top}>
-            <BarStackHorizontal<any, string>
-              color={colorScale}
-              data={dataGroup}
-              height={yMax}
-              keys={keys}
-              xScale={dateScale}
-              y={(d) => d}
-              yScale={threadScale}
-            >
-              {(barStacks) => {
-                return barStacks.map((barStack) =>
-                  barStack.bars.map((bar) => (
-                    <rect
-                      key={`barstack-horizontal-${barStack.index}-${bar.index}`}
-                      fill={bar.color}
-                      height={bar.height}
-                      width={bar.width}
-                      x={bar.x}
-                      y={bar.y}
-                      onClick={() => {
-                        if (events) alert(`clicked: ${JSON.stringify(bar)}`);
-                      }}
-                      onMouseLeave={() => {
-                        tooltipTimeout = window.setTimeout(() => {
-                          hideTooltip();
-                        }, 300);
-                      }}
-                      onMouseMove={() => {
-                        if (tooltipTimeout) clearTimeout(tooltipTimeout);
-                        const top = bar.y + margin.top;
-                        const left = bar.x + bar.width + margin.left;
-
-                        showTooltip({
-                          tooltipData: bar,
-                          tooltipTop: top,
-                          tooltipLeft: left,
-                        });
-                      }}
-                    />
-                  )),
-                );
-              }}
-            </BarStackHorizontal>
-            <AxisLeft
-              hideAxisLine
-              hideTicks
-              scale={threadScale}
-              stroke={purple3}
-              tickFormat={(thread: any) => thread.name}
-              tickLabelProps={{
-                fill: purple3,
-                fontSize: 11,
-                textAnchor: "end",
-                dy: "0.33em",
-              }}
-              tickStroke={purple3}
-            />
-            <AxisBottom
-              scale={dateScale}
-              stroke={purple3}
-              tickLabelProps={{
-                fill: purple3,
-                fontSize: 11,
-                textAnchor: "middle",
-              }}
-              tickStroke={purple3}
-              top={yMax}
-            />
-          </Group>
-        </svg>
-        <div
-          style={{
-            position: "absolute",
-            top: margin.top / 2 - 10,
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            fontSize: "14px",
-          }}
-        >
-          <LegendOrdinal
-            direction="row"
-            labelMargin="0 15px 0 0"
-            scale={colorScale}
-          />
-        </div>
-        {tooltipOpen && tooltipData && (
-          <Tooltip left={tooltipLeft} style={tooltipStyles} top={tooltipTop}>
-            <div style={{ color: colorScale(tooltipData.key) }}>
-              <strong>{tooltipData.key}</strong>
-            </div>
-            <div>{tooltipData.bar.data[tooltipData.key]}</div>
-            <div>
-              <small>{formatDate(getDate(tooltipData.bar.data))}</small>
-            </div>
-          </Tooltip>
-        )}
-      </div>
-    );
-  },
-);
-
+interface Group {
+  name: string;
+  threads: [
+    {
+      threadName: string;
+      dumps: {
+        time: string;
+        threadState:
+          | "NEW"
+          | "RUNNABLE"
+          | "BLOCKED"
+          | "WAITING"
+          | "TIMED_WAITING"
+          | "TERMINATED";
+      }[];
+    },
+  ];
+}
 export const DumpGroup = () => {
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [timeValues, setTimeValues] = useState<Date[]>([]);
+
+  useEffect(() => {
+    const ctrl = new AbortController();
+
+    fetchEventSource(
+      `${import.meta.env.VITE_API_DASHBOARD_V1}metrics/thread-dump`,
+      {
+        method: "GET",
+        signal: ctrl.signal,
+        onmessage: (event: EventSourceMessage) => {
+          if (event.event === "dumpInfo") {
+            const data: Dump = JSON.parse(event.data);
+
+            if (!timeValues.find((e) => e === data.time)) {
+              setTimeValues((prevState) => {
+                if (prevState.length > 100) {
+                  prevState.shift();
+                }
+
+                return prevState.concat([new Date(data.time)]);
+              });
+            }
+            setGroups((prevState) => {
+              const groupIndex = prevState.findIndex(
+                (group) => group.name === data.value.group,
+              );
+
+              if (groupIndex > -1) {
+                const tempGroup = prevState[groupIndex];
+                const threadIndex = tempGroup.threads.findIndex(
+                  (thread) =>
+                    thread.threadName === data.value.dumpInfo.threadName,
+                );
+
+                if (threadIndex > -1) {
+                  const tempThread = tempGroup.threads[threadIndex];
+
+                  if (tempThread.dumps.length > 100) {
+                    tempThread.dumps.shift();
+                  }
+                  if (!tempThread.dumps.find((e) => e.time === data.time)) {
+                    tempThread.dumps.push({
+                      time: data.time,
+                      threadState: data.value.dumpInfo.threadState,
+                    });
+                  }
+                  tempGroup.threads[threadIndex] = tempThread;
+                } else {
+                  tempGroup.threads.push({
+                    threadName: data.value.dumpInfo.threadName,
+                    dumps: [
+                      {
+                        time: data.time,
+                        threadState: data.value.dumpInfo.threadState,
+                      },
+                    ],
+                  });
+                }
+
+                return prevState.toSpliced(groupIndex, 1, tempGroup);
+              } else {
+                return prevState.concat([
+                  {
+                    name: data.value.group,
+                    threads: [
+                      {
+                        threadName: data.value.dumpInfo.threadName,
+                        dumps: [
+                          {
+                            time: data.time,
+                            threadState: data.value.dumpInfo.threadState,
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ]);
+              }
+            });
+          }
+        },
+      },
+    ).then(() => {
+      // TODO
+    });
+
+    return () => {
+      ctrl.abort();
+    };
+  }, []);
+  const getMinMax = (vals: (number | { valueOf(): number })[]) => {
+    const numericVals = vals.map(coerceNumber);
+
+    return [Math.min(...numericVals), Math.max(...numericVals)];
+  };
+
   return (
-    <ParentSize>
-      {({ width, height }) => <DumpCharts height={height} width={width} />}
-    </ParentSize>
+    <div className="w-full">
+      <svg className="w-full ml-40">
+        <Axis
+          label="time"
+          scale={scaleUtc({
+            domain: getMinMax(timeValues),
+            range: [0, 800],
+          })}
+          tickFormat={(v: Date) => timeFormat("%H:%m:%S")(v)}
+        />
+      </svg>
+      <Accordion selectionMode="multiple">
+        {groups &&
+          groups.map((group) => (
+            <AccordionItem
+              key={group.name}
+              aria-label={group.name}
+              subtitle="Press to expand"
+              title={group.name}
+            >
+              {group.threads.map((thread) => (
+                <div key={thread.threadName} className="flex">
+                  <div className="w-40 line-clamp-1">{thread.threadName}</div>
+                  <div className="w-full">
+                    {thread.dumps.map((e) => (
+                      <span
+                        key={thread.threadName + e.time}
+                        className="w-3.5 h-2 inline-block"
+                        style={{
+                          background: types[e.threadState].color,
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </AccordionItem>
+          ))}
+      </Accordion>
+    </div>
   );
 };

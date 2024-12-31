@@ -13,7 +13,7 @@ export const DashboardLayout = () => {
         <Sidebar />
         <div className=" w-full flex-1 flex-col p-4">
           <Navbar />
-          <main className="m-4 h-full w-full overflow-visible">
+          <main className="m-4 h-[90%] w-full overflow-visible relative overflow-x-auto overflow-y-auto">
             <Outlet />
           </main>
         </div>

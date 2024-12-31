@@ -37,7 +37,7 @@ export const Sidebar = () => {
         {siteConfig.sidenav.map((link) => {
           const LinkIcon = link.icon;
           const iconClasses =
-            "text-2xl pointer-events-none flex-shrink-0 xw-6 mx-1 fa-fw";
+            "pointer-events-none flex-shrink-0 xw-6 mx-1 fa-fw text-xl";
 
           return (
             <ListboxItem
@@ -50,13 +50,13 @@ export const Sidebar = () => {
                 <Tooltip content={link.name} placement="right">
                   <div className="truncate flex items-center justify-between gap-2">
                     <LinkIcon className={iconClasses} />
-                    <span className="flex-1 truncate font-medium " />
+                    <span className="flex-1 truncate font-medium text-base" />
                   </div>
                 </Tooltip>
               ) : (
                 <div className="truncate flex items-center justify-between gap-2">
                   <LinkIcon className={iconClasses} />
-                  <span className="flex-1 truncate font-medium">
+                  <span className="flex-1 truncate font-medium text-base">
                     {link.name}
                   </span>
                 </div>
@@ -67,7 +67,7 @@ export const Sidebar = () => {
       </Listbox>
       <Button
         isIconOnly
-        className="absolute top-[100px] right-[-10px] bg-gradient-to-tr from-pink-500 to-yellow-500 text-white shadow-lg text-small min-w-5 w-5 h-5"
+        className="absolute top-[30px] right-[-10px] text-white shadow-lg text-small min-w-5 w-5 h-5"
         radius="full"
         size="sm"
         onPress={() => setIsOpen(!isOpen)}
