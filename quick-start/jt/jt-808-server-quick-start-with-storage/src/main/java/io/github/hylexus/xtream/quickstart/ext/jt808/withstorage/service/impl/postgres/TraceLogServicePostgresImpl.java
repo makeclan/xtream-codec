@@ -16,10 +16,14 @@
 
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl.postgres;
 
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.PageableVo;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriptionRegistry;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.converter.Jt808EntityConverter;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.dto.Jt808TraceLogDto;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.entity.Jt808RequestTraceLogEntity;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.entity.Jt808ResponseTraceLogEntity;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.event.Jt808EventPayloads;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.vo.Jt808TraceLogVo;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.postgres.Jt808RequestTraceLogMapperPostgres;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.postgres.Jt808ResponseTraceLogMapperPostgres;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.TraceLogService;
@@ -31,10 +35,15 @@ import reactor.core.publisher.Mono;
  */
 public class TraceLogServicePostgresImpl implements TraceLogService {
 
+    private final Jt808MessageDescriptionRegistry messageDescriptionRegistry;
     private final Jt808RequestTraceLogMapperPostgres requestTraceLogMapper;
     private final Jt808ResponseTraceLogMapperPostgres responseTraceLogMapper;
 
-    public TraceLogServicePostgresImpl(Jt808RequestTraceLogMapperPostgres requestTraceLogMapper, Jt808ResponseTraceLogMapperPostgres responseTraceLogMapper) {
+    public TraceLogServicePostgresImpl(
+            Jt808MessageDescriptionRegistry messageDescriptionRegistry,
+            Jt808RequestTraceLogMapperPostgres requestTraceLogMapper,
+            Jt808ResponseTraceLogMapperPostgres responseTraceLogMapper) {
+        this.messageDescriptionRegistry = messageDescriptionRegistry;
         this.requestTraceLogMapper = requestTraceLogMapper;
         this.responseTraceLogMapper = responseTraceLogMapper;
     }
@@ -52,5 +61,18 @@ public class TraceLogServicePostgresImpl implements TraceLogService {
         final Jt808ResponseTraceLogEntity entity = Jt808EntityConverter.toResponseLogEntity(event);
         return DatabaseRouter.TRACE_LOG_POSTGRES.executeMono(this.responseTraceLogMapper.insert(entity))
                 .then(Mono.just(true));
+    }
+
+    @Override
+    public Mono<PageableVo<Jt808TraceLogVo>> listTraceLog(Jt808TraceLogDto dto) {
+        return DatabaseRouter.TRACE_LOG_POSTGRES.executeMono(this.requestTraceLogMapper.countTraceLog(dto)).flatMap(total -> {
+            if (total <= 0) {
+                return Mono.just(PageableVo.empty());
+            }
+            return DatabaseRouter.TRACE_LOG_POSTGRES.executeFlux(this.requestTraceLogMapper.listTraceLog(dto)).collectList().map(voList -> {
+                Jt808EntityConverter.setMessageDescription(voList, this.messageDescriptionRegistry::getDescription, "未知");
+                return PageableVo.of(total, voList);
+            });
+        });
     }
 }

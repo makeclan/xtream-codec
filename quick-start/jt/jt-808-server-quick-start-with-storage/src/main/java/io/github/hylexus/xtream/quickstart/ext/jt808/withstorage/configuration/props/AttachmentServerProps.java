@@ -40,4 +40,5 @@ public class AttachmentServerProps {
      * 将本地文件上传到远程存储后，是否保留本地文件
      */
     private boolean retainLocalTemporaryFile = true;
+    private String filePreviewBaseUrl;
 }

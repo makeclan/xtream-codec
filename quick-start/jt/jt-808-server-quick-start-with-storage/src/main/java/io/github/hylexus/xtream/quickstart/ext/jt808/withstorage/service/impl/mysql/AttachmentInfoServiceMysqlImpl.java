@@ -17,21 +17,30 @@
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl.mysql;
 
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1210;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.PageableVo;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.converter.Jt808EntityConverter;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.dto.Jt808AlarmAttachmentInfoDto;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.entity.Jt808AlarmAttachmentInfoEntity;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.vo.Jt808AlarmAttachmentInfoVo;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.mysql.Jt808AlarmAttachmentInfoMapperMysql;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.AttachmentInfoService;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.utils.DatabaseRouter;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 /**
  * @author hylexus
  */
 public class AttachmentInfoServiceMysqlImpl implements AttachmentInfoService {
     private final Jt808AlarmAttachmentInfoMapperMysql mapper;
+    private final String previewBaseUrl;
 
-    public AttachmentInfoServiceMysqlImpl(Jt808AlarmAttachmentInfoMapperMysql mapper) {
+    public AttachmentInfoServiceMysqlImpl(
+            Jt808AlarmAttachmentInfoMapperMysql mapper,
+            String previewBaseUrl) {
         this.mapper = mapper;
+        this.previewBaseUrl = previewBaseUrl;
     }
 
     @Override
@@ -40,4 +49,22 @@ public class AttachmentInfoServiceMysqlImpl implements AttachmentInfoService {
         return DatabaseRouter.TRACE_LOG_MYSQL.executeMono(this.mapper.insert(entity))
                 .then(Mono.just(true));
     }
+
+    @Override
+    public Mono<PageableVo<Jt808AlarmAttachmentInfoVo>> listAlarmAttachmentInfo(Jt808AlarmAttachmentInfoDto dto) {
+        return DatabaseRouter.TRACE_LOG_MYSQL.executeMono(this.mapper.count(dto)).flatMap(total -> {
+            if (total <= 0) {
+                return Mono.just(PageableVo.empty());
+            }
+            return DatabaseRouter.TRACE_LOG_MYSQL.executeFlux(this.mapper.list(dto)).collectList().map(list -> {
+                final List<Jt808AlarmAttachmentInfoVo> records = list.stream().map(entity -> {
+                    final Jt808AlarmAttachmentInfoVo vo = Jt808EntityConverter.armInfoEntityToVo(entity);
+                    vo.setPreviewUrl(this.previewBaseUrl + "/" + entity.getFilePath());
+                    return vo;
+                }).toList();
+                return PageableVo.of(total, records);
+            });
+        });
+    }
+
 }

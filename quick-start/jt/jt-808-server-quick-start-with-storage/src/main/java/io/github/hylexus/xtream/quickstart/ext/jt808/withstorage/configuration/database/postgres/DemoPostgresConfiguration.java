@@ -17,6 +17,8 @@
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.database.postgres;
 
 
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriptionRegistry;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.props.QuickStartAppProps;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.postgres.Jt808AlarmAttachmentInfoMapperPostgres;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.postgres.Jt808RequestTraceLogMapperPostgres;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.postgres.Jt808ResponseTraceLogMapperPostgres;
@@ -31,12 +33,15 @@ import org.springframework.context.annotation.Bean;
 public class DemoPostgresConfiguration {
 
     @Bean
-    TraceLogService traceLogServicePostgresImpl(Jt808RequestTraceLogMapperPostgres requestTraceLogMapper, Jt808ResponseTraceLogMapperPostgres responseTraceLogMapper) {
-        return new TraceLogServicePostgresImpl(requestTraceLogMapper, responseTraceLogMapper);
+    TraceLogService traceLogServicePostgresImpl(
+            Jt808MessageDescriptionRegistry descriptionRegistry,
+            Jt808RequestTraceLogMapperPostgres requestTraceLogMapper,
+            Jt808ResponseTraceLogMapperPostgres responseTraceLogMapper) {
+        return new TraceLogServicePostgresImpl(descriptionRegistry, requestTraceLogMapper, responseTraceLogMapper);
     }
 
     @Bean
-    AttachmentInfoService attachmentInfoServicePostgresImpl(Jt808AlarmAttachmentInfoMapperPostgres mapper) {
-        return new AttachmentInfoServicePostgresImpl(mapper);
+    AttachmentInfoService attachmentInfoServicePostgresImpl(Jt808AlarmAttachmentInfoMapperPostgres mapper, QuickStartAppProps appProps) {
+        return new AttachmentInfoServicePostgresImpl(mapper, appProps.getAttachmentBasePreviewUrl());
     }
 }

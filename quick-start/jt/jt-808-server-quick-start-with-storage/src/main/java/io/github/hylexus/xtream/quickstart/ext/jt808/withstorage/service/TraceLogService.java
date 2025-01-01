@@ -16,7 +16,10 @@
 
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service;
 
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.PageableVo;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.dto.Jt808TraceLogDto;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.event.Jt808EventPayloads;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.vo.Jt808TraceLogVo;
 import reactor.core.publisher.Mono;
 
 /**
@@ -27,5 +30,7 @@ public interface TraceLogService {
     Mono<Boolean> afterRequestDecode(Jt808EventPayloads.Jt808ReceiveEvent event);
 
     Mono<Boolean> beforeResponseSend(Jt808EventPayloads.Jt808SendEvent event);
+
+    Mono<PageableVo<Jt808TraceLogVo>> listTraceLog(Jt808TraceLogDto dto);
 
 }

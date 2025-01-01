@@ -16,10 +16,13 @@
 
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.postgres;
 
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.dto.Jt808TraceLogDto;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.entity.Jt808RequestTraceLogEntity;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.vo.Jt808TraceLogVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -36,5 +39,9 @@ public interface Jt808RequestTraceLogMapperPostgres {
     Mono<Jt808RequestTraceLogEntity> findById(@Param("id") String id);
 
     Mono<Void> insert(Jt808RequestTraceLogEntity requestLog);
+
+    Mono<Long> countTraceLog(@Param("dto") Jt808TraceLogDto dto);
+
+    Flux<Jt808TraceLogVo> listTraceLog(@Param("dto") Jt808TraceLogDto dto);
 
 }

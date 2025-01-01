@@ -20,6 +20,7 @@ import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.r
 import pro.chenggang.project.reactive.mybatis.support.r2dbc.executor.placeholder.dialect.NamePlaceholderDialect;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
 /**
@@ -30,7 +31,7 @@ import java.util.regex.Pattern;
  * @see DemoR2dbcConfiguration#r2dbcMybatisConfigurationCustomizer()
  */
 public class ClickhousePlaceholderDialect implements NamePlaceholderDialect {
-
+    private final AtomicLong counter = new AtomicLong(0);
     /**
      * The dialect name.
      */
@@ -45,7 +46,13 @@ public class ClickhousePlaceholderDialect implements NamePlaceholderDialect {
 
     @Override
     public String getMarker() {
-        return ":Ch_";
+        // return ":Ch_";
+        return ":Ch_" + this.mask(this.counter.incrementAndGet()) + "_";
+    }
+
+    // 移除之后去掉符号位，再次从零开始
+    long mask(long value) {
+        return value & Integer.MAX_VALUE;
     }
 
     @Override

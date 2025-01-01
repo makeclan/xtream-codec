@@ -16,10 +16,14 @@
 
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl.clickhouse;
 
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.PageableVo;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriptionRegistry;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.converter.Jt808EntityConverter;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.dto.Jt808TraceLogDto;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.entity.Jt808RequestTraceLogEntity;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.entity.Jt808ResponseTraceLogEntity;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.event.Jt808EventPayloads;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.vo.Jt808TraceLogVo;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.clickhouse.Jt808RequestTraceLogMapperClickhouse;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.clickhouse.Jt808ResponseTraceLogMapperClickhouse;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.TraceLogService;
@@ -30,11 +34,15 @@ import reactor.core.publisher.Mono;
  * @author hylexus
  */
 public class TraceLogServiceClickhouseImpl implements TraceLogService {
-
+    private final Jt808MessageDescriptionRegistry messageDescriptionRegistry;
     private final Jt808RequestTraceLogMapperClickhouse requestTraceLogMapper;
     private final Jt808ResponseTraceLogMapperClickhouse responseTraceLogMapper;
 
-    public TraceLogServiceClickhouseImpl(Jt808RequestTraceLogMapperClickhouse requestTraceLogMapper, Jt808ResponseTraceLogMapperClickhouse responseTraceLogMapper) {
+    public TraceLogServiceClickhouseImpl(
+            Jt808MessageDescriptionRegistry messageDescriptionRegistry,
+            Jt808RequestTraceLogMapperClickhouse requestTraceLogMapper,
+            Jt808ResponseTraceLogMapperClickhouse responseTraceLogMapper) {
+        this.messageDescriptionRegistry = messageDescriptionRegistry;
         this.requestTraceLogMapper = requestTraceLogMapper;
         this.responseTraceLogMapper = responseTraceLogMapper;
     }
@@ -52,6 +60,19 @@ public class TraceLogServiceClickhouseImpl implements TraceLogService {
         final Jt808ResponseTraceLogEntity entity = Jt808EntityConverter.toResponseLogEntity(event);
         return DatabaseRouter.TRACE_LOG_CLICKHOUSE.executeMono(this.responseTraceLogMapper.insert(entity))
                 .then(Mono.just(true));
+    }
+
+    @Override
+    public Mono<PageableVo<Jt808TraceLogVo>> listTraceLog(Jt808TraceLogDto dto) {
+        return DatabaseRouter.TRACE_LOG_CLICKHOUSE.executeMono(this.requestTraceLogMapper.countTraceLog(dto)).flatMap(total -> {
+            if (total <= 0) {
+                return Mono.just(PageableVo.empty());
+            }
+            return DatabaseRouter.TRACE_LOG_CLICKHOUSE.executeFlux(this.requestTraceLogMapper.listTraceLog(dto)).collectList().map(voList -> {
+                Jt808EntityConverter.setMessageDescription(voList, this.messageDescriptionRegistry::getDescription, "未知");
+                return PageableVo.of(total, voList);
+            });
+        });
     }
 
 }

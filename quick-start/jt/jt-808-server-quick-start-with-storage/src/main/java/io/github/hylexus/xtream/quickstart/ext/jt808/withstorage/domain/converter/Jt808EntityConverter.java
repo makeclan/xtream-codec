@@ -23,9 +23,13 @@ import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.entity.J
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.event.Jt808EventPayloads;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.values.Jt808NetType;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.values.Jt808Version;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.vo.Jt808AlarmAttachmentInfoVo;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.vo.Jt808TraceLogVo;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 
 /**
  * @author hylexus
@@ -34,6 +38,7 @@ public class Jt808EntityConverter {
 
     public static Jt808RequestTraceLogEntity toRequestLogEntity(Jt808EventPayloads.Jt808ReceiveEvent event) {
         return new Jt808RequestTraceLogEntity()
+                .setRequestId(event.requestId())
                 .setId(UUID.randomUUID().toString())
                 .setReceivedAt(event.receiveTime())
                 .setNetType(Jt808NetType.fromName(event.netType().name()))
@@ -54,6 +59,7 @@ public class Jt808EntityConverter {
 
     public static Jt808ResponseTraceLogEntity toResponseLogEntity(Jt808EventPayloads.Jt808SendEvent event) {
         return new Jt808ResponseTraceLogEntity()
+                .setRequestId(event.requestId())
                 .setId(UUID.randomUUID().toString())
                 .setSentAt(event.sentAt())
                 .setNetType(Jt808NetType.fromName(event.netType().name()))
@@ -79,5 +85,29 @@ public class Jt808EntityConverter {
                 .setFilePath(filePath)
                 .setCreatedAt(LocalDateTime.now())
                 ;
+    }
+
+    public static Jt808AlarmAttachmentInfoVo armInfoEntityToVo(Jt808AlarmAttachmentInfoEntity entity) {
+        final Jt808AlarmAttachmentInfoVo vo = new Jt808AlarmAttachmentInfoVo();
+        vo.setId(entity.getId());
+        vo.setTerminalId(entity.getTerminalId());
+        vo.setAlarmNo(entity.getAlarmNo());
+        vo.setAlarmTime(entity.getAlarmTime());
+        vo.setAlarmSequence(entity.getAlarmSequence());
+        vo.setAttachmentCount(entity.getAttachmentCount());
+        vo.setClientId(entity.getClientId());
+        vo.setFileName(entity.getFileName());
+        vo.setFileType(entity.getFileType());
+        vo.setFileSize(entity.getFileSize());
+        vo.setFilePath(entity.getFilePath());
+        vo.setCreatedAt(entity.getCreatedAt());
+        return vo;
+    }
+
+    public static void setMessageDescription(List<Jt808TraceLogVo> voList, Function<Integer, String> descriptionProvider, String def) {
+        for (final Jt808TraceLogVo vo : voList) {
+            final String desc = descriptionProvider.apply(vo.getMessageId());
+            vo.setMessageDesc(desc == null ? def : desc);
+        }
     }
 }

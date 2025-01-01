@@ -17,8 +17,11 @@
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl.logging;
 
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1210;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.PageableVo;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.converter.Jt808EntityConverter;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.dto.Jt808AlarmAttachmentInfoDto;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.entity.Jt808AlarmAttachmentInfoEntity;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.vo.Jt808AlarmAttachmentInfoVo;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.AttachmentInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +42,11 @@ public class AttachmentInfoServiceLoggingImpl implements AttachmentInfoService {
         log.info("==> attachmentInfo:saveAlarmInfo {} {} {}", terminalId, filePath, attachmentItem);
         final Jt808AlarmAttachmentInfoEntity entity = Jt808EntityConverter.toAlarmInfoEntity(terminalId, filePath, attachmentItem);
         return Mono.just(true);
+    }
+
+    @Override
+    public Mono<PageableVo<Jt808AlarmAttachmentInfoVo>> listAlarmAttachmentInfo(Jt808AlarmAttachmentInfoDto dto) {
+        return Mono.error(new UnsupportedOperationException());
     }
 
 }

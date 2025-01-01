@@ -17,6 +17,8 @@
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.database.clickhouse;
 
 
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriptionRegistry;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.props.QuickStartAppProps;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.clickhouse.Jt808AlarmAttachmentInfoMapperClickhouse;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.clickhouse.Jt808RequestTraceLogMapperClickhouse;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.clickhouse.Jt808ResponseTraceLogMapperClickhouse;
@@ -31,13 +33,18 @@ import org.springframework.context.annotation.Bean;
 public class DemoClickhouseConfiguration {
 
     @Bean
-    TraceLogService traceLogServiceClickhouseImpl(Jt808RequestTraceLogMapperClickhouse requestTraceLogMapper, Jt808ResponseTraceLogMapperClickhouse responseTraceLogMapper) {
-        return new TraceLogServiceClickhouseImpl(requestTraceLogMapper, responseTraceLogMapper);
+    TraceLogService traceLogServiceClickhouseImpl(
+            Jt808MessageDescriptionRegistry descriptionRegistry,
+            Jt808RequestTraceLogMapperClickhouse requestTraceLogMapper,
+            Jt808ResponseTraceLogMapperClickhouse responseTraceLogMapper) {
+        return new TraceLogServiceClickhouseImpl(descriptionRegistry, requestTraceLogMapper, responseTraceLogMapper);
     }
 
     @Bean
-    AttachmentInfoService attachmentInfoServiceClickhouseImpl(Jt808AlarmAttachmentInfoMapperClickhouse mapper) {
-        return new AttachmentInfoServiceClickhouseImpl(mapper);
+    AttachmentInfoService attachmentInfoServiceClickhouseImpl(
+            Jt808AlarmAttachmentInfoMapperClickhouse mapper,
+            QuickStartAppProps appProps) {
+        return new AttachmentInfoServiceClickhouseImpl(mapper, appProps.getAttachmentBasePreviewUrl());
     }
 
 }

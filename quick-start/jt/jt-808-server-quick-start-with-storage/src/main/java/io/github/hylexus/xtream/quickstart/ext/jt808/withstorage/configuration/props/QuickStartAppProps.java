@@ -19,6 +19,7 @@ package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -74,5 +75,13 @@ public class QuickStartAppProps {
     @Setter
     public static class Switchable {
         private boolean enabled = true;
+    }
+
+    public String getAttachmentBasePreviewUrl() {
+        final String filePreviewBaseUrl = this.getAttachmentServer().getFilePreviewBaseUrl();
+        if (StringUtils.isEmpty(filePreviewBaseUrl)) {
+            return this.getMinio().getEndpoint() + "/" + this.getAttachmentServer().getRemoteStorageBucketName();
+        }
+        return filePreviewBaseUrl;
     }
 }

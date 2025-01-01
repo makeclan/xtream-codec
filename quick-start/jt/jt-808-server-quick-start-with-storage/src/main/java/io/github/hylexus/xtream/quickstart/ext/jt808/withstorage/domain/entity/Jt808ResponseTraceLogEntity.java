@@ -36,6 +36,8 @@ public class Jt808ResponseTraceLogEntity {
      */
     private String id;
 
+    private String requestId;
+
     /**
      * 报文发送时间
      */

@@ -17,6 +17,9 @@
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl.composite;
 
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1210;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.PageableVo;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.dto.Jt808AlarmAttachmentInfoDto;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.vo.Jt808AlarmAttachmentInfoVo;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.AttachmentInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,4 +52,10 @@ public class AttachmentInfoServiceComposite implements AttachmentInfoService {
                 })
                 .then(Mono.just(true));
     }
+
+    @Override
+    public Mono<PageableVo<Jt808AlarmAttachmentInfoVo>> listAlarmAttachmentInfo(Jt808AlarmAttachmentInfoDto dto) {
+        return Mono.error(new UnsupportedOperationException());
+    }
+
 }

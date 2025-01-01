@@ -1,6 +1,10 @@
+-- drop table jt_808_request_trace_log;
+-- drop table jt_808_response_trace_log;
+-- drop table jt_808_alarm_attachment_info;
 create table jt_808_request_trace_log
 (
     id                    varchar(36) primary key,
+    request_id            varchar(64),
     received_at           timestamp,
     net_type              integer,
     trace_id              varchar(36),
@@ -20,6 +24,7 @@ create table jt_808_request_trace_log
 alter table jt_808_request_trace_log
     owner to jt;
 comment on column jt_808_request_trace_log.id is 'uuid';
+comment on column jt_808_request_trace_log.request_id is 'RequestId';
 comment on column jt_808_request_trace_log.received_at is '收到报文的时间';
 comment on column jt_808_request_trace_log.net_type is '网络类型; 0:TCP, 1:UDP';
 comment on column jt_808_request_trace_log.trace_id is '请求ID';
@@ -39,6 +44,7 @@ comment on column jt_808_request_trace_log.created_at is '数据插入时间';
 create table jt_808_response_trace_log
 (
     id          varchar(36) primary key,
+    request_id  varchar(64) null,
     sent_at     timestamp,
     net_type    integer,
     trace_id    varchar(36),
@@ -49,6 +55,7 @@ create table jt_808_response_trace_log
 alter table jt_808_response_trace_log
     owner to jt;
 comment on column jt_808_response_trace_log.id is 'uuid';
+comment on column jt_808_response_trace_log.request_id is 'RequestId';
 comment on column jt_808_response_trace_log.sent_at is '报文发送时间';
 comment on column jt_808_response_trace_log.net_type is '网络类型; 0:TCP, 1:UDP';
 comment on column jt_808_response_trace_log.trace_id is '请求ID';

@@ -16,7 +16,10 @@
 
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl.composite;
 
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.PageableVo;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.dto.Jt808TraceLogDto;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.event.Jt808EventPayloads;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.vo.Jt808TraceLogVo;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.TraceLogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +73,11 @@ public class TraceLogServiceComposite implements TraceLogService {
                     return Mono.just(true);
                 })
                 .then(Mono.just(true));
+    }
+
+    @Override
+    public Mono<PageableVo<Jt808TraceLogVo>> listTraceLog(Jt808TraceLogDto dto) {
+        return Mono.error(new UnsupportedOperationException());
     }
 
 }

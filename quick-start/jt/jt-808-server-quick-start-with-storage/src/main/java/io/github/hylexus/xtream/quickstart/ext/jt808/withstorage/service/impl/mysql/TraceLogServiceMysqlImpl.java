@@ -16,10 +16,14 @@
 
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.impl.mysql;
 
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.PageableVo;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriptionRegistry;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.converter.Jt808EntityConverter;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.dto.Jt808TraceLogDto;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.entity.Jt808RequestTraceLogEntity;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.entity.Jt808ResponseTraceLogEntity;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.event.Jt808EventPayloads;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.vo.Jt808TraceLogVo;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.mysql.Jt808RequestTraceLogMapperMysql;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.mysql.Jt808ResponseTraceLogMapperMysql;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.service.TraceLogService;
@@ -30,11 +34,15 @@ import reactor.core.publisher.Mono;
  * @author hylexus
  */
 public class TraceLogServiceMysqlImpl implements TraceLogService {
-
+    private final Jt808MessageDescriptionRegistry messageDescriptionRegistry;
     private final Jt808RequestTraceLogMapperMysql requestTraceLogMapper;
     private final Jt808ResponseTraceLogMapperMysql responseTraceLogMapper;
 
-    public TraceLogServiceMysqlImpl(Jt808RequestTraceLogMapperMysql requestTraceLogMapper, Jt808ResponseTraceLogMapperMysql responseTraceLogMapper) {
+    public TraceLogServiceMysqlImpl(
+            Jt808MessageDescriptionRegistry messageDescriptionRegistry,
+            Jt808RequestTraceLogMapperMysql requestTraceLogMapper,
+            Jt808ResponseTraceLogMapperMysql responseTraceLogMapper) {
+        this.messageDescriptionRegistry = messageDescriptionRegistry;
         this.requestTraceLogMapper = requestTraceLogMapper;
         this.responseTraceLogMapper = responseTraceLogMapper;
     }
@@ -53,6 +61,19 @@ public class TraceLogServiceMysqlImpl implements TraceLogService {
         final Jt808ResponseTraceLogEntity entity = Jt808EntityConverter.toResponseLogEntity(event);
         return DatabaseRouter.TRACE_LOG_MYSQL.executeMono(this.responseTraceLogMapper.insert(entity))
                 .then(Mono.just(true));
+    }
+
+    @Override
+    public Mono<PageableVo<Jt808TraceLogVo>> listTraceLog(Jt808TraceLogDto dto) {
+        return DatabaseRouter.TRACE_LOG_MYSQL.executeMono(this.requestTraceLogMapper.countTraceLog(dto)).flatMap(total -> {
+            if (total <= 0) {
+                return Mono.just(PageableVo.empty());
+            }
+            return DatabaseRouter.TRACE_LOG_MYSQL.executeFlux(this.requestTraceLogMapper.listTraceLog(dto)).collectList().map(voList -> {
+                Jt808EntityConverter.setMessageDescription(voList, this.messageDescriptionRegistry::getDescription, "未知");
+                return PageableVo.of(total, voList);
+            });
+        });
     }
 
 }

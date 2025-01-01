@@ -28,8 +28,8 @@ import reactor.core.publisher.Mono;
 public interface Jt808ResponseTraceLogMapperPostgres {
 
     @Insert("""
-            insert into jt_808_response_trace_log (id, sent_at, net_type, trace_id, terminal_id, escaped_hex, created_at)
-            values (#{id}, #{sentAt}, #{netType}, #{traceId}, #{terminalId}, #{escapedHex}, #{createdAt})
+            insert into jt_808_response_trace_log (id, request_id, sent_at, net_type, trace_id, terminal_id, escaped_hex, created_at)
+            values (#{id}, #{requestId}, #{sentAt}, #{netType}, #{traceId}, #{terminalId}, #{escapedHex}, #{createdAt})
             """)
     Mono<Void> insert(Jt808ResponseTraceLogEntity responseTraceLog);
 

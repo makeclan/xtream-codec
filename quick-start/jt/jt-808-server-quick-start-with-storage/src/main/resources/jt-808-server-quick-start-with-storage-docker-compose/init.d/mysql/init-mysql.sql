@@ -5,6 +5,7 @@ create table jt_808_request_trace_log
 (
     id                    varchar(36) not null comment 'uuid'
         primary key,
+    request_id            varchar(64) comment 'RequestId',
     received_at           datetime    null comment '收到报文的时间',
     net_type              int         null comment '网络类型; 0:TCP, 1:UDP',
     trace_id              varchar(36) null comment '请求ID',
@@ -28,6 +29,7 @@ create table jt_808_response_trace_log
 (
     id          varchar(36) not null comment 'uuid'
         primary key,
+    request_id  varchar(64) null comment 'RequestId',
     sent_at     DATETIME comment '报文发送时间',
     net_type    int         null comment '网络类型; 0:TCP, 1:UDP',
     trace_id    varchar(36) null comment '请求ID',

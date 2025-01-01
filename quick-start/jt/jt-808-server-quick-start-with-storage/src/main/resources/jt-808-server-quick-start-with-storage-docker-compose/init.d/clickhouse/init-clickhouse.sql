@@ -5,6 +5,7 @@ drop table if exists jt_808_request_trace_log;
 create table jt_808_request_trace_log
 (
     id                    UUID,
+    request_id            String comment 'RequestId',
     received_at           DATETIME comment '收到报文的时间',
     net_type              Enum8('TCP' = 0, 'UDP' = 1) comment '网络类型',
     trace_id              String comment '请求ID',
@@ -31,6 +32,7 @@ drop table if exists jt_808_response_trace_log;
 create table jt_808_response_trace_log
 (
     id          UUID,
+    request_id  Nullable(String) comment 'RequestId',
     sent_at     DATETIME comment '报文发送时间',
     net_type    Enum8('TCP' = 0, 'UDP' = 1) comment '网络类型',
     trace_id    String comment '请求ID',

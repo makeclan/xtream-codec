@@ -17,6 +17,8 @@
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.database.mysql;
 
 
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriptionRegistry;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.configuration.props.QuickStartAppProps;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.mysql.Jt808AlarmAttachmentInfoMapperMysql;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.mysql.Jt808RequestTraceLogMapperMysql;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.mysql.Jt808ResponseTraceLogMapperMysql;
@@ -31,12 +33,15 @@ import org.springframework.context.annotation.Bean;
 public class DemoMysqlConfiguration {
 
     @Bean
-    TraceLogService traceLogServiceMysqlImpl(Jt808RequestTraceLogMapperMysql requestTraceLogMapper, Jt808ResponseTraceLogMapperMysql responseTraceLogMapper) {
-        return new TraceLogServiceMysqlImpl(requestTraceLogMapper, responseTraceLogMapper);
+    TraceLogService traceLogServiceMysqlImpl(
+            Jt808MessageDescriptionRegistry descriptionRegistry,
+            Jt808RequestTraceLogMapperMysql requestTraceLogMapper,
+            Jt808ResponseTraceLogMapperMysql responseTraceLogMapper) {
+        return new TraceLogServiceMysqlImpl(descriptionRegistry, requestTraceLogMapper, responseTraceLogMapper);
     }
 
     @Bean
-    AttachmentInfoService attachmentInfoServiceMysqlImpl(Jt808AlarmAttachmentInfoMapperMysql mapper) {
-        return new AttachmentInfoServiceMysqlImpl(mapper);
+    AttachmentInfoService attachmentInfoServiceMysqlImpl(Jt808AlarmAttachmentInfoMapperMysql mapper, QuickStartAppProps appProps) {
+        return new AttachmentInfoServiceMysqlImpl(mapper, appProps.getAttachmentBasePreviewUrl());
     }
 }

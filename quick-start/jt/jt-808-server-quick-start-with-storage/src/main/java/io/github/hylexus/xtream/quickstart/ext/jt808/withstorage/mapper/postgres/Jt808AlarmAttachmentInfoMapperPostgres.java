@@ -16,9 +16,12 @@
 
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.mapper.postgres;
 
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.dto.Jt808AlarmAttachmentInfoDto;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.entity.Jt808AlarmAttachmentInfoEntity;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -37,4 +40,7 @@ public interface Jt808AlarmAttachmentInfoMapperPostgres {
             """)
     Mono<Void> insert(Jt808AlarmAttachmentInfoEntity entity);
 
+    Mono<Long> count(@Param("dto") Jt808AlarmAttachmentInfoDto dto);
+
+    Flux<Jt808AlarmAttachmentInfoEntity> list(@Param("dto") Jt808AlarmAttachmentInfoDto dto);
 }
