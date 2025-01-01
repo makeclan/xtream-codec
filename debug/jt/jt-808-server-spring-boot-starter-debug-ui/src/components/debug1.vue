@@ -17,7 +17,7 @@ getBaseInfo();
 <template>
     <div class="w-full">
         <div class="flex flex-col">
-            <el-button @click="() => count++">Add {{msg}}</el-button>
+            <el-button @click="() => count++">debug1 {{msg}}</el-button>
             <div class="m-t-5">count: <el-input class="my-input" v-model="count"></el-input></div>
             <pre>{{ response }}</pre>
         </div>
