@@ -54,7 +54,8 @@
 ├── quick-start   ## quick-start 示例
 │     └── jt      ## JT/T 示例
 │         ├── jt-808-server-quick-start                   ## JT/T 808 服务端示例(不带 dashboard)
-│         └── jt-808-server-quick-start-with-dashboard    ## JT/T 808 服务端示例(带 dashboard)
+│         ├── jt-808-server-quick-start-with-dashboard    ## JT/T 808 服务端示例(带 dashboard)
+│         └── jt-808-server-quick-start-with-storage      ## JT/T 808 服务端示例(带 存储:clickhouse,mysql,postgres,minio)
 ├── debug         ## 调试专用(不用理会)
 │     ├── jt      ## JT/T 示例(不用理会)
 │     │   └── jt-808-server-spring-boot-starter-reactive-debug   ## JT/T 808 服务端调试(不用理会)
@@ -72,6 +73,7 @@
 
 ## QuickStart
 
+- 带存储的 **JT/T 808** 服务示例: [jt-808-server-quick-start-with-storage](quick-start/jt/jt-808-server-quick-start-with-storage/README.md)
 - **自定义** 协议示例
     - Github: https://hylexus.github.io/xtream-codec/core/samples/custom-protocol-sample-01/
     - ~~Gitee: https://hylexus.gitee.io/xtream-codec/core/samples/custom-protocol-sample-01/~~  (Gitee 暂停 Pages 服务，尚不确定后续能否恢复服务)

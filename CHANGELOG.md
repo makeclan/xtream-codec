@@ -1,3 +1,16 @@
+## 0.0.1-beta.10(2025-01-01)
+
+### ⭐ New Features
+
+- `jt-808-server-dashboard-ui` 优化
+- `xtream-codec-server-reactive` 模块配置项默认值调整
+- 新增 `quck-start/jt/jt-808-server-quick-start-with-storage` 示例模块
+
+### ❤️ Contributors
+
+- [@dfEric](https://github.com/dfEric)
+- [@hylexus](https://github.com/hylexus)
+
 ## 0.0.1-beta.9(2024-12-22)
 
 ### ⭐ New Features

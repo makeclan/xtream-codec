@@ -4,6 +4,7 @@ import {
   fetchEventSource,
 } from "@microsoft/fetch-event-source";
 import { useEffect, useState } from "react";
+// @ts-ignore
 import { Axis, AxisTop } from "@visx/axis";
 import { timeFormat } from "@visx/vendor/d3-time-format";
 import { coerceNumber, scaleUtc } from "@visx/scale";
@@ -83,6 +84,7 @@ export const DumpGroup = () => {
           if (event.event === "dumpInfo") {
             const data: Dump = JSON.parse(event.data);
 
+            // @ts-ignore
             if (!timeValues.find((e) => e === data.time)) {
               setTimeValues((prevState) => {
                 if (prevState.length > 100) {
@@ -175,6 +177,7 @@ export const DumpGroup = () => {
             domain: getMinMax(timeValues),
             range: [0, 800],
           })}
+          // @ts-ignore
           tickFormat={(v: Date) => timeFormat("%H:%m:%S")(v)}
         />
       </svg>
