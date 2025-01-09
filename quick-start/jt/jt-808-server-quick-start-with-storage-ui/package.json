@@ -10,7 +10,10 @@
   },
   "dependencies": {
     "axios": "^1.7.9",
+    "build": "^0.1.4",
     "element-plus": "^2.8.8",
+    "pnpm": "^9.15.3",
+    "run": "^1.5.0",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
   },

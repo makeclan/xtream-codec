@@ -2,7 +2,7 @@
 import {onMounted, reactive} from 'vue'
 import {DatabaseConfig, TraceLogVo} from "../types/model.ts";
 import {requestServerConfig, requestTraceLog} from "../api/demo-query-api.ts";
-import {fileTypeDescriptor, formatFileSize, jt808VersionTagType, toHexString} from "../utils/common-utils.ts";
+import {jt808VersionTagType, toHexString} from "../utils/common-utils.ts";
 
 interface PageState {
   data: TraceLogVo[],

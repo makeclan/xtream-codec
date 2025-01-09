@@ -42,7 +42,7 @@ demo-app-with-storage:
       minio:
         enabled: ${FEATURE_CONTROL_OSS_MINIO_ENABLED:true}
   minio:
-    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+    endpoint: ${MINIO_ENDPOINT:http://192.168.71.176:9000}
     access-key: ${MINIO_ACCESS_KEY:minioadmin}
     secret-key: ${MINIO_SECRET_KEY:minioadmin}
   # 示例性的附件服务器配置
@@ -70,7 +70,7 @@ spring:
           - name: trace-log-mysql
             as-default: true
             # r2dbc-url: r2dbc:mysql://[username[:password]@]hostname[:port]/[database][?property1=value1&...]
-            r2dbc-url: ${MYSQL_R2DBC_URL:r2dbc:mysql://localhost:3306/jt_808}
+            r2dbc-url: ${MYSQL_R2DBC_URL:r2dbc:mysql://192.168.71.176:3306/jt_808}
             username: ${MYSQL_R2DBC_USERNAME:root}
             password: ${MYSQL_R2DBC_PASSWORD:mysql}
             pool:
@@ -83,7 +83,7 @@ spring:
               max-create-connection-time: PT10S
           - name: trace-log-postgres
             as-default: false
-            r2dbc-url: ${POSTGRES_R2DBC_URL:r2dbc:postgres://localhost:5432/jt_808}
+            r2dbc-url: ${POSTGRES_R2DBC_URL:r2dbc:postgres://192.168.71.176:5432/jt_808}
             username: ${POSTGRES_R2DBC_USERNAME:jt}
             password: ${POSTGRES_R2DBC_PASSWORD:postgres}
             pool:
@@ -96,7 +96,7 @@ spring:
               max-create-connection-time: PT10S
           - name: trace-log-clickhouse
             as-default: false
-            r2dbc-url: ${CLICKHOUSE_R2DBC_URL:r2dbc:clickhouse://localhost:8123/jt_808}
+            r2dbc-url: ${CLICKHOUSE_R2DBC_URL:r2dbc:clickhouse://192.168.71.176:8123/jt_808}
             username: ${CLICKHOUSE_R2DBC_USERNAME:jt}
             password: ${CLICKHOUSE_R2DBC_PASSWORD:clickhouse}
             pool:

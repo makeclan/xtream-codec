@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory} from 'vue-router'
+import {createRouter, createWebHashHistory} from 'vue-router'
 import AlarmInfo from "../pages/alarm-info.vue";
 import TraceLog from "../pages/trace-log.vue";
 import HomePage from "../pages/home-page.vue";
@@ -10,6 +10,6 @@ const routes = [
 ]
 
 export const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHashHistory(),
     routes,
 })

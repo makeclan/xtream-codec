@@ -16,6 +16,8 @@
 
 services:
   minio:
+    profiles:
+      - minio
     image: minio/minio:RELEASE.2024-12-18T13-15-44Z
     container_name: minio
     networks:
@@ -31,9 +33,9 @@ services:
       - ${DATA_BASE_PATH}/minio:/data
       # - ./config:/root/.minio
     command: server /data --console-address ":9001"
-    profiles:
-      - minio
   trace-log-mysql:
+    profiles:
+      - mysql
     image: mysql:8.4.3
     container_name: trace-log-mysql
     networks:
@@ -47,9 +49,9 @@ services:
     volumes:
       - ${DATA_BASE_PATH}/trace-log-mysql:/var/lib/mysql
       - ./init.d/mysql:/docker-entrypoint-initdb.d
-    profiles:
-      - mysql
   trace-log-postgres:
+    profiles:
+      - postgres
     image: postgres:16.6
     container_name: trace-log-postgres
     networks:
@@ -64,9 +66,9 @@ services:
     volumes:
       - ${DATA_BASE_PATH}/trace-log-postgres:/var/lib/postgresql/data
       - ./init.d/postgres:/docker-entrypoint-initdb.d
-    profiles:
-      - postgres
   trace-log-clickhouse:
+    profiles:
+      - clickhouse
     image: clickhouse/clickhouse-server:24.10.1.2812
     container_name: trace-log-clickhouse
     networks:
@@ -81,8 +83,33 @@ services:
     volumes:
       - ${DATA_BASE_PATH}/trace-log-clickhouse:/var/lib/clickhouse
       - ./init.d/clickhouse:/docker-entrypoint-initdb.d
+  spring-boot-app:
     profiles:
-      - clickhouse
+      - app
+    image: registry.cn-hangzhou.aliyuncs.com/xtream-codec/jt-808-server-quick-start-with-storage:latest
+    container_name: jt-808-server-quick-start-with-storage
+    networks:
+      - trace-log-network
+    environment:
+      - TZ=Asia/Shanghai
+      # 如果你不想写 N 多环境变量，可以考虑将配置文件映射到容器中
+      - ATTACHMENT_SERVER_IP=192.168.71.184
+      - FEATURE_CONTROL_DATABASE_CLICKHOUSE_ENABLED=true
+      - FEATURE_CONTROL_DATABASE_MYSQL_ENABLED=true
+      - FEATURE_CONTROL_DATABASE_POSTGRES_ENABLED=true
+      - FEATURE_CONTROL_OSS_MINIO_ENABLED=true
+      - MINIO_ENDPOINT=http://minio:9000
+      - MYSQL_R2DBC_URL=r2dbc:mysql://trace-log-mysql:3306/jt_808
+      - MYSQL_R2DBC_USERNAME=root
+      - MYSQL_R2DBC_PASSWORD=mysql
+      - POSTGRES_R2DBC_URL=r2dbc:postgres://trace-log-postgres:5432/jt_808
+      - POSTGRES_R2DBC_USERNAME=jt
+      - POSTGRES_R2DBC_PASSWORD=postgres
+      - CLICKHOUSE_R2DBC_URL=r2dbc:clickhouse://trace-log-clickhouse:8123/jt_808
+      - CLICKHOUSE_R2DBC_USERNAME=jt
+      - CLICKHOUSE_R2DBC_PASSWORD=clickhouse
+    ports:
+      - "8080:8080"
 networks:
   trace-log-network:
     driver: bridge
