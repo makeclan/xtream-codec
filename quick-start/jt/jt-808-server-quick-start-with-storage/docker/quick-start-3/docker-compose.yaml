@@ -110,6 +110,10 @@ services:
       - CLICKHOUSE_R2DBC_PASSWORD=clickhouse
     ports:
       - "8080:8080"
+      - "3927:3927"
+      - "3824:3824"
+      - "3721:3721"
+      - "3618:3618"
 networks:
   trace-log-network:
     driver: bridge
