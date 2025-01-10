@@ -22,6 +22,8 @@ export interface Event {
   version: string;
   isSubPackage: string;
   messageId: string;
+  messageDesc: string;
+  hexString: string;
   rawHexString: string;
   escapedHexString: string;
   type: EventType;

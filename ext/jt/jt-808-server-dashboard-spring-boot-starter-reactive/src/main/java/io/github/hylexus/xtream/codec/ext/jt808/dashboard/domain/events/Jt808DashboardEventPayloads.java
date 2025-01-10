@@ -78,6 +78,7 @@ public class Jt808DashboardEventPayloads {
             String version,
             boolean isSubPackage,
             int messageId,
+            String messageDesc,
             String hexString,
             Instant eventTime) implements HasTerminalId, HasEventTime {
     }
@@ -92,6 +93,7 @@ public class Jt808DashboardEventPayloads {
             String version,
             boolean isSubPackage,
             int messageId,
+            String messageDesc,
             String mergedHexString,
             Instant eventTime) implements HasTerminalId, HasEventTime {
     }
@@ -104,6 +106,7 @@ public class Jt808DashboardEventPayloads {
             String traceId,
             String terminalId,
             int messageId,
+            String messageDesc,
             String hexString,
             Instant eventTime) implements HasTerminalId, HasEventTime {
     }

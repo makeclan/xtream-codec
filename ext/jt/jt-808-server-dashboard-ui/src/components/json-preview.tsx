@@ -13,7 +13,19 @@ import {
 } from "@/components/icons.tsx";
 import { Dic } from "@/types";
 const annotation: Dic = {
+  features: "功能开关",
   requestLogger: "请求日志",
+  requestDispatcherScheduler:
+    "转发请求时使用指定的调度器(而不是上游默认的Reactor调度器)",
+  requestCombiner: "分包请求合并",
+  instructionServer: "指令服务器",
+  attachmentServer: "附件服务器",
+  schedulers: "Reactor调度器",
+  requestDispatcher: "和 features.requestDispatcherScheduler 相对应的配置",
+  nonBlockingHandler: "[非阻塞类型] 的处理器用到的调度器",
+  blockingHandler: "[阻塞类型] 的处理器用到的调度器",
+  eventPublisher: "[事件发布器] 用到的调度器",
+  customSchedulers: "[用户自定义] 调度器",
 };
 const isObject = (val: any) => {
   return typeof val === "object" && val !== null;
@@ -23,7 +35,7 @@ const valueColor = (item: string | number | boolean) => {
     case "number":
       return "text-primary";
     case "boolean":
-      return "text-success";
+      return item ? "text-success" : "text-secondary";
     case "string":
       return "text-secondary";
   }

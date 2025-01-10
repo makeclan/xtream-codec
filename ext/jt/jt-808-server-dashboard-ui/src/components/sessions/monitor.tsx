@@ -47,6 +47,19 @@ interface MessageProps {
   item: Event;
   className?: string;
 }
+
+const eventKeyDesc = (key: string): string => {
+  switch (key) {
+    case "messageId":
+      return "消息ID";
+    case "hexString":
+      return "报文";
+    case "eventTime":
+      return "时间";
+    default:
+      return key;
+  }
+};
 const Message: FC<MessageProps> = ({ item, className }) => {
   const rowDisplay = useMemo(() => {
     return [
@@ -89,11 +102,17 @@ const Message: FC<MessageProps> = ({ item, className }) => {
         <CardBody>
           {Object.keys(item)
             .filter((k) => ["messageId", "hexString", "eventTime"].includes(k))
-            .map((e, i) => (
-              <p
-                key={i}
-              >{`${e}: ${e === "messageId" ? "0x0" + item[e as keyof Event].toString(16) : item[e as keyof Event]}`}</p>
-            ))}
+            .map((e, i) => {
+              const messageDesc = item["messageDesc"];
+              const messageDescText = messageDesc ? `(${messageDesc})` : "";
+
+              return (
+                <p
+                  key={i}
+                  style={{ wordBreak: "break-all" }}
+                >{`${eventKeyDesc(e)}: ${e === "messageId" ? "0x" + item[e as keyof Event].toString(16).padStart(4, "0") + messageDescText : item[e as keyof Event]}`}</p>
+              );
+            })}
         </CardBody>
       </Card>
       <div className="w-12">

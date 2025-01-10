@@ -124,8 +124,8 @@ public class BuiltinJt808DashboardConfiguration {
     }
 
     @Bean
-    Jt808DashboardRequestLifecycleListener jt808DashboardRequestLifecycleListener(XtreamEventPublisher eventPublisher) {
-        return new Jt808DashboardRequestLifecycleListener(eventPublisher);
+    Jt808DashboardRequestLifecycleListener jt808DashboardRequestLifecycleListener(XtreamEventPublisher eventPublisher, Jt808MessageDescriptionRegistry descriptionRegistry) {
+        return new Jt808DashboardRequestLifecycleListener(eventPublisher, descriptionRegistry);
     }
 
     @Bean

@@ -20,6 +20,7 @@ import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.events.Jt808DashboardEventPayloads;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.events.Jt808DashboardEventType;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriptionRegistry;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
@@ -36,9 +37,11 @@ import java.time.Instant;
  */
 public class Jt808DashboardRequestLifecycleListener implements Jt808RequestLifecycleListener {
     private final XtreamEventPublisher eventPublisher;
+    private final Jt808MessageDescriptionRegistry descriptionRegistry;
 
-    public Jt808DashboardRequestLifecycleListener(XtreamEventPublisher eventPublisher) {
+    public Jt808DashboardRequestLifecycleListener(XtreamEventPublisher eventPublisher, Jt808MessageDescriptionRegistry descriptionRegistry) {
         this.eventPublisher = eventPublisher;
+        this.descriptionRegistry = descriptionRegistry;
     }
 
     @Override
@@ -57,6 +60,7 @@ public class Jt808DashboardRequestLifecycleListener implements Jt808RequestLifec
                             header.version().shortDesc(),
                             header.messageBodyProps().hasSubPackage(),
                             header.messageId(),
+                            this.getMessageIdDesc(header.messageId()),
                             FormatUtils.toHexString(rawPayload),
                             now
                     );
@@ -80,6 +84,7 @@ public class Jt808DashboardRequestLifecycleListener implements Jt808RequestLifec
                             header.version().shortDesc(),
                             header.messageBodyProps().hasSubPackage(),
                             header.messageId(),
+                            this.getMessageIdDesc(header.messageId()),
                             FormatUtils.toHexString(mergedRequest.payload()),
                             now
                     );
@@ -99,6 +104,7 @@ public class Jt808DashboardRequestLifecycleListener implements Jt808RequestLifec
                             request.traceId(),
                             request.terminalId(),
                             request.messageId(),
+                            this.getMessageIdDesc(request.messageId()) + " - 回复",
                             FormatUtils.toHexString(response),
                             now
                     );
@@ -122,5 +128,9 @@ public class Jt808DashboardRequestLifecycleListener implements Jt808RequestLifec
                     );
                 }
         );
+    }
+
+    private String getMessageIdDesc(int messageId) {
+        return this.descriptionRegistry.getDescription(messageId, "未知消息");
     }
 }
