@@ -70,6 +70,28 @@ public class DemoLocationMessageHandler {
     //  * <p>
     //  * 7e02004086010000000001893094655200E4000000000000000101D907F2073D336C000000000000211124114808010400000026030200003001153101002504000000001404000000011504000000FA160400000000170200001803000000EA10FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF02020000EF0400000000F31B017118000000000000000000000000000000000000000000000000567e
     //  */
+    // @Jt808RequestHandlerMapping(scheduler = "my-virtual-thread-scheduler-1", messageIds = 0x0200, versions = Jt808ProtocolVersion.VERSION_2019)
+    // public ServerCommonReplyMessage processMessage0200V2019(
+    //         Jt808Session session,
+    //         Jt808Request request,
+    //         @Jt808RequestBody BuiltinMessage0200 body,
+    //         Jt808RequestEntity<BuiltinMessage0200> requestEntity,
+    //         DemoLocationMsg03 message) {
+    //     log.info("v2019-0x0200: {}", body);
+    //     log.info("v2019-0x0200: {}", requestEntity);
+    //     log.info("v2019-0x0200: {}", message);
+    //     log.info("v2019-0x0200: threadName={} thread={}", Thread.currentThread().getName(),Thread.currentThread());
+    //     // 当前方法被调度到了 `my-virtual-thread-scheduler-1` 这个基于虚拟线程的调度器上
+    //     // 所以这里可以阻塞
+    //     final Byte result = this.locationService.processLocationMessage(session, body).block();
+    //     return ServerCommonReplyMessage.of(request, Objects.requireNonNull(result));
+    // }
+
+    // /**
+    //  * 位置上报(V2019)
+    //  * <p>
+    //  * 7e02004086010000000001893094655200E4000000000000000101D907F2073D336C000000000000211124114808010400000026030200003001153101002504000000001404000000011504000000FA160400000000170200001803000000EA10FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF02020000EF0400000000F31B017118000000000000000000000000000000000000000000000000567e
+    //  */
     // @Jt808RequestHandlerMapping(messageIds = 0x0200, versions = Jt808ProtocolVersion.VERSION_2019)
     // public Mono<Jt808ResponseEntity<ServerCommonReplyMessage>> processMessage0200V2019(
     //         // public Jt808ResponseEntity<ServerCommonReplyMessage> processMessage0200V2019(

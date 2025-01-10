@@ -17,10 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.boot.properties;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
-import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.scheduler.BoundedElasticProperties;
-import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.scheduler.ParallelProperties;
-import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.scheduler.SchedulerType;
-import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.scheduler.SingleProperties;
+import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.scheduler.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -52,6 +49,9 @@ public class XtreamServerSchedulerProperties {
 
     @NestedConfigurationProperty
     protected SingleProperties single = new SingleProperties();
+
+    @NestedConfigurationProperty
+    protected VirtualThreadProperties virtual = new VirtualThreadProperties();
 
     public XtreamSchedulerRegistry.SchedulerConfig toSchedulerConfig(String name) {
         return XtreamSchedulerRegistry.SchedulerConfig.newBuilder()

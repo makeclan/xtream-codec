@@ -177,6 +177,9 @@ jt808-server:
         # parallelism: 10
         daemon: true
         reject-blocking-task: true
+      ## 当且仅当 jt808-server.schedulers.request-dispatcher.type == virtual 时生效
+      virtual:
+        prefix: xrd-vt
       ## !!!仅仅用于测试!!!
       ## 当且仅当 jt808-server.schedulers.request-dispatcher.type == single 时生效
       single:
@@ -210,6 +213,9 @@ jt808-server:
         # parallelism: 10
         daemon: true
         reject-blocking-task: true
+      ## 当且仅当 jt808-server.schedulers.non-blocking-handler.type == virtual 时生效
+      virtual:
+        prefix: xnbh-vt
       ## !!!仅仅用于测试!!!
       ## 当且仅当 jt808-server.schedulers.non-blocking-handler.type == single 时生效
       single:
@@ -243,6 +249,9 @@ jt808-server:
         # parallelism: 10
         daemon: true
         reject-blocking-task: false
+      ## 当且仅当 jt808-server.schedulers.blocking-handler.type == virtual 时生效
+      virtual:
+        prefix: xbh-vt
       ## !!!仅仅用于测试!!!
       ## 当且仅当 jt808-server.schedulers.blocking-handler.type == single 时生效
       single:
@@ -276,6 +285,9 @@ jt808-server:
         # parallelism: 10
         daemon: true
         reject-blocking-task: true
+      ## 当且仅当 jt808-server.schedulers.event-publisher.type == virtual 时生效
+      virtual:
+        prefix: xep-vt
       ## !!!仅仅用于测试!!!
       ## 当且仅当 jt808-server.schedulers.event-publisher.type == single 时生效
       single:

@@ -19,15 +19,14 @@ package io.github.hylexus.xtream.codec.ext.jt808.processor;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamServerSchedulerProperties;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistryCustomizer;
-import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.scheduler.BoundedElasticProperties;
-import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.scheduler.ParallelProperties;
-import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.scheduler.SchedulerType;
-import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.scheduler.SingleProperties;
+import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.scheduler.*;
 import io.github.hylexus.xtream.codec.server.reactive.spec.resources.XtreamReactorThreadFactory;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 public class DefaultJt808XtreamScheduleRegistryCustomizer implements XtreamSchedulerRegistryCustomizer {
     protected final XtreamServerSchedulerProperties schedulerProperties;
@@ -50,11 +49,23 @@ public class DefaultJt808XtreamScheduleRegistryCustomizer implements XtreamSched
         return switch (schedulerType) {
             case BOUNDED_ELASTIC -> newBoundedElastic(property.getBoundedElastic());
             case PARALLEL -> newParallel(property.getParallel());
-            case VIRTUAL -> Schedulers.fromExecutorService(Executors.newVirtualThreadPerTaskExecutor());
+            case VIRTUAL -> newVirtualThreadPerTaskExecutor(property.getVirtual());
             case SINGLE -> newSingle(property.getSingle());
             case IMMEDIATE -> Schedulers.immediate();
             default -> throw new IllegalArgumentException("Unsupported SchedulerType: " + schedulerType);
         };
+    }
+
+    /**
+     * @see Executors#newVirtualThreadPerTaskExecutor()
+     */
+    public static Scheduler newVirtualThreadPerTaskExecutor(VirtualThreadProperties properties) {
+        final ThreadFactory factory = Thread.ofVirtual()
+                .name(properties.getPrefix().endsWith("-") ? properties.getPrefix() : properties.getPrefix() + "-", properties.getStart())
+                .inheritInheritableThreadLocals(properties.isInheritInheritableThreadLocals())
+                .factory();
+        final ExecutorService executorService = Executors.newThreadPerTaskExecutor(factory);
+        return Schedulers.fromExecutorService(executorService);
     }
 
     public static Scheduler newSingle(SingleProperties single) {

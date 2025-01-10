@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.quickstart.ext.jt808.handler;
+package io.github.hylexus.xtream.quickstart.ext.jt808.withdashboard.handler;
 
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.*;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.BuiltinMessage8100;
