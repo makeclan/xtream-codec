@@ -42,10 +42,24 @@ public final class FormatUtils {
         return Integer.toHexString(i);
     }
 
+    public static String toHexString(long l) {
+        return Long.toHexString(l);
+    }
+
     public static String toHexString(int i, int minLen) {
         final String hexString = Integer.toHexString(i);
         final int prefixLen = Math.max(minLen - hexString.length(), 0);
         return "0".repeat(prefixLen) + hexString;
+    }
+
+    public static String toHexString(long l, int minLen) {
+        final String hexString = Long.toHexString(l);
+        final int prefixLen = Math.max(minLen - hexString.length(), 0);
+        return "0".repeat(prefixLen) + hexString;
+    }
+
+    public static String toHexString(ByteBuf byteBuf, int length) {
+        return ByteBufUtil.hexDump(byteBuf, 0, length);
     }
 
     public static String toHexString(ByteBuf byteBuf) {

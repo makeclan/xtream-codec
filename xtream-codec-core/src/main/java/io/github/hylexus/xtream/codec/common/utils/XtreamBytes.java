@@ -171,6 +171,12 @@ public class XtreamBytes {
         return byteBuf.writeShort(value);
     }
 
+    public static ByteBuf writeHexString(ByteBuf byteBuf, String value) {
+        final byte[] hexBytes = decodeHex(value.toLowerCase());
+        byteBuf.writeBytes(hexBytes);
+        return byteBuf;
+    }
+
     public static ByteBuf writeBcd(ByteBuf byteBuf, String value) {
         BcdOps.encodeBcd8421StringIntoByteBuf(value, byteBuf);
         return byteBuf;

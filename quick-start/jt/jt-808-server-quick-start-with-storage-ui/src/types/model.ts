@@ -40,3 +40,25 @@ export interface TraceLogVo {
     responseHex?: string;
     subpackage: boolean;
 }
+
+export interface TerminalVo {
+    id: string;
+    terminalId: string;
+    serverType: string;
+    protocolVersion: string;
+    protocolType: string;
+    creationTime: string;
+    lastCommunicateTime: string;
+}
+export interface Command8104Item {
+    parameterId: number;
+    parameterIdAsHexString: number;
+    parameterLength: number;
+    parameterValue: string;
+    parameterType: string;
+}
+export interface Command8104Response {
+    flowId: number;
+    parameterCount: number;
+    parameterItems: Array<Command8104Item>
+}

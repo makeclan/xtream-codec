@@ -16,6 +16,12 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.codec;
 
+import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
+import io.github.hylexus.xtream.codec.core.FieldCodec;
+import io.github.hylexus.xtream.codec.core.impl.codec.StringFieldCodec;
+import io.github.hylexus.xtream.codec.core.impl.codec.U16FieldCodec;
+import io.github.hylexus.xtream.codec.core.impl.codec.U32FieldCodec;
+import io.github.hylexus.xtream.codec.core.impl.codec.U8FieldCodec;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -39,6 +45,9 @@ public class ParameterItem {
     // 自定义 FieldCodec 时就不用加 @Preset.JtStyle.RuntimeType 注解了
     private Object parameterValue;
 
+    // 非请求参数；仅仅为了调试方便；可以忽略这个参数
+    private ParameterType parameterType;
+
     public ParameterItem() {
     }
 
@@ -46,5 +55,43 @@ public class ParameterItem {
         this.parameterId = parameterId;
         this.parameterLength = parameterLength;
         this.parameterValue = parameterValue;
+    }
+
+    // 下面代码都是为了调试方便添加的  可以忽略
+    public String getParameterIdAsHexString() {
+        return "0x" + FormatUtils.toHexString(this.parameterId, 4);
+    }
+
+    public enum ParameterType {
+        BYTE,
+        WORD,
+        DWORD,
+        STRING_BCD_8421,
+        STRING_GBK,
+        STRING_HEX,
+        STRING_UTF_8,
+        UNKNOWN,
+        ;
+
+        public static ParameterType fromFieldCodec(FieldCodec<?> fieldCodec) {
+            return switch (fieldCodec) {
+                case U8FieldCodec ignored -> BYTE;
+                case U16FieldCodec ignored -> WORD;
+                case U32FieldCodec ignored -> DWORD;
+                case StringFieldCodec.InternalHexStringFieldCodec ignored -> STRING_HEX;
+                case StringFieldCodec stringFieldCodec -> detectStringType(stringFieldCodec.getCharset());
+                case StringFieldCodec.InternalSimpleStringFieldCodec stringFieldCodec -> detectStringType(stringFieldCodec.getCharset().name());
+                default -> UNKNOWN;
+            };
+        }
+
+        private static ParameterType detectStringType(String stringFieldCodec) {
+            return switch (stringFieldCodec.toLowerCase()) {
+                case "bcd_8421" -> STRING_BCD_8421;
+                case "gbk" -> STRING_GBK;
+                case "utf-8" -> STRING_UTF_8;
+                default -> UNKNOWN;
+            };
+        }
     }
 }

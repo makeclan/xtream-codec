@@ -85,8 +85,9 @@ export const SessionTable: FC<SessionTableProps> = ({ type }) => {
     isLoading && tableData?.data?.length === 0 ? "loading" : "idle";
 
   const columns = [
+    { key: "id", label: "会话ID" },
     { key: "terminalId", label: "终端手机号" },
-    { key: "serverType", label: "服务类型" },
+    // { key: "serverType", label: "服务类型" },
     { key: "protocolVersion", label: "808协议版本" },
     { key: "protocolType", label: "协议" },
     { key: "creationTime", label: "创建时间" },

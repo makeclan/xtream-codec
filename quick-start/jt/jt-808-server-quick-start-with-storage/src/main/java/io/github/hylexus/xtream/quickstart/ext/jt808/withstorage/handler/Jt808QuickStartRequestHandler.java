@@ -19,6 +19,7 @@ package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.handler;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.*;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.BuiltinMessage8100;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.ServerCommonReplyMessage;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808CommandSender;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestBody;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestHandler;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestHandlerMapping;
@@ -40,9 +41,11 @@ public class Jt808QuickStartRequestHandler {
 
     private static final Logger log = LoggerFactory.getLogger(Jt808QuickStartRequestHandler.class);
     private final Jt808SessionManager jt808SessionManager;
+    private final Jt808CommandSender jt808CommandSender;
 
-    public Jt808QuickStartRequestHandler(Jt808SessionManager jt808SessionManager) {
+    public Jt808QuickStartRequestHandler(Jt808SessionManager jt808SessionManager, Jt808CommandSender jt808CommandSender) {
         this.jt808SessionManager = jt808SessionManager;
+        this.jt808CommandSender = jt808CommandSender;
     }
 
     /**
@@ -63,6 +66,18 @@ public class Jt808QuickStartRequestHandler {
     public Mono<Void> processMessage0001(Jt808Request request, @Jt808RequestBody BuiltinMessage0001 requestBody) {
         log.info("receive message [0x0001]: {}", requestBody);
         return Mono.empty();
+    }
+
+    @Jt808RequestHandlerMapping(messageIds = 0x0104)
+    public Mono<ServerCommonReplyMessage> processMessage0104(Jt808Request request, @Jt808RequestBody BuiltinMessage0104Sample2 requestBody) {
+        log.info("receive message [0x0104]: {}", requestBody);
+        final Jt808CommandSender.Jt808CommandKey commandKey = Jt808CommandSender.Jt808CommandKey.of(
+                request.terminalId(),
+                request.messageId(),
+                requestBody.getFlowId()
+        );
+        this.jt808CommandSender.setClientResponse(commandKey, requestBody);
+        return Mono.just(ServerCommonReplyMessage.success(request));
     }
 
     @Jt808RequestHandlerMapping(messageIds = 0x0100, versions = Jt808ProtocolVersion.VERSION_2019)

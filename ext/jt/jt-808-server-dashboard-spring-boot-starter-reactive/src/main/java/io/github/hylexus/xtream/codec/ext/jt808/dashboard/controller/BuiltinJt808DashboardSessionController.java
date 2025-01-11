@@ -85,7 +85,7 @@ public class BuiltinJt808DashboardSessionController {
             return PageableVo.empty();
         }
         final List<Jt808SessionVo> list = manager
-                .list(dto.getPage(), dto.getSize(), filter, this::convertToVo)
+                .list(dto.getPage(), dto.getPageSize(), filter, this::convertToVo)
                 .toList();
         return PageableVo.of(total, list);
     }

@@ -17,11 +17,15 @@
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.codec;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
+import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.github.hylexus.xtream.codec.core.impl.codec.*;
 import io.netty.buffer.ByteBuf;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,13 +35,99 @@ import java.util.Map;
 public class CustomParameterListFieldCodec extends AbstractFieldCodec<List<ParameterItem>> {
 
     @SuppressWarnings("rawtypes")
-    static final Map<Long, FieldCodec> VALUE_CODEC_MAPPING = Map.of(
-            0x0001L, U32FieldCodec.INSTANCE,
-            0x0040L, StringFieldCodec.createStringCodec("GBK"),
-            0x0081L, U16FieldCodec.INSTANCE,
-            0x0082L, U16FieldCodec.INSTANCE,
-            0x0084L, U8FieldCodec.INSTANCE
-    );
+    static final Map<Long, FieldCodec> VALUE_CODEC_MAPPING;
+    private static final Logger log = LoggerFactory.getLogger(CustomParameterListFieldCodec.class);
+
+    static {
+        VALUE_CODEC_MAPPING = new HashMap<>();
+        for (long parameterId = 0x0001L; parameterId <= 0x0007L; parameterId++) {
+            VALUE_CODEC_MAPPING.put(parameterId, U32FieldCodec.INSTANCE);
+        }
+
+        for (long parameterId = 0x0010L; parameterId <= 0x0017L; parameterId++) {
+            VALUE_CODEC_MAPPING.put(parameterId, StringFieldCodec.INSTANCE_GBK);
+        }
+
+        VALUE_CODEC_MAPPING.put(0x001AL, StringFieldCodec.INSTANCE_GBK);
+        VALUE_CODEC_MAPPING.put(0x001BL, U32FieldCodec.INSTANCE);
+        VALUE_CODEC_MAPPING.put(0x001CL, U32FieldCodec.INSTANCE);
+        VALUE_CODEC_MAPPING.put(0x001DL, StringFieldCodec.INSTANCE_GBK);
+
+        for (long parameterId = 0x0020L; parameterId <= 0x0022L; parameterId++) {
+            VALUE_CODEC_MAPPING.put(parameterId, U32FieldCodec.INSTANCE);
+        }
+
+        for (long parameterId = 0x0023L; parameterId <= 0x0026L; parameterId++) {
+            VALUE_CODEC_MAPPING.put(parameterId, StringFieldCodec.INSTANCE_GBK);
+        }
+
+        for (long parameterId = 0x0027L; parameterId <= 0x0029L; parameterId++) {
+            VALUE_CODEC_MAPPING.put(parameterId, U32FieldCodec.INSTANCE);
+        }
+
+        for (long parameterId = 0x002CL; parameterId <= 0x0030L; parameterId++) {
+            VALUE_CODEC_MAPPING.put(parameterId, U32FieldCodec.INSTANCE);
+        }
+
+        VALUE_CODEC_MAPPING.put(0x0031L, U16FieldCodec.INSTANCE);
+        VALUE_CODEC_MAPPING.put(0x0032L, StringFieldCodec.INSTANCE_HEX);
+
+        for (long parameterId = 0x0040L; parameterId <= 0x0044L; parameterId++) {
+            VALUE_CODEC_MAPPING.put(parameterId, StringFieldCodec.INSTANCE_GBK);
+        }
+
+        for (long parameterId = 0x0045L; parameterId <= 0x0047L; parameterId++) {
+            VALUE_CODEC_MAPPING.put(parameterId, U32FieldCodec.INSTANCE);
+        }
+
+        VALUE_CODEC_MAPPING.put(0x0048L, StringFieldCodec.INSTANCE_GBK);
+        VALUE_CODEC_MAPPING.put(0x0049L, StringFieldCodec.INSTANCE_GBK);
+
+        for (long parameterId = 0x0050L; parameterId <= 0x005AL; parameterId++) {
+            VALUE_CODEC_MAPPING.put(parameterId, U32FieldCodec.INSTANCE);
+        }
+        for (long parameterId = 0x005BL; parameterId <= 0x005EL; parameterId++) {
+            VALUE_CODEC_MAPPING.put(parameterId, U16FieldCodec.INSTANCE);
+        }
+        VALUE_CODEC_MAPPING.put(0x0064L, U32FieldCodec.INSTANCE);
+        VALUE_CODEC_MAPPING.put(0x0065L, U32FieldCodec.INSTANCE);
+
+        for (long parameterId = 0x0070L; parameterId <= 0x0074L; parameterId++) {
+            VALUE_CODEC_MAPPING.put(parameterId, U32FieldCodec.INSTANCE);
+        }
+
+        // 0x0075 ~ 0x007F: 自定义
+        for (long parameterId = 0x0075L; parameterId <= 0x007FL; parameterId++) {
+            VALUE_CODEC_MAPPING.put(parameterId, StringFieldCodec.INSTANCE_HEX);
+        }
+
+        VALUE_CODEC_MAPPING.put(0x0080L, U32FieldCodec.INSTANCE);
+
+        VALUE_CODEC_MAPPING.put(0x0081L, U16FieldCodec.INSTANCE);
+        VALUE_CODEC_MAPPING.put(0x0082L, U16FieldCodec.INSTANCE);
+        VALUE_CODEC_MAPPING.put(0x0083L, StringFieldCodec.INSTANCE_GBK);
+        VALUE_CODEC_MAPPING.put(0x0084L, U8FieldCodec.INSTANCE);
+
+        for (long parameterId = 0x0090L; parameterId <= 0x0092L; parameterId++) {
+            VALUE_CODEC_MAPPING.put(parameterId, U8FieldCodec.INSTANCE);
+        }
+
+        VALUE_CODEC_MAPPING.put(0x0093L, U32FieldCodec.INSTANCE);
+        VALUE_CODEC_MAPPING.put(0x0094L, U8FieldCodec.INSTANCE);
+        VALUE_CODEC_MAPPING.put(0x0095L, U32FieldCodec.INSTANCE);
+
+        VALUE_CODEC_MAPPING.put(0x0100L, U32FieldCodec.INSTANCE);
+        VALUE_CODEC_MAPPING.put(0x0101L, U16FieldCodec.INSTANCE);
+        VALUE_CODEC_MAPPING.put(0x0102L, U32FieldCodec.INSTANCE);
+        VALUE_CODEC_MAPPING.put(0x0103L, U16FieldCodec.INSTANCE);
+        // byte[8]
+        VALUE_CODEC_MAPPING.put(0x0110L, StringFieldCodec.INSTANCE_HEX);
+
+        // byte[8]
+        for (long parameterId = 0x0111L; parameterId <= 0x01FFL; parameterId++) {
+            VALUE_CODEC_MAPPING.put(parameterId, StringFieldCodec.INSTANCE_HEX);
+        }
+    }
 
     @Override
     protected void doSerialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, List<ParameterItem> value) {
@@ -53,7 +143,7 @@ public class CustomParameterListFieldCodec extends AbstractFieldCodec<List<Param
         final long parameterId = item.getParameterId();
         @SuppressWarnings("unchecked") final FieldCodec<Object> valueCodec = VALUE_CODEC_MAPPING.get(parameterId);
         if (valueCodec == null) {
-            throw new IllegalArgumentException("Unsupported parameterId: " + parameterId);
+            throw new IllegalArgumentException("Unsupported parameterId: 0x" + FormatUtils.toHexString(parameterId, 4));
         }
 
         // 1. key:u32
@@ -72,15 +162,22 @@ public class CustomParameterListFieldCodec extends AbstractFieldCodec<List<Param
             final long parameterId = input.readUnsignedInt();
             // 2. valueLength:u8
             final short valueLength = input.readUnsignedByte();
-            @SuppressWarnings("unchecked") final FieldCodec<Object> valueCodec = VALUE_CODEC_MAPPING.get(parameterId);
+
+            final Object value;
+            FieldCodec<?> valueCodec = VALUE_CODEC_MAPPING.get(parameterId);
             if (valueCodec == null) {
-                throw new IllegalArgumentException("Unsupported parameterId: " + parameterId);
+                log.warn("Unsupported parameterId: 0x{}. Using [InternalHexStringFieldCodec] as fallback", FormatUtils.toHexString(parameterId, 4));
+                valueCodec = StringFieldCodec.INSTANCE_HEX;
+                value = "[fallback:hex]" + valueCodec.deserialize(propertyMetadata, context, input, valueLength);
+                // throw new IllegalArgumentException("Unsupported parameterId: 0x" + FormatUtils.toHexString(parameterId, 4));
+            } else {
+                value = valueCodec.deserialize(propertyMetadata, context, input, valueLength);
             }
-            final Object value = valueCodec.deserialize(propertyMetadata, context, input, valueLength);
             final ParameterItem item = new ParameterItem()
                     .setParameterId(parameterId)
                     .setParameterLength(valueLength)
-                    .setParameterValue(value);
+                    .setParameterValue(value)
+                    .setParameterType(ParameterItem.ParameterType.fromFieldCodec(valueCodec));
             list.add(item);
         }
         return list;

@@ -24,11 +24,11 @@ public enum Jt808ProtocolVersion {
     /**
      * 2013 版
      */
-    VERSION_2013("2013", (byte) 0, (byte) -1),
+    VERSION_2013("2013", (byte) 0, (byte) 0),
     /**
      * 2011 版
      */
-    VERSION_2011("2011", (byte) 0, (byte) 0),
+    VERSION_2011("2011", (byte) 0, (byte) -1),
     /**
      * 2019 版
      */

@@ -87,6 +87,7 @@ services:
     profiles:
       - app
     image: registry.cn-hangzhou.aliyuncs.com/xtream-codec/jt-808-server-quick-start-with-storage:latest
+    pull_policy: always
     container_name: jt-808-server-quick-start-with-storage
     networks:
       - trace-log-network

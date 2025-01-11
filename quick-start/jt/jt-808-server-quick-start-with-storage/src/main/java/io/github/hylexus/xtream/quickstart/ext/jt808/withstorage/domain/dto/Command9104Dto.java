@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto;
+package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.domain.dto;
 
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ServerType;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.Duration;
+
 @Getter
 @Setter
 @ToString
-public class Jt808SessionQueryDto {
-    private Integer page = 1;
-    private Integer pageSize = 10;
-    private String terminalId;
-    private Jt808ServerType serverType;
-    private Jt808ProtocolVersion protocolVersion;
-    private XtreamRequest.Type protocolType;
+public class Command9104Dto {
+
+    @NotNull(message = "sessionId can't be null")
+    @NotEmpty(message = "sessionId can't be empty")
+    private String sessionId;
+
+    private Duration timeout = Duration.ofSeconds(30);
 }

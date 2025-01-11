@@ -18,12 +18,17 @@ package io.github.hylexus.xtream.codec.core.impl.codec;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.utils.BcdOps;
+import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
+import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.netty.buffer.ByteBuf;
 
 import java.nio.charset.Charset;
 
 public class StringFieldCodec implements FieldCodec<String> {
+    public static final FieldCodec<String> INSTANCE_BCD_8421 = StringFieldCodec.createStringCodec("bcd_8421");
+    public static final FieldCodec<String> INSTANCE_GBK = StringFieldCodec.createStringCodec("gbk");
+    public static final FieldCodec<String> INSTANCE_HEX = InternalHexStringFieldCodec.INSTANCE;
     protected final String charset;
 
     private final FieldCodec<String> delegate;
@@ -56,11 +61,15 @@ public class StringFieldCodec implements FieldCodec<String> {
         return String.class;
     }
 
+    public String getCharset() {
+        return charset;
+    }
+
     @Override
     public String toString() {
         return "StringFieldCodec{"
-                + "charset='" + charset + '\''
-                + '}';
+               + "charset='" + charset + '\''
+               + '}';
     }
 
     public static FieldCodec<String> createStringCodec(String charset) {
@@ -71,7 +80,7 @@ public class StringFieldCodec implements FieldCodec<String> {
         return new InternalSimpleStringFieldCodec(nomalCharset);
     }
 
-    static class InternalSimpleStringFieldCodec extends AbstractFieldCodec<String> {
+    public static class InternalSimpleStringFieldCodec extends AbstractFieldCodec<String> {
 
         private final Charset charset;
 
@@ -88,9 +97,13 @@ public class StringFieldCodec implements FieldCodec<String> {
         protected void doSerialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, String value) {
             output.writeCharSequence(value, charset);
         }
+
+        public Charset getCharset() {
+            return charset;
+        }
     }
 
-    static class InternalBcdFieldCodec extends AbstractFieldCodec<String> {
+    public static class InternalBcdFieldCodec extends AbstractFieldCodec<String> {
         protected final String charset;
 
         public InternalBcdFieldCodec(String charset) {
@@ -105,6 +118,23 @@ public class StringFieldCodec implements FieldCodec<String> {
         @Override
         protected void doSerialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, String value) {
             BcdOps.encodeBcd8421StringIntoByteBuf(value, output);
+        }
+
+    }
+
+    public static class InternalHexStringFieldCodec extends AbstractFieldCodec<String> {
+        public static final InternalHexStringFieldCodec INSTANCE = new InternalHexStringFieldCodec();
+
+        @Override
+        public String deserialize(BeanPropertyMetadata propertyMetadata, DeserializeContext context, ByteBuf input, int length) {
+            final String hexString = FormatUtils.toHexString(input, length);
+            input.readerIndex(input.readerIndex() + length);
+            return hexString;
+        }
+
+        @Override
+        protected void doSerialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, String value) {
+            XtreamBytes.writeHexString(output, value);
         }
 
     }

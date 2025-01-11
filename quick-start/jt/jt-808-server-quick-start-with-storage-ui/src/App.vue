@@ -8,6 +8,7 @@
       mode="horizontal"
   >
     <el-menu-item index="/">首页</el-menu-item>
+    <el-menu-item index="/terminals">在线终端</el-menu-item>
     <el-menu-item index="/trace-log">请求日志</el-menu-item>
     <el-menu-item index="/alarm-info">报警信息</el-menu-item>
   </el-menu>
