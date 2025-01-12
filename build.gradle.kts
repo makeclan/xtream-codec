@@ -319,6 +319,7 @@ fun isJavaProject(project: Project): Boolean {
                 "jt-808-server-quick-start",
                 "jt-808-server-quick-start-with-dashboard",
                 "jt-808-server-quick-start-with-storage",
+                "jt-808-server-quick-start-with-storage-blocking",
             ).contains(project.name))
 }
 
@@ -352,6 +353,8 @@ fun getMavenRepoConfig(): Properties {
 
 fun extraMavenRepositoryUrls(): List<String> {
     return listOf(
+        "https://mirrors.cloud.tencent.com/nexus/repository/maven-public",
+        "https://repo.huaweicloud.com/repository/maven",
         "https://maven.aliyun.com/repository/central",
         "https://maven.aliyun.com/repository/public",
         "https://maven.aliyun.com/repository/google",

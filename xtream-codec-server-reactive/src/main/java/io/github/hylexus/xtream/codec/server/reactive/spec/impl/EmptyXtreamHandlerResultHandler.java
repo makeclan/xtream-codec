@@ -49,6 +49,7 @@ public class EmptyXtreamHandlerResultHandler implements XtreamHandlerResultHandl
     @Override
     public Mono<Void> handleResult(XtreamExchange exchange, XtreamHandlerResult result) {
         return switch (result.getReturnValue()) {
+            case null -> Mono.empty();
             case Mono<?> mono -> mono.then();
             case Flux<?> flux -> flux.then();
             case Object ignored -> Mono.empty();
