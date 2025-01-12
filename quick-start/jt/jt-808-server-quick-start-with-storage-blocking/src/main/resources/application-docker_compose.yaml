@@ -25,13 +25,13 @@ demo-app-with-storage:
         enabled: true
       ## 存储到 Clickhouse 中
       clickhouse:
-        enabled: true
+        enabled: ${FEATURE_CONTROL_DATABASE_CLICKHOUSE_ENABLED:true}
       ## 存储到 MySQL 中
       mysql:
-        enabled: true
+        enabled: ${FEATURE_CONTROL_DATABASE_MYSQL_ENABLED:false}
       ## 存储到 Postgres 中
       postgres:
-        enabled: true
+        enabled: ${FEATURE_CONTROL_DATABASE_POSTGRES_ENABLED:false}
     # OSS(对象存储服务)开关(苏标附件文件会上传到启用的OSS中)
     ## 可以同时启用多个
     oss:
@@ -40,11 +40,11 @@ demo-app-with-storage:
         enabled: true
       ## 文件会存储到Minio中
       minio:
-        enabled: true
+        enabled: ${FEATURE_CONTROL_OSS_MINIO_ENABLED:true}
   minio:
-    endpoint: http://localhost:9000
-    access-key: minioadmin
-    secret-key: minioadmin
+    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+    access-key: ${MINIO_ACCESS_KEY:minioadmin}
+    secret-key: ${MINIO_SECRET_KEY:minioadmin}
   # 示例性的附件服务器配置
   attachment-server:
     # 附件服务器的IP 应该是一个公网IP(设备能访问的IP)
@@ -58,8 +58,10 @@ demo-app-with-storage:
     remote-storage-bucket-name: jt-attachment
     file-preview-base-url: ${demo-app-with-storage.minio.endpoint}/${demo-app-with-storage.attachment-server.remote-storage-bucket-name}
 spring:
-  application:
-    name: jt-808-server-quick-start-with-storage
+  web:
+    resources:
+      static-locations:
+        - classpath:/static/quickstart-ui/
   ds:
     aop:
       enabled: true
@@ -71,9 +73,9 @@ spring:
         name: trace-log-mysql
         type: com.zaxxer.hikari.HikariDataSource
         driver-class-name: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://localhost:3306/jt_808
-        username: root
-        password: mysql
+        url: ${MYSQL_JDBC_URL:jdbc:mysql://localhost:3306/jt_808}
+        username: ${MYSQL_JDBC_USERNAME:root}
+        password: ${MYSQL_JDBC_PASSWORD:mysql}
         hikari:
           minimum-idle: 1
           maximum-pool-size: 10
@@ -81,9 +83,9 @@ spring:
         name: trace-log-postgres
         type: com.zaxxer.hikari.HikariDataSource
         driver-class-name: org.postgresql.Driver
-        url: jdbc:postgresql://localhost:5432/jt_808
-        username: jt
-        password: postgres
+        url: ${POSTGRES_JDBC_URL:jdbc:postgresql://localhost:5432/jt_808}
+        username: ${POSTGRES_JDBC_USERNAME:jt}
+        password: ${POSTGRES_JDBC_PASSWORD:postgres}
         hikari:
           minimum-idle: 1
           maximum-pool-size: 10
@@ -91,9 +93,9 @@ spring:
         name: trace-log-clickhouse
         type: com.zaxxer.hikari.HikariDataSource
         driver-class-name: com.clickhouse.jdbc.ClickHouseDriver
-        url: jdbc:clickhouse://localhost:8123/jt_808
-        username: jt
-        password: clickhouse
+        url: ${CLICKHOUSE_JDBC_URL:jdbc:clickhouse://localhost:8123/jt_808}
+        username: ${CLICKHOUSE_JDBC_USERNAME:jt}
+        password: ${CLICKHOUSE_JDBC_PASSWORD:clickhouse}
         hikari:
           minimum-idle: 1
           maximum-pool-size: 10
@@ -104,6 +106,11 @@ spring:
 jt808-server:
   # false: 不会进行任何自动配置
   enabled: true
+  features:
+    dashboard:
+      enabled: true
+      # 示例项目有自己的首页 所以不用重定向到dashboard首页
+      redirect-root-to-base-path: false
   ## 指令服务器
   instruction-server:
     # TCP 服务配置(指令服务器)
@@ -140,12 +147,12 @@ jt808-server:
       # UDP 服务端口
       port: 3618
 
-logging:
-  level:
-    root: info
-    io.netty.handler.logging.LoggingHandler: debug
-
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+logging:
+  level:
+    root: info
+    io.netty.handler.logging.LoggingHandler: debug

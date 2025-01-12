@@ -318,7 +318,7 @@ fun isJavaProject(project: Project): Boolean {
                 "jt-808-server-spring-boot-starter-reactive-debug",
                 "jt-808-server-quick-start",
                 "jt-808-server-quick-start-with-dashboard",
-                "jt-808-server-quick-start-with-storage",
+                "jt-808-server-quick-start-with-storage-nonblocking",
                 "jt-808-server-quick-start-with-storage-blocking",
             ).contains(project.name))
 }

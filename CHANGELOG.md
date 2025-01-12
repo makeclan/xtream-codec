@@ -4,7 +4,7 @@
 
 - `jt-808-server-dashboard-ui` 优化
 - `xtream-codec-server-reactive` 模块配置项默认值调整
-- 新增 `quck-start/jt/jt-808-server-quick-start-with-storage` 示例模块
+- 新增 `quck-start/jt/jt-808-server-quick-start-with-storage-nonblocking` 示例模块
 
 ### ❤️ Contributors
 

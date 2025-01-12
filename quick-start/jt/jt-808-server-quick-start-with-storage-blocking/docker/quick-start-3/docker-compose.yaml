@@ -1,0 +1,120 @@
+#
+# Copyright 2024 the original author or authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+services:
+  minio:
+    profiles:
+      - minio
+    image: minio/minio:RELEASE.2024-12-18T13-15-44Z
+    container_name: minio
+    networks:
+      - trace-log-network
+    environment:
+      - TZ=Asia/Shanghai
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    ports:
+      - "9000:9000"  # S3 API 端口
+      - "9001:9001"  # MinIO 控制台端口
+    volumes:
+      - ${DATA_BASE_PATH}/minio:/data
+      # - ./config:/root/.minio
+    command: server /data --console-address ":9001"
+  trace-log-mysql:
+    profiles:
+      - mysql
+    image: mysql:8.4.3
+    container_name: trace-log-mysql
+    networks:
+      - trace-log-network
+    environment:
+      - MYSQL_DATABASE=jt_808
+      - MYSQL_ROOT_PASSWORD=mysql
+      - MYSQL_PASSWORD=mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - ${DATA_BASE_PATH}/trace-log-mysql:/var/lib/mysql
+      - ./init.d/mysql:/docker-entrypoint-initdb.d
+  trace-log-postgres:
+    profiles:
+      - postgres
+    image: postgres:16.6
+    container_name: trace-log-postgres
+    networks:
+      - trace-log-network
+    environment:
+      - TZ=Asia/Shanghai
+      - POSTGRES_USER=jt
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=jt_808
+    ports:
+      - "5432:5432"
+    volumes:
+      - ${DATA_BASE_PATH}/trace-log-postgres:/var/lib/postgresql/data
+      - ./init.d/postgres:/docker-entrypoint-initdb.d
+  trace-log-clickhouse:
+    profiles:
+      - clickhouse
+    image: clickhouse/clickhouse-server:24.10.1.2812
+    container_name: trace-log-clickhouse
+    networks:
+      - trace-log-network
+    environment:
+      - TZ=Asia/Shanghai
+      - CLICKHOUSE_USER=jt
+      - CLICKHOUSE_PASSWORD=clickhouse
+    ports:
+      - "8123:8123"  # HTTP port
+      # - "9000:9000"  # Native port
+    volumes:
+      - ${DATA_BASE_PATH}/trace-log-clickhouse:/var/lib/clickhouse
+      - ./init.d/clickhouse:/docker-entrypoint-initdb.d
+  spring-boot-app:
+    profiles:
+      - app
+    image: registry.cn-hangzhou.aliyuncs.com/xtream-codec/jt-808-server-quick-start-with-storage-blocking:latest
+    pull_policy: always
+    container_name: jt-808-server-quick-start-with-storage-nonblocking
+    networks:
+      - trace-log-network
+    environment:
+      - TZ=Asia/Shanghai
+      # 如果你不想写 N 多环境变量，可以考虑将配置文件映射到容器中
+      - ATTACHMENT_SERVER_IP=192.168.71.184
+      - FEATURE_CONTROL_DATABASE_CLICKHOUSE_ENABLED=true
+      - FEATURE_CONTROL_DATABASE_MYSQL_ENABLED=true
+      - FEATURE_CONTROL_DATABASE_POSTGRES_ENABLED=true
+      - FEATURE_CONTROL_OSS_MINIO_ENABLED=true
+      - MINIO_ENDPOINT=http://minio:9000
+      - MYSQL_JDBC_URL=jdbc:mysql://trace-log-mysql:3306/jt_808
+      - MYSQL_JDBC_USERNAME=root
+      - MYSQL_JDBC_PASSWORD=mysql
+      - POSTGRES_JDBC_URL=jdbc:postgresql://trace-log-postgres:5432/jt_808
+      - POSTGRES_JDBC_USERNAME=jt
+      - POSTGRES_JDBC_PASSWORD=postgres
+      - CLICKHOUSE_JDBC_URL=jdbc:clickhouse://trace-log-clickhouse:8123/jt_808
+      - CLICKHOUSE_JDBC_USERNAME=jt
+      - CLICKHOUSE_JDBC_PASSWORD=clickhouse
+    ports:
+      - "8080:8080"
+      - "3927:3927"
+      - "3824:3824"
+      - "3721:3721"
+      - "3618:3618"
+networks:
+  trace-log-network:
+    driver: bridge
