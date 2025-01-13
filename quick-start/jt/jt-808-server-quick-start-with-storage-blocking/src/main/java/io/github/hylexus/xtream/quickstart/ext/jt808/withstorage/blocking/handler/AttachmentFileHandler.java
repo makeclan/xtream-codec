@@ -38,7 +38,6 @@ import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -71,7 +70,7 @@ public class AttachmentFileHandler {
 
     @Jt808RequestHandlerMapping(messageIds = 0x1210)
     @Jt808ResponseBody(messageId = 0x8001)
-    public Mono<ServerCommonReplyMessage> processMsg0x1210(Jt808RequestEntity<BuiltinMessage1210> requestEntity) {
+    public ServerCommonReplyMessage processMsg0x1210(Jt808RequestEntity<BuiltinMessage1210> requestEntity) {
         final BuiltinMessage1210 body = requestEntity.getBody();
         log.info("0x1210 ==> {}", body);
         if (requestEntity.getServerType() == Jt808ServerType.INSTRUCTION_SERVER) {
@@ -82,25 +81,25 @@ public class AttachmentFileHandler {
             item.setGroup(body);
             itemMap.put(item.getFileName().trim(), item);
         }
-        return Mono.just(ServerCommonReplyMessage.success(requestEntity));
+        return ServerCommonReplyMessage.success(requestEntity);
     }
 
     @Jt808RequestHandlerMapping(messageIds = 0x1211)
     @Jt808ResponseBody(messageId = 0x8001)
-    public Mono<ServerCommonReplyMessage> processMsg0x1211(Jt808RequestEntity<BuiltinMessage1211> requestEntity) {
+    public ServerCommonReplyMessage processMsg0x1211(Jt808RequestEntity<BuiltinMessage1211> requestEntity) {
         log.info("0x1211 ==> {}", requestEntity.getBody());
         if (requestEntity.getServerType() == Jt808ServerType.INSTRUCTION_SERVER) {
             log.error("{}", "0x1211 不应该由指令服务器对应的端口处理");
         }
         final Map<String, BuiltinMessage1210.AttachmentItem> items = this.attachmentItemCache.getIfPresent(requestEntity.getHeader().terminalId());
         if (items == null) {
-            return Mono.just(ServerCommonReplyMessage.success(requestEntity));
+            return ServerCommonReplyMessage.success(requestEntity);
         }
         final BuiltinMessage1210.AttachmentItem attachmentItem = items.get(requestEntity.getBody().getFileName().trim());
         if (attachmentItem != null) {
             attachmentItem.setFileType(requestEntity.getBody().getFileType());
         }
-        return Mono.just(ServerCommonReplyMessage.success(requestEntity));
+        return ServerCommonReplyMessage.success(requestEntity);
     }
 
     @Jt808RequestHandlerMapping(messageIds = 0x1212)

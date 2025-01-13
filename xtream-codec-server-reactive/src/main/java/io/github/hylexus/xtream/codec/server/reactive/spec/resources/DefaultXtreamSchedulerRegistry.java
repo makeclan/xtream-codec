@@ -133,4 +133,10 @@ public class DefaultXtreamSchedulerRegistry implements XtreamSchedulerRegistry {
         return Collections.unmodifiableMap(this.schedulerConfigMap);
     }
 
+    @Override
+    public Optional<SchedulerConfig> getSchedulerConfig(String name) {
+        final SchedulerConfig config = this.schedulerConfigMap.get(name);
+        return Optional.ofNullable(config);
+    }
+
 }

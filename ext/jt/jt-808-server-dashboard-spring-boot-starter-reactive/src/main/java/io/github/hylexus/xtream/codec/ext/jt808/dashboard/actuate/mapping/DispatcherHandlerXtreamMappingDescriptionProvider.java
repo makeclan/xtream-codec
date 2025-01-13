@@ -85,24 +85,29 @@ public class DispatcherHandlerXtreamMappingDescriptionProvider implements Xtream
 
     public record Jt808RequestHandlerMappingDescription(
             String handler,
+            boolean nonBlocking,
             String handlerDesc,
             int messageId,
             String messageIdAsHexString,
             String messageIdDesc,
             Jt808ProtocolVersion version,
             String scheduler,
-            boolean nonBlocking) {
+            boolean rejectBlockingTask,
+            boolean virtualThread
+    ) {
 
         public Jt808RequestHandlerMappingDescription(XtreamHandlerMethod handlerMethod, int messageId, String messageIdDesc, Jt808ProtocolVersion version) {
             this(
                     handlerMethod.getContainerClass().getName() + "#" + handlerMethod.getMethod().getName(),
+                    handlerMethod.isNonBlocking(),
                     handlerMethod.getDesc(),
                     messageId,
                     "0x" + FormatUtils.toHexString(messageId, 4),
                     messageIdDesc,
                     version,
                     handlerMethod.getSchedulerName(),
-                    handlerMethod.isNonBlocking()
+                    handlerMethod.isRejectBlockingTask(),
+                    handlerMethod.isVirtualThread()
             );
         }
     }

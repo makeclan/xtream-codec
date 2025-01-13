@@ -50,7 +50,7 @@ public abstract class AbstractXtreamRequestMappingHandlerMapping implements Xtre
         throw new IllegalArgumentException("Cannot determine `nonBlockingScheduler`. Because `schedulerName` is EMPTY");
     }
 
-    protected Scheduler determineScheduler(XtreamHandlerMethod handlerMethod, String methodLevelScheduler, String blockingScheduler, String nonBlockingScheduler) {
+    protected SchedulerInfo determineScheduler(XtreamHandlerMethod handlerMethod, String methodLevelScheduler, String blockingScheduler, String nonBlockingScheduler) {
         if (StringUtils.hasText(methodLevelScheduler)) {
             return this.getSchedulerOrThrow(methodLevelScheduler);
         }
@@ -67,9 +67,14 @@ public abstract class AbstractXtreamRequestMappingHandlerMapping implements Xtre
         throw new IllegalArgumentException("Cannot determine `nonBlockingScheduler`. Because `schedulerName` is EMPTY");
     }
 
-    protected Scheduler getSchedulerOrThrow(String schedulerName) {
-        return this.schedulerRegistry.getScheduler(schedulerName)
+    protected SchedulerInfo getSchedulerOrThrow(String schedulerName) {
+        final Scheduler scheduler = this.schedulerRegistry.getScheduler(schedulerName)
                 .orElseThrow(() -> new IllegalArgumentException("Cannot determine `Scheduler` with name `" + schedulerName + "`"));
+        final XtreamSchedulerRegistry.SchedulerConfig config = this.schedulerRegistry.getSchedulerConfig(schedulerName)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot determine `SchedulerConfig` with name `" + schedulerName + "`"));
+        return new SchedulerInfo(scheduler, config);
     }
 
+    public record SchedulerInfo(Scheduler scheduler, XtreamSchedulerRegistry.SchedulerConfig config) {
+    }
 }

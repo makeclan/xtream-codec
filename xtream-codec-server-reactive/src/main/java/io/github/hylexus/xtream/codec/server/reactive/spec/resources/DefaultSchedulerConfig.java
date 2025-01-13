@@ -26,6 +26,8 @@ import java.util.StringJoiner;
 
 public record DefaultSchedulerConfig(
         String name,
+        boolean virtualThread,
+        boolean rejectBlocking,
         boolean metricsEnabled,
         String metricsPrefix,
         String remark,
@@ -43,6 +45,8 @@ public record DefaultSchedulerConfig(
 
     public static class DefaultSchedulerConfigBuilder implements XtreamSchedulerRegistry.SchedulerConfigBuilder {
         private String name;
+        private boolean virtualThread;
+        private boolean rejectBlocking;
         private boolean metricsEnabled;
         private String metricsPrefix;
         private String remark;
@@ -51,6 +55,18 @@ public record DefaultSchedulerConfig(
         @Override
         public DefaultSchedulerConfigBuilder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        @Override
+        public XtreamSchedulerRegistry.SchedulerConfigBuilder virtualThread(boolean virtualThread) {
+            this.virtualThread = virtualThread;
+            return this;
+        }
+
+        @Override
+        public XtreamSchedulerRegistry.SchedulerConfigBuilder rejectBlocking(boolean rejectBlocking) {
+            this.rejectBlocking = rejectBlocking;
             return this;
         }
 
@@ -87,6 +103,8 @@ public record DefaultSchedulerConfig(
             }
             return new DefaultSchedulerConfig(
                     Objects.requireNonNull(name),
+                    virtualThread,
+                    rejectBlocking,
                     metricsEnabled,
                     metricsPrefix,
                     remark,

@@ -40,6 +40,8 @@ public abstract class XtreamHandlerMethod {
     protected String schedulerName;
     protected String desc;
     protected boolean nonBlocking;
+    protected boolean rejectBlockingTask;
+    protected boolean virtualThread;
 
     public XtreamHandlerMethod(Class<?> containerClass, Method method) {
         this.containerClass = containerClass;
@@ -122,5 +124,23 @@ public abstract class XtreamHandlerMethod {
 
     public boolean isNonBlocking() {
         return nonBlocking;
+    }
+
+    public boolean isVirtualThread() {
+        return virtualThread;
+    }
+
+    public XtreamHandlerMethod setVirtualThread(boolean virtualThread) {
+        this.virtualThread = virtualThread;
+        return this;
+    }
+
+    public boolean isRejectBlockingTask() {
+        return rejectBlockingTask;
+    }
+
+    public XtreamHandlerMethod setRejectBlockingTask(boolean rejectBlockingTask) {
+        this.rejectBlockingTask = rejectBlockingTask;
+        return this;
     }
 }

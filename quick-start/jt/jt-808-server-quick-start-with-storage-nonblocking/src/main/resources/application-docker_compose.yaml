@@ -48,7 +48,7 @@ demo-app-with-storage:
   # 示例性的附件服务器配置
   attachment-server:
     # 附件服务器的IP 应该是一个公网IP(设备能访问的IP)
-    server-ip: ${ATTACHMENT_SERVER_IP:192.168.1.3}
+    server-ip: ${ATTACHMENT_SERVER_IP:192.168.71.176}
     # 用来存放附件文件的临时路径
     temporary-path: /tmp/jt-808/attachment
     # 将本地文件上传到远程存储后，是否保留本地文件

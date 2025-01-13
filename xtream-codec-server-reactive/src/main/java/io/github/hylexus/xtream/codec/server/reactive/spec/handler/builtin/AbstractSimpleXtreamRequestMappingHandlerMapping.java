@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.util.ReflectionUtils;
-import reactor.core.scheduler.Scheduler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,13 +80,16 @@ public abstract class AbstractSimpleXtreamRequestMappingHandlerMapping extends A
                         log.info(method.getName());
                         final XtreamRequestHandlerMapping mappingAnnotation = requireNonNull(AnnotatedElementUtils.getMergedAnnotation(method, XtreamRequestHandlerMapping.class));
                         final XtreamHandlerMethod handlerMethod = new ReactiveXtreamHandlerMethod(cls, method);
-                        final Scheduler scheduler = this.determineScheduler(
+                        final SchedulerInfo schedulerInfo = this.determineScheduler(
                                 handlerMethod,
                                 mappingAnnotation.scheduler(),
                                 classLevelAnnotation.blockingScheduler(),
                                 classLevelAnnotation.nonBlockingScheduler()
                         );
-                        handlerMethod.setScheduler(scheduler);
+                        handlerMethod.setScheduler(schedulerInfo.scheduler());
+                        handlerMethod.setVirtualThread(schedulerInfo.config().virtualThread());
+                        handlerMethod.setRejectBlockingTask(schedulerInfo.config().rejectBlocking());
+
                         final Object containerInstance = instanceFactory.apply(cls);
                         handlerMethod.setContainerInstance(containerInstance);
                         handlerMethods.add(handlerMethod);

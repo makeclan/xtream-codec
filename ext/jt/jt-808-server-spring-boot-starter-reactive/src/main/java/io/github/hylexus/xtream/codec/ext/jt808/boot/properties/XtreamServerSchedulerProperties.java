@@ -53,14 +53,22 @@ public class XtreamServerSchedulerProperties {
     @NestedConfigurationProperty
     protected VirtualThreadProperties virtual = new VirtualThreadProperties();
 
+    @SuppressWarnings("deprecation")
     public XtreamSchedulerRegistry.SchedulerConfig toSchedulerConfig(String name) {
-        return XtreamSchedulerRegistry.SchedulerConfig.newBuilder()
+        final XtreamSchedulerRegistry.SchedulerConfigBuilder builder = XtreamSchedulerRegistry.SchedulerConfig.newBuilder()
                 .name(name)
                 .metricsEnabled(this.getMetrics().isEnabled())
                 .metricsPrefix(this.getMetrics().getPrefix())
                 .metadata(this.getMetadata())
-                .remark(this.getRemark())
-                .build();
+                .remark(this.getRemark());
+        switch (this.type) {
+            case VIRTUAL -> builder.virtualThread(true);
+            case PARALLEL -> builder.rejectBlocking(this.getParallel().isRejectBlockingTask());
+            case BOUNDED_ELASTIC -> builder.rejectBlocking(this.getBoundedElastic().isRejectBlockingTask());
+            case SINGLE -> builder.rejectBlocking(this.getSingle().isRejectBlockingTask());
+            case null, default -> builder.virtualThread(false).rejectBlocking(true);
+        }
+        return builder.build();
     }
 
     @Getter

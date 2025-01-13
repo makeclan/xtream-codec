@@ -107,9 +107,15 @@ public interface XtreamSchedulerRegistry {
 
     Map<String, SchedulerConfig> schedulerConfigAsMapView();
 
+    Optional<SchedulerConfig> getSchedulerConfig(String name);
+
     interface SchedulerConfig {
 
         String name();
+
+        boolean virtualThread();
+
+        boolean rejectBlocking();
 
         boolean metricsEnabled();
 
@@ -138,6 +144,10 @@ public interface XtreamSchedulerRegistry {
 
     interface SchedulerConfigBuilder {
         SchedulerConfigBuilder name(String name);
+
+        SchedulerConfigBuilder virtualThread(boolean virtualThread);
+
+        SchedulerConfigBuilder rejectBlocking(boolean rejectBlocking);
 
         SchedulerConfigBuilder metricsEnabled(boolean metricsEnabled);
 

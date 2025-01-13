@@ -146,6 +146,16 @@ jt808-server:
       host: 0.0.0.0
       # UDP 服务端口
       port: 3618
+  schedulers:
+    # 阻塞版的调度器都使用虚拟线程
+    request-dispatcher:
+      type: virtual
+    non-blocking-handler:
+      type: virtual
+    blocking-handler:
+      type: virtual
+    event-publisher:
+      type: virtual
 
 mybatis:
   mapper-locations: classpath:mapper/**/*.xml

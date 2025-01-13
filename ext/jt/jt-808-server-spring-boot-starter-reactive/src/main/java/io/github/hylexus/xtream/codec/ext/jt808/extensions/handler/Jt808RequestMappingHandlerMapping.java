@@ -34,7 +34,6 @@ import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.util.ReflectionUtils;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -90,10 +89,12 @@ public class Jt808RequestMappingHandlerMapping extends AbstractXtreamRequestMapp
                                 classLevelAnnotation.blockingScheduler(),
                                 classLevelAnnotation.nonBlockingScheduler()
                         );
-                        final Scheduler scheduler = this.getSchedulerOrThrow(schedulerName);
-                        handlerMethod.setScheduler(scheduler);
+                        final SchedulerInfo schedulerInfo = this.getSchedulerOrThrow(schedulerName);
+                        handlerMethod.setScheduler(schedulerInfo.scheduler());
                         handlerMethod.setSchedulerName(schedulerName);
                         handlerMethod.setDesc(annotation.desc());
+                        handlerMethod.setRejectBlockingTask(schedulerInfo.config().rejectBlocking());
+                        handlerMethod.setVirtualThread(schedulerInfo.config().virtualThread());
                         final int[] messageIds = annotation.messageIds();
                         for (final int messageId : messageIds) {
                             final Map<Jt808ProtocolVersion, XtreamHandlerMethod> map = this.mappings.computeIfAbsent(messageId, k -> new HashMap<>());
