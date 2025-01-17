@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.controller;
 
+import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.PageableVo;
 import io.github.hylexus.xtream.codec.ext.jt808.exception.BadRequestException;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.configuration.props.QuickStartAppProps;
@@ -31,7 +32,11 @@ import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.servic
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.service.impl.mysql.TraceLogServiceMysqlImpl;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.service.impl.postgres.AttachmentInfoServicePostgresImpl;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.service.impl.postgres.TraceLogServicePostgresImpl;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.utils.DemoNetUtils;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.web.reactive.context.ReactiveWebApplicationContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,10 +54,18 @@ public class DemoQueryController implements InitializingBean {
     private final Map<String, TraceLogService> traceLogServiceRoutes = new HashMap<>();
     private final QuickStartAppProps appProps;
     private final ApplicationContext applicationContext;
+    private final int port;
+    private final XtreamJt808ServerProperties jt808ServerProperties;
+    private final WebApplicationType webApplicationType;
+    private final List<String> availableIpAddresses;
 
-    public DemoQueryController(QuickStartAppProps appProps, ApplicationContext applicationContext) {
+    public DemoQueryController(QuickStartAppProps appProps, ApplicationContext applicationContext, @Value("${server.port}") int port, XtreamJt808ServerProperties jt808ServerProperties) {
         this.appProps = appProps;
         this.applicationContext = applicationContext;
+        this.port = port;
+        this.jt808ServerProperties = jt808ServerProperties;
+        this.webApplicationType = applicationContext instanceof ReactiveWebApplicationContext ? WebApplicationType.REACTIVE : WebApplicationType.SERVLET;
+        this.availableIpAddresses = DemoNetUtils.getLocalIpAddressesOrEmpty();
     }
 
     @GetMapping("/server-config")
@@ -63,7 +76,12 @@ public class DemoQueryController implements InitializingBean {
                 Map.of("label", "Postgres", "value", "postgres", "enabled", databaseControl.getPostgres().isEnabled()),
                 Map.of("label", "Mysql", "value", "mysql", "enabled", databaseControl.getMysql().isEnabled())
         );
-        return Map.of("database", databaseList);
+        return Map.of(
+                "server", Map.of("port", this.port, "type", this.webApplicationType, "availableIpAddresses", this.availableIpAddresses),
+                "database", databaseList,
+                "oss", List.of(Map.of("label", "Minio", "value", "minio", "enabled", appProps.getFeatureControl().getOss().getMinio().isEnabled())),
+                "jt808", jt808ServerProperties
+        );
     }
 
     @GetMapping("/attachment-info")

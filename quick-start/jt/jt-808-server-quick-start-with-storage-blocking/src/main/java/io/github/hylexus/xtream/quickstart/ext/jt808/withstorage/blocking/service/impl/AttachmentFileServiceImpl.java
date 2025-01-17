@@ -29,7 +29,6 @@ import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.servic
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
@@ -141,30 +140,25 @@ public class AttachmentFileServiceImpl implements AttachmentFileService {
     }
 
     @SuppressWarnings("unused")
-    private Mono<Integer> writeDataWithAsynchronousFileChannel(BuiltinMessage30316364 body, String filePath) {
-        return Mono.<Integer>create(sink -> {
-            try {
-                createFileIfNecessary(filePath);
-            } catch (IOException e) {
-                sink.error(e);
-                return;
-            }
+    private int writeDataWithAsynchronousFileChannel(BuiltinMessage30316364 body, String filePath) {
+        try {
+            createFileIfNecessary(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-            try (final AsynchronousFileChannel channel = AsynchronousFileChannel.open(
-                    Path.of(filePath),
-                    StandardOpenOption.WRITE,
-                    StandardOpenOption.READ,
-                    StandardOpenOption.SPARSE
-            )) {
-                final ByteBuffer buffer = ByteBuffer.wrap(body.getData());
-                final Future<Integer> writeFuture = channel.write(buffer, body.getDataOffset());
-                final Integer dataSize = writeFuture.get();
-                sink.success(dataSize);
-            } catch (Throwable e) {
-                sink.error(e);
-            }
-            // 将阻塞操作调度到单独的线程池中执行
-        }).subscribeOn(SCHEDULER);
+        try (final AsynchronousFileChannel channel = AsynchronousFileChannel.open(
+                Path.of(filePath),
+                StandardOpenOption.WRITE,
+                StandardOpenOption.READ,
+                StandardOpenOption.SPARSE
+        )) {
+            final ByteBuffer buffer = ByteBuffer.wrap(body.getData());
+            final Future<Integer> writeFuture = channel.write(buffer, body.getDataOffset());
+            return writeFuture.get();
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
     }
 
     static void createFileIfNecessary(String filePath) throws IOException {

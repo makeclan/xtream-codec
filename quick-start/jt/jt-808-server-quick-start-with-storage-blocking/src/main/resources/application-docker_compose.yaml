@@ -48,7 +48,7 @@ demo-app-with-storage:
   # 示例性的附件服务器配置
   attachment-server:
     # 附件服务器的IP 应该是一个公网IP(设备能访问的IP)
-    server-ip: 192.168.71.59
+    server-ip: ${ATTACHMENT_SERVER_IP:192.168.71.176}
     # 用来存放附件文件的临时路径
     temporary-path: /tmp/jt-808/attachment
     # 将本地文件上传到远程存储后，是否保留本地文件
@@ -57,7 +57,14 @@ demo-app-with-storage:
     # 项目启动时会自动创建(为简化示例，会自动将 bucket 改为可匿名访问)
     remote-storage-bucket-name: jt-attachment
     file-preview-base-url: ${demo-app-with-storage.minio.endpoint}/${demo-app-with-storage.attachment-server.remote-storage-bucket-name}
+
+server:
+  port: 8888
+
 spring:
+  main:
+    # [阻塞]环境下，显式指定 Servlet(不配置也可以,默认就是Tomcat)
+    web-application-type: servlet
   web:
     resources:
       static-locations:

@@ -1,40 +1,68 @@
-<script setup lang="ts"></script>
-
+<script setup lang="ts">
+</script>
 <template>
-  <el-menu
-      :router="true"
-      :ellipsis="false"
-      class="header-bar"
-      mode="horizontal"
-  >
-    <el-menu-item index="/">首页</el-menu-item>
-    <el-menu-item index="/terminals">在线终端</el-menu-item>
-    <el-menu-item index="/trace-log">请求日志</el-menu-item>
-    <el-menu-item index="/alarm-info">报警信息</el-menu-item>
-  </el-menu>
-  <main class="main">
-    <RouterView></RouterView>
-  </main>
+  <el-container>
+    <el-aside class="aside-area">
+      <el-scrollbar>
+        <el-menu
+            :router="true"
+            :ellipsis="false"
+            mode="vertical"
+            style="height: 100%;"
+        >
+          <el-menu-item index="/">首页</el-menu-item>
+          <el-menu-item index="/terminals">在线终端</el-menu-item>
+          <el-menu-item index="/trace-log">请求日志</el-menu-item>
+          <el-menu-item index="/alarm-info">报警信息(苏标)</el-menu-item>
+        </el-menu>
+      </el-scrollbar>
+    </el-aside>
+    <el-container>
+      <el-header class="header-area">
+        <h3>Xtream-Codec JT/T 808 服务端示例</h3>
+      </el-header>
+      <el-main class="main-area">
+        <RouterView></RouterView>
+      </el-main>
+    </el-container>
+  </el-container>
 </template>
 
-<style scoped>
-.header-bar {
-  box-sizing: content-box;
+<style scoped lang="scss">
+$aside-width: 130px;
+$header-height: 50px;
+::v-deep(.aside-area) {
+  .el-scrollbar__view {
+    height: 100%;
+  }
+
   position: fixed;
   top: 0;
   left: 0;
-  height: var(--el-menu-horizontal-height);
+  height: 100%;
+  width: $aside-width;
+}
+
+.header-area {
+  position: fixed;
+  top: 0;
+  left: $aside-width;
   width: 100%;
+  height: $header-height;
+
+  border-bottom: 1px solid var(--el-border-color);
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  z-index: 999999;
 }
 
-.main {
-  box-sizing: content-box;
-  margin: calc(var(--el-menu-horizontal-height) + 10px) 0 10px 0;
+.main-area {
+  z-index: 10;
   padding: 10px 10px;
-  border: 1px solid var(--el-border-color);
-  border-radius: 10px;
-  height: calc(100vh - var(--el-menu-horizontal-height) - 42px);
+  margin: $header-height 0 0 $aside-width;
+  width: calc(100vw - #{$aside-width});
+  height: calc(100vh - #{$header-height});
+  overflow-y: scroll;
 }
-
-
 </style>

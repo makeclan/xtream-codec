@@ -4,6 +4,12 @@ export interface DatabaseConfig {
     enabled: boolean;
 }
 
+export interface OssConfig {
+    label: string;
+    value: string;
+    enabled: boolean;
+}
+
 export interface AlarmInfoVo {
     id: string;
     terminalId: string;
@@ -50,6 +56,7 @@ export interface TerminalVo {
     creationTime: string;
     lastCommunicateTime: string;
 }
+
 export interface Command8104Item {
     parameterId: number;
     parameterIdAsHexString: number;
@@ -57,8 +64,29 @@ export interface Command8104Item {
     parameterValue: string;
     parameterType: string;
 }
+
 export interface Command8104Response {
     flowId: number;
     parameterCount: number;
     parameterItems: Array<Command8104Item>
+}
+
+export interface QuickstartServerConfig {
+    database: Array<DatabaseConfig>;
+    oss: Array<OssConfig>;
+    server: {
+        type: string,
+        port: number,
+        availableIpAddresses: Array<string>
+    },
+    jt808: {
+        instructionServer: {
+            tcpServer: { enabled: boolean, host: string, port: number },
+            udpServer: { enabled: boolean, host: string, port: number },
+        },
+        attachmentServer: {
+            tcpServer: { enabled: boolean, host: string, port: number },
+            udpServer: { enabled: boolean, host: string, port: number },
+        }
+    },
 }

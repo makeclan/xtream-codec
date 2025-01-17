@@ -57,7 +57,14 @@ demo-app-with-storage:
     # 项目启动时会自动创建(为简化示例，会自动将 bucket 改为可匿名访问)
     remote-storage-bucket-name: jt-attachment
     file-preview-base-url: ${demo-app-with-storage.minio.endpoint}/${demo-app-with-storage.attachment-server.remote-storage-bucket-name}
+
+server:
+  port: 8888
+
 spring:
+  main:
+    # [非阻塞]环境下，显式指定 Reactive(不配置也可以,默认就是Netty)
+    web-application-type: reactive
   web:
     resources:
       static-locations:
@@ -136,6 +143,7 @@ jt808-server:
       host: 0.0.0.0
       # TCP 服务端口
       port: 3927
+      max-instruction-frame-length: 2048
     # UDP 服务配置(指令服务器)
     udp-server:
       # 是否启动 UDP 服务

@@ -52,7 +52,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <el-card>
+  <el-card class="my-card">
     <el-form inline style="display: flex;align-items: center;justify-items: center;">
       <el-form-item label="终端手机号" style="margin-bottom: 0;">
         <el-input v-model="pageState.query.terminalId" placeholder="终端手机号" clearable/>
@@ -81,52 +81,61 @@ onMounted(async () => {
       </el-form-item>
     </el-form>
   </el-card>
-  <el-table :data="pageState.data" v-loading="pageState.tableDataLoading" border style="width: 100%">
-    <el-table-column prop="id" label="ID" fixed min-width="500" show-overflow-tooltip/>
-    <el-table-column prop="terminalId" label="终端手机号" min-width="200"/>
-    <el-table-column prop="protocolVersion" label="协议版本" min-width="130">
-      <template #default="scope">
-        <el-tag :type="scope.row.protocolVersion === 'VERSION_2019' ? 'success' : 'info'">
-          {{ scope.row.protocolVersion }}
-        </el-tag>
-      </template>
-    </el-table-column>
-    <el-table-column prop="protocolType" label="网络类型" fixed min-width="90">
-      <template #default="scope">
-        <el-tag :type="scope.row.protocolType === 'TCP' ? 'success' : 'info'">
-          {{ scope.row.protocolType }}
-        </el-tag>
-      </template>
-    </el-table-column>
-    <el-table-column prop="creationTime" label="会话创建时间" width="200"/>
-    <el-table-column prop="lastCommunicateTime" label="最后一次通信时间" width="200"/>
-    <el-table-column label="操作" fixed="right" width="130">
-      <template #default="scope">
-        <el-button type="primary" size="small" @click="sendCommand8104(scope.row.id)">查询终端参数</el-button>
-      </template>
-    </el-table-column>
-  </el-table>
-  <el-card>
-    <el-pagination
-        :total="pageState.total"
-        :current-page="pageState.query.page"
-        :default-page-size="3"
-        :page-size="pageState.query.pageSize"
-        :page-sizes="[5,10,20,30,50,100]"
-        :background="true"
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="async (val:number) => {
+
+  <el-card class="my-card">
+    <template #header>在线终端列表</template>
+    <div>
+      <el-table
+          :data="pageState.data"
+          v-loading="pageState.tableDataLoading"
+          border
+          style="width: 100%;margin-top: 10px;">
+        <el-table-column prop="id" label="ID" fixed min-width="500" show-overflow-tooltip/>
+        <el-table-column prop="terminalId" label="终端手机号" min-width="200"/>
+        <el-table-column prop="protocolVersion" label="协议版本" min-width="130">
+          <template #default="scope">
+            <el-tag :type="scope.row.protocolVersion === 'VERSION_2019' ? 'success' : 'info'">
+              {{ scope.row.protocolVersion }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="protocolType" label="网络类型" fixed min-width="90">
+          <template #default="scope">
+            <el-tag :type="scope.row.protocolType === 'TCP' ? 'success' : 'info'">
+              {{ scope.row.protocolType }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="creationTime" label="会话创建时间" width="200"/>
+        <el-table-column prop="lastCommunicateTime" label="最后一次通信时间" width="200"/>
+        <el-table-column label="操作" fixed="right" width="130">
+          <template #default="scope">
+            <el-button type="primary" size="small" @click="sendCommand8104(scope.row.id)">查询终端参数</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-card>
+        <el-pagination
+            :total="pageState.total"
+            :current-page="pageState.query.page"
+            :default-page-size="3"
+            :page-size="pageState.query.pageSize"
+            :page-sizes="[5,10,20,30,50,100]"
+            :background="true"
+            layout="total, sizes, prev, pager, next, jumper"
+            @size-change="async (val:number) => {
           pageState.query.pageSize = val;
           await loadData();
         }"
-        @current-change="async (val:number)=> {
+            @current-change="async (val:number)=> {
           pageState.query.page = val;
           await loadData();
         }"
-    />
+        />
+      </el-card>
+    </div>
   </el-card>
-
-  <el-card style="margin-top: 20px">
+  <el-card class="my-card">
     <template #header>
       <div style="display: flex;align-items: center;">
         <h5 style="margin: 0 100px 0 0;">
@@ -150,5 +159,13 @@ onMounted(async () => {
 </template>
 
 <style scoped lang="scss">
+.my-card {
+
+  &:not(:first-child) {
+    margin-top: 20px;
+  }
+
+  border-radius: 10px;
+}
 </style>
 

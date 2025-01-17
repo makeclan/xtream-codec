@@ -110,7 +110,7 @@ services:
       - CLICKHOUSE_R2DBC_USERNAME=jt
       - CLICKHOUSE_R2DBC_PASSWORD=clickhouse
     ports:
-      - "8080:8080"
+      - "8888:8888"
       - "3927:3927"
       - "3824:3824"
       - "3721:3721"

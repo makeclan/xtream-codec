@@ -5,6 +5,9 @@ plugins {
     application
 }
 
+application {
+}
+
 dependencies {
     // common start
     compileOnly("org.projectlombok:lombok")
@@ -21,6 +24,7 @@ dependencies {
     // api(project(":ext:jt:jt-808-server-spring-boot-starter-reactive"))
     api(project(":ext:jt:jt-808-server-dashboard-spring-boot-starter-reactive"))
     api("org.springframework.boot:spring-boot-starter-logging")
+    api("org.springframework.boot:spring-boot-starter-web")
 
     implementation("jakarta.annotation:jakarta.annotation-api")
 

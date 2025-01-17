@@ -1,7 +1,7 @@
 import {request} from "../utils/request.ts";
-import {AlarmInfoVo, DatabaseConfig, TraceLogVo} from "../types/model.ts";
+import {AlarmInfoVo, QuickstartServerConfig, TraceLogVo} from "../types/model.ts";
 
-export const requestServerConfig = async (): Promise<{ database: DatabaseConfig[] }> => {
+export const requestServerConfig = async (): Promise<QuickstartServerConfig> => {
     return await request({path: 'api/jt-808-quick-start-with-storage/v1/data-query/server-config', method: 'GET'});
 }
 

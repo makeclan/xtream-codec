@@ -6,7 +6,6 @@ plugins {
 }
 
 application {
-    mainClass.set("io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.Jt808ServerQuickStartWithStorageApp")
 }
 
 dependencies {

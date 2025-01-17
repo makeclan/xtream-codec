@@ -353,8 +353,8 @@ fun getMavenRepoConfig(): Properties {
 
 fun extraMavenRepositoryUrls(): List<String> {
     return listOf(
-        "https://mirrors.cloud.tencent.com/nexus/repository/maven-public",
-        "https://repo.huaweicloud.com/repository/maven",
+//        "https://mirrors.cloud.tencent.com/nexus/repository/maven-public",
+//        "https://repo.huaweicloud.com/repository/maven",
         "https://maven.aliyun.com/repository/central",
         "https://maven.aliyun.com/repository/public",
         "https://maven.aliyun.com/repository/google",

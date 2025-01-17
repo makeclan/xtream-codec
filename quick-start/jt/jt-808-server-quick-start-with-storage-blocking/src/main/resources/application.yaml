@@ -19,3 +19,6 @@ spring:
     name: jt-808-server-quick-start-with-storage-blocking
   profiles:
     active: docker_compose
+  mvc:
+    async:
+      request-timeout: 10s

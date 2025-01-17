@@ -24,7 +24,7 @@
     - 默认启用了 Clickhouse 和 Minio，看情况修改
     - 某个中间件是否启用取决于 `demo-app-with-storage.feature-control.xxx.enabled` 配置项
 - 启动服务: 运行 [Jt808ServerQuickStartWithStorageApp.java](src/main/java/io/github/hylexus/xtream/quickstart/ext/jt808/withstorage/Jt808ServerQuickStartWithStorageApp.java)
-- 访问 UI: http://localhost:8080
+- 访问 UI: http://localhost:8888
 - 使用客户端发送报文
 
 ## 基于Docker启动

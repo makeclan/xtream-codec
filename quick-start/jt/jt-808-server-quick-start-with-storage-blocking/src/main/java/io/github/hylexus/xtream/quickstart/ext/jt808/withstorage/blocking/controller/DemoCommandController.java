@@ -38,17 +38,16 @@ public class DemoCommandController {
     }
 
     @PostMapping("/8104")
-    public Mono<Object> command8104(@RequestBody Command9104Dto dto) {
-        return this.jt808CommandSender.sendObjectAndWaitingResponse(
+    public Object command8104(@RequestBody Command9104Dto dto) {
+        final Object response = this.jt808CommandSender.sendObjectAndWaitingResponse(
                         dto.getSessionId(),
                         Mono.just(new BuiltinMessage8104()),
                         0x0104
                 )
-                .timeout(dto.getTimeout())
-                .doOnNext(response -> {
-                    // ...
-                    log.info("0x8104 response: {}", response);
-                });
+                // MVC 环境下 `.block()` 这种阻塞操作是可以的
+                .block(dto.getTimeout());
+        log.info("0x8104 response: {}", response);
+        return response;
     }
 
 }

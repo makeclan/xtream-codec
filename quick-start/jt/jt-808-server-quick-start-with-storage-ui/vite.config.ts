@@ -7,6 +7,7 @@ import UnoCSS from 'unocss/vite'
 export default defineConfig({
     plugins: [vue(), ElementPlus({}), UnoCSS()],
     server: {
+        host: '0.0.0.0',
         proxy: {
             // "/api/jt-808-quick-start-with-storage": {
             //     target: "http://localhost:8080",
@@ -14,8 +15,8 @@ export default defineConfig({
             //     // rewrite: (path) => path.replace(/^\/api/, "/api/v1"),
             //     rewrite: (path) => path,
             // },
-            '/dashboard-api': 'http://localhost:8080',
-            '/api/jt-808-quick-start-with-storage': 'http://localhost:8080',
+            '/dashboard-api': 'http://localhost:8888',
+            '/api/jt-808-quick-start-with-storage': 'http://localhost:8888',
         },
     }
 })
