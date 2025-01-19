@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.debug.codec.core.demo01;
 
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
 import io.github.hylexus.xtream.debug.codec.core.utilsforunittest.DebugEntity01ForJunitPurpose;
 import lombok.Getter;
@@ -62,7 +63,7 @@ public class RawStyleDebugEntity01ForEncode implements DebugEntity01ForJunitPurp
     private int passwordLength;
 
     // 密码 String, "GBK"
-    @XtreamField(charset = "GBK")
+    @XtreamField(charset = XtreamConstants.CHARSET_NAME_GBK)
     private String password;
 
     // 生日 String[8], "yyyyMMdd", "UTF-8"
@@ -70,7 +71,7 @@ public class RawStyleDebugEntity01ForEncode implements DebugEntity01ForJunitPurp
     private String birthday;
 
     // 手机号 BCD_8421[6] "GBK"
-    @XtreamField(charset = "bcd_8421")
+    @XtreamField(charset = XtreamConstants.CHARSET_NAME_BCD_8421)
     private String phoneNumber;
 
     // 年龄 无符号数 2字节

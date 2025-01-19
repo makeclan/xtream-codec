@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.codec;
 
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.github.hylexus.xtream.codec.core.impl.codec.StringFieldCodec;
 import io.github.hylexus.xtream.codec.core.impl.codec.U16FieldCodec;
@@ -86,10 +87,10 @@ public class ParameterItem {
         }
 
         private static ParameterType detectStringType(String stringFieldCodec) {
-            return switch (stringFieldCodec.toLowerCase()) {
-                case "bcd_8421" -> STRING_BCD_8421;
-                case "gbk" -> STRING_GBK;
-                case "utf-8" -> STRING_UTF_8;
+            return switch (stringFieldCodec.toUpperCase()) {
+                case XtreamConstants.CHARSET_NAME_BCD_8421 -> STRING_BCD_8421;
+                case "GBK" -> STRING_GBK;
+                case "UTF-8" -> STRING_UTF_8;
                 default -> UNKNOWN;
             };
         }

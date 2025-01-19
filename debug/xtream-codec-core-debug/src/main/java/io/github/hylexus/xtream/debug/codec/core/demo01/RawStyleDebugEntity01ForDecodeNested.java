@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.debug.codec.core.demo01;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.github.hylexus.xtream.debug.codec.core.utilsforunittest.DebugEntity01NestedForJunitPurpose;
@@ -80,7 +81,7 @@ public class RawStyleDebugEntity01ForDecodeNested {
         private int passwordLength;
 
         // 密码 String, "GBK"
-        @Preset.RustStyle.str(charset = "GBK", lengthExpression = "getPasswordLength()")
+        @Preset.RustStyle.str(charset = XtreamConstants.CHARSET_NAME_GBK, lengthExpression = "getPasswordLength()")
         private String password;
 
         // 生日 String[8], "yyyyMMdd", "UTF-8"
@@ -88,7 +89,7 @@ public class RawStyleDebugEntity01ForDecodeNested {
         private String birthday;
 
         // 手机号 BCD_8421[6] "GBK"
-        @XtreamField(charset = "bcd_8421", length = 6)
+        @XtreamField(charset = XtreamConstants.CHARSET_NAME_BCD_8421, length = 6)
         private String phoneNumber;
 
         // 年龄 无符号数 2字节

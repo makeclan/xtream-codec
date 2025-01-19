@@ -20,14 +20,15 @@ import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.utils.BcdOps;
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.netty.buffer.ByteBuf;
 
 import java.nio.charset.Charset;
 
 public class StringFieldCodec implements FieldCodec<String> {
-    public static final FieldCodec<String> INSTANCE_BCD_8421 = StringFieldCodec.createStringCodec("bcd_8421");
-    public static final FieldCodec<String> INSTANCE_GBK = StringFieldCodec.createStringCodec("gbk");
+    public static final FieldCodec<String> INSTANCE_BCD_8421 = InternalBcdFieldCodec.INSTANCE;
+    public static final FieldCodec<String> INSTANCE_GBK = InternalSimpleStringFieldCodec.INSTANCE_GBK;
     public static final FieldCodec<String> INSTANCE_HEX = InternalHexStringFieldCodec.INSTANCE;
     protected final String charset;
 
@@ -73,15 +74,19 @@ public class StringFieldCodec implements FieldCodec<String> {
     }
 
     public static FieldCodec<String> createStringCodec(String charset) {
-        if (charset.equalsIgnoreCase("bcd_8421")) {
-            return new InternalBcdFieldCodec(charset);
-        }
-        final Charset nomalCharset = Charset.forName(charset);
-        return new InternalSimpleStringFieldCodec(nomalCharset);
+        return switch (charset.toUpperCase()) {
+            case XtreamConstants.CHARSET_NAME_GBK -> InternalSimpleStringFieldCodec.INSTANCE_GBK;
+            case XtreamConstants.CHARSET_NAME_BCD_8421 -> InternalBcdFieldCodec.INSTANCE;
+            case XtreamConstants.CHARSET_NAME_HEX -> InternalHexStringFieldCodec.INSTANCE;
+            default -> {
+                final Charset nomalCharset = Charset.forName(charset);
+                yield new InternalSimpleStringFieldCodec(nomalCharset);
+            }
+        };
     }
 
     public static class InternalSimpleStringFieldCodec extends AbstractFieldCodec<String> {
-
+        public static final FieldCodec<String> INSTANCE_GBK = new InternalSimpleStringFieldCodec(XtreamConstants.CHARSET_GBK);
         private final Charset charset;
 
         public InternalSimpleStringFieldCodec(Charset charset) {
@@ -104,6 +109,7 @@ public class StringFieldCodec implements FieldCodec<String> {
     }
 
     public static class InternalBcdFieldCodec extends AbstractFieldCodec<String> {
+        public static final InternalBcdFieldCodec INSTANCE = new InternalBcdFieldCodec(XtreamConstants.CHARSET_NAME_BCD_8421);
         protected final String charset;
 
         public InternalBcdFieldCodec(String charset) {

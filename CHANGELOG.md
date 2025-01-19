@@ -1,3 +1,13 @@
+## 0.0.1-beta.11(2025-01-19)
+
+### ⭐ New Features
+
+- `jt-808-server-dashboard-ui` 优化
+- `jt-808-server-dashboard-spring-boot-starter-reactive` 兼容 **SpringMVC**
+- 新增 `quck-start/jt/jt-808-server-quick-start-with-storage-blocking` 示例模块
+- 内置编解码器支持十六进制字符串
+- 调整虚拟线程默认配置
+
 ## 0.0.1-beta.10(2025-01-01)
 
 ### ⭐ New Features

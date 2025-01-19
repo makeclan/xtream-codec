@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.debug.codec.core.demo02;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
 import io.github.hylexus.xtream.debug.codec.core.utilsforunittest.DebugEntity02ForJunitPurpose;
 import lombok.Getter;
@@ -44,7 +45,7 @@ public class RawStyleDebugEntity02ForDecode implements DebugEntity02ForJunitPurp
     private byte protocolVersion;
 
     // byte[5-15)    终端手机号或设备ID bcd[10]
-    @XtreamField(charset = "bcd_8421", length = 10)
+    @XtreamField(charset = XtreamConstants.CHARSET_NAME_BCD_8421, length = 10)
     private String terminalId;
 
     // byte[15-17)    消息流水号 word(16)
@@ -86,7 +87,7 @@ public class RawStyleDebugEntity02ForDecode implements DebugEntity02ForJunitPurp
     private int direction;
 
     // 时间  BCD[6] yyMMddHHmmss
-    @XtreamField(charset = "bcd_8421", length = 6)
+    @XtreamField(charset = XtreamConstants.CHARSET_NAME_BCD_8421, length = 6)
     private String time;
 
     // 长度：消息体长度减去前面的 28 字节

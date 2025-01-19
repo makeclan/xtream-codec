@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.debug.codec.core.demo03;
 
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamFieldMapDescriptor;
 import io.github.hylexus.xtream.codec.core.type.Preset;
@@ -46,7 +47,7 @@ public class RustStyleDebugEntity03ForDecode {
                     ),
                     valueDecoderDescriptors = {
                             @XtreamFieldMapDescriptor.ValueCodecConfig(whenKeyIsU16 = 1, javaType = String.class),
-                            @XtreamFieldMapDescriptor.ValueCodecConfig(whenKeyIsU16 = 2, javaType = String.class, config = @XtreamField(charset = "gbk"), valueLengthFieldSize = 2),
+                            @XtreamFieldMapDescriptor.ValueCodecConfig(whenKeyIsU16 = 2, javaType = String.class, config = @XtreamField(charset = XtreamConstants.CHARSET_NAME_GBK), valueLengthFieldSize = 2),
                             @XtreamFieldMapDescriptor.ValueCodecConfig(whenKeyIsU16 = 3, javaType = short.class, config = @XtreamField(length = 2)),
                     }
             )

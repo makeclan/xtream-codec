@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.debug.codec.core.demo04;
 
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.github.hylexus.xtream.debug.codec.core.demo04.spec.BaseJt808Msg;
@@ -37,15 +38,15 @@ public class DemoJt808Msg0100V2019 extends BaseJt808Msg {
     private int cityId;
 
     // 3. [4-15) BYTE[11] 制造商ID
-    @Preset.RustStyle.str(length = 11, charset = "gbk")
+    @Preset.RustStyle.str(length = 11, charset = XtreamConstants.CHARSET_NAME_GBK)
     private String manufacturerId;
 
     // 4. [15-45) BYTE[30] 终端型号
-    @Preset.RustStyle.str(length = 30, charset = "gbk")
+    @Preset.RustStyle.str(length = 30, charset = XtreamConstants.CHARSET_NAME_GBK)
     private String terminalType;
 
     // 5. [45-75) BYTE[30] 终端ID
-    @Preset.RustStyle.str(length = 30, charset = "gbk")
+    @Preset.RustStyle.str(length = 30, charset = XtreamConstants.CHARSET_NAME_GBK)
     private String terminalId;
 
     // 6. [75]   BYTE    车牌颜色
@@ -62,9 +63,9 @@ public class DemoJt808Msg0100V2019 extends BaseJt808Msg {
      * @see FieldCodec#deserialize(io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata, FieldCodec.DeserializeContext, ByteBuf, int)
      */
     // 1. 使用 SpEL 计算消息长度(上下文中的消息体总长度减去前面消费掉的字节数)
-    // @Preset.RustStyle.str(charset = "gbk", lengthExpression = "msgBodyLength() - (1 + 30 + 30 +11 +2 +2)")
+    // @Preset.RustStyle.str(charset = XtreamConstants.CHARSET_NAME_GBK, lengthExpression = "msgBodyLength() - (1 + 30 + 30 +11 +2 +2)")
     // 2. 不指定长度(意味着长度是后续所有的字节数)
-    @Preset.RustStyle.str(charset = "gbk")
+    @Preset.RustStyle.str(charset = XtreamConstants.CHARSET_NAME_GBK)
     private String carIdentifier;
 
 }

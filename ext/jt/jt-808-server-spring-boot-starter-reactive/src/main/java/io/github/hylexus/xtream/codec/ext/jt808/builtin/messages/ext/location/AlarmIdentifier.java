@@ -41,7 +41,7 @@ public class AlarmIdentifier {
     // 时间   BCD[6]  YY-MM-DD-hh-mm-ss （GMT+8时间）
     @Preset.JtStyle.BcdDateTime
     // 或者
-    // @XtreamDateTimeField(pattern = "yyMMddHHmmss", length = 6, charset = "bcd_8421")
+    // @XtreamDateTimeField(pattern = "yyMMddHHmmss", length = 6, charset = XtreamConstants.CHARSET_NAME_BCD_8421)
     private LocalDateTime time;
 
     // 序号   BYTE    同一时间点报警的序号，从0循环累加

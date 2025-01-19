@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.debug.codec.core.demo01;
 
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.github.hylexus.xtream.debug.codec.core.utilsforunittest.DebugEntity01ForJunitPurpose;
 import lombok.Getter;
@@ -62,7 +63,7 @@ public class JtStyleDebugEntity01ForDecode implements DebugEntity01ForJunitPurpo
     private int passwordLength;
 
     // 密码 String, "GBK"
-    @Preset.JtStyle.Str(charset = "GBK", lengthExpression = "getPasswordLength()")
+    @Preset.JtStyle.Str(charset = XtreamConstants.CHARSET_NAME_GBK, lengthExpression = "getPasswordLength()")
     private String password;
 
     // 生日 String[8], "yyyyMMdd", "UTF-8"

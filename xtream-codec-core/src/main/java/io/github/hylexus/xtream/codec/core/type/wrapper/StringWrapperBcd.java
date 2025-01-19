@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.core.type.wrapper;
 
 import io.github.hylexus.xtream.codec.common.utils.BcdOps;
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.netty.buffer.ByteBuf;
 
@@ -27,7 +28,7 @@ public class StringWrapperBcd implements DataWrapper<String> {
 
     public static final Charset UTF_8 = StandardCharsets.UTF_8;
 
-    @Preset.RustStyle.str(charset = "bcd_8421")
+    @Preset.RustStyle.str(charset = XtreamConstants.CHARSET_NAME_BCD_8421)
     protected String value;
     protected int length;
 

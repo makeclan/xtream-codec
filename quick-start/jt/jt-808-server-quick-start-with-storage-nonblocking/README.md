@@ -1,6 +1,19 @@
 # jt-808-server-quick-start-with-storage-nonblocking
 
+## 介绍
+
 当前项目是使用 **xtream-codec** 处理 **JT/T 808** 协议的示例项目。
+
+代码可能看起来有点复杂，但是其实核心代码没几行。
+
+大多数代码都是为了支持多种存储介质，写的适配代码。
+
+非阻塞式编程:
+
+- 数据访问:
+    - [R2DBC](https://r2dbc.io/)
+    - [reactive-mybatis-support](https://github.com/chenggangpro/reactive-mybatis-support)
+- Web: [Spring-WebFlux](https://docs.spring.io/spring-boot/reference/web/reactive.html)
 
 ## 功能描述
 

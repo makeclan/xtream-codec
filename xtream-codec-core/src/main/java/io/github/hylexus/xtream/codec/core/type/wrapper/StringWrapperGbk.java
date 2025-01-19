@@ -22,7 +22,7 @@ import io.netty.buffer.ByteBuf;
 
 public class StringWrapperGbk implements DataWrapper<String> {
 
-    @Preset.RustStyle.str(charset = "gbk")
+    @Preset.RustStyle.str(charset = XtreamConstants.CHARSET_NAME_GBK)
     protected String value;
     protected int length;
 

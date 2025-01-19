@@ -70,7 +70,7 @@ public class BuiltinMessage67 {
 
     // offset[23,29) BCD[6] 日期时间
     @Preset.JtStyle.BcdDateTime
-    // @XtreamDateTimeField(pattern = "yyMMddHHmmss", length = 6, charset = "bcd_8421")
+    // @XtreamDateTimeField(pattern = "yyMMddHHmmss", length = 6, charset = XtreamConstants.CHARSET_NAME_BCD_8421)
     private LocalDateTime datetime;
 
     // offset[29,31] WORD 车辆状态

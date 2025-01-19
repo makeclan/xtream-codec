@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.debug.ext.jt808.message;
 
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import lombok.Getter;
 import lombok.Setter;
@@ -58,7 +59,7 @@ public class DemoLocationMsg01 {
     private int direction;
 
     // 时间  BCD[6] yyMMddHHmmss
-    @Preset.RustStyle.str(charset = "bcd_8421", length = 6)
+    @Preset.RustStyle.str(charset = XtreamConstants.CHARSET_NAME_BCD_8421, length = 6)
     private String time;
 
     // 长度：消息体长度减去前面的 28 字节

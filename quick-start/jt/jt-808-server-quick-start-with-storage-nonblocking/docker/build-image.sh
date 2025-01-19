@@ -21,7 +21,7 @@ cd ${SUBPROJECT_ROOT_DIR}
 export BUILDX_NO_DEFAULT_ATTESTATIONS=1
 docker buildx build --platform linux/amd64,linux/arm64 \
 -t registry.cn-hangzhou.aliyuncs.com/xtream-codec/jt-808-server-quick-start-with-storage-nonblocking:latest \
--t registry.cn-hangzhou.aliyuncs.com/xtream-codec/jt-808-server-quick-start-with-storage-nonblocking:0.0.1-beta.10 \
+-t registry.cn-hangzhou.aliyuncs.com/xtream-codec/jt-808-server-quick-start-with-storage-nonblocking:0.0.1-beta.11 \
 -f ${SUBPROJECT_ROOT_DIR}/docker/Dockerfile \
 ${SUBPROJECT_ROOT_DIR} \
 --push

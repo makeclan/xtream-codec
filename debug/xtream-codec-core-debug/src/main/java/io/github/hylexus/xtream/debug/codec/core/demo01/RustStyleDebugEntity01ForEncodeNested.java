@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.debug.codec.core.demo01;
 
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.github.hylexus.xtream.debug.codec.core.utilsforunittest.DebugEntity01NestedForJunitPurpose;
 import lombok.Data;
@@ -78,7 +79,7 @@ public class RustStyleDebugEntity01ForEncodeNested {
         private int passwordLength;
 
         // 密码 String, "GBK"
-        @Preset.RustStyle.str(charset = "GBK")
+        @Preset.RustStyle.str(charset = XtreamConstants.CHARSET_NAME_GBK)
         private String password;
 
         // 生日 String[8], "yyyyMMdd", "UTF-8"
@@ -86,7 +87,7 @@ public class RustStyleDebugEntity01ForEncodeNested {
         private String birthday;
 
         // 手机号 BCD_8421[6] "GBK"
-        @Preset.RustStyle.str(charset = "bcd_8421")
+        @Preset.RustStyle.str(charset = XtreamConstants.CHARSET_NAME_BCD_8421)
         private String phoneNumber;
 
         // 年龄 无符号数 2字节

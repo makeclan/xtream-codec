@@ -4,7 +4,7 @@ LOCAL_IP_ADDR=192.168.71.59
 
 docker pull registry.cn-hangzhou.aliyuncs.com/xtream-codec/jt-808-server-quick-start-with-storage-blocking:latest
 
-docker run --rm -p 8080:8080 \
+docker run --rm -p 8888:8888 \
 -p 3927:3927 \
 -p 3721:3721 \
 -p 3824:3824 \

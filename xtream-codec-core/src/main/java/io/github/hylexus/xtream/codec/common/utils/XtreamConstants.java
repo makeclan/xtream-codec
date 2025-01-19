@@ -20,9 +20,18 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 public final class XtreamConstants {
+
     private XtreamConstants() {
+        throw new UnsupportedOperationException();
     }
 
-    public static final Charset CHARSET_GBK = Charset.forName("GBK");
+    public static final String CHARSET_NAME_GBK = "GBK";
+    public static final String CHARSET_NAME_GB_2312 = "GB2312";
+    public static final String CHARSET_NAME_BCD_8421 = "BCD_8421";
+    public static final String CHARSET_NAME_HEX = "HEX";
+
+    public static final Charset CHARSET_GBK = Charset.forName(CHARSET_NAME_GBK);
+    public static final Charset CHARSET_GB_2312 = Charset.forName(CHARSET_NAME_GB_2312);
     public static final Charset CHARSET_UTF8 = StandardCharsets.UTF_8;
+
 }

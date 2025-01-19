@@ -31,7 +31,6 @@ import io.github.hylexus.xtream.codec.core.type.XtreamDataType;
 import io.github.hylexus.xtream.codec.core.type.wrapper.*;
 import io.github.hylexus.xtream.codec.core.utils.BeanUtils;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -125,7 +124,7 @@ public class DefaultFieldCodecRegistry implements FieldCodecRegistry {
     private static void registerDefaultStringCodec(DefaultFieldCodecRegistry registry) {
         Arrays.asList(
                 XtreamConstants.CHARSET_GBK,
-                Charset.forName("gb2312"),
+                XtreamConstants.CHARSET_GB_2312,
                 StandardCharsets.UTF_8,
                 StandardCharsets.US_ASCII,
                 StandardCharsets.ISO_8859_1,
@@ -137,7 +136,8 @@ public class DefaultFieldCodecRegistry implements FieldCodecRegistry {
             registry.register(new StringFieldCodec(charset.name()), String.class, XtreamDataType.string.sizeInBytes(), charset.name(), false);
         });
 
-        registry.register(new StringFieldCodec("bcd_8421"), String.class, XtreamDataType.string.sizeInBytes(), "bcd_8421", false);
+        registry.register(StringFieldCodec.INSTANCE_BCD_8421, String.class, XtreamDataType.string.sizeInBytes(), XtreamConstants.CHARSET_NAME_BCD_8421, false);
+        registry.register(StringFieldCodec.INSTANCE_HEX, String.class, XtreamDataType.string.sizeInBytes(), XtreamConstants.CHARSET_NAME_HEX, false);
     }
 
     @Override

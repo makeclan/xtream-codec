@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.debug.codec.server.reactive.tcp.message;
 
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,7 +43,7 @@ public class DemoLocationMsg01 {
     private byte protocolVersion;
 
     // byte[5-15)    终端手机号或设备ID bcd[10]
-    @Preset.RustStyle.str(charset = "bcd_8421", length = 10)
+    @Preset.RustStyle.str(charset = XtreamConstants.CHARSET_NAME_BCD_8421, length = 10)
     private String terminalId;
 
     // byte[15-17)    消息流水号 word(16)
@@ -84,7 +85,7 @@ public class DemoLocationMsg01 {
     private int direction;
 
     // 时间  BCD[6] yyMMddHHmmss
-    @Preset.RustStyle.str(charset = "bcd_8421", length = 6)
+    @Preset.RustStyle.str(charset = XtreamConstants.CHARSET_NAME_BCD_8421, length = 6)
     private String time;
 
     // 长度：消息体长度减去前面的 28 字节

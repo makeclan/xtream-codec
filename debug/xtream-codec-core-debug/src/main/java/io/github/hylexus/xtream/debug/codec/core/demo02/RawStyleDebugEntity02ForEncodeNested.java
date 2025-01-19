@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.debug.codec.core.demo02;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
 import io.github.hylexus.xtream.debug.codec.core.utilsforunittest.DebugEntity02NestedForJunitPurpose;
 import lombok.Getter;
@@ -62,7 +63,7 @@ public class RawStyleDebugEntity02ForEncodeNested {
         private byte protocolVersion;
 
         // byte[5-15)    终端手机号或设备ID bcd[10]
-        @XtreamField(charset = "bcd_8421")
+        @XtreamField(charset = XtreamConstants.CHARSET_NAME_BCD_8421)
         private String terminalId;
 
         // byte[15-17)    消息流水号 word(16)
@@ -110,7 +111,7 @@ public class RawStyleDebugEntity02ForEncodeNested {
         private int direction;
 
         // 时间  BCD[6] yyMMddHHmmss
-        @XtreamField(charset = "bcd_8421")
+        @XtreamField(charset = XtreamConstants.CHARSET_NAME_BCD_8421)
         private String time;
 
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.sequence)

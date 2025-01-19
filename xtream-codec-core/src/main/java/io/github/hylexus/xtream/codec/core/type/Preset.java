@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.core.type;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.core.ContainerInstanceFactory;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
@@ -392,7 +393,7 @@ public @interface Preset {
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
-        @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, charset = "bcd_8421")
+        @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, charset = XtreamConstants.CHARSET_NAME_BCD_8421)
         @interface Bcd {
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
@@ -419,7 +420,7 @@ public @interface Preset {
         @Target({ElementType.FIELD, ElementType.METHOD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
-        @XtreamDateTimeField(pattern = "yyMMddHHmmss", charset = "bcd_8421")
+        @XtreamDateTimeField(pattern = "yyMMddHHmmss", charset = XtreamConstants.CHARSET_NAME_BCD_8421)
         @interface BcdDateTime {
             @AliasFor(annotation = XtreamDateTimeField.class, attribute = "pattern")
             String pattern() default "yyMMddHHmmss";
@@ -483,7 +484,7 @@ public @interface Preset {
         @Target({ElementType.FIELD})
         @Retention(RetentionPolicy.RUNTIME)
         @Documented
-        @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, charset = "GBK")
+        @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, charset = XtreamConstants.CHARSET_NAME_GBK)
         @interface Str {
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
@@ -495,7 +496,7 @@ public @interface Preset {
             String lengthExpression() default "";
 
             @AliasFor(annotation = XtreamField.class, attribute = "charset")
-            String charset() default "GBK";
+            String charset() default XtreamConstants.CHARSET_NAME_GBK;
 
             @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldLength")
             int prependLengthFieldLength() default -1;

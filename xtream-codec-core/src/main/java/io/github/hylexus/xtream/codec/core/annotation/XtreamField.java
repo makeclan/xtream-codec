@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.core.annotation;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
+import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.common.utils.XtreamTypes;
 import io.github.hylexus.xtream.codec.core.ContainerInstanceFactory;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
@@ -72,7 +73,7 @@ public @interface XtreamField {
     /**
      * 只有 {@link String} 类型用到
      */
-    String charset() default "GBK";
+    String charset() default XtreamConstants.CHARSET_NAME_GBK;
 
     /**
      * 编码时: 自动给当前字段前面写入 N 字节, 表示当前字段的长度
