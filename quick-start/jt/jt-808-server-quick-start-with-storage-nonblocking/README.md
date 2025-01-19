@@ -8,7 +8,11 @@
 
 大多数代码都是为了支持多种存储介质，写的适配代码。
 
-非阻塞式编程:
+提供了 `linux/arm,linux/amd64` 多架构镜像：`registry.cn-hangzhou.aliyuncs.com/xtream-codec/jt-808-server-quick-start-with-storage-nonblocking:latest`
+
+## 特点
+
+非阻塞式编程。
 
 - 数据访问:
     - [R2DBC](https://r2dbc.io/)

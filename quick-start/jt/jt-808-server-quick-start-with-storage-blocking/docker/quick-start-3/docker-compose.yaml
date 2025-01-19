@@ -88,13 +88,13 @@ services:
       - app
     image: registry.cn-hangzhou.aliyuncs.com/xtream-codec/jt-808-server-quick-start-with-storage-blocking:latest
     pull_policy: always
-    container_name: jt-808-server-quick-start-with-storage-nonblocking
+    container_name: jt-808-server-quick-start-with-storage-blocking
     networks:
       - trace-log-network
     environment:
       - TZ=Asia/Shanghai
       # 如果你不想写 N 多环境变量，可以考虑将配置文件映射到容器中
-      - ATTACHMENT_SERVER_IP=192.168.71.184
+      - ATTACHMENT_SERVER_IP=192.168.71.59
       - FEATURE_CONTROL_DATABASE_CLICKHOUSE_ENABLED=true
       - FEATURE_CONTROL_DATABASE_MYSQL_ENABLED=true
       - FEATURE_CONTROL_DATABASE_POSTGRES_ENABLED=true

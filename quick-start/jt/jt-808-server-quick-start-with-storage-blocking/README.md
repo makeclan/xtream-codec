@@ -8,8 +8,13 @@
 
 大多数代码都是为了支持多种存储介质，写的适配代码。
 
-传统的阻塞式编程:
+提供了 `linux/arm,linux/amd64` 多架构镜像：`registry.cn-hangzhou.aliyuncs.com/xtream-codec/jt-808-server-quick-start-with-storage-blocking:latest`
 
+## 特点
+
+传统的阻塞式编程。
+
+- 虚拟线程
 - 数据访问
     - JDBC
     - [mybatis-mp](https://mybatis-mp.cn/)

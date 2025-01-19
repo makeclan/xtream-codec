@@ -28,18 +28,18 @@ dependencies {
     implementation("jakarta.annotation:jakarta.annotation-api")
 
     // region r2dbc
-    api("pro.chenggang:mybatis-r2dbc-spring:3.0.5.RELEASE")
+    api("pro.chenggang:mybatis-r2dbc-spring")
     // mybatis-r2dbc-spring 的依赖
     api("org.apache.commons:commons-lang3")
 
     api("io.asyncer:r2dbc-mysql")
     api("org.postgresql:r2dbc-postgresql")
-    api("com.clickhouse:clickhouse-client:0.7.1")
-    api("com.clickhouse:clickhouse-r2dbc:0.7.1")
+    api("com.clickhouse:clickhouse-client")
+    api("com.clickhouse:clickhouse-r2dbc")
     // endregion r2dbc
 
     // 对象存储
-    api("io.minio:minio:8.5.14")
+    api("io.minio:minio")
 }
 
 val quickStartUiStaticDir = project.file("src/main/resources/static")

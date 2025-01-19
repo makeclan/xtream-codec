@@ -3,7 +3,7 @@ LABEL authors="hylexus"
 
 WORKDIR /app/
 
-ARG JAR_FILE=build/libs/jt-808-server-quick-start-with-storage-nonblocking.jar
+ARG JAR_FILE=build/libs/jt-808-server-quick-start-with-storage-nonblocking-0.0.1-beta.11.jar
 COPY ${JAR_FILE} app.jar
 
 ENV TZ=Asia/Shanghai

@@ -50,9 +50,21 @@ configure(subprojects) {
         }
 
         dependencies {
+            // 其他依赖版本都由上面的 mavenBom 控制
+            // 这里指定 mavenBom 中没有包含的依赖版本
             dependency("io.github.classgraph:classgraph:4.8.174")
             dependency("org.bouncycastle:bcprov-jdk18on:1.78.1")
+            dependency("pro.chenggang:mybatis-r2dbc-spring:3.0.5.RELEASE")
+            dependency("cn.mybatis-mp:mybatis-mp-spring-boot-starter:1.7.8-spring-boot3")
+            dependency("cn.mybatis-mp:mybatis-mp-datasource-routing:1.0.2")
+            dependency("com.clickhouse:clickhouse-jdbc:0.7.2")
+            dependency("com.clickhouse:clickhouse-client:0.7.1")
+            dependency("com.clickhouse:clickhouse-r2dbc:0.7.1")
+            dependency("io.minio:minio:8.5.14")
         }
+
+        group = "xtream-codec"
+        version = getProjectVersion()
     }
 
     repositories {
@@ -331,6 +343,8 @@ fun isMavenPublications(project: Project): Boolean {
 fun needSign() = !rootProject.version.toString().lowercase().endsWith("snapshot")
 
 fun getConfigAsString(key: String) = project.ext.get(key) as String
+
+fun getConfigAsBoolean(key: String) = project.ext.get(key)?.toString()?.toBoolean() ?: false
 
 fun getProjectVersion() = getConfigAsString("projectVersion")
 

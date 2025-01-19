@@ -29,16 +29,16 @@ dependencies {
     implementation("jakarta.annotation:jakarta.annotation-api")
 
     // region jdbc
-    api("cn.mybatis-mp:mybatis-mp-spring-boot-starter:1.7.8-spring-boot3")
-    api("cn.mybatis-mp:mybatis-mp-datasource-routing:1.0.2")
+    api("cn.mybatis-mp:mybatis-mp-spring-boot-starter")
+    api("cn.mybatis-mp:mybatis-mp-datasource-routing")
 
     api("com.mysql:mysql-connector-j")
     api("org.postgresql:postgresql")
-    api("com.clickhouse:clickhouse-jdbc:0.7.2")
+    api("com.clickhouse:clickhouse-jdbc")
     // endregion jdbc
 
     // 对象存储
-    api("io.minio:minio:8.5.14")
+    api("io.minio:minio")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.mockito:mockito-core")

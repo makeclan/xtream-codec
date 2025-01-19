@@ -50,13 +50,15 @@
 ├── docs          ## 文档
 ├── ext           ## 扩展模块
 │     └── jt      ## JT/T 扩展
+│         ├── jt-808-server-dashboard-spring-boot-starter-reactive  ## JT/T 808 扩展 - Dashboard - Server
+│         ├── jt-808-server-dashboard-ui                            ## JT/T 808 扩展 - Dashboard - UI
 │         └── jt-808-server-spring-boot-starter-reactive  ## JT/T 808 扩展
 ├── quick-start   ## quick-start 示例
 │     └── jt      ## JT/T 示例
 │         ├── jt-808-server-quick-start                   ## JT/T 808 服务端示例(不带 dashboard)
 │         ├── jt-808-server-quick-start-with-dashboard    ## JT/T 808 服务端示例(带 dashboard)
-│         ├── jt-808-server-quick-start-with-storage-blocking         ## JT/T 808 服务端阻塞版示例(带 存储:clickhouse,mysql,postgres,minio)
-│         └── jt-808-server-quick-start-with-storage-nonblocking      ## JT/T 808 服务端非阻塞版示例(带 存储:clickhouse,mysql,postgres,minio)
+│         ├── jt-808-server-quick-start-with-storage-blocking         ## JT/T 808 服务端[阻塞版-SpringMvc]示例(带 存储:clickhouse,mysql,postgres,minio)
+│         └── jt-808-server-quick-start-with-storage-nonblocking      ## JT/T 808 服务端[非阻塞版-WebFlux]示例(带 存储:clickhouse,mysql,postgres,minio)
 ├── debug         ## 调试专用(不用理会)
 │     ├── jt      ## JT/T 示例(不用理会)
 │     │   └── jt-808-server-spring-boot-starter-reactive-debug   ## JT/T 808 服务端调试(不用理会)
@@ -86,5 +88,9 @@
 
 ## License
 
-`xtream-codec` 使用 [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0)。 详情见 [LICENSE](LICENSE) 文件。
+`xtream-codec` 使用 [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0) 开源许可证。 详情见 [LICENSE](LICENSE) 文件。
 
+第三方依赖的许可证信息:
+
+- 请参考生成的 **.jar** 文件中的 `META-INF/NOTICE.txt` 文件 。
+- 或者, 执行 `./gradlew clean generateLicenseReport` 之后查看生成的 `build/reports/dependency-license/THIRD-PARTY-NOTICES.txt` 文件。
