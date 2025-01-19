@@ -20,7 +20,10 @@ import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808Serve
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.mapping.DispatcherHandlerXtreamMappingDescriptionProvider;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.mapping.XtreamMappingDescriptionProvider;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.request.Jt808DashboardErrorStore;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.*;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.BuiltinJt808DashboardCommonController;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.BuiltinJt808DashboardMetricsController;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.BuiltinJt808DashboardPublisherController;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.BuiltinJt808DashboardSessionController;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.Jt808DashboardRequestLifecycleListener;
@@ -82,11 +85,6 @@ public class BuiltinJt808DashboardConfiguration {
     @Bean
     RequestInfoCollector requestInfoCollector(Jt808ServerSimpleMetricsHolder metricsHolder, Jt808MessageDescriptionRegistry descriptor) {
         return new RequestInfoCollector(metricsHolder, descriptor);
-    }
-
-    @Bean
-    BuiltinJt808DashboardEventController builtinJt808DashboardEventController(XtreamEventPublisher eventPublisher) {
-        return new BuiltinJt808DashboardEventController(eventPublisher);
     }
 
     @Bean

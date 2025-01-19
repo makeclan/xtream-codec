@@ -17,7 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.boot.configuration;
 
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardMetricsServiceWithMicroMeter;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl.Jt808DashboardMetricsServiceWithMicroMeterImpl;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl.DefaultJt808DashboardMetricsServiceWithMicroMeterImpl;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegistry;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
@@ -45,7 +45,7 @@ public class BuiltinJt808DashboardConfigurationWithMicroMeter {
     Jt808DashboardMetricsServiceWithMicroMeter jt808DashboardMetricsServiceWithMicroMeter(
             XtreamSchedulerRegistry schedulerRegistry,
             MeterRegistry meterRegistry) {
-        return new Jt808DashboardMetricsServiceWithMicroMeterImpl(schedulerRegistry, meterRegistry);
+        return new DefaultJt808DashboardMetricsServiceWithMicroMeterImpl(schedulerRegistry, meterRegistry);
     }
 
 }

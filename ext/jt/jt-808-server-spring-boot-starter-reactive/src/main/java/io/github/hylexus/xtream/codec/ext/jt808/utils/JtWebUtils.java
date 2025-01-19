@@ -52,7 +52,7 @@ public final class JtWebUtils {
             "REMOTE_ADDR"
     };
 
-    public static Optional<String> getClientIp(HttpRequestHeaderProvider headerProvider, InetSocketAddress remoteAddress) {
+    public static Optional<String> getClientIp(HttpRequestHeaderProvider headerProvider) {
         for (String headerName : IP_HEADER_NAMES) {
             String ip = headerProvider.get(headerName);
             if (StringUtils.isNotEmpty(ip) && !"unknown".equalsIgnoreCase(ip)) {
@@ -63,8 +63,14 @@ public final class JtWebUtils {
                 return Optional.of(ip);
             }
         }
-        return Optional.ofNullable(remoteAddress)
-                .map(InetSocketAddress::getAddress)
-                .map(InetAddress::getHostAddress);
+        return Optional.empty();
+    }
+
+    public static Optional<String> getClientIp(HttpRequestHeaderProvider headerProvider, InetSocketAddress remoteAddress) {
+        return getClientIp(headerProvider)
+                .or(() -> Optional.ofNullable(remoteAddress)
+                        .map(InetSocketAddress::getAddress)
+                        .map(InetAddress::getHostAddress)
+                );
     }
 }

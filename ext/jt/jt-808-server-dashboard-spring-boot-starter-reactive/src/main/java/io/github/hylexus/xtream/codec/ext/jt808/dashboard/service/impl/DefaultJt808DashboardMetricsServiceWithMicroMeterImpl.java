@@ -32,11 +32,11 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-public class Jt808DashboardMetricsServiceWithMicroMeterImpl implements Jt808DashboardMetricsServiceWithMicroMeter {
+public class DefaultJt808DashboardMetricsServiceWithMicroMeterImpl implements Jt808DashboardMetricsServiceWithMicroMeter {
     private final XtreamSchedulerRegistry schedulerRegistry;
     private final MeterRegistry meterRegistry;
 
-    public Jt808DashboardMetricsServiceWithMicroMeterImpl(XtreamSchedulerRegistry schedulerRegistry, MeterRegistry meterRegistry) {
+    public DefaultJt808DashboardMetricsServiceWithMicroMeterImpl(XtreamSchedulerRegistry schedulerRegistry, MeterRegistry meterRegistry) {
         this.schedulerRegistry = schedulerRegistry;
         this.meterRegistry = meterRegistry;
     }

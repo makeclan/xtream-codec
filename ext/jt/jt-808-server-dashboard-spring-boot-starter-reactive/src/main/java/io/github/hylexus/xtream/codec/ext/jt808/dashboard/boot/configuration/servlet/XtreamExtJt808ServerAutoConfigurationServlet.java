@@ -17,8 +17,10 @@
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.boot.configuration.servlet;
 
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.boot.properties.XtreamJt808ServerDashboardProperties;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.servlet.BuiltinJt808DashboardEventControllerServlet;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.Jt808ServerDashboardWebFluxConfigurer;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.Jt808ServerDashboardWebMvcConfigurer;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardEventService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
@@ -62,6 +64,11 @@ public class XtreamExtJt808ServerAutoConfigurationServlet {
             builder.GET("/", request -> ServerResponse.temporaryRedirect(URI.create(basePath)).build());
         }
         return builder.build();
+    }
+
+    @Bean
+    BuiltinJt808DashboardEventControllerServlet builtinJt808DashboardEventControllerServlet(Jt808DashboardEventService eventService) {
+        return new BuiltinJt808DashboardEventControllerServlet(eventService);
     }
 
 }

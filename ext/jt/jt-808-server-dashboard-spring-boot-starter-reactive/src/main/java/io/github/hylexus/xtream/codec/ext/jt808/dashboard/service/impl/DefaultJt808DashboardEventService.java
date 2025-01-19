@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller;
+package io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl;
 
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.LinkDataDto;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.events.Jt808DashboardEventPayloads;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.events.Jt808DashboardEventType;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardEventService;
 import io.github.hylexus.xtream.codec.ext.jt808.exception.BadRequestException;
-import io.github.hylexus.xtream.codec.ext.jt808.utils.JtWebUtils;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEvent;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventSubscriberInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.util.CollectionUtils;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 
 import java.util.Map;
@@ -38,38 +33,17 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-/**
- * @author hylexus
- */
-@RestController
-@RequestMapping("/dashboard-api/v1/event")
-public class BuiltinJt808DashboardEventController {
-    private static final Logger log = LoggerFactory.getLogger(BuiltinJt808DashboardEventController.class);
+public class DefaultJt808DashboardEventService implements Jt808DashboardEventService {
+
     private final XtreamEventPublisher eventPublisher;
 
-    public BuiltinJt808DashboardEventController(XtreamEventPublisher eventPublisher) {
+    public DefaultJt808DashboardEventService(XtreamEventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
     }
 
-    /**
-     * @see <a href="https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events">https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events</a>
-     */
-    @GetMapping("/link-data")
-    public Flux<ServerSentEvent<Object>> getLinkData(ServerWebExchange exchange, @Validated LinkDataDto dto) {
-        return this.createServerSentEventFlux(exchange, dto);
-    }
-
-    @PostMapping("/link-data")
-    public Flux<ServerSentEvent<Object>> linkData(ServerWebExchange exchange, @Validated @RequestBody LinkDataDto dto) {
-        return this.createServerSentEventFlux(exchange, dto);
-    }
-
-    private Flux<ServerSentEvent<Object>> createServerSentEventFlux(ServerWebExchange exchange, LinkDataDto dto) {
+    @Override
+    public Flux<ServerSentEvent<Object>> linkData(String clientIp, LinkDataDto dto) {
         final Set<XtreamEvent.XtreamEventType> interestedEvents = this.convertToXtreamEventTypes(dto);
-
-        // final Predicate<XtreamEvent> filter = this.createTypeFilter(interestedEvents).and(this.createTerminalIdFilter(dto));
-
-        final String clientIp = JtWebUtils.getClientIp(exchange.getRequest().getHeaders()::getFirst, exchange.getRequest().getRemoteAddress()).orElse("unknown");
         return this.eventPublisher.subscribe(
                         XtreamEventSubscriberInfo.of(
                                 interestedEvents,
@@ -108,13 +82,4 @@ public class BuiltinJt808DashboardEventController {
                     .orElseThrow(() -> new BadRequestException("Invalid event code: " + code));
         }).collect(Collectors.toSet());
     }
-
-    private Predicate<XtreamEvent> createTypeFilter(Set<XtreamEvent.XtreamEventType> eventTypes) {
-        if (eventTypes == null || eventTypes.isEmpty() || eventTypes.contains(XtreamEvent.DefaultXtreamEventType.ALL)) {
-            return it -> true;
-        }
-
-        return it -> eventTypes.contains(it.type());
-    }
-
 }

@@ -24,6 +24,9 @@ import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.request.Jt808D
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.boot.configuration.reactive.XtreamExtJt808ServerAutoConfigurationReactive;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.boot.configuration.servlet.XtreamExtJt808ServerAutoConfigurationServlet;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.boot.properties.XtreamJt808ServerDashboardProperties;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardEventService;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl.DefaultJt808DashboardEventService;
+import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -60,4 +63,11 @@ public class XtreamExtJt808ServerAutoConfiguration {
         return new DefaultJt808DashboardErrorReporter(errorStore);
     }
     // endregion error-reporter
+
+    @Bean
+    @ConditionalOnMissingBean
+    Jt808DashboardEventService jt808DashboardEventService(XtreamEventPublisher eventPublisher) {
+        return new DefaultJt808DashboardEventService(eventPublisher);
+    }
+
 }
