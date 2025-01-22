@@ -18,41 +18,43 @@ tag:
 
 :::
 
-## 解码
-
-### 实体类定义
+## 实体类定义
 
 ::: tabs#demo1
 
 @tab:active Rust 命名风格#rust-style
 
-@[code](@src/core/entity-codec/RustStyleDebugEntity01ForDecode.java)
+@[code](@src/core/entity-codec/demo01/RustStyleDebugEntity01Flatten.java)
 
 @tab 原始命名风格#raw-style
 
-@[code](@src/core/entity-codec/RawStyleDebugEntity01ForDecode.java)
+@[code](@src/core/entity-codec/demo01/RawStyleDebugEntity01Flatten.java)
 
 @tab JT/T 808 命名风格#jt-style
 
-@[code](@src/core/entity-codec/JtStyleDebugEntity01ForDecode.java)
+@[code](@src/core/entity-codec/demo01/JtStyleDebugEntity01Flatten.java)
+
+@tab JT/T 808 命名风格(简化)#jt-style-simple
+
+@[code](@src/core/entity-codec/demo01/JtStyleDebugEntity01FlattenSimple.java)
 
 :::
 
-### 反序列化
+## 反序列化
 
 ```java {12,15}
 public class EntityDecodeTest {
 
     @Test
     void testDecode() {
-        final EntityCodec entityCodec = new EntityCodec();
+        final EntityCodec entityCodec = EntityCodec.DEFAULT;
 
         // buffer 中存储的是要反序列化的数据(这里写死用来演示)
         final String hexString = "8090123401020001003d001678747265616d2d636f6465632ee794a8e688b7e5908d001178747265616d2d636f6465632ec3dcc2eb3230323130323033013911112222270fff9c";
         final ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer().writeBytes(XtreamBytes.decodeHex(hexString));
 
         try {
-            final RustStyleDebugEntity01ForDecode entity = entityCodec.decode(RustStyleDebugEntity01ForDecode.class, buffer);
+            final JtStyleDebugEntity01Flatten entity = entityCodec.decode(JtStyleDebugEntity01Flatten.class, buffer);
             System.out.println(entity);
         } finally {
             buffer.release();
@@ -61,38 +63,18 @@ public class EntityDecodeTest {
 }
 ```
 
-## 编码
-
-### 实体类定义
-
-::: tabs#demo1
-
-@tab:active Rust 命名风格#rust-style
-
-@[code](@src/core/entity-codec/RustStyleDebugEntity01ForEncode.java)
-
-@tab 原始命名风格#raw-style
-
-@[code](@src/core/entity-codec/RawStyleDebugEntity01ForEncode.java)
-
-@tab JT/T 808 命名风格#jt-style
-
-@[code](@src/core/entity-codec/JtStyleDebugEntity01ForEncode.java)
-
-:::
-
-### 序列化
+## 序列化
 
 ```java {16,20}
 public class EntityEncodeTest {
 
     @Test
     void testEncode() {
-        final EntityCodec entityCodec = new EntityCodec();
+        final EntityCodec entityCodec = EntityCodec.DEFAULT;
 
         final ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer();
         try {
-            final RustStyleDebugEntity01ForEncode instance = new RustStyleDebugEntity01ForEncode();
+            final JtStyleDebugEntity01Flatten instance = new JtStyleDebugEntity01Flatten();
             // 省略属性赋值
             // instance.setXxx(someValue);
             // ...

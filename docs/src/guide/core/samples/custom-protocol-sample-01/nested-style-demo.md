@@ -18,41 +18,39 @@ tag:
 
 :::
 
-## 解码
-
-### 实体类定义
+## 实体类定义
 
 ::: tabs#demo1
 
 @tab:active Rust 命名风格#rust-style
 
-@[code](@src/core/entity-codec/RustStyleDebugEntity01ForDecodeNested.java)
+@[code](@src/core/entity-codec/demo01/RustStyleDebugEntity01Nested.java)
 
 @tab 原始命名风格#raw-style
 
-@[code](@src/core/entity-codec/RawStyleDebugEntity01ForDecodeNested.java)
+@[code](@src/core/entity-codec/demo01/RawStyleDebugEntity01Nested.java)
 
 @tab JT/T 808 命名风格#jt-style
 
-@[code](@src/core/entity-codec/JtStyleDebugEntity01ForDecodeNested.java)
+@[code](@src/core/entity-codec/demo01/JtStyleDebugEntity01Nested.java)
 
 :::
 
-### 反序列化
+## 反序列化
 
 ```java {12,15}
 public class EntityDecodeTest {
 
     @Test
     void testDecode() {
-        final EntityCodec entityCodec = new EntityCodec();
+        final EntityCodec entityCodec = EntityCodec.DEFAULT;
 
         // buffer 中存储的是要反序列化的数据(这里写死用来演示)
         final String hexString = "8090123401020001003d001678747265616d2d636f6465632ee794a8e688b7e5908d001178747265616d2d636f6465632ec3dcc2eb3230323130323033013911112222270fff9c";
         final ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer().writeBytes(XtreamBytes.decodeHex(hexString));
 
         try {
-            final RustStyleDebugEntity01ForDecodeNested entity = entityCodec.decode(RustStyleDebugEntity01ForDecodeNested.class, buffer);
+            final RustStyleDebugEntity01Nested entity = entityCodec.decode(RustStyleDebugEntity01Nested.class, buffer);
             System.out.println(entity);
         } finally {
             buffer.release();
@@ -61,42 +59,22 @@ public class EntityDecodeTest {
 }
 ```
 
-## 编码
-
-### 实体类定义
-
-::: tabs#demo1
-
-@tab:active Rust 命名风格#rust-style
-
-@[code](@src/core/entity-codec/RustStyleDebugEntity01ForEncodeNested.java)
-
-@tab 原始命名风格#raw-style
-
-@[code](@src/core/entity-codec/RawStyleDebugEntity01ForEncodeNested.java)
-
-@tab JT/T 808 命名风格#jt-style
-
-@[code](@src/core/entity-codec/JtStyleDebugEntity01ForEncodeNested.java)
-
-:::
-
-### 序列化
+## 序列化
 
 ```java {16,20}
 public class EntityEncodeTest {
 
     @Test
     void testEncode() {
-        final EntityCodec entityCodec = new EntityCodec();
+        final EntityCodec entityCodec = EntityCodec.DEFAULT;
 
         final ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer();
         try {
-            final RustStyleDebugEntity01ForEncodeNested instance = new RustStyleDebugEntity01ForEncodeNested();
+            final RustStyleDebugEntity01Nested instance = new RustStyleDebugEntity01Nested();
             // 省略属性赋值
             // instance.setXxx(someValue);
             // ...
-            instance.setMajorVersion((short) 1);
+            instance.setHeader(...);
 
             // 将 instance 的数据序列化到 buffer 中
             entityCodec.encode(instance, buffer);

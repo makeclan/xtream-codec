@@ -122,6 +122,11 @@ export const zhSidebar = sidebar({
                     ]
                 },
                 {
+                    text: "复杂消息解析示例", icon: "at", collapsible: false, children: [
+                        '/ext/jt/jt808/complex-message-mapping/README.md'
+                    ]
+                },
+                {
                     text: "辅助工具", icon: "wrench", collapsible: false, children: [
                         '/ext/jt/jt808/utilities/bit-operator.md',
                         '/ext/jt/jt808/utilities/response-encoder.md',

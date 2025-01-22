@@ -26,8 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BaseEntityCodecTest {
 
-    EntityCodec entityCodec;
-    ByteBufAllocator byteBufAllocator = ByteBufAllocator.DEFAULT;
+    protected EntityCodec entityCodec;
+    protected ByteBufAllocator byteBufAllocator = ByteBufAllocator.DEFAULT;
 
     protected String encodeAsHexString(Object entity) {
         final ByteBuf buffer = this.byteBufAllocator.buffer();

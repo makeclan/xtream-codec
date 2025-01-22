@@ -40,7 +40,7 @@ tag:
     - 无符号整数
     - **8bit**、**1byte**
     - 大端序
-    - **JavaType**: `short/Short`, **byte** 有溢出的风险
+    - **JavaType**: `short/Short` (**byte** 有溢出的风险)
 - `@Preset.RustStyle.i16`
     - 有符号整数
     - **16bit**、**2byte**
@@ -50,7 +50,7 @@ tag:
     - 无符号整数
     - **16bit**、**2byte**
     - 大端序
-    - **JavaType**: `int/Integer`, **short** 有溢出的风险
+    - **JavaType**: `int/Integer` (**short** 有溢出的风险)
 - `@Preset.RustStyle.i16_le`
     - 有符号整数
     - **16bit**、**2byte**
@@ -60,7 +60,7 @@ tag:
     - 无符号整数
     - **16bit**、**2byte**
     - 小端序
-    - **JavaType**: `int/Integer`, **short** 有溢出的风险
+    - **JavaType**: `int/Integer` (**short** 有溢出的风险)
 - `@Preset.RustStyle.i32`
     - 有符号整数
     - **32bit**、**4byte**
@@ -70,7 +70,7 @@ tag:
     - 无符号整数
     - **32bit**、**4byte**
     - 大端序
-    - **JavaType**: `long/Long`, **int** 有溢出的风险
+    - **JavaType**: `long/Long` (**int** 有溢出的风险)
 - `@Preset.RustStyle.i32_le`
     - 有符号整数
     - **32bit**、**4byte**
@@ -80,7 +80,7 @@ tag:
     - 无符号整数
     - **32bit**、**4byte**
     - 小端序
-    - **JavaType**: `long/Long`, **int** 有溢出的风险
+    - **JavaType**: `long/Long` (**int** 有溢出的风险)
 
 ### 字符串类型
 
@@ -139,17 +139,17 @@ tag:
     - 无符号整数
     - **8bit**、**1byte**
     - 大端序
-    - **JavaType**: `short/Short`, **byte** 有溢出的风险
+    - **JavaType**: `short/Short` (**byte** 有溢出的风险)
 - `@Preset.JtStyle.Word`
     - 无符号整数
     - **16bit**、**2byte**
     - 大端序
-    - **JavaType**: `int/Integer`, **short** 有溢出的风险
+    - **JavaType**: `int/Integer` (**short** 有溢出的风险)
 - `@Preset.JtStyle.Dword`
     - 无符号整数
     - **32bit**、**4byte**
     - 大端序
-    - **JavaType**: `long/Long`
+    - **JavaType**: `long/Long` (**int** 有溢出的风险)
 
 ### 字符串类型
 

@@ -61,10 +61,24 @@ jt808-server:
         prefer-native: true
 ```
 
-## tcp-server
+## 备注
 
-todo: 补充配置项详细说明
+::: info 备注
 
-## udp-server
+附件服务器的配置 和 指令服务器的配置 基本一致，只是 **TCP** 类型的附件服务器多出了一个 `max-stream-frame-length` 配置。
 
-todo: 补充配置项详细说明
+其他配置项参考指令服务器配置，此处不再赘述。
+
+:::
+
+## max-stream-frame-length
+
+```yaml {4}
+jt808-server:
+  attachment-server:
+    tcp-server:
+      max-stream-frame-length: 66560
+```
+
+- 该配置项限制 苏标扩展码流消息 `0x30316364` 的最大长度
+- 默认值为:**66560 (1024 * 65)**

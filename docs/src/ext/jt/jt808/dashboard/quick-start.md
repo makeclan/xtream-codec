@@ -47,7 +47,7 @@ api("io.github.hylexus.xtream:jt-808-server-dashboard-spring-boot-starter-reacti
 
 ```yaml
 server:
-  ## 这个是 Dashboard 的 Web 端口(spring-WebFlux的配置)
+  ## 这个是 Dashboard 的 Web 端口( WebFlux/SpringMVC 的 HTTP 配置)
   port: 8888
 jt808-server:
   ## ... 省略其他配置 ...
