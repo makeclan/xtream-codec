@@ -4,6 +4,12 @@ article: false
 
 # 发版记录
 
+## 0.0.1-beta.12(2025-01-22)
+
+### 🐞 Bug Fixes
+
+- 修复 `jt-808-server-dashboard-spring-boot-starter-reactive` 的链路监控接口在 **SpringMVC** 环境下的异常。
+
 ## 0.0.1-beta.11(2025-01-19)
 
 ### ⭐ New Features
