@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.core;
 
+import io.github.hylexus.xtream.codec.core.tracker.CodecTracker;
 import io.github.hylexus.xtream.codec.core.impl.DefaultFieldCodecRegistry;
 import io.github.hylexus.xtream.codec.core.impl.SimpleBeanMetadataRegistry;
 import io.netty.buffer.ByteBuf;
@@ -39,11 +40,35 @@ public class EntityCodec {
         entityEncoder.encode(instance, target);
     }
 
+    public void encode(Object instance, ByteBuf target, CodecTracker tracker) {
+        if (tracker == null) {
+            entityEncoder.encode(instance, target);
+        } else {
+            entityEncoder.encodeWithTracker(instance, target, tracker);
+        }
+    }
+
     public <T> T decode(Class<T> entityClass, ByteBuf source) {
         return entityDecoder.decode(entityClass, source);
     }
 
+    public <T> T decode(Class<T> entityClass, ByteBuf source, CodecTracker tracker) {
+        if (tracker == null) {
+            return entityDecoder.decode(entityClass, source);
+        } else {
+            return entityDecoder.decodeWithTracker(entityClass, source, tracker);
+        }
+    }
+
     public <T> T decode(T instance, ByteBuf source) {
         return entityDecoder.decode(source, instance);
+    }
+
+    public <T> T decode(T instance, ByteBuf source, CodecTracker tracker) {
+        if (tracker == null) {
+            return entityDecoder.decode(source, instance);
+        } else {
+            return entityDecoder.decodeWithTracker(source, instance, tracker);
+        }
     }
 }

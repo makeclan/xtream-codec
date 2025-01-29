@@ -18,6 +18,8 @@ package io.github.hylexus.xtream.codec.core;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.exception.NotYetImplementedException;
+import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
+import io.github.hylexus.xtream.codec.core.tracker.CodecTracker;
 import io.netty.buffer.ByteBuf;
 import org.springframework.expression.EvaluationContext;
 
@@ -25,7 +27,44 @@ public interface FieldCodec<T> {
 
     T deserialize(BeanPropertyMetadata propertyMetadata, DeserializeContext context, ByteBuf input, int length);
 
+    /**
+     * 带解码器埋点的反序列化方法
+     * <p>
+     * 逻辑和 {@link #deserialize(BeanPropertyMetadata, DeserializeContext, ByteBuf, int)} 一致。
+     * <p>
+     * 不想到处写{@link CodecContext#codecTracker()} 的判空语句，所以单独定义了一个方法。
+     *
+     * @apiNote 这个方法对性能有一定影响。仅仅用于调试。
+     * @see #deserialize(BeanPropertyMetadata, DeserializeContext, ByteBuf, int)
+     * @see CodecTracker
+     */
+    default T deserializeWithTracker(BeanPropertyMetadata propertyMetadata, DeserializeContext context, ByteBuf input, int length) {
+        final int indexBeforeRead = input.readerIndex();
+        final T value = this.deserialize(propertyMetadata, context, input, length);
+        final String hexString = FormatUtils.toHexString(input, indexBeforeRead, input.readerIndex() - indexBeforeRead);
+        context.codecTracker().addFieldSpan(context.codecTracker().getCurrentSpan(), propertyMetadata.name(), value, hexString, this);
+        return value;
+    }
+
     void serialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, T value);
+
+    /**
+     * 带编码器埋点的序列化方法
+     * <p>
+     * 逻辑和 {@link #serialize(BeanPropertyMetadata, SerializeContext, ByteBuf, Object)} 一致。
+     * <p>
+     * 不想到处写{@link CodecContext#codecTracker()} 的判空语句，所以单独定义了一个方法。
+     *
+     * @apiNote 这个方法对性能有一定影响。仅仅用于调试。
+     * @see #serialize(BeanPropertyMetadata, SerializeContext, ByteBuf, Object)
+     * @see CodecTracker
+     */
+    default void serializeWithTracker(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, T value) {
+        final int indexBeforeWrite = output.writerIndex();
+        this.serialize(propertyMetadata, context, output, value);
+        final String hexString = FormatUtils.toHexString(output, indexBeforeWrite, output.writerIndex() - indexBeforeWrite);
+        context.codecTracker().addFieldSpan(context.codecTracker().getCurrentSpan(), propertyMetadata.name(), value, hexString, this);
+    }
 
     default Class<?> underlyingJavaType() {
         throw new NotYetImplementedException();
@@ -36,6 +75,8 @@ public interface FieldCodec<T> {
         Object containerInstance();
 
         EvaluationContext evaluationContext();
+
+        CodecTracker codecTracker();
 
     }
 

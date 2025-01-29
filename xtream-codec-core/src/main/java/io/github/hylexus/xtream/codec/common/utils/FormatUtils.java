@@ -58,6 +58,10 @@ public final class FormatUtils {
         return "0".repeat(prefixLen) + hexString;
     }
 
+    public static String toHexString(ByteBuf byteBuf, int from, int length) {
+        return ByteBufUtil.hexDump(byteBuf, from, length);
+    }
+
     public static String toHexString(ByteBuf byteBuf, int length) {
         return ByteBufUtil.hexDump(byteBuf, 0, length);
     }

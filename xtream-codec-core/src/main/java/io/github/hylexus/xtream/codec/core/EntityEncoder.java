@@ -18,7 +18,9 @@ package io.github.hylexus.xtream.codec.core;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanMetadata;
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
+import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.core.impl.DefaultSerializeContext;
+import io.github.hylexus.xtream.codec.core.tracker.CodecTracker;
 import io.netty.buffer.ByteBuf;
 
 public class EntityEncoder {
@@ -43,7 +45,7 @@ public class EntityEncoder {
         if (instance == null) {
             return;
         }
-        final FieldCodec.SerializeContext context = new DefaultSerializeContext(this, instance);
+        final FieldCodec.SerializeContext context = new DefaultSerializeContext(this, instance, null);
         for (final BeanPropertyMetadata propertyMetadata : beanMetadata.getPropertyMetadataList()) {
             final Object value = propertyMetadata.getProperty(instance);
             if (value == null) {
@@ -54,6 +56,35 @@ public class EntityEncoder {
                 propertyMetadata.encodePropertyValue(context, target, value);
             }
         }
+    }
+
+    // with tracker
+    public void encodeWithTracker(Object instance, ByteBuf target, CodecTracker tracker) {
+        if (instance == null) {
+            return;
+        }
+        final BeanMetadata beanMetadata = beanMetadataRegistry.getBeanMetadata(instance.getClass());
+        this.encodeWithTracker(beanMetadata, instance, target, tracker);
+    }
+
+    public void encodeWithTracker(BeanMetadata beanMetadata, Object instance, ByteBuf target, CodecTracker tracker) {
+        if (instance == null) {
+            return;
+        }
+        final FieldCodec.SerializeContext context = new DefaultSerializeContext(this, instance, tracker);
+        final int indexBeforeWrite = target.writerIndex();
+        tracker.getRootSpan().setEntityClass(beanMetadata.getRawType().getName());
+        for (final BeanPropertyMetadata propertyMetadata : beanMetadata.getPropertyMetadataList()) {
+            final Object value = propertyMetadata.getProperty(instance);
+            if (value == null) {
+                continue;
+            }
+
+            if (propertyMetadata.conditionEvaluator().evaluate(context)) {
+                propertyMetadata.encodePropertyValueWithTracker(context, target, value);
+            }
+        }
+        tracker.getRootSpan().setHexString(FormatUtils.toHexString(target, indexBeforeWrite, target.writerIndex() - indexBeforeWrite));
     }
 
     public BeanMetadataRegistry getBeanMetadataRegistry() {

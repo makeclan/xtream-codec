@@ -439,6 +439,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamDateTimeField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamDateTimeField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @Target({ElementType.FIELD})
@@ -451,6 +454,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @Target({ElementType.FIELD})
@@ -630,6 +636,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "containerInstanceFactory")
             Class<? extends ContainerInstanceFactory> containerInstanceFactory() default ContainerInstanceFactory.LinkedHashMapContainerInstanceFactory.class;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
     }
 }

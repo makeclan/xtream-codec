@@ -197,6 +197,12 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
     }
 
     @Override
+    public Object decodePropertyValueWithTracker(FieldCodec.DeserializeContext context, ByteBuf input) {
+        final int length = this.fieldLengthExtractor.extractFieldLength(context, context.evaluationContext(), input);
+        return fieldCodec().deserializeWithTracker(this, context, input, length);
+    }
+
+    @Override
     public void encodePropertyValue(FieldCodec.SerializeContext context, ByteBuf output, Object value) {
         if (this.prependLengthFieldByteCounts <= 0) {
             this.doEncode(context, output, value);
@@ -218,9 +224,36 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
         }
     }
 
+    @Override
+    public void encodePropertyValueWithTracker(FieldCodec.SerializeContext context, ByteBuf output, Object value) {
+        if (this.prependLengthFieldByteCounts <= 0) {
+            this.doEncodeWithTracker(context, output, value);
+        } else {
+            final int lengthFieldWriterIndex = output.writerIndex();
+            // 写入长度字段占位符
+            prependLengthFieldType.writeTo(output, 0);
+            final int beforeEncode = output.writerIndex();
+
+            this.doEncodeWithTracker(context, output, value);
+
+            final int afterEncode = output.writerIndex();
+            final int byteCounts = afterEncode - beforeEncode;
+
+            output.writerIndex(lengthFieldWriterIndex);
+            // 写入长度字段
+            prependLengthFieldType.writeTo(output, byteCounts);
+            output.writerIndex(afterEncode);
+        }
+    }
+
     protected void doEncode(FieldCodec.SerializeContext serializeContext, ByteBuf output, Object value) {
         @SuppressWarnings("unchecked") final FieldCodec<Object> codec = (FieldCodec<Object>) fieldCodec();
         codec.serialize(this, serializeContext, output, value);
+    }
+
+    protected void doEncodeWithTracker(FieldCodec.SerializeContext serializeContext, ByteBuf output, Object value) {
+        @SuppressWarnings("unchecked") final FieldCodec<Object> codec = (FieldCodec<Object>) fieldCodec();
+        codec.serializeWithTracker(this, serializeContext, output, value);
     }
 
     @Override

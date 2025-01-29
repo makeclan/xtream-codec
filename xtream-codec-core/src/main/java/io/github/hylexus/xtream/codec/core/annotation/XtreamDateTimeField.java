@@ -54,4 +54,7 @@ public @interface XtreamDateTimeField {
     @AliasFor(annotation = XtreamField.class, attribute = "condition")
     String condition() default "";
 
+    @AliasFor(annotation = XtreamField.class, attribute = "desc")
+    String desc() default "";
+
 }

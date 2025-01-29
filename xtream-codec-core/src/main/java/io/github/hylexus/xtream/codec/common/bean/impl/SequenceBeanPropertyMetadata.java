@@ -18,9 +18,12 @@ package io.github.hylexus.xtream.codec.common.bean.impl;
 
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.bean.IterationTimesExtractor;
+import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.core.ContainerInstanceFactory;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
+import io.github.hylexus.xtream.codec.core.tracker.CollectionFieldSpan;
+import io.github.hylexus.xtream.codec.core.tracker.CollectionItemSpan;
 import io.github.hylexus.xtream.codec.core.utils.BeanUtils;
 import io.netty.buffer.ByteBuf;
 import org.springframework.util.StringUtils;
@@ -72,6 +75,23 @@ public class SequenceBeanPropertyMetadata extends BasicBeanPropertyMetadata {
     }
 
     @Override
+    protected void doEncodeWithTracker(FieldCodec.SerializeContext context, ByteBuf output, Object value) {
+        @SuppressWarnings("unchecked") final Collection<Object> collection = (Collection<Object>) value;
+        final CollectionFieldSpan collectionFieldSpan = context.codecTracker().startNewCollectionFieldSpan(this);
+        final int parentIndexBeforeWrite = output.writerIndex();
+        int sequence = 0;
+        for (final Object object : collection) {
+            final int indexBeforeWrite = output.writerIndex();
+            final CollectionItemSpan collectionItemSpan = context.codecTracker().startNewCollectionItemSpan(collectionFieldSpan, collectionFieldSpan.getFieldName(), sequence++);
+            nestedBeanPropertyMetadata.encodePropertyValueWithTracker(context, output, object);
+            collectionItemSpan.setHexString(FormatUtils.toHexString(output, indexBeforeWrite, output.writerIndex() - indexBeforeWrite));
+            context.codecTracker().finishCurrentSpan();
+        }
+        collectionFieldSpan.setHexString(FormatUtils.toHexString(output, parentIndexBeforeWrite, output.writerIndex() - parentIndexBeforeWrite));
+        context.codecTracker().finishCurrentSpan();
+    }
+
+    @Override
     public Object decodePropertyValue(FieldCodec.DeserializeContext context, ByteBuf input) {
         final int length = delegate.fieldLengthExtractor().extractFieldLength(context, context.evaluationContext(), input);
 
@@ -84,6 +104,31 @@ public class SequenceBeanPropertyMetadata extends BasicBeanPropertyMetadata {
             final Object value = nestedBeanPropertyMetadata.decodePropertyValue(context, slice);
             list.add(value);
         }
+        return list;
+    }
+
+    @Override
+    public Object decodePropertyValueWithTracker(FieldCodec.DeserializeContext context, ByteBuf input) {
+        final int length = delegate.fieldLengthExtractor().extractFieldLength(context, context.evaluationContext(), input);
+
+        final ByteBuf slice = length < 0
+                ? input // all remaining
+                : input.readSlice(length);
+        int iterationTimes = this.iterationTimesExtractor().extractIterationTimes(context, context.evaluationContext());
+        final CollectionFieldSpan collectionFieldSpan = context.codecTracker().startNewCollectionFieldSpan(this);
+        @SuppressWarnings("unchecked") final Collection<Object> list = (Collection<Object>) this.containerInstanceFactory().create();
+        int sequence = 0;
+        final int parentIndexBeforeRead = input.readerIndex();
+        while (slice.isReadable() && iterationTimes-- > 0) {
+            final CollectionItemSpan collectionItemSpan = context.codecTracker().startNewCollectionItemSpan(collectionFieldSpan, collectionFieldSpan.getFieldName(), sequence++);
+            final int indexBeforeRead = input.readerIndex();
+            final Object value = nestedBeanPropertyMetadata.decodePropertyValueWithTracker(context, slice);
+            collectionItemSpan.setHexString(FormatUtils.toHexString(input, indexBeforeRead, input.readerIndex() - indexBeforeRead));
+            list.add(value);
+            context.codecTracker().finishCurrentSpan();
+        }
+        collectionFieldSpan.setHexString(FormatUtils.toHexString(input, parentIndexBeforeRead, input.readerIndex() - parentIndexBeforeRead));
+        context.codecTracker().finishCurrentSpan();
         return list;
     }
 }

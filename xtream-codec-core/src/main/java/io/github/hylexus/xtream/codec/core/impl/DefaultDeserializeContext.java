@@ -18,23 +18,25 @@ package io.github.hylexus.xtream.codec.core.impl;
 
 import io.github.hylexus.xtream.codec.core.EntityDecoder;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
+import io.github.hylexus.xtream.codec.core.tracker.CodecTracker;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 public class DefaultDeserializeContext implements FieldCodec.DeserializeContext {
-
+    private final CodecTracker codecTracker;
     private final EntityDecoder entityDecoder;
     private final Object containerInstance;
     private final EvaluationContext evaluationContext;
 
     public DefaultDeserializeContext(FieldCodec.DeserializeContext another, Object containerInstance) {
-        this(another.entityDecoder(), containerInstance);
+        this(another.entityDecoder(), containerInstance, another.codecTracker());
     }
 
-    public DefaultDeserializeContext(EntityDecoder entityDecoder, Object containerInstance) {
+    public DefaultDeserializeContext(EntityDecoder entityDecoder, Object containerInstance, CodecTracker tracker) {
         this.entityDecoder = entityDecoder;
         this.containerInstance = containerInstance;
         this.evaluationContext = new StandardEvaluationContext(containerInstance);
+        this.codecTracker = tracker;
     }
 
     @Override
@@ -51,4 +53,10 @@ public class DefaultDeserializeContext implements FieldCodec.DeserializeContext 
     public EntityDecoder entityDecoder() {
         return this.entityDecoder;
     }
+
+    @Override
+    public CodecTracker codecTracker() {
+        return this.codecTracker;
+    }
+
 }

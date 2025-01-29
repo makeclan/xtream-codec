@@ -66,14 +66,47 @@ public class NestedBeanPropertyMetadata extends BasicBeanPropertyMetadata {
     }
 
     @Override
+    public Object decodePropertyValueWithTracker(FieldCodec.DeserializeContext context, ByteBuf input) {
+        final Object instance = BeanUtils.createNewInstance(nestedBeanMetadata.getConstructor());
+        // final Object instance = this.containerInstanceFactory().create();
+        final int length = this.fieldLengthExtractor().extractFieldLength(context, context.evaluationContext(), input);
+
+        final ByteBuf slice = length < 0
+                ? input // all remaining
+                : input.readSlice(length);
+
+        final FieldCodec.DeserializeContext deserializeContext = new DefaultDeserializeContext(context, instance);
+        for (final BeanPropertyMetadata pm : this.nestedBeanMetadata.getPropertyMetadataList()) {
+            if (!pm.conditionEvaluator().evaluate(deserializeContext)) {
+                continue;
+            }
+            Object value = pm.decodePropertyValueWithTracker(deserializeContext, slice);
+            pm.setProperty(instance, value);
+        }
+        return instance;
+    }
+
+    @Override
     public void doEncode(FieldCodec.SerializeContext context, ByteBuf output, Object value) {
-        final DefaultSerializeContext serializeContext = new DefaultSerializeContext(context.entityEncoder(), value);
+        final DefaultSerializeContext serializeContext = new DefaultSerializeContext(context, value);
         for (final BeanPropertyMetadata pm : this.nestedBeanMetadata.getPropertyMetadataList()) {
             if (!pm.conditionEvaluator().evaluate(serializeContext)) {
                 continue;
             }
             final Object nestedValue = pm.getProperty(value);
             pm.encodePropertyValue(serializeContext, output, nestedValue);
+        }
+    }
+
+    @Override
+    protected void doEncodeWithTracker(FieldCodec.SerializeContext context, ByteBuf output, Object value) {
+        final DefaultSerializeContext serializeContext = new DefaultSerializeContext(context, value);
+        for (final BeanPropertyMetadata pm : this.nestedBeanMetadata.getPropertyMetadataList()) {
+            if (!pm.conditionEvaluator().evaluate(serializeContext)) {
+                continue;
+            }
+            final Object nestedValue = pm.getProperty(value);
+            pm.encodePropertyValueWithTracker(serializeContext, output, nestedValue);
         }
     }
 

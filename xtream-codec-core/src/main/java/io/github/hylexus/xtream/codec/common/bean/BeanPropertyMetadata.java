@@ -68,7 +68,21 @@ public interface BeanPropertyMetadata {
 
     Object decodePropertyValue(FieldCodec.DeserializeContext context, ByteBuf input);
 
+    /**
+     * @see FieldCodec#deserializeWithTracker(BeanPropertyMetadata, FieldCodec.DeserializeContext, ByteBuf, int)
+     */
+    default Object decodePropertyValueWithTracker(FieldCodec.DeserializeContext context, ByteBuf input) {
+        return this.decodePropertyValue(context, input);
+    }
+
     void encodePropertyValue(FieldCodec.SerializeContext context, ByteBuf output, Object value);
+
+    /**
+     * @see FieldCodec#serializeWithTracker(BeanPropertyMetadata, FieldCodec.SerializeContext, ByteBuf, Object)
+     */
+    default void encodePropertyValueWithTracker(FieldCodec.SerializeContext context, ByteBuf output, Object value) {
+        this.encodePropertyValue(context, output, value);
+    }
 
     default void setProperty(Object instance, Object value) {
         this.propertySetter().setProperty(this, instance, value);
