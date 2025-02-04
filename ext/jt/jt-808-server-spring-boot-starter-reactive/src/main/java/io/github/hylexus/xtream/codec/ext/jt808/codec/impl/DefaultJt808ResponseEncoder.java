@@ -19,10 +19,12 @@ package io.github.hylexus.xtream.codec.ext.jt808.codec.impl;
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.core.EntityCodec;
+import io.github.hylexus.xtream.codec.core.tracker.CodecTracker;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808BytesProcessor;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808ResponseEncoder;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.*;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808SubPackageProps;
 import io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolConstant;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
@@ -65,7 +67,7 @@ public class DefaultJt808ResponseEncoder implements Jt808ResponseEncoder {
         if (body instanceof ByteBuf byteBuf) {
             return this.doBuild(describer, byteBuf);
         }
-        final ByteBuf bodyBuf = this.encodeBody(body);
+        final ByteBuf bodyBuf = this.encodeBody(body, describer.bodyCodecTracker());
         return this.doBuild(describer, bodyBuf);
     }
 
@@ -114,11 +116,13 @@ public class DefaultJt808ResponseEncoder implements Jt808ResponseEncoder {
     }
 
     private CompositeByteBuf buildPackage(Jt808MessageDescriber response, ByteBuf body, int totalSubPackageCount, int currentPackageNo, int flowId) {
-
+        response.messageCodecTracker().beforeMessageBodyEncrypt(totalSubPackageCount, currentPackageNo, flowId, response, body);
         // @see https://github.com/hylexus/jt-framework/issues/82
         body = this.encryptionHandler.encryptResponseBody(response, body);
 
-        final ByteBuf headerBuf = this.encodeMessageHeader(response, body, totalSubPackageCount > 0, totalSubPackageCount, currentPackageNo, flowId);
+        final ByteBuf headerBuf = allocator.buffer();
+        final Jt808RequestHeader jt808RequestHeader = this.encodeMessageHeader(response, body, totalSubPackageCount > 0, totalSubPackageCount, currentPackageNo, flowId);
+        jt808RequestHeader.encode(headerBuf);
         final CompositeByteBuf compositeByteBuf = allocator.compositeBuffer()
                 .addComponent(true, headerBuf)
                 .addComponent(true, body);
@@ -139,6 +143,7 @@ public class DefaultJt808ResponseEncoder implements Jt808ResponseEncoder {
         final ByteBuf escaped;
         try {
             escaped = this.messageProcessor.doEscapeForSend(compositeByteBuf);
+            response.messageCodecTracker().afterMessageEncoded(totalSubPackageCount, currentPackageNo, flowId, checkSum, response, jt808RequestHeader, compositeByteBuf, escaped);
         } catch (Throwable e) {
             XtreamBytes.releaseBuf(compositeByteBuf);
             throw e;
@@ -158,13 +163,13 @@ public class DefaultJt808ResponseEncoder implements Jt808ResponseEncoder {
                 .addComponent(true, allocator.buffer().writeByte(JtProtocolConstant.PACKAGE_DELIMITER));
     }
 
-    private ByteBuf encodeBody(Object entity) {
+    private ByteBuf encodeBody(Object entity, CodecTracker tracker) {
         if (entity instanceof ByteBuf byteBuf) {
             return byteBuf;
         }
         final ByteBuf buffer = allocator.buffer();
         try {
-            this.entityCodec.encode(entity, buffer);
+            this.entityCodec.encode(entity, buffer, tracker);
         } catch (Throwable e) {
             XtreamBytes.releaseBuf(buffer);
             throw e;
@@ -172,40 +177,22 @@ public class DefaultJt808ResponseEncoder implements Jt808ResponseEncoder {
         return buffer;
     }
 
-    private ByteBuf encodeMessageHeader(Jt808MessageDescriber response, ByteBuf body, boolean hasSubPackage, int totalSubPkgCount, int currentSubPkgNo, int flowId) {
-        final Jt808ProtocolVersion version = response.version();
-        final ByteBuf header = allocator.buffer();
-        // bytes[0-2) 消息ID Word
-        XtreamBytes.writeWord(header, response.messageId());
-
-        // bytes[2-4) 消息体属性 Word
-        final int bodyPropsForJt808 = Jt808RequestHeader.Jt808MessageBodyProps.create(
-                body.readableBytes(), response.encryptionType(),
-                hasSubPackage, response.version(), response.reversedBit15InHeader()
-        );
-        XtreamBytes.writeWord(header, bodyPropsForJt808);
-
-        // bytes[4] 协议版本号 byte
-        if (version == Jt808ProtocolVersion.VERSION_2019) {
-            header.writeByte(response.version().versionBit());
-        }
-
-        // bytes[5-14) 终端手机号 BCD[10]
-        // bytes[4-10) 终端手机号 BCD[6]
-        XtreamBytes.writeBcd(header, response.terminalId());
-
-        // bytes[15-17) 消息流水号  Word
-        XtreamBytes.writeWord(header, flowId);
-
-        // bytes[17-21) 消息包封装项
-        // bytes[12-16) 消息包封装项
-        if (hasSubPackage) {
-            // 消息总包包数
-            XtreamBytes.writeWord(header, totalSubPkgCount);
-            // 包序号
-            XtreamBytes.writeWord(header, currentSubPkgNo);
-        }
-        return header;
+    private Jt808RequestHeader encodeMessageHeader(Jt808MessageDescriber response, ByteBuf body, boolean hasSubPackage, int totalSubPkgCount, int currentSubPkgNo, int flowId) {
+        return Jt808RequestHeader.newBuilder()
+                .version(response.version())
+                .messageId(response.messageId())
+                .messageBodyProps(Jt808RequestHeader.Jt808MessageBodyProps.newBuilder()
+                        .messageBodyLength(body.readableBytes())
+                        .encryptionType(response.encryptionType())
+                        .hasSubPackage(hasSubPackage)
+                        .versionIdentifier(response.version())
+                        .reversedBit15(response.reversedBit15InHeader())
+                        .build()
+                )
+                .subPackage(new DefaultJt808SubPackageProps(totalSubPkgCount, currentSubPkgNo))
+                .terminalId(response.terminalId())
+                .flowId(flowId)
+                .build();
     }
 
 }

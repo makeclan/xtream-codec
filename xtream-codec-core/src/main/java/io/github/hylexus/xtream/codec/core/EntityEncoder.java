@@ -73,7 +73,9 @@ public class EntityEncoder {
         }
         final FieldCodec.SerializeContext context = new DefaultSerializeContext(this, instance, tracker);
         final int indexBeforeWrite = target.writerIndex();
-        tracker.getRootSpan().setEntityClass(beanMetadata.getRawType().getName());
+        if (tracker.getRootSpan().getEntityClass() == null) {
+            tracker.getRootSpan().setEntityClass(beanMetadata.getRawType().getName());
+        }
         for (final BeanPropertyMetadata propertyMetadata : beanMetadata.getPropertyMetadataList()) {
             final Object value = propertyMetadata.getProperty(instance);
             if (value == null) {

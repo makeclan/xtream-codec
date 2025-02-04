@@ -42,6 +42,29 @@ public class CodecTracker {
         this.tempMapItemType = type;
     }
 
+    public NestedFieldSpan startNewNestedFieldSpan(BeanPropertyMetadata metadata, FieldCodec<?> fieldCodec, String fieldType) {
+        final String fieldCodecString = fieldCodec == null
+                ? null
+                : fieldCodec.getClass().getSimpleName();
+        return this.startNewNestedFieldSpan(metadata, fieldCodecString, fieldType);
+    }
+
+    public NestedFieldSpan startNewNestedFieldSpan(BeanPropertyMetadata metadata, String fieldCodec, String fieldType) {
+        final NestedFieldSpan span = new NestedFieldSpan(
+                this.current,
+                metadata.name(), metadata.xtreamFieldAnnotation().desc(),
+                metadata.field().getType().getTypeName(),
+                fieldCodec);
+        if (fieldType != null) {
+            span.setFieldType(fieldType);
+        } else if (this.current instanceof CollectionItemSpan collectionItemSpan) {
+            final String fieldName = collectionItemSpan.getFieldName() + "(" + collectionItemSpan.getOffset() + ")";
+            span.setFieldName(fieldName);
+            span.setFieldType(collectionItemSpan.getFieldType());
+        }
+        return this.addSpan(span);
+    }
+
     public CollectionFieldSpan startNewCollectionFieldSpan(BeanPropertyMetadata metadata) {
         final CollectionFieldSpan span = new CollectionFieldSpan(this.current, metadata.name(), this.getFieldFirstGenericTypeName(metadata.field()), metadata.xtreamFieldAnnotation().desc());
         return this.addSpan(span);
@@ -69,7 +92,14 @@ public class CodecTracker {
         this.current = this.current.getParent();
     }
 
-    public void addFieldSpan(BaseSpan parent, String filedName, Object value, String hexString, FieldCodec<?> fieldCodec) {
+    public PrependLengthFieldSpan addPrependLengthFieldSpan(BaseSpan parent, String fieldName, Object value, String hexString, String fieldCodec, String fieldDesc) {
+        final PrependLengthFieldSpan span = new PrependLengthFieldSpan(parent, fieldName, fieldCodec, value, hexString, fieldDesc);
+        this.current.addChild(span);
+        this.current = parent;
+        return span;
+    }
+
+    public void addFieldSpan(BaseSpan parent, String fieldName, Object value, String hexString, FieldCodec<?> fieldCodec, String fieldDesc) {
         final BaseSpan trackerItem;
         if (parent instanceof MapEntrySpan) {
             trackerItem = new MapEntryItemSpan(parent, this.tempMapItemType)
@@ -78,7 +108,7 @@ public class CodecTracker {
                     .setHexString(hexString);
             this.tempMapItemType = null;
         } else {
-            trackerItem = new BasicFieldSpan(parent, filedName, null)
+            trackerItem = new BasicFieldSpan(parent, fieldName, fieldDesc)
                     .setFieldCodec(fieldCodec.getClass().getSimpleName())
                     .setValue(value)
                     .setHexString(hexString);

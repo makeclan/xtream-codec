@@ -42,7 +42,7 @@ public interface FieldCodec<T> {
         final int indexBeforeRead = input.readerIndex();
         final T value = this.deserialize(propertyMetadata, context, input, length);
         final String hexString = FormatUtils.toHexString(input, indexBeforeRead, input.readerIndex() - indexBeforeRead);
-        context.codecTracker().addFieldSpan(context.codecTracker().getCurrentSpan(), propertyMetadata.name(), value, hexString, this);
+        context.codecTracker().addFieldSpan(context.codecTracker().getCurrentSpan(), propertyMetadata.name(), value, hexString, this, propertyMetadata.xtreamFieldAnnotation().desc());
         return value;
     }
 
@@ -63,7 +63,7 @@ public interface FieldCodec<T> {
         final int indexBeforeWrite = output.writerIndex();
         this.serialize(propertyMetadata, context, output, value);
         final String hexString = FormatUtils.toHexString(output, indexBeforeWrite, output.writerIndex() - indexBeforeWrite);
-        context.codecTracker().addFieldSpan(context.codecTracker().getCurrentSpan(), propertyMetadata.name(), value, hexString, this);
+        context.codecTracker().addFieldSpan(context.codecTracker().getCurrentSpan(), propertyMetadata.name(), value, hexString, this, propertyMetadata.xtreamFieldAnnotation().desc());
     }
 
     default Class<?> underlyingJavaType() {

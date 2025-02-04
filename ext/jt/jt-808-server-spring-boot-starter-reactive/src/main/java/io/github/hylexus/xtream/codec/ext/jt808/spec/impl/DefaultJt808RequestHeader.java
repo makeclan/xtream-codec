@@ -49,12 +49,13 @@ public class DefaultJt808RequestHeader implements Jt808RequestHeader {
     }
 
     public DefaultJt808RequestHeader(
-            Jt808ProtocolVersion version, int messageId, Jt808MessageBodyProps messageBodyProps, String terminalId, int flowId) {
+            Jt808ProtocolVersion version, int messageId, Jt808MessageBodyProps messageBodyProps, String terminalId, int flowId, Jt808SubPackageProps subPackageProps) {
         this.version = version;
         this.messageId = messageId;
         this.messageBodyProps = messageBodyProps;
         this.terminalId = terminalId;
         this.flowId = flowId;
+        this.subPackageProps = subPackageProps;
     }
 
     @Override
@@ -90,12 +91,12 @@ public class DefaultJt808RequestHeader implements Jt808RequestHeader {
     @Override
     public String toString() {
         return "HeaderSpec{"
-                + "version=" + version
-                + ", terminalId='" + terminalId + '\''
-                + ", messageId=" + messageId + "(0x" + FormatUtils.toHexString(messageId, 4) + ")"
-                + ", flowId=" + flowId
-                + ", messageBodyProps=" + messageBodyProps
-                + '}';
+               + "version=" + version
+               + ", terminalId='" + terminalId + '\''
+               + ", messageId=" + messageId + "(0x" + FormatUtils.toHexString(messageId, 4) + ")"
+               + ", flowId=" + flowId
+               + ", messageBodyProps=" + messageBodyProps
+               + '}';
     }
 
     public static class DefaultJt808MessageHeaderBuilder implements Jt808MessageHeaderBuilder {
@@ -105,6 +106,7 @@ public class DefaultJt808RequestHeader implements Jt808RequestHeader {
         private Jt808MessageBodyProps messageBodyProps;
         private String terminalId;
         private int flowId;
+        private Jt808SubPackageProps subPackage;
 
         public DefaultJt808MessageHeaderBuilder() {
         }
@@ -115,6 +117,7 @@ public class DefaultJt808RequestHeader implements Jt808RequestHeader {
             this.terminalId = header.terminalId();
             this.flowId = header.flowId();
             this.version = header.version();
+            this.subPackage = header.subPackage();
         }
 
         @Override
@@ -148,8 +151,14 @@ public class DefaultJt808RequestHeader implements Jt808RequestHeader {
         }
 
         @Override
+        public Jt808MessageHeaderBuilder subPackage(Jt808SubPackageProps subPackage) {
+            this.subPackage = subPackage;
+            return this;
+        }
+
+        @Override
         public Jt808RequestHeader build() {
-            return new DefaultJt808RequestHeader(version, messageId, messageBodyProps, terminalId, flowId);
+            return new DefaultJt808RequestHeader(version, messageId, messageBodyProps, terminalId, flowId, subPackage);
         }
     }
 

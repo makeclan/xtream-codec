@@ -16,24 +16,27 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.boot.configuration;
 
+import io.github.hylexus.xtream.codec.core.EntityCodec;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808BytesProcessor;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808ResponseEncoder;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.mapping.DispatcherHandlerXtreamMappingDescriptionProvider;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.mapping.XtreamMappingDescriptionProvider;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.request.Jt808DashboardErrorStore;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.BuiltinJt808DashboardCommonController;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.BuiltinJt808DashboardMetricsController;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.BuiltinJt808DashboardPublisherController;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.BuiltinJt808DashboardSessionController;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.*;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.Jt808DashboardRequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.RequestInfoCollector;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.SessionInfoCollector;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardCodecService;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardMappingService;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardMetricsService;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardMetricsServiceWithMicroMeter;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl.DefaultJt808DashboardMappingService;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl.DefaultJt808DashboardMetricsService;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl.Jt808DashboardCodecServiceImpl;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808AttachmentSessionManager;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriptionRegistry;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
@@ -136,6 +139,20 @@ public class BuiltinJt808DashboardConfiguration {
     @Bean
     BuiltinJt808DashboardPublisherController builtinJt808DashboardPublisherController(XtreamEventPublisher eventPublisher) {
         return new BuiltinJt808DashboardPublisherController(eventPublisher);
+    }
+
+    @Bean
+    Jt808DashboardCodecService jt808DashboardCodecService(
+            EntityCodec entityCodec,
+            Jt808RequestDecoder requestDecoder,
+            Jt808ResponseEncoder responseEncoder,
+            Jt808BytesProcessor bytesProcessor) {
+        return new Jt808DashboardCodecServiceImpl(entityCodec, requestDecoder, responseEncoder, bytesProcessor);
+    }
+
+    @Bean
+    BuiltinJt808DashboardCodecController builtinJt808DashboardCodecController(Jt808DashboardCodecService service) {
+        return new BuiltinJt808DashboardCodecController(service);
     }
 
 }

@@ -17,8 +17,11 @@
 package io.github.hylexus.xtream.codec.ext.jt808.spec;
 
 
+import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808MessageBodyProps;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808RequestHeader;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 
 /**
  * @author hylexus
@@ -87,6 +90,48 @@ public interface Jt808RequestHeader {
 
     String toString();
 
+    default ByteBuf encode() {
+        final ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer();
+        this.encode(buffer);
+        return buffer;
+    }
+
+    default void encode(ByteBuf buffer) {
+        final Jt808ProtocolVersion version = this.version();
+        // bytes[0-2) 消息ID Word
+        XtreamBytes.writeWord(buffer, this.messageId());
+
+        // bytes[2-4) 消息体属性 Word
+        final Jt808MessageBodyProps messageBodyProps = this.messageBodyProps();
+        // final int bodyPropsForJt808 = Jt808RequestHeader.Jt808MessageBodyProps.create(
+        //         messageBodyProps.messageBodyLength(), messageBodyProps.encryptionType(),
+        //         messageBodyProps.hasSubPackage(), this.version(), messageBodyProps.reversedBit15()
+        // );
+        final int bodyPropsForJt808 = this.messageBodyProps().intValue();
+        XtreamBytes.writeWord(buffer, bodyPropsForJt808);
+
+        // bytes[4] 协议版本号 byte
+        if (version == Jt808ProtocolVersion.VERSION_2019) {
+            buffer.writeByte(this.version().versionBit());
+        }
+
+        // bytes[5-14) 终端手机号 BCD[10]
+        // bytes[4-10) 终端手机号 BCD[6]
+        XtreamBytes.writeBcd(buffer, this.terminalId());
+
+        // bytes[15-17) 消息流水号  Word
+        XtreamBytes.writeWord(buffer, this.flowId());
+
+        // bytes[17-21) 消息包封装项
+        // bytes[12-16) 消息包封装项
+        if (messageBodyProps.hasSubPackage()) {
+            // 消息总包包数
+            XtreamBytes.writeWord(buffer, this.subPackage().totalSubPackageCount());
+            // 包序号
+            XtreamBytes.writeWord(buffer, this.subPackage().currentPackageNo());
+        }
+    }
+
     default Jt808MessageHeaderBuilder mutate() {
         return new DefaultJt808RequestHeader.DefaultJt808MessageHeaderBuilder(this);
     }
@@ -94,17 +139,25 @@ public interface Jt808RequestHeader {
 
     interface Jt808MessageBodyProps {
 
+        static Jt808MessageBodyPropsBuilder newBuilder() {
+            return new DefaultJt808MessageBodyProps.DefaultJt808MessageBodyPropsBuilder();
+        }
+
+        static Jt808MessageBodyProps from(int value) {
+            return new DefaultJt808MessageBodyProps(value);
+        }
+
         static int create(int messageBodySize, int encryptionType, boolean isSubPackage, Jt808ProtocolVersion version, int reversedBit15) {
             // [ 0-9 ] 0000,0011,1111,1111(3FF)(消息体长度)
             int props = (messageBodySize & 0x3FF)
-                    // [10-12] 0001,1100,0000,0000(1C00)(加密类型)
-                    | ((encryptionType << 10) & 0x1C00)
-                    // [ 13_ ] 0010,0000,0000,0000(2000)(是否有子包)
-                    | (((isSubPackage ? 1 : 0) << 13) & 0x2000)
-                    // [14_ ]  0100,0000,0000,0000(4000)(保留位)
-                    | ((version.versionBit() << 14) & 0x4000)
-                    // [15_ ]  1000,0000,0000,0000(8000)(保留位)
-                    | ((reversedBit15 << 15) & 0x8000);
+                        // [10-12] 0001,1100,0000,0000(1C00)(加密类型)
+                        | ((encryptionType << 10) & 0x1C00)
+                        // [ 13_ ] 0010,0000,0000,0000(2000)(是否有子包)
+                        | (((isSubPackage ? 1 : 0) << 13) & 0x2000)
+                        // [14_ ]  0100,0000,0000,0000(4000)(保留位)
+                        | ((version.versionBit() << 14) & 0x4000)
+                        // [15_ ]  1000,0000,0000,0000(8000)(保留位)
+                        | ((reversedBit15 << 15) & 0x8000);
             return props & 0xFFFF;
         }
 
@@ -194,6 +247,8 @@ public interface Jt808RequestHeader {
         Jt808MessageHeaderBuilder terminalId(String terminalId);
 
         Jt808MessageHeaderBuilder flowId(int flowId);
+
+        Jt808MessageHeaderBuilder subPackage(Jt808SubPackageProps subPackage);
 
         Jt808RequestHeader build();
     }

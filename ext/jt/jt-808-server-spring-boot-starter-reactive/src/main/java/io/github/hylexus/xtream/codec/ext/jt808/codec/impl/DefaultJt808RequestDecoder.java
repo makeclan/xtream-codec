@@ -103,6 +103,11 @@ public class DefaultJt808RequestDecoder implements Jt808RequestDecoder {
         }
     }
 
+    @Override
+    public Jt808RequestHeader decodeHeader(ByteBuf buffer) {
+        return this.parseMessageHeaderSpec(buffer.slice());
+    }
+
     protected Jt808RequestHeader parseMessageHeaderSpec(ByteBuf byteBuf) {
         // 1. bytes[0-1] WORD
         final int messageId = XtreamBytes.getWord(byteBuf, 0);

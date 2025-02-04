@@ -16,11 +16,15 @@
 
 package io.github.hylexus.xtream.codec.core.tracker;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public abstract class BaseSpan {
-
+    protected final String id = UUID.randomUUID().toString();
+    @JsonIgnore
     protected final BaseSpan parent;
     protected final List<BaseSpan> children = new ArrayList<>();
     protected String hexString;
@@ -50,4 +54,11 @@ public abstract class BaseSpan {
         return this;
     }
 
+    public String getSpanType() {
+        return this.getClass().getSimpleName();
+    }
+
+    public String getId() {
+        return id;
+    }
 }

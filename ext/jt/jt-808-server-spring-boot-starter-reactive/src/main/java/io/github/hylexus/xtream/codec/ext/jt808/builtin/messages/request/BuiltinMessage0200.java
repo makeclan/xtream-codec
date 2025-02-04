@@ -23,6 +23,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.Bu
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.BuiltinMessage65;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.BuiltinMessage66;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.BuiltinMessage67;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -40,41 +41,42 @@ import java.util.Map;
 @Setter
 @ToString
 @Accessors(chain = true)
+@Jt808ResponseBody(messageId = 0x0200, desc = "位置信息汇报")
 public class BuiltinMessage0200 {
     // 报警标志  DWORD(4)
-    @Preset.JtStyle.Dword
+    @Preset.JtStyle.Dword(desc = "报警标志")
     private long alarmFlag;
 
     // 状态  DWORD(4)
-    @Preset.JtStyle.Dword
+    @Preset.JtStyle.Dword(desc = "状态")
     private long status;
 
     // 纬度  DWORD(4)
-    @Preset.JtStyle.Dword
+    @Preset.JtStyle.Dword(desc = "纬度")
     private long latitude;
 
     // 经度  DWORD(4)
-    @Preset.JtStyle.Dword
+    @Preset.JtStyle.Dword(desc = "经度")
     private long longitude;
 
     // 高程  WORD(2)
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "高程")
     private int altitude;
 
     // 速度  WORD(2)
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "速度")
     private int speed;
 
     // 方向  WORD(2)
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "方向")
     private int direction;
 
     // 时间  BCD[6] yyMMddHHmmss
-    @Preset.JtStyle.BcdDateTime
+    @Preset.JtStyle.BcdDateTime(desc = "时间")
     private LocalDateTime time;
 
     // 长度：消息体长度减去前面的 28 字节
-    @Preset.JtStyle.Map
+    @Preset.JtStyle.Map(desc = "附加项列表")
     @XtreamFieldMapDescriptor(
             keyDescriptor = @XtreamFieldMapDescriptor.KeyDescriptor(type = XtreamFieldMapDescriptor.KeyType.u8),
             valueLengthFieldDescriptor = @XtreamFieldMapDescriptor.ValueLengthFieldDescriptor(length = 1),

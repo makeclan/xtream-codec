@@ -16,7 +16,9 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.codec;
 
+import io.github.hylexus.xtream.codec.common.exception.NotYetImplementedException;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ServerType;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.netty.buffer.ByteBuf;
@@ -34,5 +36,9 @@ public interface Jt808RequestDecoder {
      * @see <a href="https://github.com/hylexus/jt-framework/issues/82">https://github.com/hylexus/jt-framework/issues/82</a>
      */
     Jt808Request decode(Jt808ServerType serverType, String requestId, ByteBufAllocator allocator, NettyInbound nettyInbound, XtreamRequest.Type requestType, ByteBuf payload, InetSocketAddress remoteAddress);
+
+    default Jt808RequestHeader decodeHeader(ByteBuf buffer) {
+        throw new NotYetImplementedException();
+    }
 
 }

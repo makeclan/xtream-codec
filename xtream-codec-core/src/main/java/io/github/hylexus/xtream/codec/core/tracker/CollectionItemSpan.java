@@ -19,19 +19,19 @@ package io.github.hylexus.xtream.codec.core.tracker;
 import java.util.StringJoiner;
 
 public class CollectionItemSpan extends BaseSpan {
-    private final String name;
+    private final String fieldName;
     private final int offset;
     private final String fieldType;
 
-    public CollectionItemSpan(BaseSpan parent, String name, int offset, String fieldType) {
+    public CollectionItemSpan(BaseSpan parent, String fieldName, int offset, String fieldType) {
         super(parent);
-        this.name = name;
+        this.fieldName = fieldName;
         this.offset = offset;
         this.fieldType = fieldType;
     }
 
-    public String getName() {
-        return name;
+    public String getFieldName() {
+        return fieldName;
     }
 
     public int getOffset() {
@@ -45,7 +45,7 @@ public class CollectionItemSpan extends BaseSpan {
     @Override
     public String toString() {
         return new StringJoiner(", ", CollectionItemSpan.class.getSimpleName() + "[", "]")
-                .add("name='" + name + "'")
+                .add("fieldName='" + fieldName + "'")
                 .add("offset=" + offset)
                 .add("fieldType=" + fieldType)
                 .add("hexString=" + hexString)

@@ -83,7 +83,9 @@ public class EntityDecoder {
     public <T> T decodeWithTracker(ByteBuf source, BeanMetadata beanMetadata, Object containerInstance, CodecTracker tracker) {
         Objects.requireNonNull(tracker);
         final int indexBeforeRead = source.readerIndex();
-        tracker.getRootSpan().setEntityClass(beanMetadata.getRawType().getName());
+        if (tracker.getRootSpan().getEntityClass() == null) {
+            tracker.getRootSpan().setEntityClass(beanMetadata.getRawType().getName());
+        }
         final FieldCodec.DeserializeContext context = new DefaultDeserializeContext(this, containerInstance, tracker);
         for (final BeanPropertyMetadata propertyMetadata : beanMetadata.getPropertyMetadataList()) {
             if (propertyMetadata.conditionEvaluator().evaluate(context)) {

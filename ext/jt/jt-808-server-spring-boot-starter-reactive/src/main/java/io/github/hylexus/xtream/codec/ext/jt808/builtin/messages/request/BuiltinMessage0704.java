@@ -18,6 +18,7 @@ package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
 import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.type.Preset;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -34,12 +35,13 @@ import java.util.List;
 @Setter
 @ToString
 @Accessors(chain = true)
+@Jt808ResponseBody(messageId = 0x0704, desc = "定位数据批量上传")
 public class BuiltinMessage0704 {
 
     /**
      * 数据项个数
      */
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "数据项个数")
     private int count;
 
     /**
@@ -47,10 +49,10 @@ public class BuiltinMessage0704 {
      * <li>0：正常位置批量汇报</li>
      * <li>1：盲区补报</li>
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "位置数据类型")
     private short type;
 
-    @Preset.JtStyle.List
+    @Preset.JtStyle.List(desc = "数据项列表")
     private List<Item> itemList;
 
     @Getter
@@ -70,7 +72,7 @@ public class BuiltinMessage0704 {
          * 位置汇报数据体
          */
         // @Preset.JtStyle.Object(lengthExpression = "getLocationDataLength()")
-        @Preset.JtStyle.Object(prependLengthFieldType = PrependLengthFieldType.u16)
+        @Preset.JtStyle.Object(prependLengthFieldType = PrependLengthFieldType.u16, desc = "位置汇报数据体")
         private BuiltinMessage0200 locationData;
 
         // @SuppressWarnings("lombok")

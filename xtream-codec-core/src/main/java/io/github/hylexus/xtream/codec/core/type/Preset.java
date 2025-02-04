@@ -372,6 +372,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @Target({ElementType.FIELD})
@@ -388,6 +391,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @Target({ElementType.FIELD})
@@ -415,6 +421,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
             Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @Target({ElementType.FIELD, ElementType.METHOD})
@@ -484,6 +493,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
             Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @SuppressWarnings("checkstyle:TypeName")
@@ -515,6 +527,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
             Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @Target({ElementType.FIELD})
@@ -542,6 +557,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
             Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @Target({ElementType.FIELD})
@@ -569,6 +587,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
             Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @Target({ElementType.FIELD})
@@ -605,6 +626,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "containerInstanceFactory")
             Class<? extends ContainerInstanceFactory> containerInstanceFactory() default ContainerInstanceFactory.ArrayListContainerInstanceFactory.class;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @Target({ElementType.FIELD})

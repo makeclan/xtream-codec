@@ -30,6 +30,7 @@ import io.github.hylexus.xtream.codec.core.type.ByteBufContainer;
 import io.github.hylexus.xtream.codec.core.type.XtreamDataType;
 import io.github.hylexus.xtream.codec.core.type.wrapper.*;
 import io.github.hylexus.xtream.codec.core.utils.BeanUtils;
+import io.netty.buffer.ByteBuf;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -97,6 +98,7 @@ public class DefaultFieldCodecRegistry implements FieldCodecRegistry {
         registry.register(F64FieldCodecLittleEndian.INSTANCE, double.class, XtreamDataType.f64_le.sizeInBytes(), "", true);
         registry.register(F64FieldCodecLittleEndian.INSTANCE, Double.class, XtreamDataType.f64_le.sizeInBytes(), "", true);
 
+        registry.register(ByteBufFieldCodec.INSTANCE, ByteBuf.class, -1, "", false);
         registry.register(ByteArrayFieldCodec.INSTANCE, byte[].class, -1, "", false);
         registry.register(ByteBoxArrayFieldCodec.INSTANCE, Byte[].class, -1, "", false);
 
@@ -157,6 +159,8 @@ public class DefaultFieldCodecRegistry implements FieldCodecRegistry {
             return key(targetType, -1, "", false);
         } else if (targetType == byte.class || targetType == Byte.class) {
             return key(targetType, sizeInBytes, "", false);
+        } else if (ByteBuf.class.isAssignableFrom(targetType)) {
+            return "ByteBuf <--> byte[n]";
         } else {
             return key(targetType, sizeInBytes, "", littleEndian);
         }

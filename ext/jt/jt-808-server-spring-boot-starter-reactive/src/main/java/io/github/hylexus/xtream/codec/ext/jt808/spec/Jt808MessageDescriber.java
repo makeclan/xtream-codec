@@ -16,6 +16,8 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.spec;
 
+import io.github.hylexus.xtream.codec.core.tracker.CodecTracker;
+
 /**
  * @author hylexus
  */
@@ -27,6 +29,8 @@ public class Jt808MessageDescriber {
     protected byte reversedBit15InHeader = 0;
     protected byte encryptionType = 0b000;
     protected int flowId = -1;
+    protected CodecTracker bodyCodecTracker;
+    protected Jt808MessageCodecTracker messageCodecTracker = Jt808MessageCodecTracker.NO_OP;
 
     public Jt808MessageDescriber(Jt808ProtocolVersion version, String terminalId) {
         this.version = version;
@@ -93,6 +97,24 @@ public class Jt808MessageDescriber {
 
     public Jt808MessageDescriber flowId(int flowId) {
         this.flowId = flowId;
+        return this;
+    }
+
+    public CodecTracker bodyCodecTracker() {
+        return this.bodyCodecTracker;
+    }
+
+    public Jt808MessageDescriber bodyCodecTracker(CodecTracker tracker) {
+        this.bodyCodecTracker = tracker;
+        return this;
+    }
+
+    public Jt808MessageCodecTracker messageCodecTracker() {
+        return this.messageCodecTracker;
+    }
+
+    public Jt808MessageDescriber messageCodecTracker(Jt808MessageCodecTracker messageCodecTracker) {
+        this.messageCodecTracker = messageCodecTracker;
         return this;
     }
 

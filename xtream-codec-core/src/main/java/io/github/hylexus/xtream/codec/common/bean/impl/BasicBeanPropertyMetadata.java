@@ -19,11 +19,13 @@ package io.github.hylexus.xtream.codec.common.bean.impl;
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.bean.FieldConditionEvaluator;
 import io.github.hylexus.xtream.codec.common.bean.FieldLengthExtractor;
+import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.common.utils.XtreamTypes;
 import io.github.hylexus.xtream.codec.common.utils.XtreamUtils;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
+import io.github.hylexus.xtream.codec.core.tracker.PrependLengthFieldSpan;
 import io.netty.buffer.ByteBuf;
 import lombok.Setter;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -229,6 +231,9 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
         if (this.prependLengthFieldByteCounts <= 0) {
             this.doEncodeWithTracker(context, output, value);
         } else {
+            final PrependLengthFieldSpan prependLengthFieldSpan = context.codecTracker().addPrependLengthFieldSpan(
+                    context.codecTracker().getCurrentSpan(), "prependLengthField", null, null, prependLengthFieldType.name(), "前置长度字段"
+            );
             final int lengthFieldWriterIndex = output.writerIndex();
             // 写入长度字段占位符
             prependLengthFieldType.writeTo(output, 0);
@@ -242,6 +247,8 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
             output.writerIndex(lengthFieldWriterIndex);
             // 写入长度字段
             prependLengthFieldType.writeTo(output, byteCounts);
+            final String hexString = FormatUtils.toHexString(output, lengthFieldWriterIndex, output.writerIndex() - lengthFieldWriterIndex);
+            prependLengthFieldSpan.setValue(byteCounts).setHexString(hexString);
             output.writerIndex(afterEncode);
         }
     }
