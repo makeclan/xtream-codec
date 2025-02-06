@@ -78,8 +78,8 @@ public class CodecTracker {
         return this.addSpan(span);
     }
 
-    public MapFieldSpan startNewMapFieldSpan(BeanPropertyMetadata metadata) {
-        final MapFieldSpan span = new MapFieldSpan(this.current, metadata.name(), metadata.xtreamFieldAnnotation().desc());
+    public MapFieldSpan startNewMapFieldSpan(BeanPropertyMetadata metadata, String fieldCodec) {
+        final MapFieldSpan span = new MapFieldSpan(this.current, metadata.name(), metadata.xtreamFieldAnnotation().desc(), fieldCodec);
         return this.addSpan(span);
     }
 
@@ -96,6 +96,14 @@ public class CodecTracker {
         final PrependLengthFieldSpan span = new PrependLengthFieldSpan(parent, fieldName, fieldCodec, value, hexString, fieldDesc);
         this.current.addChild(span);
         this.current = parent;
+        return span;
+    }
+
+    public MapEntryItemSpan startNewMapEntryItemSpan(BaseSpan parent, MapEntryItemSpan.Type type, FieldCodec<?> fieldCodec) {
+        final MapEntryItemSpan span = new MapEntryItemSpan(parent, type);
+        span.setFieldCodec(fieldCodec.getClass().getSimpleName());
+        this.current.addChild(span);
+        this.current = span;
         return span;
     }
 

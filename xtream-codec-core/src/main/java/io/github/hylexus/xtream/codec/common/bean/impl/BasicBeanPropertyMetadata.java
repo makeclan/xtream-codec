@@ -22,6 +22,7 @@ import io.github.hylexus.xtream.codec.common.bean.FieldLengthExtractor;
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.common.utils.XtreamTypes;
 import io.github.hylexus.xtream.codec.common.utils.XtreamUtils;
+import io.github.hylexus.xtream.codec.core.BeanMetadataRegistry;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
@@ -35,7 +36,7 @@ import java.lang.reflect.Field;
 import java.util.Optional;
 
 public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
-
+    protected final BeanMetadataRegistry beanMetadataRegistry;
     private final String name;
     private final Class<?> type;
     private final FiledDataType filedValueType;
@@ -52,7 +53,8 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
     @Setter
     private FieldCodec<?> fieldCodec;
 
-    public BasicBeanPropertyMetadata(String name, Class<?> type, Field field, PropertyGetter getter, PropertySetter setter) {
+    public BasicBeanPropertyMetadata(BeanMetadataRegistry registry, String name, Class<?> type, Field field, PropertyGetter getter, PropertySetter setter) {
+        this.beanMetadataRegistry = registry;
         this.name = name;
         this.type = type;
         this.field = field;
@@ -251,6 +253,11 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
             prependLengthFieldSpan.setValue(byteCounts).setHexString(hexString);
             output.writerIndex(afterEncode);
         }
+    }
+
+    @Override
+    public BeanMetadataRegistry beanMetadataRegistry() {
+        return this.beanMetadataRegistry;
     }
 
     protected void doEncode(FieldCodec.SerializeContext serializeContext, ByteBuf output, Object value) {

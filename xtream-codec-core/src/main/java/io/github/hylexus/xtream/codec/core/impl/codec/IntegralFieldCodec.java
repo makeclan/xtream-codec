@@ -16,23 +16,14 @@
 
 package io.github.hylexus.xtream.codec.core.impl.codec;
 
-import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
-import io.netty.buffer.ByteBuf;
+import io.github.hylexus.xtream.codec.core.FieldCodec;
 
-public class F32FieldCodec extends AbstractFieldCodec<Number> {
-    public static final F32FieldCodec INSTANCE = new F32FieldCodec();
-
-    private F32FieldCodec() {
-    }
-
-    @Override
-    public Float deserialize(BeanPropertyMetadata propertyMetadata, DeserializeContext context, ByteBuf input, int length) {
-        return input.readFloat();
-    }
-
-
-    @Override
-    protected void doSerialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, Number value) {
-        output.writeFloat(value.floatValue());
-    }
+/**
+ * 标记接口。
+ * <p>
+ * 用来表示整数类型的编解码器(不含小数部分)。
+ *
+ * @author hylexus
+ */
+public interface IntegralFieldCodec extends FieldCodec<Number> {
 }

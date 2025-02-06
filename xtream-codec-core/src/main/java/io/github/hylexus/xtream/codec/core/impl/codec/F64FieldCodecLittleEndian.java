@@ -19,7 +19,7 @@ package io.github.hylexus.xtream.codec.core.impl.codec;
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.netty.buffer.ByteBuf;
 
-public class F64FieldCodecLittleEndian extends AbstractFieldCodec<Double> {
+public class F64FieldCodecLittleEndian extends AbstractFieldCodec<Number> {
     public static final F64FieldCodecLittleEndian INSTANCE = new F64FieldCodecLittleEndian();
 
     private F64FieldCodecLittleEndian() {
@@ -32,8 +32,8 @@ public class F64FieldCodecLittleEndian extends AbstractFieldCodec<Double> {
 
 
     @Override
-    protected void doSerialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, Double value) {
-        output.writeDoubleLE(value);
+    protected void doSerialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, Number value) {
+        output.writeDoubleLE(value.doubleValue());
     }
 
     @Override

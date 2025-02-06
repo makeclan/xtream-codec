@@ -19,7 +19,7 @@ package io.github.hylexus.xtream.codec.core.impl.codec;
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.netty.buffer.ByteBuf;
 
-public class U32FieldCodecLittleEndian extends AbstractFieldCodec<Long> {
+public class U32FieldCodecLittleEndian extends AbstractFieldCodec<Number> implements IntegralFieldCodec {
     public static final U32FieldCodecLittleEndian INSTANCE = new U32FieldCodecLittleEndian();
 
     private U32FieldCodecLittleEndian() {
@@ -31,7 +31,7 @@ public class U32FieldCodecLittleEndian extends AbstractFieldCodec<Long> {
     }
 
     @Override
-    protected void doSerialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, Long value) {
+    protected void doSerialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, Number value) {
         output.writeIntLE(value.intValue());
     }
 

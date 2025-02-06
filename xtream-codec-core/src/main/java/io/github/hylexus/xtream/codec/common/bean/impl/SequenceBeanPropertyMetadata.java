@@ -19,6 +19,7 @@ package io.github.hylexus.xtream.codec.common.bean.impl;
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.bean.IterationTimesExtractor;
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
+import io.github.hylexus.xtream.codec.core.BeanMetadataRegistry;
 import io.github.hylexus.xtream.codec.core.ContainerInstanceFactory;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
@@ -36,8 +37,8 @@ public class SequenceBeanPropertyMetadata extends BasicBeanPropertyMetadata {
     private final ContainerInstanceFactory containerInstanceFactory;
     private final IterationTimesExtractor iterationTimesExtractor;
 
-    public SequenceBeanPropertyMetadata(BeanPropertyMetadata delegate, NestedBeanPropertyMetadata metadata) {
-        super(delegate.name(), delegate.rawClass(), delegate.field(), delegate.propertyGetter(), delegate.propertySetter());
+    public SequenceBeanPropertyMetadata(BeanMetadataRegistry beanMetadataRegistry, BeanPropertyMetadata delegate, NestedBeanPropertyMetadata metadata) {
+        super(beanMetadataRegistry, delegate.name(), delegate.rawClass(), delegate.field(), delegate.propertyGetter(), delegate.propertySetter());
         this.nestedBeanPropertyMetadata = metadata;
         this.delegate = delegate;
         this.containerInstanceFactory = this.xtreamField.containerInstanceFactory() == ContainerInstanceFactory.PlaceholderContainerInstanceFactory.class

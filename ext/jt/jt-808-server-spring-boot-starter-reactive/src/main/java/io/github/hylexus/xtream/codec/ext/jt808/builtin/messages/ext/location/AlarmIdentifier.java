@@ -35,24 +35,24 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 public class AlarmIdentifier {
     // 终端ID BYTE[7] 7个字节，由大写字母和数字组成
-    @Preset.JtStyle.Str(length = 7)
+    @Preset.JtStyle.Str(length = 7, desc = "终端ID 7个字节，由大写字母和数字组成")
     private String terminalId;
 
     // 时间   BCD[6]  YY-MM-DD-hh-mm-ss （GMT+8时间）
-    @Preset.JtStyle.BcdDateTime
+    @Preset.JtStyle.BcdDateTime(desc = "时间")
     // 或者
     // @XtreamDateTimeField(pattern = "yyMMddHHmmss", length = 6, charset = XtreamConstants.CHARSET_NAME_BCD_8421)
     private LocalDateTime time;
 
     // 序号   BYTE    同一时间点报警的序号，从0循环累加
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "序号 同一时间点报警的序号，从0循环累加")
     private short sequence;
 
     // 附件数量 BYTE    表示该报警对应的附件数量
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "附件数量 表示该报警对应的附件数量")
     private short attachmentCount;
 
     // 预留 BYTE
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "预留")
     private short reserved = 0;
 }

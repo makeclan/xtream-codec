@@ -88,6 +88,7 @@ public class SimpleBeanMetadataRegistry implements BeanMetadataRegistry {
     public BasicBeanPropertyMetadata createBeanPropertyMetadata(PropertyDescriptor pd) {
         final BeanUtils.BasicPropertyDescriptor basicPropertyDescriptor = (BeanUtils.BasicPropertyDescriptor) pd;
         final BasicBeanPropertyMetadata metadata = new BasicBeanPropertyMetadata(
+                this,
                 pd.getName(),
                 pd.getPropertyType(),
                 basicPropertyDescriptor.getField(),
@@ -114,13 +115,13 @@ public class SimpleBeanMetadataRegistry implements BeanMetadataRegistry {
                 pdList.add(basicPropertyMetadata);
             } else if (basicPropertyMetadata.dataType() == BeanPropertyMetadata.FiledDataType.struct) {
                 final BeanMetadata nestedMetadata = doGetMetadata(pd.getPropertyType(), creator);
-                final NestedBeanPropertyMetadata metadata = new NestedBeanPropertyMetadata(nestedMetadata, basicPropertyMetadata, null);
+                final NestedBeanPropertyMetadata metadata = new NestedBeanPropertyMetadata(this, nestedMetadata, basicPropertyMetadata, null);
                 pdList.add(metadata);
             } else if (basicPropertyMetadata.dataType() == BeanPropertyMetadata.FiledDataType.sequence) {
                 final List<Class<?>> genericClass = getGenericClass(basicPropertyMetadata.field());
                 final BeanMetadata valueMetadata = doGetMetadata(genericClass.getFirst(), creator);
-                final NestedBeanPropertyMetadata metadata = new NestedBeanPropertyMetadata(valueMetadata, basicPropertyMetadata, new FieldLengthExtractor.ConstantFieldLengthExtractor(-2));
-                final SequenceBeanPropertyMetadata seqMetadata = new SequenceBeanPropertyMetadata(basicPropertyMetadata, metadata);
+                final NestedBeanPropertyMetadata metadata = new NestedBeanPropertyMetadata(this, valueMetadata, basicPropertyMetadata, new FieldLengthExtractor.ConstantFieldLengthExtractor(-2));
+                final SequenceBeanPropertyMetadata seqMetadata = new SequenceBeanPropertyMetadata(this, basicPropertyMetadata, metadata);
                 pdList.add(seqMetadata);
             } else if (basicPropertyMetadata.dataType() == BeanPropertyMetadata.FiledDataType.map) {
                 final MapBeanPropertyMetadata mapMedata = new MapBeanPropertyMetadata(basicPropertyMetadata, fieldCodecRegistry, this);

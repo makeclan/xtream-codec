@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.common.bean;
 
+import io.github.hylexus.xtream.codec.core.BeanMetadataRegistry;
 import io.github.hylexus.xtream.codec.core.ContainerInstanceFactory;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
@@ -91,6 +92,8 @@ public interface BeanPropertyMetadata {
     default Object getProperty(Object instance) {
         return this.propertyGetter().getProperty(this, instance);
     }
+
+    BeanMetadataRegistry beanMetadataRegistry();
 
     enum FiledDataType {
         /**

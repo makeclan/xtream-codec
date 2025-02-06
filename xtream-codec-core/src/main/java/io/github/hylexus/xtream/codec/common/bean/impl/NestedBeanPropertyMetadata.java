@@ -20,6 +20,7 @@ import io.github.hylexus.xtream.codec.common.bean.BeanMetadata;
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.bean.FieldLengthExtractor;
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
+import io.github.hylexus.xtream.codec.core.BeanMetadataRegistry;
 import io.github.hylexus.xtream.codec.core.ContainerInstanceFactory;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.github.hylexus.xtream.codec.core.impl.DefaultDeserializeContext;
@@ -34,8 +35,8 @@ public class NestedBeanPropertyMetadata extends BasicBeanPropertyMetadata {
     private final FieldLengthExtractor fieldLengthExtractor;
     private final ContainerInstanceFactory containerInstanceFactory;
 
-    public NestedBeanPropertyMetadata(BeanMetadata nestedBeanMetadata, BeanPropertyMetadata pm, FieldLengthExtractor fieldLengthExtractor) {
-        super(pm.name(), pm.rawClass(), pm.field(), pm.propertyGetter(), pm.propertySetter());
+    public NestedBeanPropertyMetadata(BeanMetadataRegistry beanMetadataRegistry, BeanMetadata nestedBeanMetadata, BeanPropertyMetadata pm, FieldLengthExtractor fieldLengthExtractor) {
+        super(beanMetadataRegistry, pm.name(), pm.rawClass(), pm.field(), pm.propertyGetter(), pm.propertySetter());
         this.nestedBeanMetadata = nestedBeanMetadata;
         this.delegate = pm;
         this.fieldLengthExtractor = fieldLengthExtractor == null

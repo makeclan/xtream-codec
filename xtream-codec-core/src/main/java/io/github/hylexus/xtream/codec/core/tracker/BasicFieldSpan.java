@@ -41,10 +41,10 @@ public class BasicFieldSpan extends CodecSpan {
     public String toString() {
         return new StringJoiner(", ", BasicFieldSpan.class.getSimpleName() + "[", "]")
                 .add("fieldName='" + fieldName + "'")
+                .add("fieldDesc='" + fieldDesc + "'")
                 .add("fieldCodec='" + fieldCodec + "'")
                 .add("value=" + value)
                 .add("hexString='" + hexString + "'")
-                .add("fieldDesc='" + fieldDesc + "'")
                 .add("childrenLength=" + children.size())
                 .toString();
     }

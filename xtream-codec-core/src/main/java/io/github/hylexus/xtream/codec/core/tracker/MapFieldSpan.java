@@ -21,11 +21,13 @@ import java.util.StringJoiner;
 public class MapFieldSpan extends BaseSpan {
     private final String fieldName;
     private final String fieldDesc;
+    private final String fieldCodec;
 
-    public MapFieldSpan(BaseSpan parent, String fieldName, String fieldDesc) {
+    public MapFieldSpan(BaseSpan parent, String fieldName, String fieldDesc, String fieldCodec) {
         super(parent);
         this.fieldName = fieldName;
         this.fieldDesc = fieldDesc;
+        this.fieldCodec = fieldCodec;
     }
 
     public String getFieldName() {
@@ -36,11 +38,16 @@ public class MapFieldSpan extends BaseSpan {
         return fieldDesc;
     }
 
+    public String getFieldCodec() {
+        return fieldCodec;
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", MapFieldSpan.class.getSimpleName() + "[", "]")
                 .add("fieldName='" + fieldName + "'")
                 .add("fieldDesc='" + fieldDesc + "'")
+                .add("fieldCodec='" + fieldCodec + "'")
                 .add("childrenLength=" + children.size())
                 .add("hexString='" + hexString + "'")
                 .toString();

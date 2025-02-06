@@ -53,7 +53,6 @@ public class MapBeanPropertyMetadata extends BasicBeanPropertyMetadata {
     final BeanPropertyMetadata delegate;
     final XtreamFieldMapDescriptor xtreamFieldMapDescriptor;
     final FieldCodecRegistry fieldCodecRegistry;
-    private final BeanMetadataRegistry beanMetadataRegistry;
 
     private final FieldCodec<Object> keyFieldCodec;
     private final FieldCodec<Object> defaultValueLengthSizeFieldCodec;
@@ -64,10 +63,9 @@ public class MapBeanPropertyMetadata extends BasicBeanPropertyMetadata {
     private final Map<Object, FieldCodec<Object>> valueDecoders;
 
     public MapBeanPropertyMetadata(BeanPropertyMetadata delegate, FieldCodecRegistry fieldCodecRegistry, BeanMetadataRegistry beanMetadataRegistry) {
-        super(delegate.name(), delegate.rawClass(), delegate.field(), delegate.propertyGetter(), delegate.propertySetter());
+        super(beanMetadataRegistry, delegate.name(), delegate.rawClass(), delegate.field(), delegate.propertyGetter(), delegate.propertySetter());
         this.delegate = delegate;
         this.fieldCodecRegistry = fieldCodecRegistry;
-        this.beanMetadataRegistry = beanMetadataRegistry;
         this.xtreamFieldMapDescriptor = this.findAnnotation(XtreamFieldMapDescriptor.class)
                 .orElseThrow(() -> new BeanIntrospectionException("Map filed : [" + this.field() + "] should be marked by @" + XtreamFieldMapDescriptor.class.getSimpleName()));
 
@@ -122,7 +120,7 @@ public class MapBeanPropertyMetadata extends BasicBeanPropertyMetadata {
                 ? input // all remaining
                 : input.readSlice(length);
         final int parentIndexBeforeRead = input.readerIndex();
-        final MapFieldSpan mapFieldSpan = context.codecTracker().startNewMapFieldSpan(this);
+        final MapFieldSpan mapFieldSpan = context.codecTracker().startNewMapFieldSpan(this, this.getClass().getSimpleName());
         @SuppressWarnings({"unchecked"}) final Map<Object, Object> map = (Map<Object, Object>) this.containerInstanceFactory().create();
         int sequence = 0;
         while (slice.isReadable()) {
@@ -202,7 +200,7 @@ public class MapBeanPropertyMetadata extends BasicBeanPropertyMetadata {
         try {
             int sequence = 0;
             @SuppressWarnings("unchecked") final Map<Object, Object> map = (Map<Object, Object>) value;
-            final MapFieldSpan mapFieldSpan = context.codecTracker().startNewMapFieldSpan(this);
+            final MapFieldSpan mapFieldSpan = context.codecTracker().startNewMapFieldSpan(this, this.getClass().getSimpleName());
             final int parenIndexBeforeWrite = output.writerIndex();
             final BaseSpan parent = context.codecTracker().getCurrentSpan();
             for (final Map.Entry<Object, Object> entry : map.entrySet()) {

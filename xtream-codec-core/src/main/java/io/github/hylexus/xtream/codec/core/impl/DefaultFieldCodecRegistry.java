@@ -20,6 +20,7 @@ import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.common.utils.XtreamTypes;
 import io.github.hylexus.xtream.codec.common.utils.XtreamUtils;
+import io.github.hylexus.xtream.codec.core.BeanMetadataRegistryAware;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
 import io.github.hylexus.xtream.codec.core.FieldCodecRegistry;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
@@ -187,6 +188,9 @@ public class DefaultFieldCodecRegistry implements FieldCodecRegistry {
         if (xtreamField.fieldCodec() != FieldCodec.Placeholder.class) {
             @SuppressWarnings({"rawtypes"}) final Class<? extends FieldCodec> aClass = xtreamField.fieldCodec();
             final FieldCodec<?> newInstance = BeanUtils.createNewInstance(aClass);
+            if (newInstance instanceof BeanMetadataRegistryAware registryAware) {
+                registryAware.setBeanMetadataRegistry(metadata.beanMetadataRegistry());
+            }
             return Optional.of(newInstance);
         }
 

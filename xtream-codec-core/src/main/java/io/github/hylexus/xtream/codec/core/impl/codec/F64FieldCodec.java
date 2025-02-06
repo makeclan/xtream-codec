@@ -19,7 +19,7 @@ package io.github.hylexus.xtream.codec.core.impl.codec;
 import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.netty.buffer.ByteBuf;
 
-public class F64FieldCodec extends AbstractFieldCodec<Double> {
+public class F64FieldCodec extends AbstractFieldCodec<Number> {
     public static final F64FieldCodec INSTANCE = new F64FieldCodec();
 
     private F64FieldCodec() {
@@ -32,7 +32,7 @@ public class F64FieldCodec extends AbstractFieldCodec<Double> {
 
 
     @Override
-    protected void doSerialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, Double value) {
-        output.writeDouble(value);
+    protected void doSerialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, Number value) {
+        output.writeDouble(value.doubleValue());
     }
 }
