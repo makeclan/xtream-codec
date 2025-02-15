@@ -20,9 +20,10 @@ dependencies {
     compileOnly("org.springframework.boot:spring-boot-starter-validation")
     compileOnly("org.bouncycastle:bcprov-jdk18on")
 
-    // runtime
     compileOnly("org.springframework.boot:spring-boot-starter-actuator")
     compileOnly("io.projectreactor:reactor-core-micrometer")
+    compileOnly("org.springframework.boot:spring-boot-starter-json")
+
     implementation("jakarta.annotation:jakarta.annotation-api")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")

@@ -24,6 +24,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808ResponseEncoder;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.mapping.DispatcherHandlerXtreamMappingDescriptionProvider;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.mapping.XtreamMappingDescriptionProvider;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.request.Jt808DashboardErrorStore;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.boot.properties.XtreamJt808ServerDashboardProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.*;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
@@ -143,11 +144,12 @@ public class BuiltinJt808DashboardConfiguration {
 
     @Bean
     Jt808DashboardCodecService jt808DashboardCodecService(
+            XtreamJt808ServerDashboardProperties dashboardProperties,
             EntityCodec entityCodec,
             Jt808RequestDecoder requestDecoder,
             Jt808ResponseEncoder responseEncoder,
             Jt808BytesProcessor bytesProcessor) {
-        return new Jt808DashboardCodecServiceImpl(entityCodec, requestDecoder, responseEncoder, bytesProcessor);
+        return new Jt808DashboardCodecServiceImpl(dashboardProperties, entityCodec, requestDecoder, responseEncoder, bytesProcessor);
     }
 
     @Bean

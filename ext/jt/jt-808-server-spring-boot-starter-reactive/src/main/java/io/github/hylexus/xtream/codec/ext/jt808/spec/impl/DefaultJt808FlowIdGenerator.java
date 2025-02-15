@@ -38,8 +38,7 @@ public class DefaultJt808FlowIdGenerator implements Jt808FlowIdGenerator {
         this.currentValue = new AtomicInteger(0);
     }
 
-    // VisibleForTesting
-    DefaultJt808FlowIdGenerator(int init) {
+    public DefaultJt808FlowIdGenerator(int init) {
         this.currentValue = new AtomicInteger(this.mask(init));
     }
 

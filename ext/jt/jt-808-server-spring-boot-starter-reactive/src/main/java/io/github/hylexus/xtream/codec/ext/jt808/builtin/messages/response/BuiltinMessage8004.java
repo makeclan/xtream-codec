@@ -34,7 +34,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8004)
+@Jt808ResponseBody(messageId = 0x8004, desc = "查询服务器时间应答")
 public class BuiltinMessage8004 {
 
     @Preset.JtStyle.BcdDateTime

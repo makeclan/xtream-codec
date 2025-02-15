@@ -11,9 +11,6 @@ export default hopeTheme({
         url: "https://github.com/hylexus",
     },
 
-    // https://theme-hope.vuejs.press/zh/guide/interface/icon.html
-    iconAssets: "fontawesome-with-brands",
-
     logo: "/logo.svg",
 
     repo: "https://github.com/hylexus/xtream-codec",
@@ -97,6 +94,10 @@ export default hopeTheme({
         vPre: true,
     },
     plugins: {
+        icon: {
+            // https://theme-hope.vuejs.press/zh/guide/interface/icon.html
+            assets: "fontawesome-with-brands"
+        },
         blog: true,
         components: {
             components: ["Badge", "VPCard", "VPBanner"],

@@ -29,6 +29,7 @@ public class Jt808MessageDescriber {
     protected byte reversedBit15InHeader = 0;
     protected byte encryptionType = 0b000;
     protected int flowId = -1;
+    protected Jt808FlowIdGenerator flowIdGenerator;
     protected CodecTracker bodyCodecTracker;
     protected Jt808MessageCodecTracker messageCodecTracker = Jt808MessageCodecTracker.NO_OP;
 
@@ -115,6 +116,15 @@ public class Jt808MessageDescriber {
 
     public Jt808MessageDescriber messageCodecTracker(Jt808MessageCodecTracker messageCodecTracker) {
         this.messageCodecTracker = messageCodecTracker;
+        return this;
+    }
+
+    public Jt808FlowIdGenerator flowIdGenerator() {
+        return this.flowIdGenerator;
+    }
+
+    public Jt808MessageDescriber flowIdGenerator(Jt808FlowIdGenerator flowIdGenerator) {
+        this.flowIdGenerator = flowIdGenerator;
         return this;
     }
 

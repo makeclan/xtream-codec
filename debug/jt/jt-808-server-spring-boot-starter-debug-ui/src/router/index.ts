@@ -1,11 +1,12 @@
 import {createRouter, createWebHistory} from 'vue-router'
-
-import Debug from '../components/debug.vue'
-import Debug1 from '../components/debug1.vue'
+import MessageDecoding from "../pages/message-decoding.vue";
+import Home from "../pages/home.vue";
+import MessageEncoding from "../pages/message-encoding.vue";
 
 const routes = [
-    { path: '/debug', component: Debug },
-    { path: '/debug1', component: Debug1 },
+    {path: '/home', component: Home},
+    {path: '/message-decoding', component: MessageDecoding},
+    {path: '/message-encoding', component: MessageEncoding},
 ]
 
 export const router = createRouter({

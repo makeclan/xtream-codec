@@ -21,6 +21,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -42,8 +46,31 @@ public class XtreamJt808ServerDashboardProperties {
      */
     private boolean forwardNotFoundToIndex = true;
 
+    @NestedConfigurationProperty
+    private CodecConfig codecDebugOptions = new CodecConfig();
+
     public String getFormatedBasePath() {
         return DashboardWebUtils.formatBasePath(this.getBasePath());
     }
 
+    @Getter
+    @Setter
+    public static class CodecConfig {
+        private static final String DEFAULT_PACKAGE = "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages";
+
+        private List<String> basePackages = List.of(DEFAULT_PACKAGE);
+        private String defaultTerminalId = "00000000013912344329";
+
+        public void setBasePackages(List<String> basePackages) {
+            if (CollectionUtils.isEmpty(basePackages)) {
+                this.basePackages.add(DEFAULT_PACKAGE);
+            } else {
+                if (!basePackages.contains(DEFAULT_PACKAGE)) {
+                    basePackages.add(DEFAULT_PACKAGE);
+                }
+                this.basePackages = basePackages;
+            }
+        }
+
+    }
 }

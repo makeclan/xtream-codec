@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
+package io.github.hylexus.xtream.codec.core.tracker;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.WordWrapper;
-import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 /**
- * 终端补传分包请求 0x0005
+ * 存储多媒体数据检索
  *
  * @author hylexus
  */
@@ -35,19 +33,30 @@ import java.util.List;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x0005, desc = "终端补传分包请求")
-public class BuiltinMessage0005 {
+public class CodecDebugEntity01 {
 
-    // byte[0,2)    原始消息流水号
-    @Preset.JtStyle.Word
-    private int originalMessageFlowId;
+    /**
+     * 多媒体类型
+     * <p>
+     * 0：图像；1：音频；2：视频；
+     */
+    @Preset.JtStyle.Byte(desc = "多媒体类型")
+    private short multimediaType;
+    /**
+     * 通道ID
+     * <p>
+     * 0表示检索该媒体类型的所有通道；
+     */
+    @Preset.JtStyle.Byte(desc = "通道ID")
+    private short channelId;
 
-    // byte[2,4)    重传包总数
-    @Preset.JtStyle.Word
-    private int packageCount;
+    @Preset.JtStyle.Byte(desc = "事件项编码")
+    private short eventItemCode;
 
-    // byte[4, 2n)    重传包 ID 列表
-    @Preset.JtStyle.List
-    private List<WordWrapper> packageIdList;
+    @Preset.JtStyle.BcdDateTime(desc = "起始时间")
+    private LocalDateTime startTime;
+
+    @Preset.JtStyle.BcdDateTime(desc = "结束时间")
+    private LocalDateTime endTime;
 
 }

@@ -100,16 +100,16 @@ public class Jt808DashboardDebugMessage implements RuntimeTypeSupplier {
         private int messageBodyProps;
 
         // byte[4]     协议版本号
-        @Preset.JtStyle.Byte(condition = "hasVersionField()", desc = "协议版本号(V2019)")
+        @Preset.JtStyle.Byte(condition = "hasVersionField()", desc = "协议版本号(V2019+)")
         private short protocolVersion;
 
         // byte[5-15)    终端手机号或设备ID bcd[10]
-        @Preset.JtStyle.Bcd(length = 10, desc = "终端手机号或设备ID")
+        @Preset.JtStyle.Bcd(lengthExpression = "hasVersionField() ? 10 : 6", desc = "终端手机号或设备ID")
         private String terminalId;
 
         // byte[15-17)    消息流水号 word(16)
         @Preset.JtStyle.Word(desc = "消息流水号")
-        private int messageSerialNo;
+        private int serialNo;
 
         // byte[17-21)    消息包封装项
         @Preset.JtStyle.Object(condition = "hasSubPackage()", desc = "消息包封装项")
@@ -162,12 +162,12 @@ public class Jt808DashboardDebugMessage implements RuntimeTypeSupplier {
             return this;
         }
 
-        public int getMessageSerialNo() {
-            return messageSerialNo;
+        public int getSerialNo() {
+            return serialNo;
         }
 
-        public Header setMessageSerialNo(int messageSerialNo) {
-            this.messageSerialNo = messageSerialNo;
+        public Header setSerialNo(int serialNo) {
+            this.serialNo = serialNo;
             return this;
         }
 

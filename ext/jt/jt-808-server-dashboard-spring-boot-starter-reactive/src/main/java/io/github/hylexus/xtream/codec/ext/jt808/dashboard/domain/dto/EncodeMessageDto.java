@@ -16,18 +16,27 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto;
 
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Map;
 
 public class EncodeMessageDto {
 
+    @NotNull(message = "version is null")
+    private Jt808ProtocolVersion version = Jt808ProtocolVersion.VERSION_2019;
+
+    @NotNull(message = "terminalId is null")
+    @NotEmpty(message = "terminalId is empty")
+    private String terminalId = "00000000013912344329";
+
     @NotNull(message = "messageId is null")
     private Integer messageId;
+
     @NotNull(message = "flowId is null")
-    @Min(value = 0, message = "flowId > 0")
-    private Integer flowId = 0;
+    private Integer flowId = -1;
 
     private byte reversedBit15InHeader = 0;
 
@@ -101,6 +110,24 @@ public class EncodeMessageDto {
 
     public EncodeMessageDto setMaxPackageSize(int maxPackageSize) {
         this.maxPackageSize = maxPackageSize;
+        return this;
+    }
+
+    public Jt808ProtocolVersion getVersion() {
+        return version;
+    }
+
+    public EncodeMessageDto setVersion(Jt808ProtocolVersion version) {
+        this.version = version;
+        return this;
+    }
+
+    public String getTerminalId() {
+        return terminalId;
+    }
+
+    public EncodeMessageDto setTerminalId(String terminalId) {
+        this.terminalId = terminalId;
         return this;
     }
 }

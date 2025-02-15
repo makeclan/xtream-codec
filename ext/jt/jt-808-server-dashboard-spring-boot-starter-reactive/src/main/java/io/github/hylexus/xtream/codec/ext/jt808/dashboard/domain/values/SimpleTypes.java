@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentMap;
@@ -146,4 +147,18 @@ public final class SimpleTypes {
 
     public record DependencyInfo(String name, String version) {
     }
+
+    public record Jt808EntityClassMetadata(
+            Class<?> targetClass,
+            int messageId,
+            byte encryptionType,
+            int maxPackageSize,
+            byte reversedBit15InHeader,
+            String desc
+    ) {
+    }
+
+    public record CodecDebugOptions(String defaultTerminalId, List<Jt808EntityClassMetadata> classMetadata) {
+    }
+
 }

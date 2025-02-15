@@ -83,6 +83,12 @@ public class DefaultJt808ResponseEncoder implements Jt808ResponseEncoder {
         return describer;
     }
 
+    private Jt808FlowIdGenerator getFlowIdGenerator(Jt808MessageDescriber describer) {
+        return describer.flowIdGenerator() == null
+                ? this.flowIdGenerator
+                : describer.flowIdGenerator();
+    }
+
     protected ByteBuf doBuild(Jt808MessageDescriber describer, ByteBuf body) {
         final int maxPackageSize = describer.check().maxPackageSize();
         final int messageBodyLength = body.readableBytes();
@@ -90,7 +96,7 @@ public class DefaultJt808ResponseEncoder implements Jt808ResponseEncoder {
         final int estimatedPackageSize = Jt808RequestHeader.messageBodyStartIndex(version, false) + messageBodyLength + 3;
         if (estimatedPackageSize <= maxPackageSize) {
             if (describer.flowId() < 0) {
-                describer.flowId(flowIdGenerator.nextFlowId());
+                describer.flowId(this.getFlowIdGenerator(describer).nextFlowId());
             }
             return this.buildPackage(describer, body, 0, 0, describer.flowId());
         }
@@ -101,7 +107,7 @@ public class DefaultJt808ResponseEncoder implements Jt808ResponseEncoder {
                 : messageBodyLength / subPackageBodySize + 1;
 
         final CompositeByteBuf allResponseBytes = allocator.compositeBuffer(subPackageCount);
-        final int[] flowIds = flowIdGenerator.flowIds(subPackageCount);
+        final int[] flowIds = this.getFlowIdGenerator(describer).flowIds(subPackageCount);
         for (int i = 0; i < subPackageCount; i++) {
             final int offset = i * subPackageBodySize;
             final int length = (i == subPackageCount - 1)

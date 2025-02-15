@@ -28,13 +28,14 @@ import io.github.hylexus.xtream.codec.core.tracker.CodecTracker;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808BytesProcessor;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808ResponseEncoder;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.boot.properties.XtreamJt808ServerDashboardProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.bo.DecodedMessageMetadata;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.bo.EncodedMessageMetadata;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.DecodeMessageDto;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.EncodeMessageDto;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808DashboardDebugMessage;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808EntityClassMetadata;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.DecodedMessageVo;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.bo.EncodedMessageMetadata;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.EncodedMessageVo;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.Jt808MessageHeaderMetadata;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardCodecService;
@@ -42,8 +43,8 @@ import io.github.hylexus.xtream.codec.ext.jt808.exception.BadRequestException;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageCodecTracker;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriber;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808FlowIdGenerator;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.CompositeByteBuf;
@@ -54,14 +55,17 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Jt808DashboardCodecServiceImpl implements Jt808DashboardCodecService {
+
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private final XtreamJt808ServerDashboardProperties dashboardProperties;
     private final EntityCodec entityCodec;
     private final Jt808RequestDecoder jt808RequestDecoder;
     private final Jt808ResponseEncoder responseEncoder;
     private final Jt808BytesProcessor jt808BytesProcessor;
-    private final Map<String, Jt808EntityClassMetadata> entityClassMapping;
+    private final Map<String, SimpleTypes.Jt808EntityClassMetadata> entityClassMapping;
 
-    public Jt808DashboardCodecServiceImpl(EntityCodec entityCodec, Jt808RequestDecoder jt808RequestDecoder, Jt808ResponseEncoder responseEncoder, Jt808BytesProcessor jt808BytesProcessor) {
+    public Jt808DashboardCodecServiceImpl(XtreamJt808ServerDashboardProperties dashboardProperties, EntityCodec entityCodec, Jt808RequestDecoder jt808RequestDecoder, Jt808ResponseEncoder responseEncoder, Jt808BytesProcessor jt808BytesProcessor) {
+        this.dashboardProperties = dashboardProperties;
         this.entityCodec = entityCodec;
         this.jt808RequestDecoder = jt808RequestDecoder;
         this.responseEncoder = responseEncoder;
@@ -71,7 +75,7 @@ public class Jt808DashboardCodecServiceImpl implements Jt808DashboardCodecServic
 
     @Override
     public List<DecodedMessageVo> encodeWithTracker(EncodeMessageDto dto) {
-        final Jt808EntityClassMetadata classMetadata = this.entityClassMapping.get(dto.getBodyClass());
+        final SimpleTypes.Jt808EntityClassMetadata classMetadata = this.entityClassMapping.get(dto.getBodyClass());
         if (classMetadata == null) {
             throw new BadRequestException("未知实体类: " + dto.getBodyClass());
         }
@@ -124,7 +128,7 @@ public class Jt808DashboardCodecServiceImpl implements Jt808DashboardCodecServic
 
     @Override
     public EncodedMessageVo decodeWithTracker(DecodeMessageDto dto) {
-        final Jt808EntityClassMetadata classMetadata = this.entityClassMapping.get(dto.getBodyClass());
+        final SimpleTypes.Jt808EntityClassMetadata classMetadata = this.entityClassMapping.get(dto.getBodyClass());
         if (classMetadata == null) {
             throw new BadRequestException("未知实体类: " + dto.getBodyClass());
         }
@@ -197,8 +201,9 @@ public class Jt808DashboardCodecServiceImpl implements Jt808DashboardCodecServic
     }
 
     @Override
-    public Collection<Jt808EntityClassMetadata> getClassMetadata() {
-        return this.entityClassMapping.values();
+    public SimpleTypes.CodecDebugOptions getCodecOptions() {
+        final List<SimpleTypes.Jt808EntityClassMetadata> metadataList = this.entityClassMapping.values().stream().sorted(Comparator.comparing(it -> it.targetClass().getSimpleName())).toList();
+        return new SimpleTypes.CodecDebugOptions(this.dashboardProperties.getCodecDebugOptions().getDefaultTerminalId(), metadataList);
     }
 
     private String trim(String hex) {
@@ -213,10 +218,11 @@ public class Jt808DashboardCodecServiceImpl implements Jt808DashboardCodecServic
         return XtreamBytes.byteBufFromHexString(ByteBufAllocator.DEFAULT, this.trim(hexString));
     }
 
-    private Map<String, Jt808EntityClassMetadata> scanEntityClass() {
+    private Map<String, SimpleTypes.Jt808EntityClassMetadata> scanEntityClass() {
         final XtreamClassScanner classScanner = new DefaultXtreamClassScanner();
+        final String[] packages = this.dashboardProperties.getCodecDebugOptions().getBasePackages().toArray(new String[]{});
         final Set<Class<?>> classes = classScanner.scan(
-                new String[]{"io.github.hylexus.xtream.codec.ext.jt808.builtin.messages"},
+                packages,
                 Set.of(XtreamClassScanner.ScanMode.CLASS_ANNOTATION),
                 Jt808ResponseBody.class,
                 classInfo -> !classInfo.isAnnotation()
@@ -227,7 +233,7 @@ public class Jt808DashboardCodecServiceImpl implements Jt808DashboardCodecServic
                     if (annotation == null) {
                         return null;
                     }
-                    return new Jt808EntityClassMetadata(
+                    return new SimpleTypes.Jt808EntityClassMetadata(
                             cls,
                             annotation.messageId(),
                             annotation.encryptionType(),
@@ -289,7 +295,7 @@ public class Jt808DashboardCodecServiceImpl implements Jt808DashboardCodecServic
                         .setMessageBodyProps(vo.getHeader().messageBodyProps().intValue())
                         .setProtocolVersion(vo.getHeader().version().versionBit())
                         .setTerminalId(vo.getHeader().terminalId())
-                        .setMessageSerialNo(vo.getFlowId())
+                        .setSerialNo(vo.getFlowId())
                         .setSubPackageProps(new Jt808DashboardDebugMessage.SubPackageProps()
                                 .setTotalSubPackageCount(vo.getTotalPackageNo())
                                 .setCurrentPackageNo(vo.getCurrentPackageNo())
@@ -305,7 +311,7 @@ public class Jt808DashboardCodecServiceImpl implements Jt808DashboardCodecServic
     private List<EncodedMessageMetadata> getEncodeMetadata(EncodeMessageDto dto, Object body) {
         final Map<Integer, EncodedMessageMetadata> resultMapping = new LinkedHashMap<>();
         final CodecTracker tracker = new CodecTracker();
-        final Jt808MessageDescriber describer = new Jt808MessageDescriber(Jt808ProtocolVersion.VERSION_2019, "00000000013912344329")
+        final Jt808MessageDescriber describer = new Jt808MessageDescriber(dto.getVersion(), dto.getTerminalId())
                 .messageId(dto.getMessageId())
                 .maxPackageSize(dto.getMaxPackageSize())
                 .reversedBit15InHeader(dto.getReversedBit15InHeader())
@@ -333,6 +339,9 @@ public class Jt808DashboardCodecServiceImpl implements Jt808DashboardCodecServic
                     }
 
                 });
+        if (dto.getFlowId() >= 0) {
+            describer.flowIdGenerator(new DefaultJt808FlowIdGenerator(dto.getFlowId()));
+        }
         final ByteBuf encoded = this.responseEncoder.encode(body, describer);
         XtreamBytes.releaseBuf(encoded);
         return new ArrayList<>(resultMapping.values());
