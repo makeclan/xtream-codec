@@ -19,6 +19,8 @@ package io.github.hylexus.xtream.codec.core.type.wrapper;
 import io.netty.buffer.ByteBuf;
 
 import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.StringJoiner;
 
 public class BytesDataWrapper implements DataWrapper<byte[]> {
     static final int MASK = 0xFF;
@@ -74,4 +76,12 @@ public class BytesDataWrapper implements DataWrapper<byte[]> {
     public String asString(Charset charset) {
         return new String(value, charset);
     }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", BytesDataWrapper.class.getSimpleName() + "[", "]")
+                .add("value=" + Arrays.toString(value))
+                .toString();
+    }
+
 }

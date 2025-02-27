@@ -19,7 +19,7 @@ package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.domai
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1210;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.AlarmIdentifier;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.BuiltinMsg9208;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage9208;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -47,7 +47,7 @@ public class Jt808AlarmAttachmentInfoVo {
      * 平台分配的报警唯一编号
      *
      * @see BuiltinMessage1210#getAlarmNo()
-     * @see BuiltinMsg9208#getAlarmNo()
+     * @see BuiltinMessage9208#getAlarmNo()
      */
     private String alarmNo;
 

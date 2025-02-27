@@ -18,6 +18,7 @@ package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.core.type.Preset;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -30,30 +31,24 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
+@Jt808ResponseBody(messageId = 0x8001, desc = "终端通用应答")
 public class BuiltinMessage0001 {
-    /**
-     * 1. 应答流水号 WORD    对应的平台消息的流水号
-     */
-    @Preset.JtStyle.Word
+
+    @Preset.JtStyle.Word(desc = "应答流水号 对应的平台消息的流水号")
     private int serverFlowId;
 
-    /**
-     * 2. 应答id WORD     对应的平台消息的 ID
-     */
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "应答id 对应的平台消息的ID")
     private int serverMessageId;
-    /**
-     * 3. 结果  byte 0:成功/确认; 1:失败; 2:消息有误; 3:不支持
-     */
-    @Preset.JtStyle.Byte
+
+    @Preset.JtStyle.Byte(desc = "结果 0:成功/确认; 1:失败; 2:消息有误; 3:不支持")
     private short result;
 
     @Override
     public String toString() {
         return "BuiltinMessage0001{"
-                + "serverFlowId=" + serverFlowId
-                + ", serverMessageId=" + serverMessageId + "(0x" + FormatUtils.toHexString(serverMessageId, 2) + ")"
-                + ", result=" + result
-                + '}';
+               + "serverFlowId=" + serverFlowId
+               + ", serverMessageId=" + serverMessageId + "(0x" + FormatUtils.toHexString(serverMessageId, 2) + ")"
+               + ", result=" + result
+               + '}';
     }
 }

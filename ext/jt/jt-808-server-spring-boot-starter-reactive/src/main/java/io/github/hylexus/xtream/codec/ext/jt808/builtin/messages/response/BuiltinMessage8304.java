@@ -32,25 +32,16 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8304)
+@Jt808ResponseBody(messageId = 0x8304, desc = "信息服务")
 public class BuiltinMessage8304 {
 
-    /**
-     * 信息类型
-     */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "信息类型")
     private short type;
 
-    /**
-     * 信息长度
-     */
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "信息长度")
     private int length;
 
-    /**
-     * 信息内容
-     */
-    @Preset.JtStyle.Str
+    @Preset.JtStyle.Str(desc = "信息内容")
     private String content;
 
 }

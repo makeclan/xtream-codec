@@ -35,7 +35,7 @@ import java.util.List;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8401)
+@Jt808ResponseBody(messageId = 0x8401, desc = "设置电话本")
 public class BuiltinMessage8401 {
 
     /**
@@ -45,16 +45,13 @@ public class BuiltinMessage8401 {
      * <li>2 -- 表示追加电话本</li>
      * <li>3 -- 表示修改电话本（以联系人为索引）</li>
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "设置类型")
     private short type;
 
-    /**
-     * 联系人总数
-     */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "联系人总数")
     private short count;
 
-    @Preset.JtStyle.List
+    @Preset.JtStyle.List(desc = "联系人项")
     private List<Item> itemList;
 
     @Getter
@@ -67,21 +64,15 @@ public class BuiltinMessage8401 {
          * <p>
          * 1：呼入；2：呼出；3：呼入/呼出
          */
-        @Preset.JtStyle.Byte
+        @Preset.JtStyle.Byte(desc = "标志")
         private short flag;
 
-        /**
-         * 电话号码
-         */
         // prependLengthFieldType: 前置一个 u8类型的字段 表示 号码长度
-        @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8)
+        @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8, desc = "电话号码")
         private String phoneNumber;
 
-        /**
-         * 联系人
-         */
         // prependLengthFieldType: 前置一个 u8类型的字段 表示 联系人长度
-        @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8)
+        @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8, desc = "联系人")
         private String contacts;
 
     }

@@ -19,6 +19,8 @@ package io.github.hylexus.xtream.codec.core.type.wrapper;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.netty.buffer.ByteBuf;
 
+import java.util.StringJoiner;
+
 public class I16Wrapper implements DataWrapper<Short> {
 
     @Preset.RustStyle.i16
@@ -73,4 +75,12 @@ public class I16Wrapper implements DataWrapper<Short> {
         this.value = value;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", I16Wrapper.class.getSimpleName() + "[", "]")
+                .add("value=" + value)
+                .toString();
+    }
+
 }

@@ -29,6 +29,7 @@ class BuiltinMessage8300Test extends BaseCodecTest {
         final BuiltinMessage8300 entity = new BuiltinMessage8300();
         entity.setIdentifier((short) 1);
         entity.setText("HelloWorld 汉字 GBK 编码");
+
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2013, terminalId2013);
         assertEquals("7e8300001901391234432300000148656c6c6f576f726c6420babad7d62047424b20b1e0c2ebf27e", hex);
     }

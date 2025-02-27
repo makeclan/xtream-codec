@@ -56,6 +56,7 @@ class BuiltinMessage8604Test extends BaseCodecTest {
                 )
         );
         entity.setPointCount(entity.getPointList().size());
+
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2013, terminalId2013);
         assertEquals("7e8604002f01391234432300000000006f4003241026183956241026203956006f0a000301d907f2073d336c01d907f3073d336d01d907f4073d336eed7e", hex);
     }

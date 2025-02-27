@@ -16,11 +16,13 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -42,6 +44,8 @@ public class AlarmIdentifier {
     @Preset.JtStyle.BcdDateTime(desc = "时间")
     // 或者
     // @XtreamDateTimeField(pattern = "yyMMddHHmmss", length = 6, charset = XtreamConstants.CHARSET_NAME_BCD_8421)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime time;
 
     // 序号   BYTE    同一时间点报警的序号，从0循环累加

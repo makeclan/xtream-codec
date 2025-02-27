@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location;
+package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext;
 
+import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.type.Preset;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.AlarmIdentifier;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,40 +26,39 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 /**
+ * 报警附件上传指令(苏标)
+ *
  * @author hylexus
  */
 @Getter
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x9208)
-public class BuiltinMsg9208 {
-
-    // BYTE
-    @Preset.JtStyle.Byte
-    private short attachmentServerIpLength;
+@Jt808ResponseBody(messageId = 0x9208, desc = "报警附件上传指令(苏标)")
+public class BuiltinMessage9208 {
 
     // STRING
-    @Preset.JtStyle.Str
+    // prependLengthFieldType: 前置一个 u8 类型的字段，表示附件服务器IP地址长度
+    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8, desc = "附件服务器IP地址")
     private String attachmentServerIp;
 
     // WORD
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "附件服务器端口（TCP）")
     private int attachmentServerPortTcp;
 
     // WORD
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "附件服务器端口（UDP）")
     private int attachmentServerPortUdp;
 
     // BYTE[16]
-    @Preset.JtStyle.Object
+    @Preset.JtStyle.Object(desc = "报警标识号(表4 16)")
     private AlarmIdentifier alarmIdentifier;
 
     // BYTE[32]
-    @Preset.JtStyle.Bytes
+    @Preset.JtStyle.Bytes(desc = "报警编号:平台给报警分配的唯一编号", length = 32)
     private String alarmNo;
 
     // BYTE[16]
-    @Preset.JtStyle.Bytes
+    @Preset.JtStyle.Bytes(desc = "预留")
     private String reservedByte16 = "0000000000000000";
 }

@@ -36,13 +36,10 @@ import java.util.List;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8604)
+@Jt808ResponseBody(messageId = 0x8604, desc = "设置多边形区域")
 public class BuiltinMessage8604 {
 
-    /**
-     * 区域ID
-     */
-    @Preset.JtStyle.Dword
+    @Preset.JtStyle.Dword(desc = "区域ID")
     private long areaId;
 
     /**
@@ -60,7 +57,7 @@ public class BuiltinMessage8604 {
      * <li>bit[14] - 0：进区域开启通信模块；1：进区域关闭通信模块</li>
      * <li>bit[15] - 0：进区域不采集GNSS详细定位数据；1：进区域采集GNSS 详细定位数据</li>
      */
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "区域属性")
     private int areaProps;
 
     /**
@@ -68,7 +65,7 @@ public class BuiltinMessage8604 {
      * <p>
      * YY-MM-DD-hh-mm-ss，若区域属性0位为0则没有该字段
      */
-    @Preset.JtStyle.BcdDateTime(condition = "hasTimeProperty()")
+    @Preset.JtStyle.BcdDateTime(condition = "hasTimeProperty()", desc = "起始时间 BCD[6]")
     private LocalDateTime startTime;
 
     /**
@@ -76,7 +73,7 @@ public class BuiltinMessage8604 {
      * <p>
      * YY-MM-DD-hh-mm-ss，若区域属性0位为0则没有该字段
      */
-    @Preset.JtStyle.BcdDateTime(condition = "hasTimeProperty()")
+    @Preset.JtStyle.BcdDateTime(condition = "hasTimeProperty()", desc = "结束时间 BCD[6]")
     private LocalDateTime endTime;
 
     public boolean hasTimeProperty() {
@@ -88,7 +85,7 @@ public class BuiltinMessage8604 {
      * <p>
      * Km/h，若区域属性1位为 0 则没有该字段
      */
-    @Preset.JtStyle.Word(condition = "hasSpeedProperty()")
+    @Preset.JtStyle.Word(condition = "hasSpeedProperty()", desc = "最高速度")
     private int topSpeed;
 
     public boolean hasSpeedProperty() {
@@ -100,16 +97,13 @@ public class BuiltinMessage8604 {
      * <p>
      * 单位为秒（s） （类似表述，同前修改） ，若区域属性1位为0则没有该字段
      */
-    @Preset.JtStyle.Byte(condition = "hasSpeedProperty()")
+    @Preset.JtStyle.Byte(condition = "hasSpeedProperty()", desc = "超速持续时间")
     private short durationOfOverSpeed;
 
-    /**
-     * 区域总顶点数
-     */
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "区域总顶点数")
     private int pointCount;
 
-    @Preset.JtStyle.List
+    @Preset.JtStyle.List(desc = "顶点项")
     private List<Point> pointList;
 
     @Getter
@@ -117,10 +111,10 @@ public class BuiltinMessage8604 {
     @ToString
     public static class Point {
 
-        @Preset.JtStyle.Dword
+        @Preset.JtStyle.Dword(desc = "顶点纬度")
         private long latitude;
 
-        @Preset.JtStyle.Dword
+        @Preset.JtStyle.Dword(desc = "顶点经度")
         private long longitude;
 
         public Point() {

@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.hylexus.xtream.codec.common.utils.Numbers;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
@@ -23,6 +24,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,13 +38,10 @@ import java.util.List;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8606)
+@Jt808ResponseBody(messageId = 0x8606, desc = "设置路线")
 public class BuiltinMessage8606 {
 
-    /**
-     * 路线ID
-     */
-    @Preset.JtStyle.Dword
+    @Preset.JtStyle.Dword(desc = "路线ID")
     private long routeId;
 
     /**
@@ -55,7 +54,7 @@ public class BuiltinMessage8606 {
      * <li> bit[5] -- 1：出路线报警给平台</li>
      * <li> bit[6~15] --- 保留</li>
      */
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "路线属性")
     private int routeProps;
 
     /**
@@ -63,7 +62,9 @@ public class BuiltinMessage8606 {
      * <p>
      * YY-MM-DD-hh-mm-ss，若区域属性0位为0则没有该字段
      */
-    @Preset.JtStyle.BcdDateTime(condition = "hasTimeProperty()")
+    @Preset.JtStyle.BcdDateTime(condition = "hasTimeProperty()", desc = "起始时间 BCD[6]")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime;
 
     /**
@@ -71,20 +72,19 @@ public class BuiltinMessage8606 {
      * <p>
      * YY-MM-DD-hh-mm-ss，若区域属性0位为0则没有该字段
      */
-    @Preset.JtStyle.BcdDateTime(condition = "hasTimeProperty()")
+    @Preset.JtStyle.BcdDateTime(condition = "hasTimeProperty()", desc = "结束时间 BCD[6]")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
     public boolean hasTimeProperty() {
         return Numbers.getBitAt(this.routeProps, 0) == 1;
     }
 
-    /**
-     * 路线总拐点数
-     */
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "路线总拐点数")
     private int count;
 
-    @Preset.JtStyle.List
+    @Preset.JtStyle.List(desc = "拐点项")
     private List<Item> itemList;
 
     @Getter
@@ -92,33 +92,29 @@ public class BuiltinMessage8606 {
     @ToString
     @Accessors(chain = true)
     public static class Item {
-        /**
-         * 拐点ID
-         */
-        @Preset.JtStyle.Dword
+
+        @Preset.JtStyle.Dword(desc = "拐点ID")
         private long id;
-        /**
-         * 路段ID
-         */
-        @Preset.JtStyle.Dword
+
+        @Preset.JtStyle.Dword(desc = "路段ID")
         private long routeId;
 
         /**
          * 拐点纬度: 以度为单位的纬度值乘以 10 的 6 次方，精确到百万分之一度
          */
-        @Preset.JtStyle.Dword
+        @Preset.JtStyle.Dword(desc = "拐点纬度")
         private long latitude;
 
         /**
          * 拐点经度: 以度为单位的纬度值乘以 10 的 6 次方，精确到百万分之一度
          */
-        @Preset.JtStyle.Dword
+        @Preset.JtStyle.Dword(desc = "拐点经度")
         private long longitude;
 
         /**
          * 路段宽度
          */
-        @Preset.JtStyle.Byte
+        @Preset.JtStyle.Byte(desc = "路段宽度")
         private short routeWidth;
 
         /**
@@ -129,7 +125,7 @@ public class BuiltinMessage8606 {
          * <li>bit[3] --  0：东经；1：西经</li>
          * <li>bit[4~7] -- 保留</li>
          */
-        @Preset.JtStyle.Byte
+        @Preset.JtStyle.Byte(desc = "路段属性")
         private short routeProps;
 
         /**
@@ -137,14 +133,14 @@ public class BuiltinMessage8606 {
          * <p>
          * 单位为秒（s），若路段属性0位为0则没有该字段
          */
-        @Preset.JtStyle.Word(condition = "hasThresholdProperty()")
+        @Preset.JtStyle.Word(condition = "hasThresholdProperty()", desc = "路段行驶过长阈值")
         private Integer longDriveThreshold;
 
         /**
          * 路段行驶不足阈值
          * 单位为秒（s），若路段属性0位为0则没有该字段
          */
-        @Preset.JtStyle.Word(condition = "hasThresholdProperty()")
+        @Preset.JtStyle.Word(condition = "hasThresholdProperty()", desc = "路段行驶不足阈值")
         private Integer shortDriveThreshold;
 
         public boolean hasThresholdProperty() {
@@ -156,7 +152,7 @@ public class BuiltinMessage8606 {
          * <p>
          * 单位为公里每小时（km/h），若路段属性 1 位为 0 则没有该字段
          */
-        @Preset.JtStyle.Word(condition = "hasSpeedLimitProperty()")
+        @Preset.JtStyle.Word(condition = "hasSpeedLimitProperty()", desc = "路段最高速度")
         private Integer maxSpeedLimit;
 
         /**
@@ -164,7 +160,7 @@ public class BuiltinMessage8606 {
          * <p>
          * 单位为秒（s），若路段属性1位为0则没有该字段
          */
-        @Preset.JtStyle.Byte(condition = "hasSpeedLimitProperty()")
+        @Preset.JtStyle.Byte(condition = "hasSpeedLimitProperty()", desc = "路段超速持续时间")
         private Short speedingDuration;
 
         public boolean hasSpeedLimitProperty() {

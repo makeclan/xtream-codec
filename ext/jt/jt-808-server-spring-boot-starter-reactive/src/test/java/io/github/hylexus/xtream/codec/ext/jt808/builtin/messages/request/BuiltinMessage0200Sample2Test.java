@@ -19,6 +19,8 @@ package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.BaseCodecTest;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.AlarmIdentifier;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.LocationItem0x64;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.LocationItem0x12;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.LocationItem0x13;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import org.junit.jupiter.api.Test;
 
@@ -28,13 +30,12 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class BuiltinMessage0200Test extends BaseCodecTest {
-
+class BuiltinMessage0200Sample2Test extends BaseCodecTest {
     final LocalDateTime time = LocalDateTime.of(2014, 10, 21, 19, 51, 9);
 
     @Test
     void testEncode() {
-        final BuiltinMessage0200 entity = new BuiltinMessage0200();
+        final BuiltinMessage0200Sample2 entity = new BuiltinMessage0200Sample2();
         entity.setAlarmFlag(123L);
         entity.setStatus(222);
         entity.setLatitude(31000562);
@@ -51,6 +52,8 @@ class BuiltinMessage0200Test extends BaseCodecTest {
         extraItems.put((short) 0x04, 333);
         extraItems.put((short) 0x25, 777L);
         extraItems.put((short) 0x30, (short) 33);
+        extraItems.put((short) 0x12, new LocationItem0x12().setLocationType((short) 1).setAreaId(0).setDirection((short) 1));
+        extraItems.put((short) 0x13, new LocationItem0x13().setLineId(1L).setLineDrivenTime(0).setResult((short) 0));
         extraItems.put((short) 0x31, (short) 55);
         extraItems.put((short) 0x64, new LocationItem0x64()
                 .setAlarmId(222L)
@@ -79,12 +82,12 @@ class BuiltinMessage0200Test extends BaseCodecTest {
         entity.setExtraItems(extraItems);
 
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2019, terminalId2019, 0x0200);
-        assertEquals("7e0200406b010000000001391234432900000000007b000000de01d907f2073d336c029a004e000014102119510901040000006f020200de0302029a0402014d250400000309300121310137642f000000dedf6f03420b0c0d0e0f04d201d907f2073d336c141021195109000131323334353637141021195109010100987e", hex);
+        assertEquals("7e0200407c010000000001391234432900000000007b000000de01d907f2073d336c029a004e000014102119510901040000006f020200de0302029a0402014d2504000003093001211206010000000001130700000001000000310137642f000000dedf6f03420b0c0d0e0f04d201d907f2073d336c1410211951090001313233343536371410211951090101008e7e", hex);
     }
 
     @Test
     void testDecode() {
-        final BuiltinMessage0200 entity = decodeAsEntity(BuiltinMessage0200.class, "0200406b010000000001391234432900000000007b000000de01d907f2073d336c029a004e000014102119510901040000006f020200de0302029a0402014d250400000309300121310137642f000000dedf6f03420b0c0d0e0f04d201d907f2073d336c14102119510900013132333435363714102119510901010098");
+        final BuiltinMessage0200Sample2 entity = decodeAsEntity(BuiltinMessage0200Sample2.class, "0200407c010000000001391234432900000000007b000000de01d907f2073d336c029a004e000014102119510901040000006f020200de0302029a0402014d2504000003093001211206010000000001130700000001000000310137642f000000dedf6f03420b0c0d0e0f04d201d907f2073d336c1410211951090001313233343536371410211951090101008e");
 
         assertEquals(123L, entity.getAlarmFlag());
         assertEquals(222, entity.getStatus());

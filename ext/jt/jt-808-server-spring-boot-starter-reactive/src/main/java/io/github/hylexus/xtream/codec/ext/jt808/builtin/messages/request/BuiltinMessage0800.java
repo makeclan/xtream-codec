@@ -32,7 +32,7 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x0800)
+@Jt808ResponseBody(messageId = 0x0800, desc = "多媒体事件信息上传")
 public class BuiltinMessage0800 {
 
     /**
@@ -40,7 +40,7 @@ public class BuiltinMessage0800 {
      * <p>
      * 包含的CAN总线数据项个数，>0
      */
-    @Preset.JtStyle.Dword
+    @Preset.JtStyle.Dword(desc = "多媒体数据ID")
     private long multimediaDataID;
 
     /**
@@ -48,7 +48,7 @@ public class BuiltinMessage0800 {
      * <p>
      * 0：图像；1：音频；2：视频；
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "多媒体类型。 0：图像；1：音频；2：视频；")
     private short multimediaType;
 
     /**
@@ -60,7 +60,7 @@ public class BuiltinMessage0800 {
      * <li>4：WMV</li>
      * 其他保留
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "多媒体格式编码。0：JPEG; 1: TIF; 2: MP3; 3: WAV; 4: WMV")
     private short multimediaFormatCode;
 
     /**
@@ -75,12 +75,12 @@ public class BuiltinMessage0800 {
      * <li>7：定距拍照</li>
      * 其他保留
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "事件项编码")
     private short eventItemCode;
 
     /**
      * 通道ID
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "通道ID")
     private short channelId;
 }

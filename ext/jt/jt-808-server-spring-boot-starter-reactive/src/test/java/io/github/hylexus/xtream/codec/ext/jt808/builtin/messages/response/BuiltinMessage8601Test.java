@@ -37,6 +37,7 @@ class BuiltinMessage8601Test extends BaseCodecTest {
                 new DwordWrapper(333L)
         ));
         entity.setAreaCount((short) entity.getAreaIdList().size());
+
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2019, terminalId2019);
         assertEquals("7e8601400d01000000000139123443290000030000006f000000de0000014d417e", hex);
     }

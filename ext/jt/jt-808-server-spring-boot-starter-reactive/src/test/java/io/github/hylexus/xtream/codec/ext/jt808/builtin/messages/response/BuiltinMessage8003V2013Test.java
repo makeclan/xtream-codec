@@ -16,8 +16,8 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
+import io.github.hylexus.xtream.codec.core.type.wrapper.WordWrapper;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.BaseCodecTest;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.WordWrapper;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import org.junit.jupiter.api.Test;
 
@@ -51,9 +51,9 @@ class BuiltinMessage8003V2013Test extends BaseCodecTest {
         assertEquals(111, entity.getOriginalMessageFlowId());
         assertEquals(3, entity.getPackageCount());
         assertEquals(3, entity.getPackageIdList().size());
-        assertEquals(2, entity.getPackageIdList().get(0).getValue());
-        assertEquals(3, entity.getPackageIdList().get(1).getValue());
-        assertEquals(4, entity.getPackageIdList().get(2).getValue());
+        assertEquals(2, entity.getPackageIdList().get(0).asWord());
+        assertEquals(3, entity.getPackageIdList().get(1).asWord());
+        assertEquals(4, entity.getPackageIdList().get(2).asWord());
     }
 
 }

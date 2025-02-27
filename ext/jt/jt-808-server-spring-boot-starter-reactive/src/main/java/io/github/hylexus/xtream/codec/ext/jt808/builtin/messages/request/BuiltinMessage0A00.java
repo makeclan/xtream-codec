@@ -16,6 +16,8 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.github.hylexus.xtream.codec.core.jackson.XtreamCodecDebugJsonSerializer;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
@@ -32,20 +34,21 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x0A00)
+@Jt808ResponseBody(messageId = 0x0A00, desc = "终端 RSA 公钥")
 public class BuiltinMessage0A00 {
 
     /**
      * 终端RSA公钥{e,n}中的e
      */
     @SuppressWarnings("checkstyle:membername")
-    @Preset.JtStyle.Dword
+    @Preset.JtStyle.Dword(desc = "终端RSA公钥{e,n}中的e")
     private long e;
 
     /**
      * RSA公钥{e,n}中的n
      */
     @SuppressWarnings("checkstyle:membername")
-    @Preset.JtStyle.Bytes(length = 128)
+    @Preset.JtStyle.Bytes(length = 128, desc = "RSA公钥{e,n}中的n")
+    @JsonSerialize(using = XtreamCodecDebugJsonSerializer.class)
     private byte[] n;
 }

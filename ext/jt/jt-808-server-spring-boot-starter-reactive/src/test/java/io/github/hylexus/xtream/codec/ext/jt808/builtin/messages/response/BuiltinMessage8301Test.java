@@ -35,6 +35,7 @@ class BuiltinMessage8301Test extends BaseCodecTest {
                 new BuiltinMessage8301.EventItem((short) 1, "haha"),
                 new BuiltinMessage8301.EventItem((short) 2, "heihei")
         ));
+
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2013, terminalId2013);
         assertEquals("7e83010010013912344323000001020104686168610206686569686569ee7e", hex);
     }

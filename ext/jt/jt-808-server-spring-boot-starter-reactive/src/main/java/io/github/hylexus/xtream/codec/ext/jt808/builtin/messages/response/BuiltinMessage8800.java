@@ -16,6 +16,8 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.github.hylexus.xtream.codec.core.jackson.XtreamCodecDebugJsonSerializer;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
@@ -32,20 +34,17 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8800)
+@Jt808ResponseBody(messageId = 0x8800, desc = "多媒体数据上传应答")
 public class BuiltinMessage8800 {
     /**
      * 多媒体ID
      * <p>
      * > 0，如收到全部数据包则没有后续字段
      */
-    @Preset.JtStyle.Dword
+    @Preset.JtStyle.Dword(desc = "多媒体ID")
     private long multimediaId;
 
-    /**
-     * 重传包总数
-     */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "重传包总数")
     private short retransmittedPackageCount;
 
     /**
@@ -53,7 +52,8 @@ public class BuiltinMessage8800 {
      * <p>
      * 重传包序号顺序排列，如“包 ID1 包 ID2......包IDn”。
      */
-    @Preset.JtStyle.Bytes(lengthExpression = "2 * getRetransmittedPackageCount()")
+    @Preset.JtStyle.Bytes(lengthExpression = "2 * getRetransmittedPackageCount()", desc = "重传包ID列表")
+    @JsonSerialize(using = XtreamCodecDebugJsonSerializer.class)
     private byte[] retransmittedPackageIdList;
 
     @SuppressWarnings("lombok")

@@ -31,7 +31,7 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8201)
+@Jt808ResponseBody(messageId = 0x8201, desc = "位置信息查询(无消息体)")
 public class BuiltinMessage8201 {
     // 没有消息体
 }

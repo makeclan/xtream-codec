@@ -35,7 +35,7 @@ import java.util.List;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8608)
+@Jt808ResponseBody(messageId = 0x8608, desc = "查询区域或线路数据")
 public class BuiltinMessage8608 {
 
     /**
@@ -45,15 +45,15 @@ public class BuiltinMessage8608 {
      * <li>3 -- 查询多边形区域数据</li>
      * <li>4 -- 查询线路数据</li>
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "查询类型")
     private short type;
 
     /**
      * 要查询的区域或线路的ID数量
      */
-    @Preset.JtStyle.Dword
+    @Preset.JtStyle.Dword(desc = "要查询的区域或线路的ID数量")
     private long count;
 
-    @Preset.JtStyle.List
+    @Preset.JtStyle.List(desc = "ID 列表")
     private List<DwordWrapper> idList;
 }

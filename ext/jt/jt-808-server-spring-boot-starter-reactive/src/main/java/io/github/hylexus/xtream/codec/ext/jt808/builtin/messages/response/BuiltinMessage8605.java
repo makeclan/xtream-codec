@@ -35,15 +35,12 @@ import java.util.List;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8605)
+@Jt808ResponseBody(messageId = 0x8605, desc = "删除多边形区域")
 public class BuiltinMessage8605 {
 
-    /**
-     * 区域数
-     */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "区域数")
     private short areaCount;
 
-    @Preset.JtStyle.List
+    @Preset.JtStyle.List(desc = "区域 ID 列表")
     private List<DwordWrapper> areaIdList;
 }

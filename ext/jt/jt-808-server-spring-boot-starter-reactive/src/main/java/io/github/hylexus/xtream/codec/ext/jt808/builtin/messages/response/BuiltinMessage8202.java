@@ -32,7 +32,7 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8202)
+@Jt808ResponseBody(messageId = 0x8202, desc = "临时位置跟踪控制")
 public class BuiltinMessage8202 {
 
     /**
@@ -40,7 +40,7 @@ public class BuiltinMessage8202 {
      * <p>
      * 单位为秒(s)，0则停止跟踪。停止跟踪无需带后继字段
      */
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "时间间隔")
     private int timeDurationInSeconds;
 
     /**
@@ -51,7 +51,7 @@ public class BuiltinMessage8202 {
      * 送位置汇报
      */
     // todo 这个 condition 待确认
-    @Preset.JtStyle.Dword(condition = "getTimeDurationInSeconds() > 0")
+    @Preset.JtStyle.Dword(condition = "getTimeDurationInSeconds() > 0", desc = "位置跟踪有效期")
     private long traceValidityDurationInSeconds;
 
     @SuppressWarnings("lombok")

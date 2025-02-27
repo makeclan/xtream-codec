@@ -35,36 +35,29 @@ import java.util.List;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x0805)
+@Jt808ResponseBody(messageId = 0x0805, desc = "摄像头立即拍摄命令应答")
 public class BuiltinMessage0805 {
 
-    /**
-     * 流水号
-     * <p>
-     * 对应平台摄像头立即拍摄命令的消息流水号
-     */
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "流水号; 对应平台摄像头立即拍摄命令的消息流水号")
     private int flowId;
 
     /**
      * 0：成功；1：失败；2：通道不支持。
      * 以下字段在结果=0时才有效。
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "0：成功；1：失败；2：通道不支持")
     private short result;
 
     /**
-     * 多媒体ID个数
-     * <p>
      * 拍摄成功的多媒体个数
      */
-    @Preset.JtStyle.Word(condition = "success()")
+    @Preset.JtStyle.Word(condition = "success()", desc = "多媒体ID个数")
     private int multimediaIdCount;
 
     /**
-     * 多媒体ID列表 BYTE[4*n]
+     * BYTE[4*n]
      */
-    @Preset.JtStyle.List(condition = "success()")
+    @Preset.JtStyle.List(condition = "success()", desc = "多媒体ID列表")
     private List<DwordWrapper> multimediaIdList;
 
     public boolean success() {

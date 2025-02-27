@@ -29,7 +29,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class BuiltinMessage65 {
+public class LocationItem0x65 {
 
     // offset[0,4) 报警 ID: 按照报警先后，从0开始循环累加，不区分报警类型。
     @Preset.JtStyle.Dword

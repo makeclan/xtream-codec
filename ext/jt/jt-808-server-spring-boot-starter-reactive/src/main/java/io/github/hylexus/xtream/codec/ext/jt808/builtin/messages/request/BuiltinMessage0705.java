@@ -16,6 +16,8 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.github.hylexus.xtream.codec.core.jackson.XtreamCodecDebugJsonSerializer;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
@@ -35,7 +37,7 @@ import java.util.List;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x0705)
+@Jt808ResponseBody(messageId = 0x0705, desc = "CAN 总线数据上传")
 public class BuiltinMessage0705 {
 
     /**
@@ -80,6 +82,7 @@ public class BuiltinMessage0705 {
          * CAN数据
          */
         @Preset.JtStyle.Bytes(length = 8)
+        @JsonSerialize(using = XtreamCodecDebugJsonSerializer.class)
         private byte[] canData;
     }
 

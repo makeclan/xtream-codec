@@ -17,7 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.WordWrapper;
+import io.github.hylexus.xtream.codec.core.type.wrapper.WordWrapper;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,19 +35,16 @@ import java.util.List;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8003)
+@Jt808ResponseBody(messageId = 0x8003, desc = "服务器补传分包请求(2019)")
 public class BuiltinMessage8003V2019 {
 
-    // byte[0,2)    原始消息流水号
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "原始消息流水号")
     private int originalMessageFlowId;
 
-    // byte[2,4)    重传包总数
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "重传包总数")
     private int packageCount;
 
-    // byte[4, 2n)    重传包 ID 列表
-    @Preset.JtStyle.List
+    @Preset.JtStyle.List(desc = "重传包 ID 列表")
     private List<WordWrapper> packageIdList;
 
 }

@@ -34,6 +34,7 @@ class BuiltinMessage8802Test extends BaseCodecTest {
                 .setEventItemCode((short) 0)
                 .setStartTime(LocalDateTime.of(2021, 4, 12, 14, 30, 3))
                 .setEndTime(LocalDateTime.of(2021, 4, 12, 14, 30, 4));
+
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2019, terminalId2019);
         assertEquals("7e8802400f01000000000139123443290000020300210412143003210412143004b67e", hex);
     }

@@ -32,7 +32,7 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8500)
+@Jt808ResponseBody(messageId = 0x8500, desc = "车辆控制")
 public class BuiltinMessage8500 {
 
     /**
@@ -40,7 +40,7 @@ public class BuiltinMessage8500 {
      * <li>bit[0] -- 0：车门解锁；1：车门加锁</li>
      * <li>bit[1~7] -- 保留</li>
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "控制标志")
     private short type;
 
 }

@@ -32,7 +32,7 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8300)
+@Jt808ResponseBody(messageId = 0x8300, desc = "文本信息下发")
 public class BuiltinMessage8300 {
     /**
      * 标志
@@ -44,7 +44,7 @@ public class BuiltinMessage8300 {
      * <li>bit[5] -- 0：中心导航信息，1：CAN故障码信息</li>
      * <li>bit[6~7] -- 保留</li>
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "标志")
     private short identifier;
 
     /**
@@ -52,6 +52,6 @@ public class BuiltinMessage8300 {
      * <p>
      * 最长为 1024 字节，经 GBK 编码
      */
-    @Preset.JtStyle.Str
+    @Preset.JtStyle.Str(desc = "文本信息")
     private String text;
 }

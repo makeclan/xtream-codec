@@ -32,24 +32,16 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8001)
+@Jt808ResponseBody(messageId = 0x8001, desc = "平台通用应答")
 public class BuiltinMessage8001 {
-    /**
-     * 1. 应答流水号 WORD    对应的终端消息的流水号
-     */
-    @Preset.JtStyle.Word
+
+    @Preset.JtStyle.Word(desc = "应答流水号; 对应终端消息的流水号")
     protected int clientFlowId;
 
-    /**
-     * 2. 应答id WORD     对应的终端消息的 ID
-     */
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "应答id; 对应终端消息的ID")
     protected int clientMessageId;
 
-    /**
-     * 3. 结果  BYTE    0:成功/确认; 1:失败; 2:消息有误; 3:不支持; 4:报警处理确认
-     */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "结果; 0:成功/确认; 1:失败; 2:消息有误; 3:不支持; 4:报警处理确认")
     protected short result;
 
 }

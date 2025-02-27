@@ -29,6 +29,7 @@ class BuiltinMessage8805Test extends BaseCodecTest {
         final BuiltinMessage8805 entity = new BuiltinMessage8805()
                 .setMultimediaId(1)
                 .setDeleteFlag((short) 1);
+
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2019, terminalId2019);
         assertEquals("7e88054005010000000001391234432900000000000101bd7e", hex);
     }

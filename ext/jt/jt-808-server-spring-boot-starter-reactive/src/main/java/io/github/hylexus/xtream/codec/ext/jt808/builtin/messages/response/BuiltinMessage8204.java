@@ -31,7 +31,7 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8204)
+@Jt808ResponseBody(messageId = 0x8204, desc = "链路监测(无消息体)")
 public class BuiltinMessage8204 {
     // 没有消息体
 }

@@ -22,7 +22,8 @@ dependencies {
 
     compileOnly("org.springframework.boot:spring-boot-starter-actuator")
     compileOnly("io.projectreactor:reactor-core-micrometer")
-    compileOnly("org.springframework.boot:spring-boot-starter-json")
+    implementation("org.springframework.boot:spring-boot-starter-json")
+    testImplementation("org.springframework.boot:spring-boot-starter-json")
 
     implementation("jakarta.annotation:jakarta.annotation-api")
 

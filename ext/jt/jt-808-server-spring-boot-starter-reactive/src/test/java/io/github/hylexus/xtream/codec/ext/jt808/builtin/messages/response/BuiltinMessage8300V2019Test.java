@@ -30,6 +30,7 @@ class BuiltinMessage8300V2019Test extends BaseCodecTest {
         entity.setIdentifier((short) 1);
         entity.setTextType((short) 1);
         entity.setText("HelloWorld 汉字 GBK 编码");
+
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2019, terminalId2019);
         assertEquals("7e8300401a01000000000139123443290000010148656c6c6f576f726c6420babad7d62047424b20b1e0c2ebbb7e", hex);
     }

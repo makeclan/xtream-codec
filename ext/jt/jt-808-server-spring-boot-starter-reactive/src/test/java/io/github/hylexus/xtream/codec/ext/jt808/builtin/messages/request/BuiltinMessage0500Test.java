@@ -18,7 +18,7 @@ package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.BaseCodecTest;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.AlarmIdentifier;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.BuiltinMessage64;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.LocationItem0x64;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import org.junit.jupiter.api.Test;
 
@@ -55,7 +55,7 @@ class BuiltinMessage0500Test extends BaseCodecTest {
         extraItems.put((short) 0x25, 777L);
         extraItems.put((short) 0x30, (short) 33);
         extraItems.put((short) 0x31, (short) 55);
-        extraItems.put((short) 0x64, new BuiltinMessage64()
+        extraItems.put((short) 0x64, new LocationItem0x64()
                 .setAlarmId(222L)
                 .setStatus((short) 223)
                 .setAlarmType((short) 111)
@@ -110,7 +110,7 @@ class BuiltinMessage0500Test extends BaseCodecTest {
         assertEquals((short) 33, extraItems.get((short) 0x30));
         assertEquals((short) 55, extraItems.get((short) 0x31));
 
-        final BuiltinMessage64 message64 = (BuiltinMessage64) extraItems.get((short) 0x64);
+        final LocationItem0x64 message64 = (LocationItem0x64) extraItems.get((short) 0x64);
         assertEquals(222L, message64.getAlarmId());
         assertEquals(223, message64.getStatus());
         assertEquals(111, message64.getAlarmType());

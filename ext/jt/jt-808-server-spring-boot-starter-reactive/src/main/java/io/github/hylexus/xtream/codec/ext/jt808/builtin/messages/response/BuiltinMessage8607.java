@@ -35,15 +35,15 @@ import java.util.List;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8607)
+@Jt808ResponseBody(messageId = 0x8607, desc = "删除路线")
 public class BuiltinMessage8607 {
 
     /**
-     * 路线数
+     *
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "路线数")
     private short areaCount;
 
-    @Preset.JtStyle.List
+    @Preset.JtStyle.List(desc = "路线 ID 列表")
     private List<DwordWrapper> areaIdList;
 }

@@ -32,7 +32,7 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8804)
+@Jt808ResponseBody(messageId = 0x8804, desc = "录音开始命令")
 public class BuiltinMessage8804 {
 
     /**
@@ -40,14 +40,14 @@ public class BuiltinMessage8804 {
      * <p>
      * 0：停止录音；0x01：开始录音；
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "录音命令")
     private short recordingCommand;
     /**
      * 录音时间
      * <p>
      * 单位为秒（s） ，0表示一直录音
      */
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "录音时间")
     private int recordingDuration;
 
     /**
@@ -55,7 +55,7 @@ public class BuiltinMessage8804 {
      * <p>
      * 0：实时上传；1：保存
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "保存标志")
     private short saveFlag;
 
     /**
@@ -63,6 +63,6 @@ public class BuiltinMessage8804 {
      * <p>
      * 0：8K；1：11K；2：23K；3：32K；其他保留
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "音频采样率")
     private short audioSampleRate;
 }

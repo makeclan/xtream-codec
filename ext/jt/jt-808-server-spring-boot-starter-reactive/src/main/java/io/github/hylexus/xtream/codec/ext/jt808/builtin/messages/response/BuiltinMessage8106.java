@@ -35,12 +35,12 @@ import java.util.List;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8106)
+@Jt808ResponseBody(messageId = 0x8106, desc = "查询终端参数")
 public class BuiltinMessage8106 {
 
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "参数总数")
     private short parameterCount;
 
-    @Preset.JtStyle.List
+    @Preset.JtStyle.List(desc = "参数 ID 列表")
     private List<DwordWrapper> parameterIdList;
 }

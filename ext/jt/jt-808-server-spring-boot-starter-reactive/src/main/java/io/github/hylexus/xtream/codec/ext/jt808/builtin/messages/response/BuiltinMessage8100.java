@@ -35,19 +35,19 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8100)
+@Jt808ResponseBody(messageId = 0x8100, desc = "终端注册应答")
 public class BuiltinMessage8100 {
 
     // 1. byte[0,2) WORD 对应的终端注册消息的流水号
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "对应的终端注册消息的流水号")
     private int clientFlowId;
 
     // 2. byte[2,3) BYTE 0:成功;1:车辆已被注册;2:数据库中无该车辆; 3:终端已被注册;4:数据库中无该终端
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "注册结果")
     private short result;
 
     // 3. byte[3,x) STRING 鉴权码(只有在成功后才有该字段)
-    @Preset.JtStyle.Str(condition = "result == 0")
+    @Preset.JtStyle.Str(condition = "result == 0", desc = "鉴权码")
     private String authCode;
 
 }

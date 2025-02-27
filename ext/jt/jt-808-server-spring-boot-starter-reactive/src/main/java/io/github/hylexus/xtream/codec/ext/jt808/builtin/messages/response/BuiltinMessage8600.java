@@ -38,7 +38,7 @@ import java.util.List;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8600)
+@Jt808ResponseBody(messageId = 0x8600, desc = "设置圆形区域")
 public class BuiltinMessage8600 {
 
     /**
@@ -47,16 +47,13 @@ public class BuiltinMessage8600 {
      * <li>1：追加区域</li>
      * <li>2：修改区域</li>
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "设置属性")
     private short type;
 
-    /**
-     * 区域总数
-     */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "区域总数")
     private short areaCount;
 
-    @Preset.JtStyle.List
+    @Preset.JtStyle.List(desc = "区域项")
     private List<CircularArea> areaList;
 
     @Getter
@@ -64,10 +61,8 @@ public class BuiltinMessage8600 {
     @Accessors(chain = true)
     @ToString
     public static class CircularArea {
-        /**
-         * 区域ID
-         */
-        @Preset.JtStyle.Dword
+
+        @Preset.JtStyle.Dword(desc = "区域ID")
         private long areaId;
 
         /**
@@ -85,7 +80,7 @@ public class BuiltinMessage8600 {
          * <li>bit[14] - 0：进区域开启通信模块；1：进区域关闭通信模块</li>
          * <li>bit[15] - 0：进区域不采集GNSS详细定位数据；1：进区域采集GNSS 详细定位数据</li>
          */
-        @Preset.JtStyle.Word
+        @Preset.JtStyle.Word(desc = "区域属性")
         private int areaProps;
 
         /**
@@ -93,7 +88,7 @@ public class BuiltinMessage8600 {
          * <p>
          * 以度为单位的纬度值乘以10 的6次方，精确到百万分之一度
          */
-        @Preset.JtStyle.Dword
+        @Preset.JtStyle.Dword(desc = "中心点纬度")
         private long latitude;
 
         /**
@@ -101,7 +96,7 @@ public class BuiltinMessage8600 {
          * <p>
          * 以度为单位的纬度值乘以10 的6次方，精确到百万分之一度
          */
-        @Preset.JtStyle.Dword
+        @Preset.JtStyle.Dword(desc = "中心点经度")
         private long longitude;
 
         /**
@@ -109,7 +104,7 @@ public class BuiltinMessage8600 {
          * <p>
          * 单位为米(m)，路段为该拐点到下一拐点
          */
-        @Preset.JtStyle.Dword
+        @Preset.JtStyle.Dword(desc = "半径")
         private long radius;
 
         /**
@@ -117,7 +112,7 @@ public class BuiltinMessage8600 {
          * <p>
          * YY-MM-DD-hh-mm-ss，若区域属性0位为0则没有该字段
          */
-        @Preset.JtStyle.BcdDateTime(condition = "hasTimeProperty()")
+        @Preset.JtStyle.BcdDateTime(condition = "hasTimeProperty()", desc = "起始时间 BCD[6]")
         private LocalDateTime startTime;
 
         /**
@@ -125,7 +120,7 @@ public class BuiltinMessage8600 {
          * <p>
          * YY-MM-DD-hh-mm-ss，若区域属性0位为0则没有该字段
          */
-        @Preset.JtStyle.BcdDateTime(condition = "hasTimeProperty()")
+        @Preset.JtStyle.BcdDateTime(condition = "hasTimeProperty()", desc = "结束时间 BCD[6]")
         private LocalDateTime endTime;
 
         public boolean hasTimeProperty() {
@@ -137,7 +132,7 @@ public class BuiltinMessage8600 {
          * <p>
          * Km/h，若区域属性1位为 0 则没有该字段
          */
-        @Preset.JtStyle.Word(condition = "hasSpeedProperty()")
+        @Preset.JtStyle.Word(condition = "hasSpeedProperty()", desc = "最高速度")
         private int topSpeed;
 
         public boolean hasSpeedProperty() {
@@ -149,7 +144,7 @@ public class BuiltinMessage8600 {
          * <p>
          * 单位为秒（s） （类似表述，同前修改） ，若区域属性1位为0则没有该字段
          */
-        @Preset.JtStyle.Byte(condition = "hasSpeedProperty()")
+        @Preset.JtStyle.Byte(condition = "hasSpeedProperty()", desc = "超速持续时间")
         private short durationOfOverSpeed;
     }
 }

@@ -34,24 +34,16 @@ import java.util.List;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x0802)
+@Jt808ResponseBody(messageId = 0x0802, desc = "存储多媒体数据检索应答")
 public class BuiltinMessage0802 {
 
-    /**
-     * 流水号
-     * <p>
-     * 对应平台摄像头立即拍摄命令的消息流水号
-     */
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "流水号; 对应平台摄像头立即拍摄命令的消息流水号")
     private int flowId;
 
-    /**
-     * 多媒体数据总项数
-     */
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "多媒体数据总项数")
     private short multimediaDataItemCount;
 
-    @Preset.JtStyle.List
+    @Preset.JtStyle.List(desc = "数据项列表")
     private List<Item> itemList;
 
     @Getter
@@ -59,24 +51,14 @@ public class BuiltinMessage0802 {
     @ToString
     @Accessors(chain = true)
     public static class Item {
-        /**
-         * 多媒体ID
-         */
-        @Preset.JtStyle.Dword
+
+        @Preset.JtStyle.Dword(desc = "多媒体ID")
         private long multimediaId;
 
-        /**
-         * 多媒体类型
-         * <p>
-         * 0：图像；1：音频；2：视频
-         */
-        @Preset.JtStyle.Byte
+        @Preset.JtStyle.Byte(desc = "多媒体类型。 0：图像；1：音频；2：视频")
         private short multimediaType;
 
-        /**
-         * 通道ID
-         */
-        @Preset.JtStyle.Byte
+        @Preset.JtStyle.Byte(desc = "通道ID")
         private short channelId;
 
         /**
@@ -84,13 +66,13 @@ public class BuiltinMessage0802 {
          * <p>
          * 0：平台下发指令；1：定时动作；2：抢劫报警触发；3：碰撞侧翻报警触发；其他保留
          */
-        @Preset.JtStyle.Byte
+        @Preset.JtStyle.Byte(desc = "事件项编码")
         private short eventItemCode;
 
         /**
          * 位置信息汇报(0x0200)消息体
          */
-        @Preset.JtStyle.Object(length = 28)
+        @Preset.JtStyle.Object(length = 28, desc = "位置信息汇报")
         private BuiltinMessage0200 location;
     }
 }

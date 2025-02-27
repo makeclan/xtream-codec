@@ -32,7 +32,7 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8400)
+@Jt808ResponseBody(messageId = 0x8400, desc = "电话回拨")
 public class BuiltinMessage8400 {
 
     /**
@@ -40,13 +40,10 @@ public class BuiltinMessage8400 {
      * <p>
      * 0:普通通话；1:监听
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "标志")
     private short flag;
 
-    /**
-     * 电话号码 最长为20字节
-     */
-    @Preset.JtStyle.Str
+    @Preset.JtStyle.Str(desc = "电话号码 最长为20字节")
     private String phoneNumber;
 
 }

@@ -20,6 +20,8 @@ import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.netty.buffer.ByteBuf;
 
+import java.util.StringJoiner;
+
 public class StringWrapperGbk implements DataWrapper<String> {
 
     @Preset.RustStyle.str(charset = XtreamConstants.CHARSET_NAME_GBK)
@@ -74,4 +76,12 @@ public class StringWrapperGbk implements DataWrapper<String> {
         this.length = value.getBytes(XtreamConstants.CHARSET_GBK).length;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", StringWrapperGbk.class.getSimpleName() + "[", "]")
+                .add("value='" + value + "'")
+                .toString();
+    }
+
 }

@@ -36,6 +36,7 @@ class BuiltinMessage8801Test extends BaseCodecTest {
                 .setContrastRate((short) 100)
                 .setSaturation((short) 99)
                 .setChroma((short) 111);
+
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2019, terminalId2019);
         assertEquals("7e8801400c01000000000139123443290000160000000001ff03c764636ff47e", hex);
     }

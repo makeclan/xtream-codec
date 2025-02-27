@@ -19,6 +19,8 @@ package io.github.hylexus.xtream.codec.core.type.wrapper;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.netty.buffer.ByteBuf;
 
+import java.util.StringJoiner;
+
 public class I32Wrapper implements DataWrapper<Integer> {
     static final int MASK = 0xFF;
     @Preset.RustStyle.i32
@@ -75,4 +77,12 @@ public class I32Wrapper implements DataWrapper<Integer> {
         this.value = value;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", I32Wrapper.class.getSimpleName() + "[", "]")
+                .add("value=" + value)
+                .toString();
+    }
+
 }

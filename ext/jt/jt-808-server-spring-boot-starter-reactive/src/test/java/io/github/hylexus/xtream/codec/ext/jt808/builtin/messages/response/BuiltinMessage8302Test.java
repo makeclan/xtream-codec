@@ -33,7 +33,6 @@ class BuiltinMessage8302Test extends BaseCodecTest {
 
         final String question = "你是谁?";
         entity.setQuestion(question);
-
         entity.setCandidateAnswerList(List.of(
                 new BuiltinMessage8302.CandidateAnswer()
                         .setAnswerId((short) 1)
@@ -42,6 +41,7 @@ class BuiltinMessage8302Test extends BaseCodecTest {
                         .setAnswerId((short) 2)
                         .setAnswer("李四")
         ));
+
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2013, terminalId2013);
         assertEquals("7e8302001701391234432300000107c4e3cac7cbad3f010004d5c5c8fd020004c0eecbc49a7e", hex);
     }

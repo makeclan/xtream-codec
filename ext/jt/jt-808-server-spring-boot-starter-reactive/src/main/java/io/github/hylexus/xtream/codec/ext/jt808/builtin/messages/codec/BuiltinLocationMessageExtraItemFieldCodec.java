@@ -31,10 +31,10 @@ public class BuiltinLocationMessageExtraItemFieldCodec
 
     private EntityFieldCodec<LocationItem0x12> locationItem0x12FieldCodec;
     private EntityFieldCodec<LocationItem0x13> locationItem0x13FieldCodec;
-    private EntityFieldCodec<BuiltinMessage64> locationItem0x64FieldCodec;
-    private EntityFieldCodec<BuiltinMessage65> locationItem0x65FieldCodec;
-    private EntityFieldCodec<BuiltinMessage66> locationItem0x66FieldCodec;
-    private EntityFieldCodec<BuiltinMessage67> locationItem0x67FieldCodec;
+    private EntityFieldCodec<LocationItem0x64> locationItem0x64FieldCodec;
+    private EntityFieldCodec<LocationItem0x65> locationItem0x65FieldCodec;
+    private EntityFieldCodec<LocationItem0x66> locationItem0x66FieldCodec;
+    private EntityFieldCodec<LocationItem0x67> locationItem0x67FieldCodec;
 
     @Override
     protected FieldCodec<?> getKeyFieldCodec() {
@@ -71,10 +71,10 @@ public class BuiltinLocationMessageExtraItemFieldCodec
     public void setBeanMetadataRegistry(BeanMetadataRegistry registry) {
         this.locationItem0x12FieldCodec = new EntityFieldCodec<>(registry, LocationItem0x12.class);
         this.locationItem0x13FieldCodec = new EntityFieldCodec<>(registry, LocationItem0x13.class);
-        this.locationItem0x64FieldCodec = new EntityFieldCodec<>(registry, BuiltinMessage64.class);
-        this.locationItem0x65FieldCodec = new EntityFieldCodec<>(registry, BuiltinMessage65.class);
-        this.locationItem0x66FieldCodec = new EntityFieldCodec<>(registry, BuiltinMessage66.class);
-        this.locationItem0x67FieldCodec = new EntityFieldCodec<>(registry, BuiltinMessage67.class);
+        this.locationItem0x64FieldCodec = new EntityFieldCodec<>(registry, LocationItem0x64.class);
+        this.locationItem0x65FieldCodec = new EntityFieldCodec<>(registry, LocationItem0x65.class);
+        this.locationItem0x66FieldCodec = new EntityFieldCodec<>(registry, LocationItem0x66.class);
+        this.locationItem0x67FieldCodec = new EntityFieldCodec<>(registry, LocationItem0x67.class);
     }
 
     public static class OverSpeedAlarmItemFieldCodec implements FieldCodec<OverSpeedAlarmItem> {

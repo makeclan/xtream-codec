@@ -23,20 +23,20 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BuiltinMessage8607Test extends BaseCodecTest {
 
     @Test
     void testEncode() {
         final BuiltinMessage8607 entity = new BuiltinMessage8607();
-
         entity.setAreaIdList(List.of(
                 new DwordWrapper(111L),
                 new DwordWrapper(222L),
                 new DwordWrapper(333L)
         ));
         entity.setAreaCount((short) entity.getAreaIdList().size());
+
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2019, terminalId2019);
         assertEquals("7e8607400d01000000000139123443290000030000006f000000de0000014d477e", hex);
     }

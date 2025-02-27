@@ -3,6 +3,7 @@ import {onMounted, reactive, ref} from "vue";
 import {requestCodecOptionsApi, requestDecodeMessageApi} from "../api/codec-api.ts";
 import {ClassMetadata, DecodeResult} from "../types/model.ts";
 import {codecMockData, toBinaryString, toHexString} from "../utils/codec-utils.ts";
+import {getLocalStorage, setLocalStorage} from "../utils/storage.ts";
 
 enum DecodeMode {
   SINGLE, MULTIPLE
@@ -56,8 +57,13 @@ const onDecodeBtbClick = async () => {
     treeData.value = [pageState.decodeResult.multiple.details]
   }
 }
+const bodyClassStorageKey = "xtream-codec-decoding-entity-class"
 const onEntityClassChange = (value: keyof object) => {
-  pageState.query.hexString = codecMockData[value]?.hexString;
+  const data = codecMockData[value]
+  if (data) {
+    pageState.query.hexString = data.hexString;
+    setLocalStorage(bodyClassStorageKey, pageState.query)
+  }
 }
 const defaultProps = {
   children: 'children',
@@ -70,6 +76,10 @@ const loadClassMetadata = async () => {
 }
 onMounted(async () => {
   await loadClassMetadata()
+  const savedEntityClass = getLocalStorage<{ bodyClass: string, hexString: string }>(bodyClassStorageKey)
+  if (savedEntityClass) {
+    pageState.query = savedEntityClass
+  }
 })
 </script>
 
@@ -102,7 +112,7 @@ onMounted(async () => {
           <el-input v-model="pageState.query.hexString" type="textarea" :rows="3"/>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onDecodeBtbClick" style="width: 100%;" size="large">解析</el-button>
+          <el-button type="primary" @click="onDecodeBtbClick" style="width: 100%;" size="large">解码</el-button>
         </el-form-item>
       </el-form>
     </div>

@@ -18,6 +18,7 @@ package io.github.hylexus.xtream.debug.ext.jt808.service.impl;
 
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage9208;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.*;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.BuiltinMessage0200;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808CommandSender;
@@ -64,22 +65,22 @@ public class DemoLocationServiceImpl implements DemoLocationService {
     private void processExtraItemList(Jt808Session session, Map<Short, Object> groupById) {
         // 苏标: 高级驾驶辅助系统报警信息，定义见表 4-15
         // ADAS模块视频通道
-        this.process0x64IfNecessary(session, (BuiltinMessage64) groupById.get((short) 0x64));
+        this.process0x64IfNecessary(session, (LocationItem0x64) groupById.get((short) 0x64));
 
         // 苏标: 驾驶员状态监测系统报警信息，定义见表 4-17
         // DSM模块视频通道
-        this.process0x65IfNecessary(session, (BuiltinMessage65) groupById.get((short) 0x65));
+        this.process0x65IfNecessary(session, (LocationItem0x65) groupById.get((short) 0x65));
 
         // 苏标: 胎压监测系统报警信息，定义见表 4-18
         // TPMS 轮胎气压监测系统
-        this.process0x66IfNecessary(session, (BuiltinMessage66) groupById.get((short) 0x66));
+        this.process0x66IfNecessary(session, (LocationItem0x66) groupById.get((short) 0x66));
 
         // 苏标: 盲区监测系统报警信息，定义见表 4-20
         // BSD 盲点监测系统
-        this.process0x67IfNecessary(session, (BuiltinMessage67) groupById.get((short) 0x67));
+        this.process0x67IfNecessary(session, (LocationItem0x67) groupById.get((short) 0x67));
     }
 
-    private void process0x67IfNecessary(Jt808Session session, BuiltinMessage67 message67) {
+    private void process0x67IfNecessary(Jt808Session session, LocationItem0x67 message67) {
         if (message67 == null) {
             return;
         }
@@ -87,7 +88,7 @@ public class DemoLocationServiceImpl implements DemoLocationService {
         this.doSendMsg9208(session, message67.getAlarmIdentifier());
     }
 
-    private void process0x66IfNecessary(Jt808Session session, BuiltinMessage66 message66) {
+    private void process0x66IfNecessary(Jt808Session session, LocationItem0x66 message66) {
         if (message66 == null) {
             return;
         }
@@ -95,7 +96,7 @@ public class DemoLocationServiceImpl implements DemoLocationService {
         this.doSendMsg9208(session, message66.getAlarmIdentifier());
     }
 
-    private void process0x65IfNecessary(Jt808Session session, BuiltinMessage65 message65) {
+    private void process0x65IfNecessary(Jt808Session session, LocationItem0x65 message65) {
         if (message65 == null) {
             return;
         }
@@ -103,7 +104,7 @@ public class DemoLocationServiceImpl implements DemoLocationService {
         this.doSendMsg9208(session, message65.getAlarmIdentifier());
     }
 
-    private void process0x64IfNecessary(Jt808Session session, BuiltinMessage64 message64) {
+    private void process0x64IfNecessary(Jt808Session session, LocationItem0x64 message64) {
         if (message64 == null) {
             return;
         }
@@ -112,11 +113,10 @@ public class DemoLocationServiceImpl implements DemoLocationService {
     }
 
     private void doSendMsg9208(Jt808Session session, AlarmIdentifier alarmIdentifier) {
-        final BuiltinMsg9208 msg9208 = new BuiltinMsg9208();
+        final BuiltinMessage9208 msg9208 = new BuiltinMessage9208();
 
         final String serverIp = demoAppConfigProperties.getAttachmentServer().getServerIp();
         msg9208.setAttachmentServerIp(serverIp);
-        msg9208.setAttachmentServerIpLength((short) serverIp.length());
         msg9208.setAttachmentServerPortTcp(serverProperties.getAttachmentServer().getTcpServer().getPort());
         msg9208.setAttachmentServerPortUdp(serverProperties.getAttachmentServer().getUdpServer().getPort());
         msg9208.setAlarmIdentifier(alarmIdentifier);

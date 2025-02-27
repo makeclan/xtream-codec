@@ -23,6 +23,7 @@ import io.netty.buffer.ByteBuf;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.StringJoiner;
 
 public class StringWrapperBcd implements DataWrapper<String> {
 
@@ -80,4 +81,12 @@ public class StringWrapperBcd implements DataWrapper<String> {
         this.length = BcdOps.encodeBcd8421AsBytes(value).length;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", StringWrapperBcd.class.getSimpleName() + "[", "]")
+                .add("value='" + value + "'")
+                .toString();
+    }
+
 }

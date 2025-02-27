@@ -36,7 +36,7 @@ import java.util.List;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8602)
+@Jt808ResponseBody(messageId = 0x8602, desc = "设置矩形区域")
 public class BuiltinMessage8602 {
 
     /**
@@ -45,19 +45,13 @@ public class BuiltinMessage8602 {
      * <li>1：追加区域</li>
      * <li>2：修改区域</li>
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "设置属性")
     private short type;
 
-    /**
-     * 区域总数
-     */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "区域总数")
     private short areaCount;
 
-    /**
-     * 区域列表
-     */
-    @Preset.JtStyle.List
+    @Preset.JtStyle.List(desc = "区域列表")
     private List<RectangularArea> areaList;
 
     @Getter
@@ -65,10 +59,8 @@ public class BuiltinMessage8602 {
     @ToString
     @Accessors(chain = true)
     public static class RectangularArea {
-        /**
-         * 区域ID
-         */
-        @Preset.JtStyle.Dword
+
+        @Preset.JtStyle.Dword(desc = "区域ID")
         private long areaId;
 
         /**
@@ -86,29 +78,29 @@ public class BuiltinMessage8602 {
          * <li>bit[14] - 0：进区域开启通信模块；1：进区域关闭通信模块</li>
          * <li>bit[15] - 0：进区域不采集GNSS详细定位数据；1：进区域采集GNSS 详细定位数据</li>
          */
-        @Preset.JtStyle.Word
+        @Preset.JtStyle.Word(desc = "区域属性")
         private int areaProps;
 
         /**
          * 左上点纬度: 以度为单位的纬度值乘以10 的6次方，精确到百万分之一度
          */
-        @Preset.JtStyle.Dword
+        @Preset.JtStyle.Dword(desc = "左上点纬度")
         private long leftTopLatitude;
         /**
          * 左上点经度: 以度为单位的纬度值乘以10 的6次方，精确到百万分之一度
          */
-        @Preset.JtStyle.Dword
+        @Preset.JtStyle.Dword(desc = "左上点经度")
         private long leftTopLongitude;
 
         /**
          * 右下点纬度: 以度为单位的纬度值乘以10 的6次方，精确到百万分之一度
          */
-        @Preset.JtStyle.Dword
+        @Preset.JtStyle.Dword(desc = "右下点纬度")
         private long rightBottomLatitude;
         /**
          * 右下点经度: 以度为单位的纬度值乘以10 的6次方，精确到百万分之一度
          */
-        @Preset.JtStyle.Dword
+        @Preset.JtStyle.Dword(desc = "右下点经度")
         private long rightBottomLongitude;
 
         /**
@@ -116,7 +108,7 @@ public class BuiltinMessage8602 {
          * <p>
          * YY-MM-DD-hh-mm-ss，若区域属性0位为0则没有该字段
          */
-        @Preset.JtStyle.BcdDateTime(condition = "hasTimeProperty()")
+        @Preset.JtStyle.BcdDateTime(condition = "hasTimeProperty()", desc = "起始时间 BCD[6]")
         private LocalDateTime startTime;
 
         /**
@@ -124,7 +116,7 @@ public class BuiltinMessage8602 {
          * <p>
          * YY-MM-DD-hh-mm-ss，若区域属性0位为0则没有该字段
          */
-        @Preset.JtStyle.BcdDateTime(condition = "hasTimeProperty()")
+        @Preset.JtStyle.BcdDateTime(condition = "hasTimeProperty()", desc = "结束时间 BCD[6]")
         private LocalDateTime endTime;
 
         public boolean hasTimeProperty() {
@@ -136,7 +128,7 @@ public class BuiltinMessage8602 {
          * <p>
          * Km/h，若区域属性1位为 0 则没有该字段
          */
-        @Preset.JtStyle.Word(condition = "hasSpeedProperty()")
+        @Preset.JtStyle.Word(condition = "hasSpeedProperty()", desc = "最高速度")
         private int topSpeed;
 
         public boolean hasSpeedProperty() {
@@ -148,7 +140,7 @@ public class BuiltinMessage8602 {
          * <p>
          * 单位为秒（s） （类似表述，同前修改） ，若区域属性1位为0则没有该字段
          */
-        @Preset.JtStyle.Byte(condition = "hasSpeedProperty()")
+        @Preset.JtStyle.Byte(condition = "hasSpeedProperty()", desc = "超速持续时间")
         private short durationOfOverSpeed;
     }
 }

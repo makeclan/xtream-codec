@@ -17,7 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.WordWrapper;
+import io.github.hylexus.xtream.codec.core.type.wrapper.WordWrapper;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;

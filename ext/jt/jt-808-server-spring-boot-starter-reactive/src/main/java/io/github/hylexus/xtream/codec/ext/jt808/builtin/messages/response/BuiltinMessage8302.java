@@ -35,7 +35,7 @@ import java.util.List;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8302)
+@Jt808ResponseBody(messageId = 0x8302, desc = "提问下发")
 public class BuiltinMessage8302 {
     /**
      * 事件类型
@@ -46,20 +46,14 @@ public class BuiltinMessage8302 {
      * <li>bit[4] -- 1：广告屏显示</li>
      * <li>bit[5~7] -- 保留</li>
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "事件类型")
     private short identifier;
 
-    /**
-     * 问题
-     */
     // prependLengthFieldType: 前置一个 u8类型的字段 表示 问题内容长度
-    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8)
+    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8, desc = "问题")
     private String question;
 
-    /**
-     * 候选答案列表
-     */
-    @Preset.JtStyle.List
+    @Preset.JtStyle.List(desc = "候选答案列表")
     private List<CandidateAnswer> candidateAnswerList;
 
     @Getter
@@ -67,17 +61,12 @@ public class BuiltinMessage8302 {
     @ToString
     @Accessors(chain = true)
     public static class CandidateAnswer {
-        /**
-         * 答案 ID
-         */
-        @Preset.JtStyle.Byte
+
+        @Preset.JtStyle.Byte(desc = "答案 ID")
         private short answerId;
 
-        /**
-         * 答案内容
-         */
         // prependLengthFieldType: 前置一个 u16(Word)类型的字段 表示 答案内容
-        @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u16)
+        @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u16, desc = "答案内容")
         private String answer;
 
     }

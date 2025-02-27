@@ -28,7 +28,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
  *
  * @author hylexus
  */
-@Jt808ResponseBody(messageId = 0x8001)
+@Jt808ResponseBody(messageId = 0x8001, desc = "BuiltinMessage8001的别名")
 public class ServerCommonReplyMessage extends BuiltinMessage8001 {
 
     public static ServerCommonReplyMessage success(Jt808RequestEntity<?> requestEntity) {

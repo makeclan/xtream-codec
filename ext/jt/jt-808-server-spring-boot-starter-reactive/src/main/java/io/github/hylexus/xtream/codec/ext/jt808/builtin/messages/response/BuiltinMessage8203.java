@@ -32,7 +32,7 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8203)
+@Jt808ResponseBody(messageId = 0x8203, desc = "人工确认报警消息")
 public class BuiltinMessage8203 {
 
     /**
@@ -40,7 +40,7 @@ public class BuiltinMessage8203 {
      * <p>
      * 需人工确认的报警消息流水号，0 表示该报警类型所有消息
      */
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "报警消息流水号")
     private int flowId;
 
     /**
@@ -57,7 +57,7 @@ public class BuiltinMessage8203 {
      * <li>bi[28] - 1：确认车辆非法位移报警；</li>
      * <li>bi[29~31] - 保留</li>
      */
-    @Preset.JtStyle.Dword
+    @Preset.JtStyle.Dword(desc = "人工确认报警类型")
     private long alarmType;
 
 }

@@ -32,19 +32,12 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8805)
+@Jt808ResponseBody(messageId = 0x8805, desc = "单条存储多媒体数据检索上传命令")
 public class BuiltinMessage8805 {
 
-    /**
-     * 多媒体ID
-     */
-    @Preset.JtStyle.Dword
+    @Preset.JtStyle.Dword(desc = "多媒体ID")
     private int multimediaId;
-    /**
-     * 删除标志
-     * <p>
-     * 0：保留；1：删除；
-     */
-    @Preset.JtStyle.Byte
+
+    @Preset.JtStyle.Byte(desc = "删除标志 0：保留；1：删除；")
     private short deleteFlag;
 }

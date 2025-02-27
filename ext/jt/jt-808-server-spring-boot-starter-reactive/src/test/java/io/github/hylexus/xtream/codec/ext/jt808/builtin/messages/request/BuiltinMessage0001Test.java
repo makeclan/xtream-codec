@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response;
+package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.BaseCodecTest;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
@@ -22,27 +22,26 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class BuiltinMessage8804Test extends BaseCodecTest {
+class BuiltinMessage0001Test extends BaseCodecTest {
 
     @Test
     void testEncode() {
-        final BuiltinMessage8804 entity = new BuiltinMessage8804()
-                .setRecordingCommand((short) 0x01)
-                .setRecordingDuration(10)
-                .setSaveFlag((short) 0)
-                .setAudioSampleRate((short) 3);
-
+        final BuiltinMessage0001 entity = new BuiltinMessage0001()
+                .setServerFlowId(123)
+                .setServerMessageId(0x0200)
+                .setResult((short) 1);
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2019, terminalId2019);
-        assertEquals("7e880440050100000000013912344329000001000a0003b47e", hex);
+
+        assertEquals("7e8001400501000000000139123443290000007b020001c97e", hex);
     }
 
     @Test
     void testDecode() {
-        final String hex = "880440050100000000013912344329000001000a0003b4";
-        final BuiltinMessage8804 entity = decodeAsEntity(BuiltinMessage8804.class, hex);
-        assertEquals(1, entity.getRecordingCommand());
-        assertEquals(10, entity.getRecordingDuration());
-        assertEquals(0, entity.getSaveFlag());
-        assertEquals(3, entity.getAudioSampleRate());
+        final String hex = "8001400501000000000139123443290000007b020001c9";
+        final BuiltinMessage0001 entity = decodeAsEntity(BuiltinMessage0001.class, hex);
+        assertEquals(123, entity.getServerFlowId());
+        assertEquals(0x0200, entity.getServerMessageId());
+        assertEquals(1, entity.getResult());
     }
+
 }

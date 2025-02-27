@@ -3,6 +3,7 @@ import {computed, onMounted, reactive} from "vue";
 import {requestCodecOptionsApi, requestEncodeMessageApi} from "../api/codec-api.ts";
 import {ClassMetadata, EncodeResult} from "../types/model.ts";
 import {codecMockData, toHexString} from "../utils/codec-utils.ts";
+import {getLocalStorage, setLocalStorage} from "../utils/storage.ts";
 
 enum EncodeMode {
   SINGLE, MULTIPLE
@@ -16,6 +17,7 @@ interface PageState {
     encryptionType: number;
     bodyClass: string;
     messageId: number;
+    hasBodyData?: boolean;
     flowId: number;
     reversedBit15InHeader: number;
     maxPackageSize: number;
@@ -77,15 +79,18 @@ const onEncodeBtbClick = async () => {
   pageState.encodeResult = resp
   console.log(resp)
 }
+const bodyClassStorageKey = "xtream-codec-encoding-entity-class"
 const onEntityClassChange = (value: keyof object) => {
   const data = codecMockData[value]
   if (data) {
     pageState.query.messageId = data.messageId
+    pageState.query.hasBodyData = data.hasBodyData
     pageState.temp.bodyJsonString = JSON.stringify(data.bodyJson || {}, null, 4)
   } else {
     pageState.query.messageId = 0
     pageState.temp.bodyJsonString = "{}"
   }
+  setLocalStorage(bodyClassStorageKey, pageState.query.bodyClass)
 }
 const defaultProps = {
   children: 'children',
@@ -98,6 +103,11 @@ const loadClassMetadata = async () => {
 }
 onMounted(async () => {
   await loadClassMetadata()
+  const savedEntityClass = getLocalStorage<string>(bodyClassStorageKey)
+  if (savedEntityClass) {
+    pageState.query.bodyClass = savedEntityClass
+    onEntityClassChange(savedEntityClass as keyof object)
+  }
 })
 </script>
 
@@ -176,10 +186,11 @@ onMounted(async () => {
           </el-col>
         </el-row>
         <el-form-item label="消息体">
-          <el-input v-model="pageState.temp.bodyJsonString" type="textarea" :rows="5" autosize/>
+          <el-input v-model="pageState.temp.bodyJsonString" type="textarea" :rows="5" autosize
+                    :disabled="pageState.query.hasBodyData === false"/>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onEncodeBtbClick" style="width: 100%;" size="large">解析</el-button>
+          <el-button type="primary" @click="onEncodeBtbClick" style="width: 100%;" size="large">编码</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -229,29 +240,29 @@ onMounted(async () => {
         <span class="custom-tree-node">
           <el-tag type="info">{{ data.fieldName || data.spanType }}</el-tag>
           <span v-if="data.spanType === 'RootSpan'">
-            <el-tag type="primary">十六进制: {{ data.hexString }}</el-tag>
+            <el-tag type="primary">编码结果(HEX): {{ data.hexString }}</el-tag>
             <el-tag type="success">实体类: {{ data.entityClass }}</el-tag>
           </span>
           <span v-else-if="data.spanType === 'NestedFieldSpan'">
             <el-tag type="danger" v-if="data.fieldDesc">{{ data.fieldDesc }}</el-tag>
-            <el-tag type="primary">十六进制: {{ data.hexString }}</el-tag>
+            <el-tag type="primary">编码结果(HEX): {{ data.hexString }}</el-tag>
             <el-tag type="success">类型: {{ data.fieldType }}</el-tag>
           </span>
           <span v-else-if="data.spanType == 'BasicFieldSpan'">
             <el-tag type="danger" v-if="data.fieldDesc">{{ data.fieldDesc }}</el-tag>
-            <el-tag type="primary">十六进制: {{ data.hexString }}</el-tag>
-            <el-tag type="warning">解码结果: {{ data.value }}</el-tag>
+            <el-tag type="primary">编码结果(HEX): {{ data.hexString }}</el-tag>
+            <el-tag type="warning">原始值: {{ data.value }}</el-tag>
             <el-tag type="success">解码器: {{ data.fieldCodec }}</el-tag>
           </span>
           <span v-else-if="data.spanType == 'PrependLengthFieldSpan'">
             <el-tag type="danger" v-if="data.fieldDesc">{{ data.fieldDesc }}</el-tag>
-            <el-tag type="primary">十六进制: {{ data.hexString }}</el-tag>
-            <el-tag type="warning">解码结果: {{ data.value }}</el-tag>
+            <el-tag type="primary">编码结果(HEX): {{ data.hexString }}</el-tag>
+            <el-tag type="warning">原始值: {{ data.value }}</el-tag>
             <el-tag type="success">解码器: {{ data.fieldCodec }}</el-tag>
           </span>
           <span v-else-if="data.spanType === 'CollectionFieldSpan'">
             <el-tag type="danger" v-if="data.fieldDesc">{{ data.fieldDesc }}</el-tag>
-            <el-tag type="primary">十六进制: {{ data.hexString }}</el-tag>
+            <el-tag type="primary">编码结果(HEX): {{ data.hexString }}</el-tag>
             <el-tag type="warning">类型: {{ data.fieldType }}</el-tag>
           </span>
           <span v-else-if="data.spanType === 'CollectionItemSpan'">
@@ -259,16 +270,16 @@ onMounted(async () => {
           </span>
           <span v-else-if="data.spanType === 'MapFieldSpan'">
             <el-tag type="danger" v-if="data.fieldDesc">{{ data.fieldDesc }}</el-tag>
-            <el-tag type="primary">十六进制: {{ data.hexString }}</el-tag>
+            <el-tag type="primary">编码结果(HEX): {{ data.hexString }}</el-tag>
           </span>
           <span v-else-if="data.spanType === 'MapEntrySpan'">
             <el-tag type="warning">offset: {{ data.offset }}</el-tag>
-            <el-tag type="primary">十六进制: {{ data.hexString }}</el-tag>
+            <el-tag type="primary">编码结果(HEX): {{ data.hexString }}</el-tag>
           </span>
           <span v-else-if="data.spanType === 'MapEntryItemSpan'">
             <el-tag type="primary">类型: {{ data.type }}</el-tag>
-            <el-tag type="primary">十六进制: {{ data.hexString }}</el-tag>
-            <el-tag type="warning">解码结果: {{ data.value }}</el-tag>
+            <el-tag type="primary">编码结果(HEX): {{ data.hexString }}</el-tag>
+            <el-tag type="warning">原始值: {{ data.value }}</el-tag>
             <el-tag type="success">解码器: {{ data.fieldCodec }}</el-tag>
           </span>
         </span>

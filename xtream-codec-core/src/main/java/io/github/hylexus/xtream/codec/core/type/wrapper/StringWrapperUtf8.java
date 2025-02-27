@@ -22,6 +22,7 @@ import io.netty.buffer.ByteBuf;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.StringJoiner;
 
 public class StringWrapperUtf8 implements DataWrapper<String> {
 
@@ -79,4 +80,12 @@ public class StringWrapperUtf8 implements DataWrapper<String> {
         this.length = value.getBytes(UTF_8).length;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", StringWrapperUtf8.class.getSimpleName() + "[", "]")
+                .add("value='" + value + "'")
+                .toString();
+    }
+
 }

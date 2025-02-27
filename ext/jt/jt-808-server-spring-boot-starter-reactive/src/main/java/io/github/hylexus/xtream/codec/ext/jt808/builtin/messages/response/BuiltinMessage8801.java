@@ -32,12 +32,12 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8801)
+@Jt808ResponseBody(messageId = 0x8801, desc = "摄像头立即拍摄命令")
 public class BuiltinMessage8801 {
     /**
      * 通道ID > 0
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "通道ID")
     private short chanelId;
 
     /**
@@ -47,7 +47,7 @@ public class BuiltinMessage8801 {
      * 0xFFFF 表示录像；
      * 其它表示拍照张数
      */
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "拍摄命令")
     private int command;
 
     /**
@@ -55,7 +55,7 @@ public class BuiltinMessage8801 {
      * <p>
      * 秒，0表示按最小间隔拍照或一直录像
      */
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "拍照间隔/录像时间")
     private int duration;
 
     /**
@@ -64,13 +64,13 @@ public class BuiltinMessage8801 {
      * 1：保存；
      * 0：实时上传
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "保存标志")
     private short saveFlag;
 
     /**
      * 分辨率
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "分辨率")
     private short resolution;
 
     /**
@@ -78,30 +78,18 @@ public class BuiltinMessage8801 {
      * <p>
      * 1-10，1代表质量损失最小，10表示压缩比最大
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "图像/视频质量")
     private short quality;
 
-    /**
-     * 亮度
-     */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "亮度")
     private short brightness;
 
-    /**
-     * 对比度
-     */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "对比度")
     private short contrastRate;
 
-    /**
-     * 饱和度
-     */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "饱和度")
     private short saturation;
 
-    /**
-     * 色度
-     */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "色度")
     private short chroma;
 }

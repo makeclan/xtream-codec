@@ -36,6 +36,7 @@ class BuiltinMessage8303Test extends BaseCodecTest {
                 new BuiltinMessage8303.Item((short) 0x03, "测试 3")
         ));
         entity.setItemCount((short) entity.getItemList().size());
+
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2019, terminalId2019);
         assertEquals("7e8303401d010000000001391234432900000103010006b2e2cad42031020006b2e2cad42032030006b2e2cad42033f27e", hex);
     }

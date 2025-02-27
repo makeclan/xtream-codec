@@ -16,10 +16,15 @@
 
 package io.github.hylexus.xtream.codec.core.tracker;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.github.hylexus.xtream.codec.core.jackson.XtreamCodecDebugJsonSerializer;
+
 import java.util.StringJoiner;
 
 public class CodecSpan extends BaseSpan {
     protected String fieldCodec;
+
+    @JsonSerialize(using = XtreamCodecDebugJsonSerializer.class)
     protected Object value;
 
     public CodecSpan(BaseSpan parent) {

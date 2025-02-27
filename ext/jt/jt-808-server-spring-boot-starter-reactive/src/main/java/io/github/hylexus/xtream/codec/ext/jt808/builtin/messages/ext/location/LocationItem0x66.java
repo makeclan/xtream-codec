@@ -33,7 +33,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class BuiltinMessage66 {
+public class LocationItem0x66 {
 
     // offset[0,4) DWORD 报警 ID: 按照报警先后，从0开始循环累加，不区分报警类型。
     @Preset.JtStyle.Dword

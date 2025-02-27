@@ -30,7 +30,6 @@ class BuiltinMessage8608Test extends BaseCodecTest {
     @Test
     void testEncode() {
         final BuiltinMessage8608 entity = new BuiltinMessage8608();
-
         entity.setType((short) 1);
         entity.setIdList(List.of(
                 new DwordWrapper(111L),
@@ -38,6 +37,7 @@ class BuiltinMessage8608Test extends BaseCodecTest {
                 new DwordWrapper(333L)
         ));
         entity.setCount(entity.getIdList().size());
+
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2019, terminalId2019);
         assertEquals("7e860840110100000000013912344329000001000000030000006f000000de0000014d557e", hex);
     }

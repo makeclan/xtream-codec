@@ -35,7 +35,7 @@ import java.util.List;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8303)
+@Jt808ResponseBody(messageId = 0x8303, desc = "信息点播菜单设置")
 public class BuiltinMessage8303 {
     /**
      * 设置类型
@@ -44,16 +44,13 @@ public class BuiltinMessage8303 {
      * <li>2--追加菜单</li>
      * <li>3--修改菜单</li>
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "设置类型")
     private short type;
 
-    /**
-     * 信息项总数
-     */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "信息项总数")
     private short itemCount;
 
-    @Preset.JtStyle.List
+    @Preset.JtStyle.List(desc = "信息项列表")
     private List<Item> itemList;
 
     @Getter
@@ -61,17 +58,12 @@ public class BuiltinMessage8303 {
     @ToString
     @Accessors(chain = true)
     public static class Item {
-        /**
-         * 信息类型
-         */
-        @Preset.JtStyle.Byte
+
+        @Preset.JtStyle.Byte(desc = "信息类型")
         private short type;
 
-        /**
-         * 信息名称
-         */
         // prependLengthFieldType: 前置一个 u16(Word)类型的字段 表示 信息名称长度
-        @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u16)
+        @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u16, desc = "信息名称")
         private String content;
 
         public Item() {

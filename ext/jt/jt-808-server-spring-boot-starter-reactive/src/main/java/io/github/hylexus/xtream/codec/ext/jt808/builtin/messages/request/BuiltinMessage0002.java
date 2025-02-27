@@ -17,12 +17,14 @@
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.BuiltinBodilessMessage;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 
 /**
- * 终端心跳消息体(消息体为空) 0x0002
+ * 终端心跳(消息体为空) 0x0002
  *
  * @author hylexus
  */
+@Jt808ResponseBody(messageId = 0x0002, desc = "终端心跳(无消息体)")
 public class BuiltinMessage0002 extends BuiltinBodilessMessage {
 
     @Override
