@@ -18,6 +18,7 @@ package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
 import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.type.Preset;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -30,6 +31,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
+@Jt808ResponseBody(messageId = 0x0107, desc = "查询终端属性应答(2019)")
 public class BuiltinMessage0107V2019 {
 
     /**
@@ -42,54 +44,33 @@ public class BuiltinMessage0107V2019 {
      * <li>bit7，0：一体机，1：分体机</li>
      * <li>bit8，0：不适用挂车，1：适用挂车</li>
      */
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "终端类型")
     private short type;
 
-    /**
-     * 制造商 ID
-     */
-    @Preset.JtStyle.Bytes(length = 11)
+    @Preset.JtStyle.Bytes(length = 11, desc = "制造商ID(11)")
     private String manufacturerId;
 
-    /**
-     * 终端型号
-     */
-    @Preset.JtStyle.Bytes(length = 30)
+    @Preset.JtStyle.Bytes(length = 30, desc = "终端型号(30)")
     private String terminalType;
 
-    /**
-     * 终端 ID
-     */
-    @Preset.JtStyle.Bytes(length = 30)
+    @Preset.JtStyle.Bytes(length = 30, desc = "终端ID(30)")
     private String terminalId;
 
-    /**
-     * 终端 SIM 卡 ICCID
-     */
-    @Preset.JtStyle.Bcd(length = 10)
+    @Preset.JtStyle.Bcd(length = 10, desc = "终端SIM卡ICCID")
     private String iccid;
 
     // prependLengthFieldType: 前置一个 u8类型的字段 表示 终端硬件版本号长度
-    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8)
+    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8, desc = "终端硬件版本号")
     private String hardwareVersion;
 
-    /**
-     * 终端固件版本号
-     */
     // prependLengthFieldType: 前置一个 u8类型的字段 表示 终端固件版本号长度
-    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8)
+    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8, desc = "终端固件版本号")
     private String firmwareVersion;
 
-    /**
-     * GNSS 模块属性
-     */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "GNSS 模块属性")
     private short gnssModelProperty;
 
-    /**
-     * 通信模块属性
-     */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "通信模块属性")
     private short communicationModelProperty;
 
 }

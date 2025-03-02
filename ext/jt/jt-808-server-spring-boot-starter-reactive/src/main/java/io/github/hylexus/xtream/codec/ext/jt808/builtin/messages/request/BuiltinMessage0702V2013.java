@@ -16,12 +16,15 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.type.Preset;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,6 +38,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Accessors(chain = true)
+@Jt808ResponseBody(messageId = 0x0702, desc = "驾驶员身份信息采集上报(2013)")
 public class BuiltinMessage0702V2013 {
 
     /**
@@ -42,7 +46,7 @@ public class BuiltinMessage0702V2013 {
      * <li>0x01：从业资格证IC卡插入（驾驶员上班）</li>
      * <li>0x02：从业资格证IC卡拔出（驾驶员下班）</li>
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "状态")
     private short status;
 
     /**
@@ -50,7 +54,9 @@ public class BuiltinMessage0702V2013 {
      * <p>
      * 以下字段在状态为0x01时才有效并做填充。
      */
-    @Preset.JtStyle.BcdDateTime
+    @Preset.JtStyle.BcdDateTime(desc = "插卡/拔卡时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime time;
 
     /**
@@ -63,27 +69,21 @@ public class BuiltinMessage0702V2013 {
      * <p>
      * 以下字段在IC 卡读取结果等于0x00时才有效。
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "IC卡读取结果")
     private short icCardReadResult;
 
-    /**
-     * 驾驶员姓名
-     */
     // prependLengthFieldType: 前置一个 u8类型的字段 表示 驾驶员姓名长度
-    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8)
+    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8, desc = "驾驶员姓名")
     private String driverName;
 
-    /**
-     * 从业资格证编码
-     */
-    @Preset.JtStyle.Str(length = 20)
+    @Preset.JtStyle.Str(length = 20, desc = "从业资格证编码")
     private String professionalLicenseNo;
 
     // prependLengthFieldType: 前置一个 u8类型的字段 表示 发证机构名称长度
-    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8)
+    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8, desc = "发证机构名称")
     private String certificateAuthorityName;
 
-    @Preset.JtStyle.BcdDateTime(length = 4, pattern = "yyyyMMdd")
+    @Preset.JtStyle.BcdDateTime(length = 4, pattern = "yyyyMMdd", desc = "到期时间")
     private LocalDate certificateExpiresDate;
 
 }

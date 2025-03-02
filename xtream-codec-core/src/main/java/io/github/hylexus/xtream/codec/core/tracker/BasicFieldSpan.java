@@ -45,7 +45,6 @@ public class BasicFieldSpan extends CodecSpan {
                 .add("fieldCodec='" + fieldCodec + "'")
                 .add("value=" + value)
                 .add("hexString='" + hexString + "'")
-                .add("childrenLength=" + children.size())
                 .toString();
     }
 }

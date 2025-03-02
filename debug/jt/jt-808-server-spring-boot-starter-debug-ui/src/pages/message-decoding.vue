@@ -63,6 +63,16 @@ const onEntityClassChange = (value: keyof object) => {
   if (data) {
     pageState.query.hexString = data.hexString;
     setLocalStorage(bodyClassStorageKey, pageState.query)
+  } else {
+    pageState.query.hexString = ""
+  }
+}
+const filteredOptions = ref<ClassMetadata[]>(pageState.classMetadataOptions);
+const filterEntityClass = (value: string) => {
+  if (!value || value.trim() === "") {
+    filteredOptions.value = pageState.classMetadataOptions
+  } else {
+    filteredOptions.value = pageState.classMetadataOptions.filter(it => it.targetClass.includes(value) || it.desc.includes(value))
   }
 }
 const defaultProps = {
@@ -88,7 +98,11 @@ onMounted(async () => {
     <div>
       <el-form size="small" label-width="auto">
         <el-form-item label="实体类">
-          <el-select v-model="pageState.query.bodyClass" filterable @change="onEntityClassChange">
+          <el-select
+              v-model="pageState.query.bodyClass"
+              filterable
+              @change="onEntityClassChange"
+              :filter-method="filterEntityClass">
             <template #label="scope">
               {{ scope.label }}
               <el-tag
@@ -99,7 +113,7 @@ onMounted(async () => {
               </el-tag>
             </template>
             <el-option
-                v-for="(item,idx) in pageState.classMetadataOptions"
+                v-for="(item,idx) in filteredOptions"
                 :key="idx"
                 :value="item.targetClass"
                 :label="item.targetClass">

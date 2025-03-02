@@ -16,6 +16,8 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
+import io.github.hylexus.xtream.codec.core.type.Preset;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -32,6 +34,13 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-public class BuiltinMessage0102V2013 extends BuiltinMessage0102V2011 {
+@Jt808ResponseBody(messageId = 0x0102, desc = "终端鉴权(2013)")
+public class BuiltinMessage0102V2013 {
+
+    /**
+     * 鉴权码 STRING 终端重连后上报鉴权码
+     */
+    @Preset.JtStyle.Str(desc = "鉴权码")
+    private String authenticationCode;
 
 }

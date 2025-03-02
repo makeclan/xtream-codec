@@ -38,7 +38,7 @@ public class BuiltinMessage0500 {
      * <p>
      * 对应的车辆控制消息的流水号
      */
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "应答流水号")
     private short flowId;
 
     /**
@@ -46,6 +46,6 @@ public class BuiltinMessage0500 {
      * <p>
      * 根据对应的状态位判断控制成功与否
      */
-    @Preset.JtStyle.Object
+    @Preset.JtStyle.Object(desc = "位置信息汇报消息体")
     private BuiltinMessage0200 location;
 }

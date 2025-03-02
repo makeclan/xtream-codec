@@ -39,12 +39,14 @@ public @interface Preset {
         @Documented
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, length = 1)
         @interface i8 {
-
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @SuppressWarnings("checkstyle:TypeName")
@@ -53,12 +55,14 @@ public @interface Preset {
         @Documented
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, length = 1)
         @interface u8 {
-
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @SuppressWarnings("checkstyle:TypeName")
@@ -67,12 +71,14 @@ public @interface Preset {
         @Documented
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, length = 2)
         @interface i16 {
-
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @SuppressWarnings("checkstyle:TypeName")
@@ -81,12 +87,14 @@ public @interface Preset {
         @Documented
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, length = 2, littleEndian = true)
         @interface i16_le {
-
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @SuppressWarnings("checkstyle:TypeName")
@@ -95,12 +103,14 @@ public @interface Preset {
         @Documented
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, length = 2)
         @interface u16 {
-
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @SuppressWarnings("checkstyle:TypeName")
@@ -109,12 +119,14 @@ public @interface Preset {
         @Documented
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, length = 2, littleEndian = true)
         @interface u16_le {
-
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @SuppressWarnings("checkstyle:TypeName")
@@ -123,12 +135,14 @@ public @interface Preset {
         @Documented
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, length = 4)
         @interface i32 {
-
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @SuppressWarnings("checkstyle:TypeName")
@@ -137,12 +151,14 @@ public @interface Preset {
         @Documented
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, length = 4, littleEndian = true)
         @interface i32_le {
-
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @SuppressWarnings("checkstyle:TypeName")
@@ -151,12 +167,14 @@ public @interface Preset {
         @Documented
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, length = 4)
         @interface u32 {
-
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @SuppressWarnings("checkstyle:TypeName")
@@ -165,12 +183,14 @@ public @interface Preset {
         @Documented
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, length = 4, littleEndian = true)
         @interface u32_le {
-
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
 
             @AliasFor(annotation = XtreamField.class, attribute = "condition")
             String condition() default "";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @SuppressWarnings("checkstyle:TypeName")
@@ -179,7 +199,6 @@ public @interface Preset {
         @Documented
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic, charset = "utf-8")
         @interface str {
-
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
 
@@ -203,6 +222,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
             Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @SuppressWarnings("checkstyle:TypeName")
@@ -211,7 +233,6 @@ public @interface Preset {
         @Documented
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.struct)
         @interface struct {
-
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
 
@@ -232,6 +253,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
             Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @SuppressWarnings("checkstyle:TypeName")
@@ -240,7 +264,6 @@ public @interface Preset {
         @Documented
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.dynamic)
         @interface dyn {
-
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
 
@@ -261,6 +284,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
             Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @SuppressWarnings("checkstyle:TypeName")
@@ -269,7 +295,6 @@ public @interface Preset {
         @Documented
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.sequence, containerInstanceFactory = ContainerInstanceFactory.ArrayListContainerInstanceFactory.class)
         @interface list {
-
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
 
@@ -293,6 +318,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "containerInstanceFactory")
             Class<? extends ContainerInstanceFactory> containerInstanceFactory() default ContainerInstanceFactory.ArrayListContainerInstanceFactory.class;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @SuppressWarnings("checkstyle:TypeName")
@@ -301,7 +329,6 @@ public @interface Preset {
         @Documented
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.map, containerInstanceFactory = ContainerInstanceFactory.LinkedHashMapContainerInstanceFactory.class)
         @interface map {
-
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
 
@@ -325,6 +352,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "containerInstanceFactory")
             Class<? extends ContainerInstanceFactory> containerInstanceFactory() default ContainerInstanceFactory.LinkedHashMapContainerInstanceFactory.class;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
 
         @SuppressWarnings("checkstyle:TypeName")
@@ -333,7 +363,6 @@ public @interface Preset {
         @Documented
         @XtreamField(dataType = BeanPropertyMetadata.FiledDataType.basic)
         @interface byte_array {
-
             @AliasFor(annotation = XtreamField.class, attribute = "order")
             int order() default -1;
 
@@ -354,6 +383,9 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "fieldCodec")
             Class<? extends FieldCodec<?>> fieldCodec() default FieldCodec.Placeholder.class;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "desc")
+            String desc() default "";
         }
     }
 

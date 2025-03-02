@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -29,21 +30,18 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
+@Jt808ResponseBody(messageId = 0x0108, desc = "查询终端参数应答")
 public class BuiltinMessage0108 {
+
     /**
      * 升级类型
      * <p>
      * 0：终端，12：道路运输证 IC 卡读卡器，52：北斗卫星定位模块
      */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "升级类型")
     private short type;
 
-    /**
-     * 升级结果
-     * <p>
-     * 0：成功，1：失败，2：取消
-     */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "升级结果 0：成功，1：失败，2：取消")
     private short result;
 
 }

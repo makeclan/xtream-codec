@@ -19,6 +19,7 @@ package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.type.Preset;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -33,6 +34,7 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
+@Jt808ResponseBody(messageId = 0x0102, desc = "终端鉴权(2019)")
 public class BuiltinMessage0102V2019 {
 
     /**
@@ -40,13 +42,13 @@ public class BuiltinMessage0102V2019 {
      * <p>
      * prependLengthFieldType: 前置一个 u8 字段表示鉴权码长度
      */
-    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8)
+    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8, desc = "鉴权码内容")
     private String authenticationCode;
 
     /**
      * byte[n+1,n+1+15)     BYTE[]  IMEI
      */
-    @Preset.JtStyle.Str(length = 15)
+    @Preset.JtStyle.Str(length = 15, desc = "IMEI(15)")
     private String imei;
 
     /**
@@ -54,7 +56,7 @@ public class BuiltinMessage0102V2019 {
      * <p>
      * 位数不足时后补 `0x00`
      */
-    @Preset.JtStyle.Str(length = 20)
+    @Preset.JtStyle.Str(length = 20, desc = "软件版本号(20)")
     private String softwareVersion;
 
     /**

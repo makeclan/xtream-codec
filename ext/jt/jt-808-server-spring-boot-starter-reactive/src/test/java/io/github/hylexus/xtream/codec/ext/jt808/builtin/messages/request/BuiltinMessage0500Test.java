@@ -81,6 +81,7 @@ class BuiltinMessage0500Test extends BaseCodecTest {
         );
         location.setExtraItems(extraItems);
         entity.setLocation(location);
+
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2019, terminalId2019, 0x0500);
         assertEquals("7e0500406d01000000000139123443290000007b0000007b000000de01d907f2073d336c029a004e000014102119510901040000006f020200de0302029a0402014d250400000309300121310137642f000000dedf6f03420b0c0d0e0f04d201d907f2073d336c141021195109000131323334353637141021195109010100e27e", hex);
     }

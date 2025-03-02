@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -31,17 +32,19 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
+@Jt808ResponseBody(messageId = 0x0201, desc = "位置信息查询应答")
 public class BuiltinMessage0201 {
 
     /**
      * 应答流水号
      */
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "应答流水号")
     private int flowId;
 
     /**
      * 位置汇报信息: 和 0x0200 消息格式一致
      */
-    @Preset.JtStyle.Object
+    @Preset.JtStyle.Object(desc = "位置汇报信息")
     private BuiltinMessage0200 locationMessage;
+
 }

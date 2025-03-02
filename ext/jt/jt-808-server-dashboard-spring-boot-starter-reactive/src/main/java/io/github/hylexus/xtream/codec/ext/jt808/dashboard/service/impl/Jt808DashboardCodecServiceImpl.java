@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.github.hylexus.xtream.codec.common.utils.DefaultXtreamClassScanner;
@@ -56,7 +57,10 @@ import java.util.stream.Collectors;
 
 public class Jt808DashboardCodecServiceImpl implements Jt808DashboardCodecService {
 
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
     private final XtreamJt808ServerDashboardProperties dashboardProperties;
     private final EntityCodec entityCodec;
     private final Jt808RequestDecoder jt808RequestDecoder;

@@ -34,7 +34,7 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x9208, desc = "报警附件上传指令(苏标)")
+@Jt808ResponseBody(messageId = 0x9208, desc = "苏标-报警附件上传指令(表-4-21)")
 public class BuiltinMessage9208 {
 
     // STRING

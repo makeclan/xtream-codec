@@ -18,7 +18,7 @@ package io.github.hylexus.xtream.debug.ext.jt808.handler;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.BuiltinMessage9212;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage9212;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1210;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1211;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1212;

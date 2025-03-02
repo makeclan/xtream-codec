@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -31,17 +32,12 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
+@Jt808ResponseBody(messageId = 0x0302, desc = "提问应答")
 public class BuiltinMessage0302 {
 
-    /**
-     * 应答流水号
-     */
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "应答流水号")
     private int flowId;
 
-    /**
-     * 答案 ID
-     */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "答案ID")
     private short answerId;
 }

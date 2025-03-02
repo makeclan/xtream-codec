@@ -70,10 +70,10 @@ public class PrependLengthFieldSpan extends BaseSpan {
     public String toString() {
         return new StringJoiner(", ", PrependLengthFieldSpan.class.getSimpleName() + "[", "]")
                 .add("fieldName='" + fieldName + "'")
+                .add("fieldDesc='" + fieldDesc + "'")
                 .add("fieldCodec='" + fieldCodec + "'")
                 .add("value=" + value)
                 .add("hexString='" + hexString + "'")
-                .add("fieldDesc='" + fieldDesc + "'")
                 .toString();
     }
 }

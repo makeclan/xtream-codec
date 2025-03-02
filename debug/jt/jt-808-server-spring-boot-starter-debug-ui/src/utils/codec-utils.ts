@@ -30,7 +30,7 @@ export const codecMockData: CodecData = {
                     "altitude": 666,
                     "speed": 33,
                     "direction": 89,
-                    "time": "2024-10-29T21:39:03Z"
+                    "time": "2024-10-29 21:39:03"
                 }
             }, {
                 "locationData": {
@@ -41,7 +41,7 @@ export const codecMockData: CodecData = {
                     "altitude": 777,
                     "speed": 67,
                     "direction": 90,
-                    "time": "2024-10-29T21:39:03Z"
+                    "time": "2024-10-29 21:39:03"
                 }
             }]
         }
@@ -57,7 +57,7 @@ export const codecMockData: CodecData = {
             "altitude": 123,
             "speed": 66,
             "direction": 3,
-            "time": "2025-01-29T22:33:44Z",
+            "time": "2025-01-29 22:33:44",
             "extraItems": {
                 "1": 12,
                 "2": 100
@@ -75,7 +75,7 @@ export const codecMockData: CodecData = {
             "altitude": 123,
             "speed": 66,
             "direction": 3,
-            "time": "2025-01-29T22:33:44Z",
+            "time": "2025-01-29 22:33:44",
             "extraItems": {
                 "1": 12,
                 "2": 100
@@ -90,7 +90,7 @@ export const codecMockData: CodecData = {
     "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.BuiltinMessage8004": {
         messageId: 0x8004,
         hexString: "7e8004400601000000000139123443290000241003155106c27e",
-        bodyJson: {"serverSideDateTime": "2025-02-15T19:10:35Z"}
+        bodyJson: {"serverSideDateTime": "2025-02-15 19:10:35"}
     },
     "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.BuiltinMessage0705": {
         messageId: 0x0705,
@@ -132,7 +132,7 @@ export const codecMockData: CodecData = {
                 "altitude": 100,
                 "speed": 60,
                 "direction": 78,
-                "time": "2014-10-21T19:51:09Z"
+                "time": "2014-10-21 19:51:09"
             },
             "mediaData": [1, 2, 3, 4, 5]
         }
@@ -156,7 +156,7 @@ export const codecMockData: CodecData = {
                     "altitude": 777,
                     "speed": 67,
                     "direction": 90,
-                    "time": "2021-09-27T15:30:33Z"
+                    "time": "2021-09-27 15:30:33"
                 }
             }, {
                 "multimediaId": 1,
@@ -171,7 +171,7 @@ export const codecMockData: CodecData = {
                     "altitude": 777,
                     "speed": 67,
                     "direction": 90,
-                    "time": "2021-09-27T15:30:33Z"
+                    "time": "2021-09-27 15:30:33"
                 }
             }]
         }
@@ -338,8 +338,8 @@ export const codecMockData: CodecData = {
                 "latitude": 31000562,
                 "longitude": 121451372,
                 "radius": 666,
-                "startTime": "2024-10-26T18:39:56Z",
-                "endTime": "2024-10-26T20:39:56Z",
+                "startTime": "2024-10-26 18:39:56",
+                "endTime": "2024-10-26 20:39:56",
                 "topSpeed": 111,
                 "durationOfOverSpeed": 10
             }, {
@@ -348,8 +348,8 @@ export const codecMockData: CodecData = {
                 "latitude": 31000562,
                 "longitude": 121451372,
                 "radius": 666,
-                "startTime": "2024-10-26T18:39:56Z",
-                "endTime": "2024-10-26T20:39:56Z",
+                "startTime": "2024-10-26 18:39:56",
+                "endTime": "2024-10-26 20:39:56",
                 "topSpeed": 111,
                 "durationOfOverSpeed": 10
             }]
@@ -373,8 +373,8 @@ export const codecMockData: CodecData = {
                 "leftTopLongitude": 121451372,
                 "rightBottomLatitude": 31000563,
                 "rightBottomLongitude": 121451373,
-                "startTime": "2024-10-26T18:39:56Z",
-                "endTime": "2024-10-26T20:39:56Z",
+                "startTime": "2024-10-26 18:39:56",
+                "endTime": "2024-10-26 20:39:56",
                 "topSpeed": 111,
                 "durationOfOverSpeed": 10
             }, {
@@ -384,8 +384,8 @@ export const codecMockData: CodecData = {
                 "leftTopLongitude": 121451372,
                 "rightBottomLatitude": 31000563,
                 "rightBottomLongitude": 121451373,
-                "startTime": "2024-10-26T18:39:56Z",
-                "endTime": "2024-10-26T20:39:56Z",
+                "startTime": "2024-10-26 18:39:56",
+                "endTime": "2024-10-26 20:39:56",
                 "topSpeed": 111,
                 "durationOfOverSpeed": 10
             }]
@@ -402,8 +402,8 @@ export const codecMockData: CodecData = {
         bodyJson: {
             "areaId": 111,
             "areaProps": 16387,
-            "startTime": "2024-10-26T18:39:56Z",
-            "endTime": "2024-10-26T20:39:56Z",
+            "startTime": "2024-10-26 18:39:56",
+            "endTime": "2024-10-26 20:39:56",
             "topSpeed": 111,
             "durationOfOverSpeed": 10,
             "pointCount": 3,
@@ -531,7 +531,7 @@ export const codecMockData: CodecData = {
             "n": [6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6]
         }
     },
-    "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.BuiltinMessage9208": {
+    "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage9208": {
         messageId: 0x9208,
         hexString: "7e92084052010000000001391234432900000d3139322e3136382e302e313233045708ae313233343536372502212133326f0100313233343536373839303132333435363738393031323334353637383930313230303030303030303030303030303030547e",
         bodyJson: {
@@ -559,5 +559,187 @@ export const codecMockData: CodecData = {
         hexString: "7e0002400001000000000139123443290000377e",
         bodyJson: {},
         hasBodyData: false
+    },
+    "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.BuiltinMessage0003": {
+        messageId: 0x0003,
+        hexString: "7e0003400001000000000139123443290000367e",
+        bodyJson: {},
+        hasBodyData: false
+    },
+    "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.BuiltinMessage0004": {
+        messageId: 0x0004,
+        hexString: "7e0004400001000000000139123443290000317e",
+        bodyJson: {},
+        hasBodyData: false
+    },
+    "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.BuiltinMessage0100V2013": {
+        messageId: 0x0100,
+        hexString: "7e0100002f0139123443230000000b0002696433323174797065313233343536373839303132333435366964313233343501b8ca4a2d3132333435395a7e",
+        bodyJson: {
+            "provinceId": 11,
+            "cityId": 2,
+            "manufacturerId": "id321",
+            "terminalType": "type1234567890123456",
+            "terminalId": "id12345",
+            "color": 1,
+            "carIdentifier": "甘J-123459"
+        }
+    },
+    "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.BuiltinMessage0100V2019": {
+        messageId: 0x0100,
+        hexString: "7e0100405601000000000139123443290000000b0002696431323334353637383974797065313233343536373839303132333435363738393031323334353669643132333435363738393031323334353637383930313233343536373801b8ca4a2d313233343539517e",
+        bodyJson: {
+            "provinceId": 11,
+            "cityId": 2,
+            "manufacturerId": "id123456789",
+            "terminalType": "type12345678901234567890123456",
+            "terminalId": "id1234567890123456789012345678",
+            "color": 1,
+            "carIdentifier": "甘J-123459"
+        }
+    },
+    "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.BuiltinMessage0102V2013": {
+        messageId: 0x0102,
+        hexString: "7e0102000d0139123443230000d5e2cac7bcf8c8a8c2eb313131767e",
+        bodyJson: {"authenticationCode": "这是鉴权码111"}
+    },
+    "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.BuiltinMessage0102V2019": {
+        messageId: 0x0102,
+        hexString: "7e01024031010000000001391234432900000dd5e2cac7bcf8c8a8c2eb313131313131313131313131313131313131312e322e333031300000000000000000000000003c7e",
+        bodyJson: {
+            "authenticationCode": "这是鉴权码111",
+            "imei": "111111111111111",
+            "softwareVersion": "1.2.3010\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000"
+        }
+    },
+    "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.BuiltinMessage0107V2013": {
+        messageId: 0x0107,
+        hexString: "7e010700400139123443230000004231323334357465726d696e616c54797065313233343536373837363534333231111122334455667788990968642d76312e322e3309666d2d76332e322e31487e",
+        bodyJson: {
+            "type": 66,
+            "manufacturerId": "12345",
+            "terminalType": "terminalType12345678",
+            "terminalId": "7654321",
+            "iccid": "11112233445566778899",
+            "hardwareVersion": "hd-v1.2.3",
+            "firmwareVersion": "fm-v3.2.1"
+        }
+    },
+    "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.BuiltinMessage0107V2019": {
+        messageId: 0x0107,
+        hexString: "7e0107406901000000000139123443290000004231323334353637383930317465726d696e616c54797065313233343536373831313131313232323232313233343536373839303132333435363738393031323334353637383930111122334455667788990968642d76312e322e3309666d2d76332e322e310302187e",
+        bodyJson: {
+            "type": 66,
+            "manufacturerId": "12345678901",
+            "terminalType": "terminalType123456781111122222",
+            "terminalId": "123456789012345678901234567890",
+            "iccid": "11112233445566778899",
+            "hardwareVersion": "hd-v1.2.3",
+            "firmwareVersion": "fm-v3.2.1",
+            "gnssModelProperty": 3,
+            "communicationModelProperty": 2
+        }
+    },
+    "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.BuiltinMessage0108": {
+        messageId: 0x0108,
+        hexString: "7e01084002010000000001391234432900000c00327e",
+        bodyJson: {"type": 12, "result": 0}
+    },
+    "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.BuiltinMessage0201": {
+        messageId: 0x0201,
+        hexString: "7e0201403c0100000000013912344329000001410000007b000000de01d907f2073d336c029a004e000014102119510901040000006f020200de0302029a0402014d2504000003093001213101374e7e",
+        bodyJson: {
+            "flowId": 321,
+            "locationMessage": {
+                "alarmFlag": 123,
+                "status": 222,
+                "latitude": 31000562,
+                "longitude": 121451372,
+                "altitude": 666,
+                "speed": 78,
+                "direction": 0,
+                "time": "2014-10-21 19:51:09",
+                "extraItems": {"1": 111, "2": 222, "3": 666, "4": 333, "37": 777, "48": 33, "49": 55}
+            }
+        }
+    },
+    "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.BuiltinMessage0302": {
+        messageId: 0x0302,
+        hexString: "7e030200030139123443230000007b01067e",
+        bodyJson: {"flowId": 123, "answerId": 1}
+    },
+    "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.BuiltinMessage0303": {
+        messageId: 0x0303,
+        hexString: "7e03034002010000000001391234432900000101377e",
+        bodyJson: {"type": 1, "flag": 1}
+    },
+    "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.BuiltinMessage0702V2013": {
+        messageId: 0x0702,
+        hexString: "7e070200300139123443230000012410292139030006d5c5cedebcc9313133333535373739393232343436363838303008c3bbd3d0c3fbd7d630241029587e",
+        bodyJson: {
+            "status": 1,
+            "time": "2024-10-29 21:39:03",
+            "icCardReadResult": 0,
+            "driverName": "张无忌",
+            "professionalLicenseNo": "11335577992244668800",
+            "certificateAuthorityName": "没有名字",
+            "certificateExpiresDate": "3024-10-29"
+        }
+    },
+    "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.BuiltinMessage0702V2019": {
+        messageId: 0x0702,
+        hexString: "7e0702404401000000000139123443290000012410292139030006d5c5cedebcc9313133333535373739393232343436363838303008c3bbd3d0c3fbd7d6302410293131323233333434353536363737383839393030677e",
+        bodyJson: {
+            "status": 1,
+            "time": "2024-10-29 21:39:03",
+            "icCardReadResult": 0,
+            "driverName": "张无忌",
+            "professionalLicenseNo": "11335577992244668800",
+            "certificateAuthorityName": "没有名字",
+            "certificateExpiresDate": "3024-10-29",
+            "driverIdCardNo": "11223344556677889900"
+        }
+    },
+    "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1210": {
+        messageId: 0x1210,
+        hexString: "7e1210406f0100000000013912344329000031323334353637313233343536372409252055320101006c72766579777764696273397065366f6e72627a36687662327366767039316200013130305f36345f363430315f305f6c72766579777764696273397065366f6e72627a3668766232736676703931622e6a706700003fec967e",
+        bodyJson: {
+            "terminalId": "1234567",
+            "alarmIdentifier": {
+                "terminalId": "1234567",
+                "time": "2024-09-25 20:55:32",
+                "sequence": 1,
+                "attachmentCount": 1,
+                "reserved": 0
+            },
+            "alarmNo": "lrveywwdibs9pe6onrbz6hvb2sfvp91b",
+            "messageType": 0,
+            "attachmentCount": 1,
+            "attachmentItemList": [{
+                "fileName": "00_64_6401_0_lrveywwdibs9pe6onrbz6hvb2sfvp91b.jpg",
+                "fileSize": 16364
+            }]
+        }
+    },
+    "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1211": {
+        messageId: 0x1211,
+        hexString: "7e12114037010000000001391234432900003130305f36345f363430315f305f3575726476646d6831707a796c39686364793678386835323138676869786e372e6a70670000002c620b7e",
+        bodyJson: {"fileName": "00_64_6401_0_5urdvdmh1pzyl9hcdy6x8h5218ghixn7.jpg", "fileType": 0, "fileSize": 11362}
+    },
+    "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1212": {
+        messageId: 0x1212,
+        hexString: "7e12124037010000000001391234432900003130325f36345f363430315f345f3575726476646d6831707a796c39686364793678386835323138676869786e372e6d7034020003a274c37e",
+        bodyJson: {"fileName": "02_64_6401_4_5urdvdmh1pzyl9hcdy6x8h5218ghixn7.mp4", "fileType": 2, "fileSize": 238196}
+    },
+    "io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage9212": {
+        messageId: 0x9212,
+        hexString: "7e92124045010000000001391234432900003130305f36345f363430315f305f6c72766579777764696273397065366f6e72627a3668766232736676703931622e6a70670001020000000100000014000000020000001eb17e",
+        bodyJson: {
+            "fileName": "00_64_6401_0_lrveywwdibs9pe6onrbz6hvb2sfvp91b.jpg",
+            "fileType": 0,
+            "uploadResult": 1,
+            "packageCountToReTransmit": 2,
+            "retransmitItemList": [{"dataOffset": 1, "dataLength": 20}, {"dataOffset": 2, "dataLength": 30}]
+        }
     }
 }

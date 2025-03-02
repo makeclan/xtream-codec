@@ -29,6 +29,7 @@ class BuiltinMessage0302Test extends BaseCodecTest {
         final BuiltinMessage0302 entity = new BuiltinMessage0302();
         entity.setFlowId(123);
         entity.setAnswerId((short) 1);
+
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2013, terminalId2013, 0x0302);
         assertEquals("7e030200030139123443230000007b01067e", hex);
     }

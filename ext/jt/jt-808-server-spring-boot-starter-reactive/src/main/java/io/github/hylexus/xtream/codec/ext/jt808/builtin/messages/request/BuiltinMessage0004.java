@@ -17,11 +17,13 @@
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.BuiltinBodilessMessage;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 
 /**
  * 查询服务器时间请求(消息体为空) 0x0004
  *
  * @author hylexus
  */
+@Jt808ResponseBody(messageId = 0x0004, desc = "查询服务器时间请求(无消息体)")
 public class BuiltinMessage0004 extends BuiltinBodilessMessage {
 }

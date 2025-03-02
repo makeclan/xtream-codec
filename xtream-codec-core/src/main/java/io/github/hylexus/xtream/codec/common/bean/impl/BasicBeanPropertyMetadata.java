@@ -202,8 +202,19 @@ public class BasicBeanPropertyMetadata implements BeanPropertyMetadata {
 
     @Override
     public Object decodePropertyValueWithTracker(FieldCodec.DeserializeContext context, ByteBuf input) {
-        final int length = this.fieldLengthExtractor.extractFieldLength(context, context.evaluationContext(), input);
-        return fieldCodec().deserializeWithTracker(this, context, input, length);
+        if (this.fieldLengthExtractor instanceof FieldLengthExtractor.PrependFieldLengthExtractor) {
+            final PrependLengthFieldSpan prependLengthFieldSpan = context.codecTracker().addPrependLengthFieldSpan(
+                    context.codecTracker().getCurrentSpan(), "prependLengthField", null, null, prependLengthFieldType.name(), "前置长度字段"
+            );
+            final int indexBeforeRead = input.readerIndex();
+            final int length = this.fieldLengthExtractor.extractFieldLength(context, context.evaluationContext(), input);
+            final String hexString = FormatUtils.toHexString(input, indexBeforeRead, input.readerIndex() - indexBeforeRead);
+            prependLengthFieldSpan.setValue(length).setHexString(hexString);
+            return fieldCodec().deserializeWithTracker(this, context, input, length);
+        } else {
+            final int length = this.fieldLengthExtractor.extractFieldLength(context, context.evaluationContext(), input);
+            return fieldCodec().deserializeWithTracker(this, context, input, length);
+        }
     }
 
     @Override

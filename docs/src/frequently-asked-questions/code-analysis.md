@@ -40,7 +40,7 @@ article: false
 这里介绍的是 [ext/jt/jt-808-server-spring-boot-starter-reactive](/ext/jt/jt808/quick-start/terminology.md)
 模块的源码阅读建议。可以从下面几个关键组件入手：
 
-- `BuiltinJt808AttachmentServerExchangeCreator`: 封装 **JT/T 808** 请求信息
+- `BuiltinJt808InstructionServerExchangeCreator 和 BuiltinJt808AttachmentServerExchangeCreator`: 封装 **JT/T 808** 请求信息
 - `Jt808RequestMappingHandlerMapping`: 请求映射(确定请求处理器 `@Jt808RequestHandlerMapping`)
 - `Jt808ResponseBodyHandlerResultHandler`: 响应体处理器(`@Jt808ResponseBody`)
 - `Jt808RequestLifecycleListener`: 请求生命周期监听器

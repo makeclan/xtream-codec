@@ -18,6 +18,7 @@ package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
 import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.type.Preset;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -32,6 +33,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @ToString
+@Jt808ResponseBody(messageId = 0x0107, desc = "查询终端属性应答(2013)")
 public class BuiltinMessage0107V2013 {
 
     /**
@@ -43,45 +45,27 @@ public class BuiltinMessage0107V2013 {
      * <li>bit6，0：不支持硬盘录像，1：支持硬盘录像</li>
      * <li>bit7，0：一体机，1：分体机</li>
      */
-    @Preset.JtStyle.Word
+    @Preset.JtStyle.Word(desc = "终端类型")
     private short type;
 
-    /**
-     * 制造商 ID
-     */
-    @Preset.JtStyle.Bytes(length = 5)
+    @Preset.JtStyle.Bytes(length = 5, desc = "制造商ID(5)")
     private String manufacturerId;
 
-    /**
-     * 终端型号
-     */
-    @Preset.JtStyle.Bytes(length = 20)
+    @Preset.JtStyle.Bytes(length = 20, desc = "终端型号(20)")
     private String terminalType;
 
-    /**
-     * 终端 ID
-     */
-    @Preset.JtStyle.Bytes(length = 7)
+    @Preset.JtStyle.Bytes(length = 7, desc = "终端ID(7)")
     private String terminalId;
 
-    /**
-     * 终端 SIM 卡 ICCID
-     */
-    @Preset.JtStyle.Bcd(length = 10)
+    @Preset.JtStyle.Bcd(length = 10, desc = "终端SIM卡ICCID")
     private String iccid;
 
-    /**
-     * 终端硬件版本号
-     */
     // prependLengthFieldType: 前置一个 u8类型的字段 表示 终端硬件版本号长度
-    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8)
+    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8, desc = "终端硬件版本号")
     private String hardwareVersion;
 
-    /**
-     * 终端固件版本号
-     */
     // prependLengthFieldType: 前置一个 u8类型的字段 表示 终端固件版本号长度
-    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8)
+    @Preset.JtStyle.Str(prependLengthFieldType = PrependLengthFieldType.u8, desc = "终端固件版本号")
     private String firmwareVersion;
 
 }

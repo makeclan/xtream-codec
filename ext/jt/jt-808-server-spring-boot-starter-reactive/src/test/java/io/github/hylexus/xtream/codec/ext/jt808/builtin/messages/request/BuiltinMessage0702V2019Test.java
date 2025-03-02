@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class BuiltinMessage0702V2019Test extends BaseCodecTest {
 
     LocalDateTime time = LocalDateTime.of(2024, 10, 29, 21, 39, 3);
-    LocalDate certificateExpiresDate = LocalDate.of(2024, 10, 29);
+    LocalDate certificateExpiresDate = LocalDate.of(3024, 10, 29);
 
     @Test
     void testEncode() {
@@ -43,12 +43,12 @@ class BuiltinMessage0702V2019Test extends BaseCodecTest {
         entity.setDriverIdCardNo("11223344556677889900");
 
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2019, terminalId2019, 0x0702);
-        assertEquals("7e0702404401000000000139123443290000012410292139030006d5c5cedebcc9313133333535373739393232343436363838303008c3bbd3d0c3fbd7d6202410293131323233333434353536363737383839393030777e", hex);
+        assertEquals("7e0702404401000000000139123443290000012410292139030006d5c5cedebcc9313133333535373739393232343436363838303008c3bbd3d0c3fbd7d6302410293131323233333434353536363737383839393030677e", hex);
     }
 
     @Test
     void testDecode() {
-        final String hex = "0702404401000000000139123443290000012410292139030006d5c5cedebcc9313133333535373739393232343436363838303008c3bbd3d0c3fbd7d620241029313132323333343435353636373738383939303077";
+        final String hex = "0702404401000000000139123443290000012410292139030006d5c5cedebcc9313133333535373739393232343436363838303008c3bbd3d0c3fbd7d630241029313132323333343435353636373738383939303067";
         final BuiltinMessage0702V2019 entity = decodeAsEntity(BuiltinMessage0702V2019.class, hex);
         assertEquals(1, entity.getStatus());
         assertEquals(time, entity.getTime());

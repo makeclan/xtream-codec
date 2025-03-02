@@ -72,6 +72,7 @@ public class BuiltinMessage0704 {
          * 位置汇报数据体
          */
         // @Preset.JtStyle.Object(lengthExpression = "getLocationDataLength()")
+        // prependLengthFieldType: 前置一个 u16 类型的字段表示当前字段的长度
         @Preset.JtStyle.Object(prependLengthFieldType = PrependLengthFieldType.u16, desc = "位置汇报数据体")
         private BuiltinMessage0200 locationData;
 

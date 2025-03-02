@@ -1,10 +1,11 @@
-## 0.0.1-beta.13
+## 0.0.1-rc.0
 
 ### ⭐ New Features
 
 - 新增 `io.github.hylexus.xtream.codec.core.tracker.CodecTracker` 用以跟踪调试编解码过程
 - 新增 `io.github.hylexus.xtream.codec.core.impl.codec.AbstractMapFieldCodec` 用以简化 `Map` 类型编解码
 - 新增 `io.github.hylexus.xtream.codec.core.impl.codec.EntityFieldCodec` 用以简化内嵌类型编解码
+- `io.github.hylexus.xtream.codec.ext.jt808.builtin.messages` 包下的示例类微调
 
 ## 0.0.1-beta.12(2025-01-22)
 

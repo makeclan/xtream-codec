@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, onMounted, reactive} from "vue";
+import {computed, onMounted, reactive, ref} from "vue";
 import {requestCodecOptionsApi, requestEncodeMessageApi} from "../api/codec-api.ts";
 import {ClassMetadata, EncodeResult} from "../types/model.ts";
 import {codecMockData, toHexString} from "../utils/codec-utils.ts";
@@ -92,6 +92,14 @@ const onEntityClassChange = (value: keyof object) => {
   }
   setLocalStorage(bodyClassStorageKey, pageState.query.bodyClass)
 }
+const filteredOptions = ref<ClassMetadata[]>(pageState.classMetadataOptions);
+const filterEntityClass = (value: string) => {
+  if (!value || value.trim() === "") {
+    filteredOptions.value = pageState.classMetadataOptions
+  } else {
+    filteredOptions.value = pageState.classMetadataOptions.filter(it => it.targetClass.includes(value) || it.desc.includes(value))
+  }
+}
 const defaultProps = {
   children: 'children',
   label: 'spanType',
@@ -116,7 +124,12 @@ onMounted(async () => {
     <div>
       <el-form size="small" label-width="auto" label-position="left">
         <el-form-item label="实体类">
-          <el-select v-model="pageState.query.bodyClass" filterable @change="onEntityClassChange">
+          <el-select
+              v-model="pageState.query.bodyClass"
+              filterable
+              @change="onEntityClassChange"
+              :filter-method="filterEntityClass"
+          >
             <template #label="scope">
               {{ scope.label }}
               <el-tag
@@ -127,7 +140,7 @@ onMounted(async () => {
               </el-tag>
             </template>
             <el-option
-                v-for="(item,idx) in pageState.classMetadataOptions"
+                v-for="(item,idx) in filteredOptions"
                 :key="idx"
                 :value="item.targetClass"
                 :label="item.targetClass">

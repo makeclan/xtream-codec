@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request;
 
 import io.github.hylexus.xtream.codec.core.type.Preset;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -31,19 +32,13 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
+@Jt808ResponseBody(messageId = 0x0303, desc = "信息点播/取消")
 public class BuiltinMessage0303 {
 
-    /**
-     * 信息类型
-     */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "信息类型")
     private short type;
 
-    /**
-     * 点播/取消标志
-     * <p>
-     * 0：取消；1：点播
-     */
-    @Preset.JtStyle.Byte
+    @Preset.JtStyle.Byte(desc = "点播/取消标志 0：取消；1：点播")
     private short flag;
+
 }
