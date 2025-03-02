@@ -1,6 +1,6 @@
 {
   "name": "xtream-codec",
-  "version": "0.0.1-beta.12",
+  "version": "0.0.1-rc.0",
   "description": "docs for xtream-codec",
   "license": "Apache License 2.0",
   "type": "module",
