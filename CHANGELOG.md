@@ -1,4 +1,4 @@
-## 0.0.1-rc.1
+## 0.0.1-rc.1(2025-03-09)
 
 - 新增 `Jt808MessageDescriber.enableTracker()` 方法，支持 `Tracker`
 
