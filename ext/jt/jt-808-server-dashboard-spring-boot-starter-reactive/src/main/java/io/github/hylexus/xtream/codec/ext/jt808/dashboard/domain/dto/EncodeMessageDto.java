@@ -43,9 +43,10 @@ public class EncodeMessageDto {
     @Min(value = 25, message = "maxPackageSize > 25")
     private int maxPackageSize = 1024;
 
+    private byte encryptionType = 0b000;
+
     @NotNull(message = "bodyClass is null")
     private String bodyClass;
-    private byte encryptionType = 0b000;
 
     @NotNull(message = "bodyData is null")
     private Map<String, Object> bodyData;

@@ -45,31 +45,24 @@ import java.util.Map;
 @Accessors(chain = true)
 @Jt808ResponseBody(messageId = 0x0200, desc = "位置信息汇报")
 public class BuiltinMessage0200 {
-    // 报警标志  DWORD(4)
     @Preset.JtStyle.Dword(desc = "报警标志")
     private long alarmFlag;
 
-    // 状态  DWORD(4)
     @Preset.JtStyle.Dword(desc = "状态")
     private long status;
 
-    // 纬度  DWORD(4)
     @Preset.JtStyle.Dword(desc = "纬度")
     private long latitude;
 
-    // 经度  DWORD(4)
     @Preset.JtStyle.Dword(desc = "经度")
     private long longitude;
 
-    // 高程  WORD(2)
     @Preset.JtStyle.Word(desc = "高程")
     private int altitude;
 
-    // 速度  WORD(2)
     @Preset.JtStyle.Word(desc = "速度")
     private int speed;
 
-    // 方向  WORD(2)
     @Preset.JtStyle.Word(desc = "方向")
     private int direction;
 
@@ -122,30 +115,5 @@ public class BuiltinMessage0200 {
             )
     )
     private Map<Short, Object> extraItems;
-    // @Preset.JtStyle.List
-    // private List<ExtraItem> extraItems;
 
-    @Setter
-    @Getter
-    @ToString
-    public static class ExtraItem {
-        // 附加信息ID   BYTE(1~255)
-        @Preset.JtStyle.Byte
-        private short id;
-        // 附加信息长度   BYTE(1~255)
-        @Preset.JtStyle.Byte
-        private short contentLength;
-        // 附加信息内容  BYTE[N]
-        @Preset.JtStyle.Bytes(lengthExpression = "getContentLength()")
-        private byte[] content;
-
-        public ExtraItem() {
-        }
-
-        public ExtraItem(short id, short length, byte[] content) {
-            this.id = id;
-            this.contentLength = length;
-            this.content = content;
-        }
-    }
 }

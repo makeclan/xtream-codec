@@ -36,6 +36,9 @@ public class BuiltinLocationMessageExtraItemFieldCodec
     private EntityFieldCodec<LocationItem0x66> locationItem0x66FieldCodec;
     private EntityFieldCodec<LocationItem0x67> locationItem0x67FieldCodec;
 
+    public BuiltinLocationMessageExtraItemFieldCodec() {
+    }
+
     @Override
     protected FieldCodec<?> getKeyFieldCodec() {
         return U8FieldCodec.INSTANCE;
@@ -56,7 +59,9 @@ public class BuiltinLocationMessageExtraItemFieldCodec
             case 0x05 -> ByteArrayFieldCodec.INSTANCE;
             // -32767 ~ +32767
             case 0x06 -> I16FieldCodec.INSTANCE;
+            // 0x11 的编解码也可以通过 EntityFieldCodec 来实现，这里使用自定义的 FieldCodec 作演示
             case 0x11 -> OverSpeedAlarmItemFieldCodec.INSTANCE;
+            // 可以直接 new 一个 EntityFieldCodec<LocationItem0x12>() 实例，但是没必要(直接返回单例即可)
             case 0x12 -> this.locationItem0x12FieldCodec;
             case 0x13 -> this.locationItem0x13FieldCodec;
             case 0x64 -> this.locationItem0x64FieldCodec;

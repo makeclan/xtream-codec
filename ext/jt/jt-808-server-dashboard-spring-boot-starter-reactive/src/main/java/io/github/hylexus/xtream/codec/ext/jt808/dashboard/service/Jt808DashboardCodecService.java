@@ -20,15 +20,15 @@ import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.DecodeMessa
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.EncodeMessageDto;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.DecodedMessageVo;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.EncodedMessageVo;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriber;
 
 import java.util.List;
 
 public interface Jt808DashboardCodecService {
 
-    List<DecodedMessageVo> encodeWithTracker(EncodeMessageDto dto);
+    List<Jt808MessageDescriber.Tracker> encodeWithTracker(EncodeMessageDto dto);
 
-    EncodedMessageVo decodeWithTracker(DecodeMessageDto dto);
+    DecodedMessageVo decodeWithTracker(DecodeMessageDto dto);
 
     SimpleTypes.CodecDebugOptions getCodecOptions();
 

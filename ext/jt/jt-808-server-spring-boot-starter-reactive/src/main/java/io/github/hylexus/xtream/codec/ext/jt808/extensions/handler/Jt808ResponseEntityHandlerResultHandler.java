@@ -68,8 +68,7 @@ public class Jt808ResponseEntityHandlerResultHandler implements XtreamHandlerRes
     }
 
     protected Jt808MessageDescriber createMessageDescriptor(Jt808ResponseEntity<Object> responseEntity, Jt808Request request) {
-        return new Jt808MessageDescriber(request.header().version(), request.header().terminalId())
-                .messageId(responseEntity.getMessageId())
+        return new Jt808MessageDescriber(responseEntity.getMessageId(), request.header().version(), request.header().terminalId())
                 .maxPackageSize(responseEntity.getMaxPackageSize())
                 .reversedBit15InHeader(responseEntity.getReversedBit15InHeader())
                 .encryptionType(responseEntity.getEncryptionType())

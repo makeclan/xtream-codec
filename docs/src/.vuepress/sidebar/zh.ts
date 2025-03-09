@@ -125,7 +125,18 @@ export const zhSidebar = sidebar({
                 },
                 {
                     text: "复杂消息解析示例", icon: "at", collapsible: false, children: [
-                        '/ext/jt/jt808/complex-message-mapping/README.md'
+                        // '/ext/jt/jt808/complex-message-mapping/README.md',
+                        '/ext/jt/jt808/complex-message-mapping/sample-0x0104.md',
+                        '/ext/jt/jt808/complex-message-mapping/sample-0x0200.md',
+                        '/ext/jt/jt808/complex-message-mapping/sample-0x0608.md',
+                        '/ext/jt/jt808/complex-message-mapping/sample-0x0704.md',
+                        '/ext/jt/jt808/complex-message-mapping/sample-0x0802.md',
+                        '/ext/jt/jt808/complex-message-mapping/sample-0x8105.md',
+                        '/ext/jt/jt808/complex-message-mapping/sample-0x8500.md',
+                        '/ext/jt/jt808/complex-message-mapping/sample-0x8600.md',
+                        '/ext/jt/jt808/complex-message-mapping/sample-0x8602.md',
+                        '/ext/jt/jt808/complex-message-mapping/sample-0x8604.md',
+                        '/ext/jt/jt808/complex-message-mapping/sample-0x8606.md',
                     ]
                 },
                 {

@@ -122,6 +122,11 @@ onMounted(async () => {
 <template>
   <div>
     <div>
+
+      <el-alert type="success" title="提示" closable style="margin-bottom: 20px;">
+        该功能会在后续版本中集成到 Dashboard 中
+      </el-alert>
+
       <el-form size="small" label-width="auto" label-position="left">
         <el-form-item label="实体类">
           <el-select
@@ -255,6 +260,17 @@ onMounted(async () => {
           <span v-if="data.spanType === 'RootSpan'">
             <el-tag type="primary">编码结果(HEX): {{ data.hexString }}</el-tag>
             <el-tag type="success">实体类: {{ data.entityClass }}</el-tag>
+          </span>
+          <span v-else-if="data.spanType === 'VirtualEntitySpan' ">
+            <el-tag type="danger" v-if="data.fieldDesc">{{ data.fieldDesc }}</el-tag>
+            <el-tag type="primary">编码结果(HEX): {{ data.hexString }}</el-tag>
+            <el-tag type="success">实体类: {{ data.entityClass }}</el-tag>
+          </span>
+          <span v-else-if="data.spanType === 'VirtualFieldSpan' ">
+            <el-tag type="danger" v-if="data.fieldDesc">{{ data.fieldDesc }}</el-tag>
+            <el-tag type="primary">编码结果(HEX): {{ data.hexString }}</el-tag>
+            <el-tag type="warning">原始值: {{ data.value }}</el-tag>
+            <el-tag type="success">类型: {{ data.fieldType }}</el-tag>
           </span>
           <span v-else-if="data.spanType === 'NestedFieldSpan'">
             <el-tag type="danger" v-if="data.fieldDesc">{{ data.fieldDesc }}</el-tag>

@@ -20,6 +20,10 @@ import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.core.EntityCodec;
 import io.github.hylexus.xtream.codec.core.tracker.CodecTracker;
+import io.github.hylexus.xtream.codec.core.tracker.RootSpan;
+import io.github.hylexus.xtream.codec.core.tracker.VirtualEntitySpan;
+import io.github.hylexus.xtream.codec.core.tracker.VirtualFieldSpan;
+import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808BytesProcessor;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808ResponseEncoder;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
@@ -29,6 +33,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolConstant;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.CompositeByteBuf;
+import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,16 +69,16 @@ public class DefaultJt808ResponseEncoder implements Jt808ResponseEncoder {
 
     @Override
     public ByteBuf encode(Object body, Jt808MessageDescriber describer) {
+        final CodecTracker tracker = describer.trackers() != null ? new CodecTracker() : null;
         if (body instanceof ByteBuf byteBuf) {
-            return this.doBuild(describer, byteBuf);
+            return this.doBuild(describer, byteBuf, tracker);
         }
-        final ByteBuf bodyBuf = this.encodeBody(body, describer.bodyCodecTracker());
-        return this.doBuild(describer, bodyBuf);
+        final ByteBuf bodyBuf = this.encodeBody(body, tracker);
+        return this.doBuild(describer, bodyBuf, tracker);
     }
 
     protected Jt808MessageDescriber createDescriber(Jt808ProtocolVersion version, String terminalId, int flowId, Jt808ResponseBody annotation) {
-        final Jt808MessageDescriber describer = new Jt808MessageDescriber(version, terminalId)
-                .messageId(annotation.messageId())
+        final Jt808MessageDescriber describer = new Jt808MessageDescriber(annotation.messageId(), version, terminalId)
                 .maxPackageSize(annotation.maxPackageSize())
                 .reversedBit15InHeader(annotation.reversedBit15InHeader())
                 .encryptionType(annotation.encryptionType());
@@ -89,7 +94,7 @@ public class DefaultJt808ResponseEncoder implements Jt808ResponseEncoder {
                 : describer.flowIdGenerator();
     }
 
-    protected ByteBuf doBuild(Jt808MessageDescriber describer, ByteBuf body) {
+    protected ByteBuf doBuild(Jt808MessageDescriber describer, ByteBuf body, @Nullable CodecTracker tracker) {
         final int maxPackageSize = describer.check().maxPackageSize();
         final int messageBodyLength = body.readableBytes();
         final Jt808ProtocolVersion version = requireNonNull(describer.version(), "version() is null");
@@ -98,7 +103,7 @@ public class DefaultJt808ResponseEncoder implements Jt808ResponseEncoder {
             if (describer.flowId() < 0) {
                 describer.flowId(this.getFlowIdGenerator(describer).nextFlowId());
             }
-            return this.buildPackage(describer, body, 0, 0, describer.flowId());
+            return this.buildPackage(tracker, describer, body, 0, 0, describer.flowId());
         }
 
         final int subPackageBodySize = maxPackageSize - Jt808RequestHeader.messageBodyStartIndex(version, true) - 3;
@@ -114,20 +119,19 @@ public class DefaultJt808ResponseEncoder implements Jt808ResponseEncoder {
                     ? Math.min(subPackageBodySize, messageBodyLength - offset)
                     : subPackageBodySize;
             final ByteBuf bodyData = body.retainedSlice(offset, length);
-            final CompositeByteBuf subPackage = this.buildPackage(describer, bodyData, subPackageCount, i + 1, flowIds[i]);
+            final CompositeByteBuf subPackage = this.buildPackage(tracker, describer, bodyData, subPackageCount, i + 1, flowIds[i]);
             allResponseBytes.addComponents(true, subPackage);
         }
         XtreamBytes.releaseBuf(body);
         return allResponseBytes;
     }
 
-    private CompositeByteBuf buildPackage(Jt808MessageDescriber response, ByteBuf body, int totalSubPackageCount, int currentPackageNo, int flowId) {
-        response.messageCodecTracker().beforeMessageBodyEncrypt(totalSubPackageCount, currentPackageNo, flowId, response, body);
+    private CompositeByteBuf buildPackage(@Nullable CodecTracker tracker, Jt808MessageDescriber describer, ByteBuf body, int totalSubPackageCount, int currentPackageNo, int flowId) {
         // @see https://github.com/hylexus/jt-framework/issues/82
-        body = this.encryptionHandler.encryptResponseBody(response, body);
+        body = this.encryptionHandler.encryptResponseBody(describer, body);
 
         final ByteBuf headerBuf = allocator.buffer();
-        final Jt808RequestHeader jt808RequestHeader = this.encodeMessageHeader(response, body, totalSubPackageCount > 0, totalSubPackageCount, currentPackageNo, flowId);
+        final Jt808RequestHeader jt808RequestHeader = this.encodeMessageHeader(describer, body, totalSubPackageCount > 0, totalSubPackageCount, currentPackageNo, flowId);
         jt808RequestHeader.encode(headerBuf);
         final CompositeByteBuf compositeByteBuf = allocator.compositeBuffer()
                 .addComponent(true, headerBuf)
@@ -139,17 +143,29 @@ public class DefaultJt808ResponseEncoder implements Jt808ResponseEncoder {
         compositeByteBuf.resetReaderIndex();
         if (log.isDebugEnabled()) {
             log.debug("- <<<<<<<<<<<<<<< ({}--{}) {}/{}: 7E{}7E",
-                    FormatUtils.toHexString(response.messageId(), 4),
+                    FormatUtils.toHexString(describer.messageId(), 4),
                     compositeByteBuf.readableBytes() + 2,
                     Math.max(currentPackageNo, 1), Math.max(totalSubPackageCount, 1),
                     FormatUtils.toHexString(compositeByteBuf)
             );
         }
-
+        final boolean needTracker = tracker != null;
+        if (needTracker) {
+            this.updateTracker(describer, totalSubPackageCount, currentPackageNo, tracker, compositeByteBuf, jt808RequestHeader, body, checkSum);
+        }
         final ByteBuf escaped;
         try {
             escaped = this.messageProcessor.doEscapeForSend(compositeByteBuf);
-            response.messageCodecTracker().afterMessageEncoded(totalSubPackageCount, currentPackageNo, flowId, checkSum, response, jt808RequestHeader, compositeByteBuf, escaped);
+            if (needTracker) {
+                final Jt808MessageDescriber.Tracker last = describer.trackers().getLast();
+                last.setEscapedHexString("7e" + FormatUtils.toHexString(escaped) + "7e");
+                final RootSpan details = last.getDetails();
+                details.setHexString(
+                        details.getChildren().get(0).getHexString()
+                        + details.getChildren().get(1).getHexString()
+                        + details.getChildren().get(2).getHexString()
+                );
+            }
         } catch (Throwable e) {
             XtreamBytes.releaseBuf(compositeByteBuf);
             throw e;
@@ -157,7 +173,7 @@ public class DefaultJt808ResponseEncoder implements Jt808ResponseEncoder {
 
         if (log.isDebugEnabled()) {
             log.debug("+ <<<<<<<<<<<<<<< ({}--{}) {}/{}: 7E{}7E",
-                    FormatUtils.toHexString(response.messageId(), 4),
+                    FormatUtils.toHexString(describer.messageId(), 4),
                     escaped.readableBytes() + 2,
                     Math.max(currentPackageNo, 1), Math.max(totalSubPackageCount, 1),
                     FormatUtils.toHexString(escaped)
@@ -169,7 +185,41 @@ public class DefaultJt808ResponseEncoder implements Jt808ResponseEncoder {
                 .addComponent(true, allocator.buffer().writeByte(JtProtocolConstant.PACKAGE_DELIMITER));
     }
 
-    private ByteBuf encodeBody(Object entity, CodecTracker tracker) {
+    private void updateTracker(
+            Jt808MessageDescriber describer, int totalSubPackageCount, int currentPackageNo, CodecTracker tracker,
+            ByteBuf message, Jt808RequestHeader jt808RequestHeader, ByteBuf body, byte checkSum) {
+
+        final Jt808MessageDescriber.Tracker responseTracker = new Jt808MessageDescriber.Tracker();
+        describer.trackers().add(responseTracker);
+        responseTracker.setRawHexString("7e" + FormatUtils.toHexString(message) + "7e");
+
+        final Header header = new Header(jt808RequestHeader);
+        final CodecTracker headerTracker = new CodecTracker();
+        final ByteBuf tempHeaderBuffer = allocator.buffer();
+        try {
+            this.entityCodec.encode(header, tempHeaderBuffer, headerTracker);
+        } finally {
+            XtreamBytes.releaseBuf(tempHeaderBuffer);
+        }
+
+        final RootSpan details = new RootSpan().setEntityClass("VirtualEntity");
+        responseTracker.setDetails(details);
+
+        // 1. header
+        details.getChildren().add(new VirtualEntitySpan(headerTracker.getRootSpan(), "header", "消息头"));
+
+        // 2. body
+        if (totalSubPackageCount == 0 && currentPackageNo == 0) {
+            details.getChildren().add(new VirtualEntitySpan(tracker.getRootSpan(), "body", "消息体"));
+        } else {
+            details.getChildren().add(new VirtualFieldSpan("body", "消息体", "ByteBuf", body).setHexString(FormatUtils.toHexString(body)));
+        }
+
+        // 3. checkSum
+        details.getChildren().add(new VirtualFieldSpan("checkSum", "校验码", "java.lang.Byte", checkSum).setHexString(FormatUtils.toHexString(checkSum, 2)));
+    }
+
+    private ByteBuf encodeBody(Object entity, @Nullable CodecTracker tracker) {
         if (entity instanceof ByteBuf byteBuf) {
             return byteBuf;
         }
@@ -199,6 +249,141 @@ public class DefaultJt808ResponseEncoder implements Jt808ResponseEncoder {
                 .terminalId(response.terminalId())
                 .flowId(flowId)
                 .build();
+    }
+
+    public static class Header {
+
+        public Header(Jt808RequestHeader header) {
+            this.messageId = header.messageId();
+            this.messageBodyProps = header.messageBodyProps().intValue();
+            this.protocolVersion = header.version().versionBit();
+            this.terminalId = header.terminalId();
+            this.serialNo = header.flowId();
+            final Jt808RequestHeader.Jt808SubPackageProps subPackage = header.subPackage();
+            if (subPackage != null) {
+                this.subPackageProps = new SubPackageProps()
+                        .setTotalSubPackageCount(subPackage.totalSubPackageCount())
+                        .setCurrentPackageNo(subPackage.currentPackageNo());
+            }
+        }
+
+        public boolean hasVersionField() {
+            return Jt808RequestHeader.Jt808MessageBodyProps.from(this.messageBodyProps).versionIdentifier() == 1;
+        }
+
+        @Preset.JtStyle.Word(desc = "消息ID")
+        private int messageId;
+
+        // byte[2-4)    消息体属性 word(16)
+        @Preset.JtStyle.Word(desc = "消息体属性")
+        private int messageBodyProps;
+
+        // byte[4]     协议版本号
+        @Preset.JtStyle.Byte(condition = "hasVersionField()", desc = "协议版本号(V2019+)")
+        private short protocolVersion;
+
+        // byte[5-15)    终端手机号或设备ID bcd[10]
+        @Preset.JtStyle.Bcd(lengthExpression = "hasVersionField() ? 10 : 6", desc = "终端手机号或设备ID")
+        private String terminalId;
+
+        // byte[15-17)    消息流水号 word(16)
+        @Preset.JtStyle.Word(desc = "消息流水号")
+        private int serialNo;
+
+        // byte[17-21)    消息包封装项
+        @Preset.JtStyle.Object(condition = "hasSubPackage()", desc = "消息包封装项")
+        private SubPackageProps subPackageProps;
+
+        // bit[0-9] 0000,0011,1111,1111(3FF)(消息体长度)
+        public int msgBodyLength() {
+            return messageBodyProps & 0x3ff;
+        }
+
+        // bit[13] 0010,0000,0000,0000(2000)(是否有子包)
+        public boolean hasSubPackage() {
+            // return ((msgBodyProperty & 0x2000) >> 13) == 1;
+            return (messageBodyProps & 0x2000) > 0;
+        }
+
+        public int getMessageId() {
+            return messageId;
+        }
+
+        public Header setMessageId(int messageId) {
+            this.messageId = messageId;
+            return this;
+        }
+
+        public int getMessageBodyProps() {
+            return messageBodyProps;
+        }
+
+        public Header setMessageBodyProps(int messageBodyProps) {
+            this.messageBodyProps = messageBodyProps;
+            return this;
+        }
+
+        public short getProtocolVersion() {
+            return protocolVersion;
+        }
+
+        public Header setProtocolVersion(short protocolVersion) {
+            this.protocolVersion = protocolVersion;
+            return this;
+        }
+
+        public String getTerminalId() {
+            return terminalId;
+        }
+
+        public Header setTerminalId(String terminalId) {
+            this.terminalId = terminalId;
+            return this;
+        }
+
+        public int getSerialNo() {
+            return serialNo;
+        }
+
+        public Header setSerialNo(int serialNo) {
+            this.serialNo = serialNo;
+            return this;
+        }
+
+        public SubPackageProps getSubPackageProps() {
+            return subPackageProps;
+        }
+
+        public Header setSubPackageProps(SubPackageProps subPackageProps) {
+            this.subPackageProps = subPackageProps;
+            return this;
+        }
+    }
+
+    public static class SubPackageProps {
+        @Preset.JtStyle.Word(desc = "消息总包数")
+        private int totalSubPackageCount;
+
+        @Preset.JtStyle.Word(desc = "包序号")
+        private int currentPackageNo;
+
+        public int getTotalSubPackageCount() {
+            return totalSubPackageCount;
+        }
+
+        public SubPackageProps setTotalSubPackageCount(int totalSubPackageCount) {
+            this.totalSubPackageCount = totalSubPackageCount;
+            return this;
+        }
+
+        public int getCurrentPackageNo() {
+            return currentPackageNo;
+        }
+
+        public SubPackageProps setCurrentPackageNo(int currentPackageNo) {
+            this.currentPackageNo = currentPackageNo;
+            return this;
+        }
     }
 
 }

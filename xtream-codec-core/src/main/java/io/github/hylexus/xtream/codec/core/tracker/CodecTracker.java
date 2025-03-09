@@ -143,13 +143,13 @@ public class CodecTracker {
     }
 
     public void visit(BiConsumer<Integer, BaseSpan> consumer) {
-        this.visit(0, this.root, consumer);
+        visitTracker(0, this.root, consumer);
     }
 
-    private void visit(int level, BaseSpan item, BiConsumer<Integer, BaseSpan> consumer) {
+    public static void visitTracker(int level, BaseSpan item, BiConsumer<Integer, BaseSpan> consumer) {
         consumer.accept(level, item);
         for (final BaseSpan child : item.getChildren()) {
-            visit(level + 1, child, consumer);
+            visitTracker(level + 1, child, consumer);
         }
     }
 

@@ -20,9 +20,9 @@ import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.DecodeMessa
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.EncodeMessageDto;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.DecodedMessageVo;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.EncodedMessageVo;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardCodecService;
 import io.github.hylexus.xtream.codec.ext.jt808.exception.BadRequestException;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriber;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -47,7 +47,7 @@ public class BuiltinJt808DashboardCodecController {
     }
 
     @PostMapping("/encode-with-entity")
-    public List<DecodedMessageVo> encode(@Validated @RequestBody EncodeMessageDto dto) {
+    public List<Jt808MessageDescriber.Tracker> encode(@Validated @RequestBody EncodeMessageDto dto) {
         dto.setTerminalId(this.convertTerminalId(dto.getTerminalId(), dto.getVersion()));
         return this.codecService.encodeWithTracker(dto);
     }
@@ -72,7 +72,7 @@ public class BuiltinJt808DashboardCodecController {
     }
 
     @PostMapping("/decode-with-entity")
-    public EncodedMessageVo decode(@Validated @RequestBody DecodeMessageDto dto) {
+    public DecodedMessageVo decode(@Validated @RequestBody DecodeMessageDto dto) {
         final List<String> list = dto.getHexString().stream()
                 .filter(Objects::nonNull)
                 .map(s -> s.replace(" ", ""))

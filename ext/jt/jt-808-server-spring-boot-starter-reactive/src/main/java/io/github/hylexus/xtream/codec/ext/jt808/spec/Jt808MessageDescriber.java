@@ -16,7 +16,12 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.spec;
 
+import io.github.hylexus.xtream.codec.core.tracker.BaseSpan;
 import io.github.hylexus.xtream.codec.core.tracker.CodecTracker;
+import io.github.hylexus.xtream.codec.core.tracker.RootSpan;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author hylexus
@@ -30,12 +35,28 @@ public class Jt808MessageDescriber {
     protected byte encryptionType = 0b000;
     protected int flowId = -1;
     protected Jt808FlowIdGenerator flowIdGenerator;
-    protected CodecTracker bodyCodecTracker;
-    protected Jt808MessageCodecTracker messageCodecTracker = Jt808MessageCodecTracker.NO_OP;
+    protected List<Tracker> trackers;
+    protected boolean withTracker;
 
-    public Jt808MessageDescriber(Jt808ProtocolVersion version, String terminalId) {
+    public Jt808MessageDescriber(Integer messageId, Jt808ProtocolVersion version, String terminalId) {
+        this.messageId = messageId;
         this.version = version;
         this.terminalId = terminalId;
+    }
+
+    /**
+     * 仅调试用。会对性能有一定影响。
+     */
+    public Jt808MessageDescriber enableTracker() {
+        this.withTracker = true;
+        if (this.trackers == null) {
+            this.trackers = new ArrayList<>();
+        }
+        return this;
+    }
+
+    public List<Tracker> trackers() {
+        return this.trackers;
     }
 
     public Jt808ProtocolVersion version() {
@@ -101,24 +122,6 @@ public class Jt808MessageDescriber {
         return this;
     }
 
-    public CodecTracker bodyCodecTracker() {
-        return this.bodyCodecTracker;
-    }
-
-    public Jt808MessageDescriber bodyCodecTracker(CodecTracker tracker) {
-        this.bodyCodecTracker = tracker;
-        return this;
-    }
-
-    public Jt808MessageCodecTracker messageCodecTracker() {
-        return this.messageCodecTracker;
-    }
-
-    public Jt808MessageDescriber messageCodecTracker(Jt808MessageCodecTracker messageCodecTracker) {
-        this.messageCodecTracker = messageCodecTracker;
-        return this;
-    }
-
     public Jt808FlowIdGenerator flowIdGenerator() {
         return this.flowIdGenerator;
     }
@@ -143,4 +146,65 @@ public class Jt808MessageDescriber {
         }
         return this;
     }
+
+    public void visitTracker() {
+        this.visitTracker((currentPackageNo, totalPackageNo, level, span) -> {
+            // ...
+            System.out.println("#" + currentPackageNo + "/" + totalPackageNo + "\t".repeat(level) + span);
+        });
+    }
+
+    public void visitTracker(Jt808ResponseEncoderTrackerVisitor visitor) {
+        final List<Tracker> trackers = this.trackers;
+        final int totalPackage = trackers.size();
+        for (int i = 0; i < totalPackage; i++) {
+            final Tracker tracker = trackers.get(i);
+            final int packageNo = i;
+            CodecTracker.visitTracker(0, tracker.getDetails(), (level, span) -> {
+                visitor.visit(packageNo + 1, totalPackage, level, span);
+            });
+        }
+    }
+
+    @FunctionalInterface
+    public interface Jt808ResponseEncoderTrackerVisitor {
+        void visit(int currentPackageNo, int totalPackageNo, int level, BaseSpan span);
+    }
+
+    public static class Tracker {
+        private String rawHexString;
+        private String escapedHexString;
+        private RootSpan details;
+
+        public Tracker() {
+        }
+
+        public String getRawHexString() {
+            return rawHexString;
+        }
+
+        public Tracker setRawHexString(String rawHexString) {
+            this.rawHexString = rawHexString;
+            return this;
+        }
+
+        public String getEscapedHexString() {
+            return escapedHexString;
+        }
+
+        public Tracker setEscapedHexString(String escapedHexString) {
+            this.escapedHexString = escapedHexString;
+            return this;
+        }
+
+        public RootSpan getDetails() {
+            return details;
+        }
+
+        public Tracker setDetails(RootSpan details) {
+            this.details = details;
+            return this;
+        }
+    }
+
 }

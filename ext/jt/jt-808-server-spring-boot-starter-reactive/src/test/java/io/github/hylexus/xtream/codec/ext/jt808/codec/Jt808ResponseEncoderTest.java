@@ -1,15 +1,37 @@
----
-icon: hammer
-article: false
----
+/*
+ * Copyright 2024 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-# 808报文构建器
+package io.github.hylexus.xtream.codec.ext.jt808.codec;
 
-这里介绍的是 `Jt808ResponseEncoder`，可以用来手动构建报文。
+import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
+import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
+import io.github.hylexus.xtream.codec.core.EntityCodec;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.BuiltinMessage8001;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808BytesProcessor;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808ResponseEncoder;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriber;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageEncryptionHandler;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-下面以 `0x8001` 消息为例，简单介绍下如何使用:
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-```java{35}
 class Jt808ResponseEncoderTest {
 
     // 如果是 Spring 环境，可以直接注入 Jt808ResponseEncoder
@@ -30,6 +52,7 @@ class Jt808ResponseEncoderTest {
 
     @Test
     void test() {
+        final BuiltinMessage8001 entity = createEntity();
         final Jt808MessageDescriber describer = new Jt808MessageDescriber(
                 // 消息头中的消息ID
                 0x8001,
@@ -43,7 +66,6 @@ class Jt808ResponseEncoderTest {
         // 可以手动指定流水号生成器，默认使用 DefaultJt808ResponseEncoder.flowIdGenerator
         // describer.flowIdGenerator(increment -> 1);
 
-        final BuiltinMessage8001 entity = createEntity();
         final ByteBuf buffer = responseEncoder.encode(entity, describer);
         try {
             final String hexString = FormatUtils.toHexString(buffer);
@@ -64,4 +86,3 @@ class Jt808ResponseEncoderTest {
     }
 
 }
-```
