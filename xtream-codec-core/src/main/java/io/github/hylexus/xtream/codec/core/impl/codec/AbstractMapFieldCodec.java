@@ -111,7 +111,7 @@ public abstract class AbstractMapFieldCodec<
                 final FieldCodec valueFieldCodec = this.getValueFieldCodec((K) mapKey);
                 valueFieldCodec.serialize(propertyMetadata, context, temp, mapValue);
 
-                final int valueLength = temp.readerIndex();
+                final int valueLength = temp.writerIndex();
                 this.getValueLengthFieldCodec().serialize(propertyMetadata, context, output, valueLength);
                 output.writeBytes(temp);
                 temp.clear();
