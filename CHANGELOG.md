@@ -1,3 +1,9 @@
+## 0.0.1-rc.2(2025-03-10)
+
+### 🐞 Bug Fixes
+
+- 修复 `AbstractMapFieldCodec` 编码长度字段为零的问题
+
 ## 0.0.1-rc.1(2025-03-09)
 
 - 新增 `Jt808MessageDescriber.enableTracker()` 方法，支持 `Tracker`
