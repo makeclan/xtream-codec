@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration.instruction;
+package io.github.hylexus.xtream.codec.ext.jt1078.boot.configuration;
 
 import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
-import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
-import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808InstructionServerExchangeCreator;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
-import io.github.hylexus.xtream.codec.ext.jt808.utils.BuiltinConfigurationUtils;
-import io.github.hylexus.xtream.codec.ext.jt808.utils.Jt808InstructionServerTcpHandlerAdapterBuilder;
+import io.github.hylexus.xtream.codec.ext.jt1078.boot.properties.XtreamJt1078ServerProperties;
+import io.github.hylexus.xtream.codec.ext.jt1078.extensions.Jt1078ServerExchangeCreator;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionManager;
+import io.github.hylexus.xtream.codec.ext.jt1078.utils.Jt1078ServerTcpHandlerAdapterBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.TcpXtreamNettyHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.UdpXtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
@@ -29,12 +28,14 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandler
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMapping;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerResultHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamRequestExceptionHandler;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.SimpleXtreamRequestHandlerHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.XtreamServerBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.TcpNettyServerCustomizer;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.TcpXtreamServer;
 import io.github.hylexus.xtream.codec.server.reactive.spec.resources.DefaultTcpXtreamNettyResourceFactory;
 import io.github.hylexus.xtream.codec.server.reactive.spec.resources.TcpXtreamNettyResourceFactory;
 import io.github.hylexus.xtream.codec.server.reactive.spec.resources.XtreamNettyResourceFactory;
+import io.github.hylexus.xtream.codec.server.reactive.utils.BuiltinConfigurationUtils;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import org.springframework.beans.factory.ObjectProvider;
@@ -45,26 +46,28 @@ import org.springframework.context.annotation.Bean;
 
 import java.util.List;
 
-import static io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolConstant.*;
+import static io.github.hylexus.xtream.codec.ext.jt1078.utils.Jt1078Constants.*;
 
-/**
- * 指令服务器配置(TCP)
- */
-@ConditionalOnProperty(prefix = "jt808-server.tcp-instruction-server", name = "enabled", havingValue = "true", matchIfMissing = true)
-public class BuiltinJt808InstructionServerTcpConfiguration {
+@ConditionalOnProperty(prefix = "jt1078-server.tcp-server", name = "enabled", havingValue = "true", matchIfMissing = true)
+public class BuiltinJt1078ServerTcpConfiguration {
 
-    @Bean(BEAN_NAME_JT_808_TCP_XTREAM_NETTY_HANDLER_ADAPTER_INSTRUCTION_SERVER)
-    @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_TCP_XTREAM_NETTY_HANDLER_ADAPTER_INSTRUCTION_SERVER)
+    @Bean
+    XtreamHandlerAdapter mockAdapter() {
+        return new SimpleXtreamRequestHandlerHandlerAdapter();
+    }
+
+    @Bean(BEAN_NAME_JT1078_TCP_XTREAM_NETTY_HANDLER_ADAPTER)
+    @ConditionalOnMissingBean(name = BEAN_NAME_JT1078_TCP_XTREAM_NETTY_HANDLER_ADAPTER)
     TcpXtreamNettyHandlerAdapter tcpXtreamNettyHandlerAdapter(
             BufferFactoryHolder bufferFactoryHolder,
-            Jt808InstructionServerExchangeCreator exchangeCreator,
+            Jt1078ServerExchangeCreator exchangeCreator,
             List<XtreamHandlerMapping> handlerMappings,
             List<XtreamHandlerAdapter> handlerAdapters,
             List<XtreamHandlerResultHandler> handlerResultHandlers,
             List<XtreamFilter> xtreamFilters,
             List<XtreamRequestExceptionHandler> exceptionHandlers) {
 
-        return new Jt808InstructionServerTcpHandlerAdapterBuilder(bufferFactoryHolder.getAllocator())
+        return new Jt1078ServerTcpHandlerAdapterBuilder(bufferFactoryHolder.getAllocator())
                 .setXtreamExchangeCreator(exchangeCreator)
                 .addHandlerMappings(handlerMappings)
                 .addHandlerAdapters(handlerAdapters)
@@ -74,10 +77,10 @@ public class BuiltinJt808InstructionServerTcpConfiguration {
                 .build();
     }
 
-    @Bean(BEAN_NAME_JT_808_TCP_XTREAM_NETTY_RESOURCE_FACTORY_INSTRUCTION_SERVER)
-    @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_TCP_XTREAM_NETTY_RESOURCE_FACTORY_INSTRUCTION_SERVER)
-    TcpXtreamNettyResourceFactory tcpXtreamNettyResourceFactory(XtreamJt808ServerProperties serverProperties) {
-        final XtreamJt808ServerProperties.TcpLoopResourcesProperty loopResources = serverProperties.getInstructionServer().getTcpServer().getLoopResources();
+    @Bean(BEAN_NAME_JT1078_TCP_XTREAM_NETTY_RESOURCE_FACTORY)
+    @ConditionalOnMissingBean(name = BEAN_NAME_JT1078_TCP_XTREAM_NETTY_RESOURCE_FACTORY)
+    TcpXtreamNettyResourceFactory tcpXtreamNettyResourceFactory(XtreamJt1078ServerProperties serverProperties) {
+        final XtreamJt1078ServerProperties.TcpLoopResourcesProperty loopResources = serverProperties.getTcpServer().getLoopResources();
         return new DefaultTcpXtreamNettyResourceFactory(new XtreamNettyResourceFactory.LoopResourcesProperty(
                 loopResources.getThreadNamePrefix(),
                 loopResources.getSelectCount(),
@@ -88,41 +91,42 @@ public class BuiltinJt808InstructionServerTcpConfiguration {
         ));
     }
 
-    @Bean(BEAN_NAME_JT_808_TCP_XTREAM_SERVER_INSTRUCTION_SERVER)
-    @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_TCP_XTREAM_SERVER_INSTRUCTION_SERVER)
+    @Bean(BEAN_NAME_JT1078_TCP_XTREAM_SERVER)
+    @ConditionalOnMissingBean(name = BEAN_NAME_JT1078_TCP_XTREAM_SERVER)
     TcpXtreamServer tcpXtreamServer(
-            @Qualifier(BEAN_NAME_JT_808_TCP_XTREAM_NETTY_HANDLER_ADAPTER_INSTRUCTION_SERVER) TcpXtreamNettyHandlerAdapter tcpXtreamNettyHandlerAdapter,
-            @Qualifier(BEAN_NAME_JT_808_TCP_XTREAM_NETTY_RESOURCE_FACTORY_INSTRUCTION_SERVER) TcpXtreamNettyResourceFactory resourceFactory,
+            @Qualifier(BEAN_NAME_JT1078_TCP_XTREAM_NETTY_HANDLER_ADAPTER) TcpXtreamNettyHandlerAdapter tcpXtreamNettyHandlerAdapter,
+            @Qualifier(BEAN_NAME_JT1078_TCP_XTREAM_NETTY_RESOURCE_FACTORY) TcpXtreamNettyResourceFactory resourceFactory,
             ObjectProvider<TcpNettyServerCustomizer> customizers,
-            Jt808SessionManager sessionManager,
-            XtreamJt808ServerProperties serverProperties) {
+            Jt1078SessionManager sessionManager,
+            XtreamJt1078ServerProperties serverProperties) {
 
-        final XtreamJt808ServerProperties.TcpServerProps tcpServer = serverProperties.getInstructionServer().getTcpServer();
+        final XtreamJt1078ServerProperties.TcpServerProps tcpServer = serverProperties.getTcpServer();
         return XtreamServerBuilder.newTcpServerBuilder()
                 // 默认 host和 port(用户自定义配置可以再次覆盖默认配置)
-                .addServerCustomizer(io.github.hylexus.xtream.codec.server.reactive.utils.BuiltinConfigurationUtils.defaultTcpBasicConfigurer(tcpServer.getHost(), tcpServer.getPort()))
+                .addServerCustomizer(BuiltinConfigurationUtils.defaultTcpBasicConfigurer(tcpServer.getHost(), tcpServer.getPort()))
                 // handler
                 .addServerCustomizer(server -> server.handle(tcpXtreamNettyHandlerAdapter))
                 // 分包 + 空闲检测
                 .addServerCustomizer(server -> server.doOnConnection(connection -> {
                     // 空闲检测
-                    BuiltinConfigurationUtils.addIdleStateHandler(
-                            serverProperties.getInstructionServer().getTcpServer().getSessionIdleStateChecker(),
-                            sessionManager,
-                            null,
-                            connection
-                    );
+                    // BuiltinConfigurationUtils.addIdleStateHandler(
+                    //         serverProperties.getInstructionServer().getTcpServer().getSessionIdleStateChecker(),
+                    //         sessionManager,
+                    //         null,
+                    //         connection
+                    // );
                     // 分包
                     // stripDelimiter=true
-                    final int frameLength = serverProperties.getInstructionServer().getTcpServer().getMaxInstructionFrameLength();
-                    final DelimiterBasedFrameDecoder frameDecoder = new DelimiterBasedFrameDecoder(frameLength, true, Unpooled.copiedBuffer(new byte[]{PACKAGE_DELIMITER}));
-                    connection.addHandlerFirst(BEAN_NAME_CHANNEL_INBOUND_HANDLER_ADAPTER, frameDecoder);
+                    final int frameLength = serverProperties.getTcpServer().getMaxFrameLength();
+                    // todo 自定义分包器
+                    final DelimiterBasedFrameDecoder frameDecoder = new DelimiterBasedFrameDecoder(frameLength, true, Unpooled.copiedBuffer(new byte[]{0x30, 0x31, 0x63, 0x64}));
+                    connection.addHandlerFirst(BEAN_NAME_JT1078_CHANNEL_FRAME_DECODER, frameDecoder);
                 }))
                 // loopResources
                 .addServerCustomizer(server -> server.runOn(resourceFactory.loopResources(), resourceFactory.preferNative()))
                 // 用户自定义配置
                 .addServerCustomizers(customizers.stream().toList())
-                .build("INSTRUCTION");
+                .build("1078-TCP");
     }
 
 }

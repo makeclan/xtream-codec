@@ -103,7 +103,7 @@ public class BuiltinJt808AttachmentServerTcpConfiguration {
         final XtreamJt808ServerProperties.TcpAttachmentServerProps tcpServer = serverProperties.getAttachmentServer().getTcpServer();
         return XtreamServerBuilder.newTcpServerBuilder()
                 // 默认 host和 port(用户自定义配置可以再次覆盖默认配置)
-                .addServerCustomizer(BuiltinConfigurationUtils.defaultTcpBasicConfigurer(tcpServer.getHost(), tcpServer.getPort()))
+                .addServerCustomizer(io.github.hylexus.xtream.codec.server.reactive.utils.BuiltinConfigurationUtils.defaultTcpBasicConfigurer(tcpServer.getHost(), tcpServer.getPort()))
                 // handler
                 .addServerCustomizer(server -> server.handle(tcpXtreamNettyHandlerAdapter))
                 // 分包 + 空闲检测

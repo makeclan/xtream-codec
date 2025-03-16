@@ -80,6 +80,24 @@ public interface XtreamByteReader {
         return this;
     }
 
+    default long readU32() {
+        return readable().readUnsignedInt();
+    }
+
+    default XtreamByteReader readU32(Consumer<Long> consumer) {
+        consumer.accept(this.readU32());
+        return this;
+    }
+
+    default long readI64() {
+        return readable().readLong();
+    }
+
+    default XtreamByteReader readI64(Consumer<Long> consumer) {
+        consumer.accept(this.readI64());
+        return this;
+    }
+
     default String readString(int length) {
         return readString(length, StandardCharsets.UTF_8);
     }
