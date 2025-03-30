@@ -35,6 +35,9 @@ import java.lang.reflect.Type;
 public class EmptyXtreamHandlerResultHandler implements XtreamHandlerResultHandler {
     private static final Logger log = LoggerFactory.getLogger(EmptyXtreamHandlerResultHandler.class);
 
+    public EmptyXtreamHandlerResultHandler() {
+    }
+
     @Override
     public boolean supports(XtreamHandlerResult result) {
         final XtreamMethodParameter returnType = result.getReturnType();

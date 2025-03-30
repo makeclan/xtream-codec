@@ -14,7 +14,6 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     // common end
 
-    // 加解密
     api(project(":ext:jt:jt-1078-server-spring-boot-starter-reactive"))
     api("org.springframework.boot:spring-boot-starter-webflux")
     api("org.springframework.boot:spring-boot-starter-validation")

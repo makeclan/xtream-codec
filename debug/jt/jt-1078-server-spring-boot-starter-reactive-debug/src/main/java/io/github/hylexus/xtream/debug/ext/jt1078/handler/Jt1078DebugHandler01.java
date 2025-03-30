@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-@Component
+// @Component
 public class Jt1078DebugHandler01 implements SimpleXtreamRequestHandler {
     private static final Logger log = LoggerFactory.getLogger(Jt1078DebugHandler01.class);
 

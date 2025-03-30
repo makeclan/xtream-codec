@@ -21,7 +21,7 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandler
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-@Component
+// @Component
 public class Jt1078HandlerMapping01 implements XtreamHandlerMapping {
 
     @Override

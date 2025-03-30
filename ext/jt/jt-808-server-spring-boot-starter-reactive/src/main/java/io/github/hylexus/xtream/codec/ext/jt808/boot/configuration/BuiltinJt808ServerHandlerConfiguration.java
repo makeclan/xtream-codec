@@ -125,6 +125,7 @@ public class BuiltinJt808ServerHandlerConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     EmptyXtreamHandlerResultHandler emptyXtreamHandlerResultHandler() {
         return new EmptyXtreamHandlerResultHandler();
     }

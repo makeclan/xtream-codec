@@ -28,9 +28,12 @@ import io.github.hylexus.xtream.codec.ext.jt1078.extensions.filter.Jt1078Request
 import io.github.hylexus.xtream.codec.ext.jt1078.extensions.impl.DefaultJt1078ServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionManager;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.DefaultJt1078SessionManager;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionEventListener;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.UdpSessionIdleStateCheckerProps;
 import io.netty.buffer.ByteBufAllocator;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -45,6 +48,7 @@ import org.springframework.context.annotation.Import;
 @Import({
         BuiltinJt1078ServerTcpConfiguration.class,
         BuiltinJt1078ServerUdpConfiguration.class,
+        BuiltinJt1078ServerHandlerConfiguration.class,
 })
 @ConditionalOnProperty(prefix = "jt1078-server", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class XtreamExtJt1078ServerAutoConfiguration {
@@ -100,6 +104,11 @@ public class XtreamExtJt1078ServerAutoConfiguration {
     @ConditionalOnProperty(prefix = "jt1078-server.features.request-combiner", name = "enabled", havingValue = "true", matchIfMissing = true)
     Jt1078RequestCombinerFilter jt1078RequestCombinerFilter(Jt1078RequestCombiner combiner) {
         return new Jt1078RequestCombinerFilter(combiner);
+    }
+
+    @Bean
+    CommandLineRunner jt1078SessionEventListenerRegister(Jt1078SessionManager sessionManager, ObjectProvider<XtreamSessionEventListener> listeners) {
+        return args -> listeners.orderedStream().forEach(sessionManager::addListener);
     }
 
 }
