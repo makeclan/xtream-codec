@@ -33,6 +33,7 @@ include("ext:jt")
 include("ext:jt:jt-808-server-spring-boot-starter-reactive")
 include("ext:jt:jt-808-server-dashboard-spring-boot-starter-reactive")
 include("ext:jt:jt-1078-server-spring-boot-starter-reactive")
+include("ext:jt:jt-1078-server-dashboard-spring-boot-starter-reactive")
 
 include("debug")
 include("debug:xtream-codec-core-debug")

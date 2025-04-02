@@ -30,7 +30,7 @@ import java.util.Map;
  * @author hylexus
  */
 @RestController
-@RequestMapping("/dashboard-api/v1")
+@RequestMapping("/dashboard-api/jt808/v1")
 public class BuiltinJt808DashboardCommonController {
 
     private final Instant serverStartupTime = Instant.now();

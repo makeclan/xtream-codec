@@ -14,7 +14,8 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     // common end
 
-    api(project(":ext:jt:jt-1078-server-spring-boot-starter-reactive"))
+//    api(project(":ext:jt:jt-1078-server-spring-boot-starter-reactive"))
+    api(project(":ext:jt:jt-1078-server-dashboard-spring-boot-starter-reactive"))
     api("org.springframework.boot:spring-boot-starter-webflux")
     api("org.springframework.boot:spring-boot-starter-validation")
     api("org.springframework.boot:spring-boot-starter-logging")

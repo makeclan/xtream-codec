@@ -25,7 +25,7 @@ public class Resp<T> {
 
     private int code;
 
-    private String msg;
+    private String message;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T data;
@@ -33,9 +33,9 @@ public class Resp<T> {
     public Resp() {
     }
 
-    public Resp(int code, String msg, T data) {
+    public Resp(int code, String message, T data) {
         this.code = code;
-        this.msg = msg;
+        this.message = message;
         this.data = data;
     }
 
@@ -84,12 +84,12 @@ public class Resp<T> {
         return this;
     }
 
-    public String getMsg() {
-        return msg;
+    public String getMessage() {
+        return message;
     }
 
-    public Resp<T> setMsg(String msg) {
-        this.msg = msg;
+    public Resp<T> setMessage(String message) {
+        this.message = message;
         return this;
     }
 

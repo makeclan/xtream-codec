@@ -6,13 +6,13 @@ export const requestCodecOptionsApi = async (): Promise<{
     classMetadata: Array<ClassMetadata>
 }> => {
     return await request({
-        path: 'dashboard-api/v1/codec/codec-options',
+        path: 'dashboard-api/jt808/v1/codec/codec-options',
         method: 'get',
     });
 }
 export const requestDecodeMessageApi = async (data: object): Promise<DecodeResult> => {
     return await request({
-        path: 'dashboard-api/v1/codec/decode-with-entity',
+        path: 'dashboard-api/jt808/v1/codec/decode-with-entity',
         method: 'post',
         data
     });
@@ -20,7 +20,7 @@ export const requestDecodeMessageApi = async (data: object): Promise<DecodeResul
 
 export const requestEncodeMessageApi = async (data: object): Promise<Array<EncodeResult>> => {
     return await request({
-        path: 'dashboard-api/v1/codec/encode-with-entity',
+        path: 'dashboard-api/jt808/v1/codec/encode-with-entity',
         method: 'post',
         data
     });

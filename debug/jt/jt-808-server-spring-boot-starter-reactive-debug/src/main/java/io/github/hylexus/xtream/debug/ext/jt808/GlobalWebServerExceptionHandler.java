@@ -50,7 +50,7 @@ public class GlobalWebServerExceptionHandler {
 
     @ExceptionHandler(XtreamHttpException.class)
     public ResponseEntity<Resp<Object>> processXtreamHttpException(XtreamHttpException e) {
-        return new ResponseEntity<>(Resp.badRequest(e.getMessage()), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(Resp.failure(e.getApiCode(), e.getMessage()), HttpStatus.valueOf(e.getApiCode().code()));
     }
 
     @ExceptionHandler(ResponseStatusException.class)

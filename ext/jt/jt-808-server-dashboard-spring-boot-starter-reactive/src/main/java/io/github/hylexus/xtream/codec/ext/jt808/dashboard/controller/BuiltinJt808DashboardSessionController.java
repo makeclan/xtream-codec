@@ -36,9 +36,8 @@ import java.util.function.Predicate;
 /**
  * @author hylexus
  */
-// todo 接口重命名
 @RestController
-@RequestMapping("/dashboard-api/v1/session")
+@RequestMapping("/dashboard-api/jt808/v1/session")
 public class BuiltinJt808DashboardSessionController {
     private final Jt808SessionManager sessionManager;
     private final Jt808AttachmentSessionManager attachmentSessionManager;

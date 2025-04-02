@@ -52,7 +52,7 @@ tasks.register<Exec>("buildJt808DashboardUi") {
         "sh", "-c",
         """
         pnpm install --registry https://registry.npmmirror.com \
-        && pnpm run build
+        && pnpm run build --mode production
         """.trimIndent()
     )
 }

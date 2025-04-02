@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/dashboard-api/v1/codec")
+@RequestMapping("/dashboard-api/jt808/v1/codec")
 public class BuiltinJt808DashboardCodecController {
 
     private final Jt808DashboardCodecService codecService;

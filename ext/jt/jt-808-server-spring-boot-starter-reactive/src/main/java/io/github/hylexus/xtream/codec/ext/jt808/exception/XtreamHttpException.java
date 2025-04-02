@@ -44,4 +44,8 @@ public class XtreamHttpException extends RuntimeException {
         super(message, cause, enableSuppression, writableStackTrace);
         this.apiCode = apiCode;
     }
+
+    public RespCode getApiCode() {
+        return apiCode;
+    }
 }

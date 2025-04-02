@@ -33,7 +33,7 @@ import java.util.Optional;
  * @author hylexus
  */
 @RestController
-@RequestMapping("/dashboard-api/v1/event")
+@RequestMapping("/dashboard-api/jt808/v1/event")
 public class BuiltinJt808DashboardEventControllerServlet {
     private static final Logger log = LoggerFactory.getLogger(BuiltinJt808DashboardEventControllerServlet.class);
     private final Jt808DashboardEventService dashboardEventService;

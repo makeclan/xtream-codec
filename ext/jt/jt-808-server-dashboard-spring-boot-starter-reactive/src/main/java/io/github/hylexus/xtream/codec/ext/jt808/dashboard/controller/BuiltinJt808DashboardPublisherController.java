@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  * @author hylexus
  */
 @RestController
-@RequestMapping("/dashboard-api/v1/event-publisher")
+@RequestMapping("/dashboard-api/jt808/v1/event-publisher")
 public class BuiltinJt808DashboardPublisherController {
 
     private final XtreamEventPublisher eventPublisher;

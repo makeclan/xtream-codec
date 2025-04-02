@@ -31,7 +31,7 @@ import reactor.core.publisher.Flux;
  * @author hylexus
  */
 @RestController
-@RequestMapping("/dashboard-api/v1/event")
+@RequestMapping("/dashboard-api/jt808/v1/event")
 public class BuiltinJt808DashboardEventControllerReactive {
     private static final Logger log = LoggerFactory.getLogger(BuiltinJt808DashboardEventControllerReactive.class);
     private final Jt808DashboardEventService dashboardEventService;

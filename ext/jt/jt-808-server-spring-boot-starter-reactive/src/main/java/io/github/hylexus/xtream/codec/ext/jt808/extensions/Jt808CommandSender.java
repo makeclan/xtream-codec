@@ -38,7 +38,13 @@ public interface Jt808CommandSender extends InternalXtreamCommandSender<Jt808Ses
      * @param messageId 客户端对该条指令的回复消息的 ID
      * @see #setClientResponse(Jt808CommandKey, Object)
      */
-    Mono<Object> sendObjectAndWaitingResponse(String sessionId, Mono<Object> body, int messageId);
+    <R> Mono<R> sendObjectAndWaitingResponse(String sessionId, Mono<Object> body, int messageId);
+
+    default <R> Mono<R> sendObjectAndWaitingResponseWithSessionId(String sessionId, Mono<Object> body, int messageId) {
+        return this.sendObjectAndWaitingResponse(sessionId, body, messageId);
+    }
+
+    <R> Mono<R> sendObjectAndWaitingResponseWithTerminalId(String terminalId, Mono<Object> body, int messageId);
 
     /**
      * 设置客户端的回复结果

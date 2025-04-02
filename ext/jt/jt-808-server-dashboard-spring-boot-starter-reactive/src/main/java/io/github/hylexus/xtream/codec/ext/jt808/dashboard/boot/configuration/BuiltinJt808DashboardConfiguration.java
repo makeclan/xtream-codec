@@ -38,6 +38,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808Dashboard
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl.DefaultJt808DashboardMappingService;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl.DefaultJt808DashboardMetricsService;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl.Jt808DashboardCodecServiceImpl;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808CommandSender;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808AttachmentSessionManager;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriptionRegistry;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
@@ -155,6 +156,11 @@ public class BuiltinJt808DashboardConfiguration {
     @Bean
     BuiltinJt808DashboardCodecController builtinJt808DashboardCodecController(Jt808DashboardCodecService service) {
         return new BuiltinJt808DashboardCodecController(service);
+    }
+
+    @Bean
+    BuiltinJt808DashboardCommandController builtinJt808DashboardCommandController(Jt808CommandSender commandSender) {
+        return new BuiltinJt808DashboardCommandController(commandSender);
     }
 
 }

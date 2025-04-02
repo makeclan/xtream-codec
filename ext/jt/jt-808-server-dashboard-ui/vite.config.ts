@@ -9,11 +9,11 @@ export default defineConfig({
   base: process.env.VITE_BASE_PATH || "/dashboard-ui/",
   server: {
     proxy: {
-      "/dashboard-api": {
-        target: "http://localhost:8080",
+      "/dashboard-api/jt808": {
+        target: "http://localhost:8888",
         changeOrigin: true,
         rewrite: (path) =>
-          path.replace(/^\/dashboard-api/, "/dashboard-api/v1"),
+          path.replace(/^\/dashboard-api\/jt808/, "/dashboard-api/jt808/v1"),
       },
     },
   },

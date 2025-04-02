@@ -26,6 +26,8 @@ public enum DefaultRespCode implements RespCode {
     SERVER_ERROR(500, HttpResponseStatus.INTERNAL_SERVER_ERROR.reasonPhrase()),
     BAD_REQUEST(400, HttpResponseStatus.BAD_REQUEST.reasonPhrase()),
     NOT_FOUND(404, HttpResponseStatus.NOT_FOUND.reasonPhrase()),
+    REQUEST_TIMEOUT(408, HttpResponseStatus.REQUEST_TIMEOUT.reasonPhrase()),
+    GATEWAY_TIMEOUT(504, HttpResponseStatus.GATEWAY_TIMEOUT.reasonPhrase()),
     ;
 
     private final int code;
