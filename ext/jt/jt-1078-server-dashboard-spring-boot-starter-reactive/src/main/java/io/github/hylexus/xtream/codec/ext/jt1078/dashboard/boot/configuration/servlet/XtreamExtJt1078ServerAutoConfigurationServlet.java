@@ -16,5 +16,23 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.dashboard.boot.configuration.servlet;
 
+import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.controller.servlet.BuiltinJt1078DashboardProxyControllerServlet;
+import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.service.Jt808ProxyServiceServlet;
+import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.service.impl.DefaultJt808ProxyServiceServlet;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.context.annotation.Bean;
+
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class XtreamExtJt1078ServerAutoConfigurationServlet {
+
+    @Bean
+    Jt808ProxyServiceServlet jt808ProxyService() {
+        return new DefaultJt808ProxyServiceServlet();
+    }
+
+    @Bean
+    BuiltinJt1078DashboardProxyControllerServlet builtinJt1078DashboardProxyControllerServlet(Jt808ProxyServiceServlet proxyServiceServlet) {
+        return new BuiltinJt1078DashboardProxyControllerServlet(proxyServiceServlet);
+    }
+
 }

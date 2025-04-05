@@ -16,21 +16,6 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.dashboard.boot.configuration;
 
-import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.boot.controller.BuiltinJt1078DashboardProxyController;
-import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.boot.service.Jt808ProxyService;
-import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.boot.service.service.DefaultJt808ProxyService;
-import org.springframework.context.annotation.Bean;
-
 public class BuiltinJt1078DashboardConfiguration {
-
-    @Bean
-    Jt808ProxyService jt808ProxyService() {
-        return new DefaultJt808ProxyService();
-    }
-
-    @Bean
-    BuiltinJt1078DashboardProxyController builtinJt1078DashboardProxyController(Jt808ProxyService proxyService) {
-        return new BuiltinJt1078DashboardProxyController(proxyService);
-    }
 
 }

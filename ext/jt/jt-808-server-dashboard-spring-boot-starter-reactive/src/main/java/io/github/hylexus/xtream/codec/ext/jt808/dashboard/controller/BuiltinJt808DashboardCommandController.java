@@ -16,15 +16,13 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller;
 
+import io.github.hylexus.xtream.codec.base.web.exception.XtreamHttpException;
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.jt1078.BuiltinMessage9101;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.jt1078.BuiltinMessage9102;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.command.DashboardCommand9101Dto;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.command.DashboardCommand9102Dto;
-import io.github.hylexus.xtream.codec.ext.jt808.domain.DefaultRespCode;
 import io.github.hylexus.xtream.codec.ext.jt808.exception.Jt808SessionNotFoundException;
-import io.github.hylexus.xtream.codec.ext.jt808.exception.ResourceNotFoundException;
-import io.github.hylexus.xtream.codec.ext.jt808.exception.XtreamHttpException;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808CommandSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,11 +82,11 @@ public class BuiltinJt808DashboardCommandController {
                 })
                 .onErrorResume(Jt808SessionNotFoundException.class, e -> {
                     log.error("Jt808Session not found with terminalId: [{}]", sim);
-                    return Mono.error(new ResourceNotFoundException("No Jt808Session found with terminalId: [" + sim + "]"));
+                    return Mono.error(XtreamHttpException.badRequest("No Jt808Session found with terminalId: [" + sim + "]"));
                 })
                 .onErrorResume(TimeoutException.class, e -> {
                     log.error("Command {}(0x{}) response timeout({})", messageId, FormatUtils.toHexString(messageId, 4), timeout);
-                    return Mono.error(new XtreamHttpException("Command 0x9101 response timeout(" + timeout + ")", DefaultRespCode.GATEWAY_TIMEOUT));
+                    return Mono.error(XtreamHttpException.timeout("Command 0x9101 response timeout(" + timeout + ")"));
                 });
     }
 

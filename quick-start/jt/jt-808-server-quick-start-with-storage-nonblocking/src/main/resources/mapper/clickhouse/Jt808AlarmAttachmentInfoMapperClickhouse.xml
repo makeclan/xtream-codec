@@ -28,7 +28,7 @@
         select *
         from jt_808_alarm_attachment_info
         order by alarm_time desc
-            limit #{dto.size}
+            limit #{dto.pageSize}
         offset #{dto.offset}
     </select>
 

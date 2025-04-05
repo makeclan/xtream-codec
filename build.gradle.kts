@@ -15,6 +15,7 @@ plugins {
 
 val mavenRepoConfig = getMavenRepoConfig()
 val mavenPublications = setOf(
+    "xtream-codec-base",
     "xtream-codec-core",
     "xtream-codec-server-reactive",
     "jt-808-server-spring-boot-starter-reactive",

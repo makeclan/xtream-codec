@@ -16,12 +16,11 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller;
 
+import io.github.hylexus.xtream.codec.base.web.domain.vo.PageableVo;
+import io.github.hylexus.xtream.codec.base.web.exception.XtreamHttpException;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.Jt808SessionQueryDto;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.events.Jt808DashboardSessionCloseReason;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.Jt808SessionVo;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.PageableVo;
-import io.github.hylexus.xtream.codec.ext.jt808.domain.DefaultRespCode;
-import io.github.hylexus.xtream.codec.ext.jt808.exception.XtreamHttpException;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808AttachmentSessionManager;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
@@ -69,7 +68,7 @@ public class BuiltinJt808DashboardSessionController {
 
     private Mono<Map<String, Boolean>> closeSession(String sessionId, XtreamSessionManager<Jt808Session> manager) {
         return manager.getSessionById(sessionId)
-                .switchIfEmpty(Mono.defer(() -> Mono.error(new XtreamHttpException("No session found with sessionId: " + sessionId, DefaultRespCode.NOT_FOUND))))
+                .switchIfEmpty(Mono.defer(() -> Mono.error(XtreamHttpException.notFound("No session found with sessionId: " + sessionId))))
                 .map(session -> {
                     // todo clientIP
                     final boolean closed = manager.closeSessionById(sessionId, new Jt808DashboardSessionCloseReason("ClosedByDashboardUser", null));
@@ -84,7 +83,7 @@ public class BuiltinJt808DashboardSessionController {
             return PageableVo.empty();
         }
         final List<Jt808SessionVo> list = manager
-                .list(dto.getPage(), dto.getPageSize(), filter, this::convertToVo)
+                .list(dto.getPageNumber(), dto.getPageSize(), filter, this::convertToVo)
                 .toList();
         return PageableVo.of(total, list);
     }

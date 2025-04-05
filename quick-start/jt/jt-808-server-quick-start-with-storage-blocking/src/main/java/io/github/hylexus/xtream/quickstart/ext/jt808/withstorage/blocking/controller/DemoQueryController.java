@@ -16,9 +16,9 @@
 
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.controller;
 
+import io.github.hylexus.xtream.codec.base.web.domain.vo.PageableVo;
+import io.github.hylexus.xtream.codec.base.web.exception.XtreamBadRequestException;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.PageableVo;
-import io.github.hylexus.xtream.codec.ext.jt808.exception.BadRequestException;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.configuration.props.QuickStartAppProps;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.domain.dto.Jt808AlarmAttachmentInfoDto;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.domain.dto.Jt808TraceLogDto;
@@ -88,7 +88,7 @@ public class DemoQueryController implements InitializingBean {
     public PageableVo<Jt808AlarmAttachmentInfoVo> alarmInfo(@Validated Jt808AlarmAttachmentInfoDto dto) {
         final AttachmentInfoService service = this.attachmentInfoServiceRoutes.get(dto.getSt());
         if (service == null) {
-            throw new BadRequestException("`st` is invalid");
+            throw new XtreamBadRequestException("`st` is invalid");
         }
         return service.listAlarmAttachmentInfo(dto);
     }
@@ -97,7 +97,7 @@ public class DemoQueryController implements InitializingBean {
     public PageableVo<Jt808TraceLogVo> alarmInfo(@Validated Jt808TraceLogDto dto) {
         final TraceLogService service = this.traceLogServiceRoutes.get(dto.getSt());
         if (service == null) {
-            throw new BadRequestException("`st` is invalid");
+            throw new XtreamBadRequestException("`st` is invalid");
         }
         return service.listTraceLog(dto);
     }

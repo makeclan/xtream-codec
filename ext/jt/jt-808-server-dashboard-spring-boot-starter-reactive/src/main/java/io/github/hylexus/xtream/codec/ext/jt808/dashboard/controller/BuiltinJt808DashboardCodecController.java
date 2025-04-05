@@ -16,12 +16,12 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller;
 
+import io.github.hylexus.xtream.codec.base.web.exception.XtreamHttpException;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.DecodeMessageDto;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.EncodeMessageDto;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.DecodedMessageVo;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardCodecService;
-import io.github.hylexus.xtream.codec.ext.jt808.exception.BadRequestException;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriber;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import org.springframework.util.StringUtils;
@@ -79,7 +79,7 @@ public class BuiltinJt808DashboardCodecController {
                 .filter(StringUtils::hasText)
                 .toList();
         if (list.isEmpty()) {
-            throw new BadRequestException("hexString is invalid");
+            throw XtreamHttpException.badRequest("hexString is invalid");
         }
         dto.setHexString(list);
 

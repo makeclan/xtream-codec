@@ -17,8 +17,8 @@
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.PageableDto;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.PageableVo;
+import io.github.hylexus.xtream.codec.base.web.domain.dto.PageableDto;
+import io.github.hylexus.xtream.codec.base.web.domain.vo.PageableVo;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,7 +49,7 @@ public class BuiltinJt808DashboardPublisherController {
         final int total = this.eventPublisher.subscriberCount();
         final List<EventPublisherInfo> list = this.eventPublisher.subscriberView()
                 .skip(dto.getOffset())
-                .limit(dto.getSize())
+                .limit(dto.getPageSize())
                 .map(it -> {
                     final Set<EventDescription> events = it.interestedEvents().stream().map(e -> new EventDescription(e.code(), e.description())).collect(Collectors.toSet());
                     return new EventPublisherInfo(it.id(), events, it.createdAt(), it.metadata());

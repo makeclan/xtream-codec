@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.github.hylexus.xtream.codec.base.web.exception.XtreamBadRequestException;
 import io.github.hylexus.xtream.codec.common.utils.DefaultXtreamClassScanner;
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
@@ -38,7 +39,6 @@ import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTy
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.DecodedMessageVo;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.Jt808MessageHeaderMetadata;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardCodecService;
-import io.github.hylexus.xtream.codec.ext.jt808.exception.BadRequestException;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriber;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
@@ -77,7 +77,7 @@ public class Jt808DashboardCodecServiceImpl implements Jt808DashboardCodecServic
     public List<Jt808MessageDescriber.Tracker> encodeWithTracker(EncodeMessageDto dto) {
         final SimpleTypes.Jt808EntityClassMetadata classMetadata = this.entityClassMapping.get(dto.getBodyClass());
         if (classMetadata == null) {
-            throw new BadRequestException("未知实体类: " + dto.getBodyClass());
+            throw new XtreamBadRequestException("未知实体类: " + dto.getBodyClass());
         }
         final Object body;
         try {
@@ -103,7 +103,7 @@ public class Jt808DashboardCodecServiceImpl implements Jt808DashboardCodecServic
     public DecodedMessageVo decodeWithTracker(DecodeMessageDto dto) {
         final SimpleTypes.Jt808EntityClassMetadata classMetadata = this.entityClassMapping.get(dto.getBodyClass());
         if (classMetadata == null) {
-            throw new BadRequestException("未知实体类: " + dto.getBodyClass());
+            throw new XtreamBadRequestException("未知实体类: " + dto.getBodyClass());
         }
         final Jt808DashboardDebugMessage entityInstance = new Jt808DashboardDebugMessage().setBodyType(classMetadata.targetClass());
         final CodecTracker tracker = new CodecTracker();

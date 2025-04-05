@@ -14,6 +14,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     // common end
 
+    api(project(":xtream-codec-base"))
     api(project(":ext:jt:jt-808-server-spring-boot-starter-reactive"))
 
     api("org.springframework.boot:spring-boot-starter-webflux")

@@ -16,5 +16,23 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.dashboard.boot.configuration.reactive;
 
+import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.controller.reactive.BuiltinJt1078DashboardProxyControllerReactive;
+import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.service.Jt808ProxyServiceReactive;
+import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.service.impl.DefaultJt808ProxyServiceReactive;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.context.annotation.Bean;
+
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 public class XtreamExtJt1078ServerAutoConfigurationReactive {
+
+    @Bean
+    Jt808ProxyServiceReactive jt808ProxyService() {
+        return new DefaultJt808ProxyServiceReactive();
+    }
+
+    @Bean
+    BuiltinJt1078DashboardProxyControllerReactive builtinJt1078DashboardProxyControllerReactive(Jt808ProxyServiceReactive proxyService) {
+        return new BuiltinJt1078DashboardProxyControllerReactive(proxyService);
+    }
+
 }
