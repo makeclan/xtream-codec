@@ -4,12 +4,11 @@ pluginManagement {
         id("io.spring.dependency-management") version "1.1.7" apply false
         id("org.springframework.boot") version defaultSpringBootBomVersion apply false
         id("com.github.joschi.licenser") version "0.6.0" apply false
-        id("com.github.jk1.dependency-license-report") version "2.5" apply false
+        id("com.github.jk1.dependency-license-report") version "2.9" apply false
         id("com.namics.oss.gradle.license-enforce-plugin") version "1.7.0" apply false
     }
 
     repositories {
-        mavenLocal()
         maven {
             url = uri("https://maven.aliyun.com/repository/gradle-plugin")
             name = "aliyunGradlePlugin"
@@ -20,6 +19,7 @@ pluginManagement {
         }
         gradlePluginPortal()
         mavenCentral()
+        mavenLocal()
     }
 
 }

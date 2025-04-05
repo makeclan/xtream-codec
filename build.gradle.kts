@@ -69,11 +69,11 @@ configure(subprojects) {
     }
 
     repositories {
-//        mavenLocal()
         extraMavenRepositoryUrls().forEach {
             maven(it)
         }
         mavenCentral()
+        mavenLocal()
     }
 
     tasks.test {
@@ -211,13 +211,13 @@ configure(subprojects) {
         logging.captureStandardOutput(LogLevel.INFO)
     }
 
-    val sourcesJar by tasks.creating(Jar::class) {
+    val sourcesJar by tasks.registering(Jar::class) {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         archiveClassifier.set("sources")
         from(sourceSets.getByName("main").java.srcDirs)
     }
 
-    val javaDocJar by tasks.creating(Jar::class) {
+    val javaDocJar by tasks.registering(Jar::class) {
         archiveClassifier.set("javadoc")
         from(tasks.named("javadoc"))
     }
