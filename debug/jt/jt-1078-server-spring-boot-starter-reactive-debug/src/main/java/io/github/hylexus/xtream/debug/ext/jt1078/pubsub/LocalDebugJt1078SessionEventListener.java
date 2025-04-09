@@ -17,12 +17,10 @@
 package io.github.hylexus.xtream.debug.ext.jt1078.pubsub;
 
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Session;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionEventListener;
-import org.springframework.stereotype.Component;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionEventListener;
 
 // @Component
-public class LocalDebugJt1078SessionEventListener implements XtreamSessionEventListener {
+public class LocalDebugJt1078SessionEventListener implements Jt1078SessionEventListener {
 
     private final LocalFlvFileDebugSubscriber flvFileDebugSubscriber;
 
@@ -31,13 +29,13 @@ public class LocalDebugJt1078SessionEventListener implements XtreamSessionEventL
     }
 
     @Override
-    public void afterSessionCreate(XtreamSession session) {
-        this.flvFileDebugSubscriber.subscribe((Jt1078Session) session);
+    public void afterSessionCreate(Jt1078Session session) {
+        this.flvFileDebugSubscriber.subscribe(session);
     }
 
     @Override
-    public void beforeSessionClose(XtreamSession session, SessionCloseReason reason) {
-        this.flvFileDebugSubscriber.unsubscribe((Jt1078Session) session);
+    public void beforeSessionClose(Jt1078Session session, SessionCloseReason reason) {
+        this.flvFileDebugSubscriber.unsubscribe(session);
     }
 
 }

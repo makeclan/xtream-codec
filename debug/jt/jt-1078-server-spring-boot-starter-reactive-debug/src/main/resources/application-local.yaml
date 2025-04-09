@@ -22,6 +22,12 @@ jt1078-server:
       sub-package-storage:
         maximum-size: 1024
         ttl: 60s
+    dashboard:
+      enabled: true
+      redirect-root-to-base-path: true
+      forward-not-found-to-index: true
+      jt808-dashboard-proxy:
+        base-url: http://localhost:8888
   tcp-server:
     enabled: true
     host: 0.0.0.0

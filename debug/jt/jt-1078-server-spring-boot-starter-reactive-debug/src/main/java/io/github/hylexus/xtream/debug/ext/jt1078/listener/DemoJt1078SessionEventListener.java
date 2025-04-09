@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.debug.ext.jt808.listener;
+package io.github.hylexus.xtream.debug.ext.jt1078.listener;
 
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionEventListener;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Session;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DemoXtreamSessionEventListener implements XtreamSessionEventListener {
-    private static final Logger log = LoggerFactory.getLogger(DemoXtreamSessionEventListener.class);
+public class DemoJt1078SessionEventListener implements Jt1078SessionEventListener {
+
+    private static final Logger log = LoggerFactory.getLogger(DemoJt1078SessionEventListener.class);
 
     @Override
-    public void afterSessionCreate(XtreamSession session) {
+    public void afterSessionCreate(Jt1078Session session) {
         log.info("Session 创建: {}", session);
     }
 
     @Override
-    public void beforeSessionClose(XtreamSession session, SessionCloseReason reason) {
+    public void beforeSessionClose(Jt1078Session session, SessionCloseReason reason) {
         log.info("Session 销毁. 原因: {}; Session: {}", reason, session);
     }
+
 }

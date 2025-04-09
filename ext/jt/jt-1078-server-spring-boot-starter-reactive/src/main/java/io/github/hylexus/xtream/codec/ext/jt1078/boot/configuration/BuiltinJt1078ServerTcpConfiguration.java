@@ -20,10 +20,12 @@ import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
 import io.github.hylexus.xtream.codec.ext.jt1078.boot.properties.XtreamJt1078ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt1078.extensions.Jt1078ServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionManager;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TcpHeatBeatHandler;
 import io.github.hylexus.xtream.codec.ext.jt1078.utils.Jt1078ServerTcpHandlerAdapterBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.TcpXtreamNettyHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.UdpXtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
+import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.TcpSessionIdleStateCheckerProps;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMapping;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerResultHandler;
@@ -38,13 +40,16 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.resources.XtreamNetty
 import io.github.hylexus.xtream.codec.server.reactive.utils.BuiltinConfigurationUtils;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import reactor.netty.Connection;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static io.github.hylexus.xtream.codec.ext.jt1078.utils.Jt1078Constants.*;
 
@@ -109,12 +114,7 @@ public class BuiltinJt1078ServerTcpConfiguration {
                 // 分包 + 空闲检测
                 .addServerCustomizer(server -> server.doOnConnection(connection -> {
                     // 空闲检测
-                    // BuiltinConfigurationUtils.addIdleStateHandler(
-                    //         serverProperties.getInstructionServer().getTcpServer().getSessionIdleStateChecker(),
-                    //         sessionManager,
-                    //         null,
-                    //         connection
-                    // );
+                    addTcpIdleStateHandler(sessionManager, serverProperties, connection);
                     // 分包
                     // stripDelimiter=true
                     final int frameLength = serverProperties.getTcpServer().getMaxFrameLength();
@@ -126,7 +126,24 @@ public class BuiltinJt1078ServerTcpConfiguration {
                 .addServerCustomizer(server -> server.runOn(resourceFactory.loopResources(), resourceFactory.preferNative()))
                 // 用户自定义配置
                 .addServerCustomizers(customizers.stream().toList())
-                .build("1078-TCP");
+                .build("JT/T-1078");
+    }
+
+    private static void addTcpIdleStateHandler(Jt1078SessionManager sessionManager, XtreamJt1078ServerProperties serverProperties, Connection connection) {
+        final TcpSessionIdleStateCheckerProps props = serverProperties.getTcpServer().getSessionIdleStateChecker();
+        connection.addHandlerLast(
+                "xtreamTcpIdleStateHandler",
+                new IdleStateHandler(
+                        props.getReaderIdleTime().toMillis(),
+                        props.getWriterIdleTime().toMillis(),
+                        props.getAllIdleTime().toMillis(),
+                        TimeUnit.MILLISECONDS
+                )
+        );
+        connection.addHandlerLast(
+                "xtreamTcpIdleStateHandlerCallback",
+                new Jt1078TcpHeatBeatHandler(sessionManager)
+        );
     }
 
 }

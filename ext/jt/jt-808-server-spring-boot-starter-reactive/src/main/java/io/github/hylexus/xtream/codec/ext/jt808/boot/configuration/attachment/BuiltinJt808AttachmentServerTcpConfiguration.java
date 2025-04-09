@@ -126,6 +126,6 @@ public class BuiltinJt808AttachmentServerTcpConfiguration {
                 .addServerCustomizer(server -> server.runOn(resourceFactory.loopResources(), resourceFactory.preferNative()))
                 // 用户自定义配置
                 .addServerCustomizers(customizers.stream().toList())
-                .build("ATTACHMENT");
+                .build("JT/T-808-ATTACHMENT");
     }
 }

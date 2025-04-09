@@ -16,23 +16,29 @@
 
 package io.github.hylexus.xtream.codec.base.web.proxy;
 
+import io.netty.handler.timeout.ReadTimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.client.reactive.ClientHttpRequest;
 import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.client.ClientResponse;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 import reactor.core.publisher.Mono;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -55,6 +61,7 @@ public class XtreamWebProxy {
     private final WebClient webClient;
     private final XtreamWebProxyHttpHeaderFilter xtreamWebProxyHttpHeaderFilter;
     private final List<XtreamWebProxyExchangeFilter> filterFunctions;
+    private final ExchangeStrategies strategies = ExchangeStrategies.withDefaults();
 
     public static Builder newBuilder() {
         return new Builder();
@@ -67,6 +74,9 @@ public class XtreamWebProxy {
         this.bufferFactory = bufferFactory;
     }
 
+    /**
+     * @see <a href="https://github.com/codecentric/spring-boot-admin/blob/1433ca5b8343247075ff775d558c9a82341e2ac6/spring-boot-admin-server/src/main/java/de/codecentric/boot/admin/server/web/InstanceWebProxy.java#L98">de.codecentric.boot.admin.server.web.InstanceWebProxy#forward()</a>
+     */
     public <V> Mono<V> proxy(XtreamWebProxyBackend backend, ForwardRequest request, Function<ClientResponse, ? extends Mono<V>> responseHandler) {
         final HttpHeaders httpHeaders = this.xtreamWebProxyHttpHeaderFilter.filterHeaders(request.headers);
         final WebClient.RequestBodySpec bodySpec = this.webClient.mutate()
@@ -86,7 +96,21 @@ public class XtreamWebProxy {
             headersSpec = bodySpec.body(request.body);
         }
 
-        return headersSpec.exchangeToMono(responseHandler);
+        return headersSpec.exchangeToMono(responseHandler).onErrorResume(throwable -> {
+            Throwable cause = throwable;
+            if (throwable instanceof WebClientRequestException requestException) {
+                cause = requestException.getCause();
+            }
+            if (cause instanceof ReadTimeoutException || cause instanceof TimeoutException) {
+                log.error("Timeout for Proxy-Request for BACKEND {} with URL '{}'", backend, request.uri);
+                return responseHandler.apply(ClientResponse.create(HttpStatus.GATEWAY_TIMEOUT, this.strategies).build());
+            }
+            if (cause instanceof IOException) {
+                log.error("Proxy-Request for BACKEND {} with URL '{}' errored", backend, request.uri, cause);
+                return responseHandler.apply(ClientResponse.create(HttpStatus.BAD_GATEWAY, this.strategies).build());
+            }
+            return Mono.error(throwable);
+        });
     }
 
     public DataBufferFactory bufferFactory() {

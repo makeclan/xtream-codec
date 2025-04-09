@@ -55,7 +55,7 @@ public abstract class AbstractXtreamServer<
 
         this.doStart();
 
-        log.info("XtreamServer({}) listening on {}({})", this.name, this.disposableServer.address(), this.getServerType());
+        log.info("{}({}) listening on {}({})", this.getClass().getSimpleName(), this.name, this.disposableServer.address(), this.getServerType());
     }
 
     private void doStart() {

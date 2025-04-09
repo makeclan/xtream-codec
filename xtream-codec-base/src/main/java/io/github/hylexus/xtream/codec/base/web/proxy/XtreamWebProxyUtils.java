@@ -52,6 +52,9 @@ public final class XtreamWebProxyUtils {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * @see <a href="https://github.com/codecentric/spring-boot-admin/blob/1433ca5b8343247075ff775d558c9a82341e2ac6/spring-boot-admin-server/src/main/java/de/codecentric/boot/admin/server/web/reactive/InstancesProxyController.java#L79">de.codecentric.boot.admin.server.web.reactive.InstancesProxyController#endpointProxy()</a>
+     */
     public static Mono<Void> proxyReactiveRequest(XtreamWebProxy proxy, XtreamWebProxyBackend backend, ServerWebExchange exchange) {
         final ServerHttpResponse response = exchange.getResponse();
         return proxyReactiveRequest(proxy, backend, exchange.getRequest(), clientResponse -> {
@@ -74,6 +77,9 @@ public final class XtreamWebProxyUtils {
         );
     }
 
+    /**
+     * @see <a href="https://github.com/codecentric/spring-boot-admin/blob/1433ca5b8343247075ff775d558c9a82341e2ac6/spring-boot-admin-server/src/main/java/de/codecentric/boot/admin/server/web/servlet/InstancesProxyController.java#L87">de.codecentric.boot.admin.server.web.servlet.InstancesProxyController#instanceProxy()</a>
+     */
     public static void proxyServletRequest(XtreamWebProxy proxy, XtreamWebProxyBackend backend, HttpServletRequest request) {
         AsyncContext asyncContext = request.startAsync();
         asyncContext.setTimeout(-1); // no timeout because XtreamWebProxy will handle it for us

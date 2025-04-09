@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.dashboard.boot.configuration.servlet;
 
+import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.boot.properties.XtreamJt808ServerDashboardProperties;
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.controller.servlet.BuiltinJt1078DashboardProxyControllerServlet;
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.service.Jt808ProxyServiceServlet;
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.service.impl.DefaultJt808ProxyServiceServlet;
@@ -26,8 +27,8 @@ import org.springframework.context.annotation.Bean;
 public class XtreamExtJt1078ServerAutoConfigurationServlet {
 
     @Bean
-    Jt808ProxyServiceServlet jt808ProxyService() {
-        return new DefaultJt808ProxyServiceServlet();
+    Jt808ProxyServiceServlet jt808ProxyService(XtreamJt808ServerDashboardProperties properties) {
+        return new DefaultJt808ProxyServiceServlet(properties);
     }
 
     @Bean

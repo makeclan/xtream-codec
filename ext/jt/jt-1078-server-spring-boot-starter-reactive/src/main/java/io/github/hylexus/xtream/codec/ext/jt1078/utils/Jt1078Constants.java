@@ -21,7 +21,10 @@ public final class Jt1078Constants {
     }
 
     public static final String BEAN_NAME_JT1078_TCP_XTREAM_NETTY_HANDLER_ADAPTER = "jt1078TcpXtreamNettyHandlerAdapter";
+    public static final String BEAN_NAME_JT1078_UDP_XTREAM_NETTY_HANDLER_ADAPTER = "jt1078UdpXtreamNettyHandlerAdapter";
     public static final String BEAN_NAME_JT1078_TCP_XTREAM_NETTY_RESOURCE_FACTORY = "jt1078TcpXtreamNettyResourceFactory";
+    public static final String BEAN_NAME_JT1078_UDP_XTREAM_NETTY_RESOURCE_FACTORY = "jt1078UdpXtreamNettyResourceFactory";
     public static final String BEAN_NAME_JT1078_TCP_XTREAM_SERVER = "jt1078TcpXtreamServer";
+    public static final String BEAN_NAME_JT1078_UDP_XTREAM_SERVER = "jt1078UdpXtreamServer";
     public static final String BEAN_NAME_JT1078_CHANNEL_FRAME_DECODER = "jt1078ChannelFrameDecoder";
 }

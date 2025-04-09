@@ -1,3 +1,9 @@
+## 0.0.1-rc.3
+
+### ⚡ Non-backward Compatible Changes(NBCs)
+
+XtreamSessionEventListener
+
 ## 0.0.1-rc.2(2025-03-10)
 
 ### 🐞 Bug Fixes

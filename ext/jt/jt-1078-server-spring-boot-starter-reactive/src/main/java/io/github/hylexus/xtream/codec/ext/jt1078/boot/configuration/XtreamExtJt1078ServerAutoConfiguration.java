@@ -26,9 +26,9 @@ import io.github.hylexus.xtream.codec.ext.jt1078.codec.impl.DefaultJt1078Request
 import io.github.hylexus.xtream.codec.ext.jt1078.extensions.Jt1078ServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt1078.extensions.filter.Jt1078RequestCombinerFilter;
 import io.github.hylexus.xtream.codec.ext.jt1078.extensions.impl.DefaultJt1078ServerExchangeCreator;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionEventListener;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionManager;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.DefaultJt1078SessionManager;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionEventListener;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.UdpSessionIdleStateCheckerProps;
 import io.netty.buffer.ByteBufAllocator;
@@ -107,7 +107,7 @@ public class XtreamExtJt1078ServerAutoConfiguration {
     }
 
     @Bean
-    CommandLineRunner jt1078SessionEventListenerRegister(Jt1078SessionManager sessionManager, ObjectProvider<XtreamSessionEventListener> listeners) {
+    CommandLineRunner jt1078SessionEventListenerRegister(Jt1078SessionManager sessionManager, ObjectProvider<Jt1078SessionEventListener> listeners) {
         return args -> listeners.orderedStream().forEach(sessionManager::addListener);
     }
 

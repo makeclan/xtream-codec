@@ -30,7 +30,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808Ser
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.Jt808DashboardRequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.RequestInfoCollector;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.SessionInfoCollector;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.Jt808SessionInfoCollector;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardCodecService;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardMappingService;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardMetricsService;
@@ -79,12 +79,12 @@ public class BuiltinJt808DashboardConfiguration {
 
     @Bean
     @ConditionalOnBean(Jt808SessionManager.class)
-    SessionInfoCollector sessionInfoCollector(
+    Jt808SessionInfoCollector sessionInfoCollector(
             Jt808ServerSimpleMetricsHolder serverSimpleMetricsHolder,
             XtreamEventPublisher eventPublisher,
             @Autowired(required = false) Jt808SessionManager sessionManager,
             @Autowired(required = false) Jt808AttachmentSessionManager attachmentSessionManager) {
-        return new SessionInfoCollector(serverSimpleMetricsHolder, sessionManager, attachmentSessionManager, eventPublisher);
+        return new Jt808SessionInfoCollector(serverSimpleMetricsHolder, sessionManager, attachmentSessionManager, eventPublisher);
     }
 
     @Bean

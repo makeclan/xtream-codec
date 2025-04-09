@@ -28,6 +28,7 @@ import java.net.InetSocketAddress;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 
 public class DefaultJt1078Session extends AbstractXtreamOutbound implements Jt1078Session {
     private final XtreamSessionManager<Jt1078Session> sessionManager;
@@ -99,6 +100,18 @@ public class DefaultJt1078Session extends AbstractXtreamOutbound implements Jt10
     @Override
     public short channelNumber() {
         return this.channelNumber;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", DefaultJt1078Session.class.getSimpleName() + "[", "]")
+                .add("id='" + id + "'")
+                .add("type=" + type)
+                .add("terminalId='" + terminalId + "'")
+                .add("channelNumber=" + channelNumber)
+                .add("lastCommunicateTime=" + lastCommunicateTime)
+                .add("creationTime=" + creationTime)
+                .toString();
     }
 
 }

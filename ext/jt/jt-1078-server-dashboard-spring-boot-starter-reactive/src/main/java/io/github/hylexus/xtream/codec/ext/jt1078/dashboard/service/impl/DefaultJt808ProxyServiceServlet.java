@@ -16,28 +16,31 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.dashboard.service.impl;
 
-import io.github.hylexus.xtream.codec.base.web.proxy.XtreamWebProxyBackend;
 import io.github.hylexus.xtream.codec.base.web.proxy.XtreamWebProxy;
+import io.github.hylexus.xtream.codec.base.web.proxy.XtreamWebProxyBackend;
 import io.github.hylexus.xtream.codec.base.web.proxy.XtreamWebProxyUtils;
+import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.boot.properties.XtreamJt808ServerDashboardProperties;
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.service.Jt808ProxyServiceServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.reactive.function.client.WebClient;
 
 public class DefaultJt808ProxyServiceServlet implements Jt808ProxyServiceServlet {
     private final XtreamWebProxy jt808DashboardWebProxy;
+    private final XtreamWebProxyBackend jt808DashboardBackend;
 
-    public DefaultJt808ProxyServiceServlet() {
+    public DefaultJt808ProxyServiceServlet(XtreamJt808ServerDashboardProperties dashboardProperties) {
         this.jt808DashboardWebProxy = XtreamWebProxy.newBuilder()
                 .webClient(WebClient.builder().build())
                 .filterFunction(new DefaultJt808ProxyServiceReactive.Jt1078ProxyRewritePathFilter())
                 .build();
+        this.jt808DashboardBackend = new XtreamWebProxyBackend().setBaseUrl(dashboardProperties.getJt808DashboardProxy().getBaseUrl());
     }
 
     @Override
     public void forwardToJt808DashboardApi(HttpServletRequest request) {
         XtreamWebProxyUtils.proxyServletRequest(
                 this.jt808DashboardWebProxy,
-                new XtreamWebProxyBackend().setBaseUrl("http://localhost:8888"),
+                this.jt808DashboardBackend,
                 request
         );
     }

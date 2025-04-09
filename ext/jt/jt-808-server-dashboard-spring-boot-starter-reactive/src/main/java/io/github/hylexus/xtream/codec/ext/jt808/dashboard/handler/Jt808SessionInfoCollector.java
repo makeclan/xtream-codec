@@ -19,25 +19,20 @@ package io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.events.Jt808DashboardEventPayloads;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808ServerSimpleMetricsHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808AttachmentSessionManager;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ServerType;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.*;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamInbound;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionEventListener;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEvent;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 
 import java.time.Instant;
 
-public class SessionInfoCollector implements XtreamSessionEventListener {
+public class Jt808SessionInfoCollector implements Jt808SessionEventListener {
     private final Jt808ServerSimpleMetricsHolder metricsHolder;
     private final Jt808SessionManager sessionManager;
     private final Jt808AttachmentSessionManager attachmentSessionManager;
     private final XtreamEventPublisher eventPublisher;
 
-    public SessionInfoCollector(Jt808ServerSimpleMetricsHolder metricsHolder, Jt808SessionManager sessionManager, Jt808AttachmentSessionManager attachmentSessionManager, XtreamEventPublisher eventPublisher) {
+    public Jt808SessionInfoCollector(Jt808ServerSimpleMetricsHolder metricsHolder, Jt808SessionManager sessionManager, Jt808AttachmentSessionManager attachmentSessionManager, XtreamEventPublisher eventPublisher) {
         this.metricsHolder = metricsHolder;
         this.sessionManager = sessionManager;
         this.attachmentSessionManager = attachmentSessionManager;
@@ -45,21 +40,20 @@ public class SessionInfoCollector implements XtreamSessionEventListener {
     }
 
     @Override
-    public void afterSessionCreate(XtreamSession session) {
-        final Jt808Session jt808Session = (Jt808Session) session;
+    public void afterSessionCreate(Jt808Session session) {
 
-        updateCount(session.type(), jt808Session.role());
+        updateCount(session.type(), session.role());
 
         this.eventPublisher.publishIfNecessary(
                 XtreamEvent.XtreamEventType.AFTER_SESSION_CREATED,
                 () -> {
                     // ...
                     return new Jt808DashboardEventPayloads.SessionCreationInfo(
-                            jt808Session.id(),
-                            jt808Session.terminalId(),
-                            jt808Session.protocolVersion().shortDesc(),
-                            jt808Session.type().name(),
-                            jt808Session.remoteAddress().toString(),
+                            session.id(),
+                            session.terminalId(),
+                            session.protocolVersion().shortDesc(),
+                            session.type().name(),
+                            session.remoteAddress().toString(),
                             session.creationTime()
                     );
                 }
@@ -67,21 +61,19 @@ public class SessionInfoCollector implements XtreamSessionEventListener {
     }
 
     @Override
-    public void beforeSessionClose(XtreamSession session, SessionCloseReason reason) {
-        final Jt808Session jt808Session = (Jt808Session) session;
-
-        updateCount(session.type(), jt808Session.role());
+    public void beforeSessionClose(Jt808Session session, SessionCloseReason reason) {
+        updateCount(session.type(), session.role());
         final Instant now = Instant.now();
         this.eventPublisher.publishIfNecessary(
                 XtreamEvent.XtreamEventType.BEFORE_SESSION_CLOSED,
                 () -> {
                     // ...
                     return new Jt808DashboardEventPayloads.SessionClosingInfo(
-                            jt808Session.id(),
-                            jt808Session.terminalId(),
-                            jt808Session.protocolVersion().shortDesc(),
-                            jt808Session.type().name(),
-                            jt808Session.remoteAddress().toString(),
+                            session.id(),
+                            session.terminalId(),
+                            session.protocolVersion().shortDesc(),
+                            session.type().name(),
+                            session.remoteAddress().toString(),
                             reason,
                             now
                     );

@@ -21,8 +21,9 @@ package io.github.hylexus.xtream.codec.server.reactive.spec;
  * @see XtreamSessionManager#addListener(XtreamSessionEventListener)
  * @see XtreamSessionManager#closeSessionById(String, SessionCloseReason)
  * @see XtreamSessionManager#closeSession(XtreamSession, SessionCloseReason)
+ * @see DefaultXtreamSessionEventListener
  */
-public interface XtreamSessionEventListener {
+public interface XtreamSessionEventListener<S extends XtreamSession> {
 
     /**
      * {@code Session} 新建之后回调
@@ -30,7 +31,7 @@ public interface XtreamSessionEventListener {
      * @param session 新创建的 {@code Session}
      * @apiNote 不应该做阻塞或者耗时的操作
      */
-    default void afterSessionCreate(XtreamSession session) {
+    default void afterSessionCreate(S session) {
     }
 
     /**
@@ -40,7 +41,7 @@ public interface XtreamSessionEventListener {
      * @param reason  关闭原因
      * @apiNote 不应该做阻塞或者耗时的操作
      */
-    default void beforeSessionClose(XtreamSession session, SessionCloseReason reason) {
+    default void beforeSessionClose(S session, SessionCloseReason reason) {
     }
 
     interface SessionCloseReason {
@@ -63,4 +64,9 @@ public interface XtreamSessionEventListener {
             return this.reason;
         }
     }
+
+    interface DefaultXtreamSessionEventListener extends XtreamSessionEventListener<XtreamSession> {
+
+    }
+
 }

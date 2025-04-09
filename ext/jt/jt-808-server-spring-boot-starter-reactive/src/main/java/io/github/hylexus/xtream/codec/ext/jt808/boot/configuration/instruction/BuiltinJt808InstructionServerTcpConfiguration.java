@@ -122,7 +122,7 @@ public class BuiltinJt808InstructionServerTcpConfiguration {
                 .addServerCustomizer(server -> server.runOn(resourceFactory.loopResources(), resourceFactory.preferNative()))
                 // 用户自定义配置
                 .addServerCustomizers(customizers.stream().toList())
-                .build("INSTRUCTION");
+                .build("JT/T-808-INSTRUCTION");
     }
 
 }
