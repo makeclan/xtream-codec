@@ -40,7 +40,7 @@ public interface XtreamFilter extends OrderedComponent {
 下面是一个使用 `XtreamFilter` 的例子，用于合并 **JT/T 808** 的子包。
 
 ```java
-public class Jt808RequestCombinerFilter implements XtreamFilter {
+public class Jt808RequestCombinerFilter implements Jt808RequestFilter {
     public static final int ORDER = -100;
     protected final Jt808RequestCombiner requestCombiner;
     protected final Jt808RequestLifecycleListener lifecycleListener;
