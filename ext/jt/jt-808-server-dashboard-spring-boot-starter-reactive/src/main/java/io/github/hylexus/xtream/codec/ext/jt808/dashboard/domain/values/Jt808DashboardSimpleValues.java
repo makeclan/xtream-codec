@@ -14,29 +14,19 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.events;
+package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values;
 
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionEventListener;
 
-public class Jt808DashboardSessionCloseReason implements XtreamSessionEventListener.SessionCloseReason {
-    private String reason;
-    private String clientIp;
+public class Jt808DashboardSimpleValues {
 
-    public Jt808DashboardSessionCloseReason() {
-    }
+    public record Jt808DashboardSessionCloseReason(String reason, String clientIp) implements XtreamSessionEventListener.SessionCloseReason {
 
-    public Jt808DashboardSessionCloseReason(String reason, String clientIp) {
-        this.reason = reason;
-        this.clientIp = clientIp;
-    }
+        @Override
+        public String getReason() {
+            return this.reason;
+        }
 
-    @Override
-    public String getReason() {
-        return this.reason;
-    }
-
-    public String getClientIp() {
-        return clientIp;
     }
 
 }

@@ -18,15 +18,15 @@ package io.github.hylexus.xtream.codec.ext.jt1078.extensions.filter;
 
 import io.github.hylexus.xtream.codec.ext.jt1078.codec.Jt1078RequestCombiner;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078RequestFilter;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SubPackageIdentifier;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilterChain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
-public class Jt1078RequestCombinerFilter implements XtreamFilter {
+public class Jt1078RequestCombinerFilter implements Jt1078RequestFilter {
     public static final int ORDER = -100;
     private static final Logger log = LoggerFactory.getLogger(Jt1078RequestCombinerFilter.class);
     private final Jt1078RequestCombiner combiner;

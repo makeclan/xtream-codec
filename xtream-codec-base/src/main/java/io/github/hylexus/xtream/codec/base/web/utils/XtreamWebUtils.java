@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt808.utils;
+package io.github.hylexus.xtream.codec.base.web.utils;
 
 
 import io.micrometer.common.util.StringUtils;
@@ -25,9 +25,10 @@ import java.util.Optional;
 
 /**
  * @author hylexus
+ * @see <a href="https://stackoverflow.com/questions/22877350/how-to-extract-ip-address-in-spring-mvc-controller-get-call">https://stackoverflow.com/questions/22877350/how-to-extract-ip-address-in-spring-mvc-controller-get-call</a>
  */
-public final class JtWebUtils {
-    private JtWebUtils() {
+public final class XtreamWebUtils {
+    private XtreamWebUtils() {
     }
 
     public interface HttpRequestHeaderProvider {

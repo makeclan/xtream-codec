@@ -28,6 +28,10 @@ public interface Jt1078Session extends XtreamSession {
 
     Jt1078Session lastCommunicateTime(Instant current);
 
+    default String sim() {
+        return this.terminalId();
+    }
+
     String terminalId();
 
     short channelNumber();

@@ -46,6 +46,8 @@ include("debug:jt:jt-808-server-spring-boot-starter-reactive-debug")
 
 include("quick-start")
 include("quick-start:jt")
+include("quick-start:jt:jt-808-attachment-server-quick-start-blocking")
+include("quick-start:jt:jt-808-attachment-server-quick-start-nonblocking")
 include("quick-start:jt:jt-808-server-quick-start")
 include("quick-start:jt:jt-808-server-quick-start-with-dashboard")
 include("quick-start:jt:jt-808-server-quick-start-with-storage-nonblocking")

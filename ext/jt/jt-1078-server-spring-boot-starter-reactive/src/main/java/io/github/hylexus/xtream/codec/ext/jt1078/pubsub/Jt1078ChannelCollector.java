@@ -20,6 +20,8 @@ import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
 import jakarta.annotation.Nullable;
 
 import java.time.Duration;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public interface Jt1078ChannelCollector<S extends Jt1078Subscription> {
 
@@ -38,5 +40,9 @@ public interface Jt1078ChannelCollector<S extends Jt1078Subscription> {
     void unsubscribe(String id, @Nullable Jt1078Subscriber.Jt1078SubscriberCloseException reason);
 
     void unsubscribe(@Nullable Jt1078Subscriber.Jt1078SubscriberCloseException reason);
+
+    long count(Predicate<Jt1078SubscriberDescriptor> predicate);
+
+    Stream<Jt1078SubscriberDescriptor> list();
 
 }

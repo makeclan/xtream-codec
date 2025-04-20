@@ -26,6 +26,8 @@ import io.github.hylexus.xtream.codec.ext.jt1078.codec.impl.DefaultJt1078Request
 import io.github.hylexus.xtream.codec.ext.jt1078.extensions.Jt1078ServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt1078.extensions.filter.Jt1078RequestCombinerFilter;
 import io.github.hylexus.xtream.codec.ext.jt1078.extensions.impl.DefaultJt1078ServerExchangeCreator;
+import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.BuiltinJt1078SessionCloseListener;
+import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078RequestPublisher;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionEventListener;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionManager;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.DefaultJt1078SessionManager;
@@ -104,6 +106,11 @@ public class XtreamExtJt1078ServerAutoConfiguration {
     @ConditionalOnProperty(prefix = "jt1078-server.features.request-combiner", name = "enabled", havingValue = "true", matchIfMissing = true)
     Jt1078RequestCombinerFilter jt1078RequestCombinerFilter(Jt1078RequestCombiner combiner) {
         return new Jt1078RequestCombinerFilter(combiner);
+    }
+
+    @Bean
+    BuiltinJt1078SessionCloseListener builtinJt1078SessionCloseListener(Jt1078RequestPublisher publisher) {
+        return new BuiltinJt1078SessionCloseListener(publisher);
     }
 
     @Bean

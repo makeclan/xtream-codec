@@ -14,4 +14,6 @@ echo "Working-Directory        : ${XTREAM_PROJECT_ROOT_DIR}"
 
 ./gradlew clean build publishMavenPublicationToMavenLocal \
 -P buildJt808DashboardUi=true \
--P buildJt808DebugUi=false
+-P buildJt808DebugUi=false \
+-P xtream.skip.checkstyle=false \
+-P xtream.skip.fatjar=true

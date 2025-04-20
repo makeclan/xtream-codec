@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.boot.configuration;
 
 import io.github.hylexus.xtream.codec.core.EntityCodec;
+import io.github.hylexus.xtream.codec.ext.jt808.boot.condition.ConditionalOnJt808Server;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808BytesProcessor;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
@@ -159,6 +160,7 @@ public class BuiltinJt808DashboardConfiguration {
     }
 
     @Bean
+    @ConditionalOnJt808Server(serverType = ConditionalOnJt808Server.ServerType.INSTRUCTION_SERVER, protocolType = ConditionalOnJt808Server.ProtocolType.ANY)
     BuiltinJt808DashboardCommandController builtinJt808DashboardCommandController(Jt808CommandSender commandSender) {
         return new BuiltinJt808DashboardCommandController(commandSender);
     }

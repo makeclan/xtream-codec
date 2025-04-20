@@ -1,3 +1,4 @@
+import io.github.hylexus.xtream.codec.gradle.plugins.XtreamCodecFastModePlugin
 import org.cadixdev.gradle.licenser.LicenseExtension
 
 plugins {
@@ -8,6 +9,11 @@ plugins {
 application {
     mainClass.set("io.github.hylexus.xtream.debug.ext.jt808.Jt808SpringBootStarterDebugApp")
 }
+tasks.bootJar {
+    archiveFileName.set("${project.name}.jar")
+    mainClass.set("io.github.hylexus.xtream.debug.ext.jt808.Jt808SpringBootStarterDebugApp")
+}
+apply<XtreamCodecFastModePlugin>()
 
 dependencies {
     // common start

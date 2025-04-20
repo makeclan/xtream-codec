@@ -24,6 +24,8 @@ import reactor.core.publisher.Flux;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.UUID;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public interface Jt1078Channel {
 
@@ -55,6 +57,11 @@ public interface Jt1078Channel {
     }
 
     void close(Jt1078Subscriber.Jt1078SubscriberCloseException reason);
+
+
+    long countSubscribers(Predicate<Jt1078SubscriberDescriptor> predicate);
+
+    Stream<Jt1078SubscriberDescriptor> listSubscribers();
 
     record ChannelKey(String sim, short channelNumber) {
         public static ChannelKey from(Jt1078Request request) {

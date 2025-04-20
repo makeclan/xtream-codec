@@ -16,13 +16,14 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.collector;
 
+import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078SubscriberDescriptor;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078Subscription;
 import reactor.core.publisher.FluxSink;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
-public interface InternalSubscriber<S extends Jt1078Subscription> {
+public interface InternalSubscriber<S extends Jt1078Subscription> extends Jt1078SubscriberDescriptor {
     String id();
 
     String sim();
@@ -36,5 +37,35 @@ public interface InternalSubscriber<S extends Jt1078Subscription> {
     Map<String, Object> metadata();
 
     FluxSink<S> sink();
+
+    @Override
+    default String getId() {
+        return this.id();
+    }
+
+    @Override
+    default String getSim() {
+        return this.sim();
+    }
+
+    @Override
+    default short getChannel() {
+        return this.channel();
+    }
+
+    @Override
+    default LocalDateTime getCreatedAt() {
+        return this.createdAt();
+    }
+
+    @Override
+    default String getDesc() {
+        return this.desc();
+    }
+
+    @Override
+    default Map<String, Object> getMetadata() {
+        return this.metadata();
+    }
 
 }

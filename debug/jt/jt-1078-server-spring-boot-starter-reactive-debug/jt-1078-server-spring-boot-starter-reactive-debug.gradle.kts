@@ -1,7 +1,18 @@
+import io.github.hylexus.xtream.codec.gradle.plugins.XtreamCodecFastModePlugin
+
 plugins {
     id("org.springframework.boot")
     application
 }
+
+application {
+    mainClass.set("io.github.hylexus.xtream.debug.ext.jt1078.Jt1078SpringBootStarterDebugApp")
+}
+tasks.bootJar {
+    archiveFileName.set("${project.name}.jar")
+    mainClass.set("io.github.hylexus.xtream.debug.ext.jt1078.Jt1078SpringBootStarterDebugApp")
+}
+apply<XtreamCodecFastModePlugin>()
 
 dependencies {
     // common start

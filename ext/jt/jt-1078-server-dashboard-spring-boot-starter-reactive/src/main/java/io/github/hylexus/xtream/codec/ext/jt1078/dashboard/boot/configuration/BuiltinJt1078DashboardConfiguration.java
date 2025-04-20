@@ -16,6 +16,22 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.dashboard.boot.configuration;
 
+import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.controller.BuiltinJt1078DashboardSessionController;
+import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.controller.BuiltinJt1078DashboardSubscribeController;
+import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078SubscriberManager;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionManager;
+import org.springframework.context.annotation.Bean;
+
 public class BuiltinJt1078DashboardConfiguration {
+
+    @Bean
+    BuiltinJt1078DashboardSessionController builtinJt1078DashboardSessionController(Jt1078SessionManager sessionManager) {
+        return new BuiltinJt1078DashboardSessionController(sessionManager);
+    }
+
+    @Bean
+    BuiltinJt1078DashboardSubscribeController builtinJt1078DashboardSubscribeController(Jt1078SubscriberManager subscriberManager) {
+        return new BuiltinJt1078DashboardSubscribeController(subscriberManager);
+    }
 
 }

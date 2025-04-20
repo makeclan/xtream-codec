@@ -17,12 +17,12 @@
 package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration.instruction;
 
 import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
+import io.github.hylexus.xtream.codec.ext.jt808.boot.condition.ConditionalOnJt808Server;
+import io.github.hylexus.xtream.codec.ext.jt808.boot.configuration.utils.Jt808ConfigurationUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808UdpDatagramPackageSplitter;
-import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808UdpDatagramPackageSplitter;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808InstructionServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt808.utils.Jt808InstructionServerUdpHandlerAdapterBuilder;
-import io.github.hylexus.xtream.codec.server.reactive.spec.TcpXtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.UdpXtreamNettyHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerAdapter;
@@ -39,7 +39,6 @@ import io.github.hylexus.xtream.codec.server.reactive.utils.BuiltinConfiguration
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 
 import java.util.List;
@@ -49,15 +48,12 @@ import static io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolConstant.
 /**
  * 指令服务器配置(UDP)
  */
-@ConditionalOnProperty(prefix = "jt808-server.udp-instruction-server", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnJt808Server(serverType = ConditionalOnJt808Server.ServerType.INSTRUCTION_SERVER, protocolType = ConditionalOnJt808Server.ProtocolType.UDP)
 public class BuiltinJt808InstructionServerUdpConfiguration {
 
-    @Bean
-    @ConditionalOnMissingBean
-    Jt808UdpDatagramPackageSplitter jt808UpDatagramPackageSplitter() {
-        return new DefaultJt808UdpDatagramPackageSplitter();
-    }
-
+    /**
+     * @see Jt808ConfigurationUtils#jt808RequestFilterPredicateUdp(XtreamFilter)
+     */
     @Bean(BEAN_NAME_JT_808_UDP_XTREAM_NETTY_HANDLER_ADAPTER_INSTRUCTION_SERVER)
     @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_UDP_XTREAM_NETTY_HANDLER_ADAPTER_INSTRUCTION_SERVER)
     UdpXtreamNettyHandlerAdapter udpXtreamNettyHandlerAdapter(
@@ -75,7 +71,7 @@ public class BuiltinJt808InstructionServerUdpConfiguration {
                 .addHandlerMappings(handlerMappings)
                 .addHandlerAdapters(handlerAdapters)
                 .addHandlerResultHandlers(handlerResultHandlers)
-                .addFilters(xtreamFilters.stream().filter(it -> !(it instanceof TcpXtreamFilter)).toList())
+                .addFilters(xtreamFilters.stream().filter(Jt808ConfigurationUtils::jt808RequestFilterPredicateUdp).toList())
                 .addExceptionHandlers(exceptionHandlers)
                 .build();
     }

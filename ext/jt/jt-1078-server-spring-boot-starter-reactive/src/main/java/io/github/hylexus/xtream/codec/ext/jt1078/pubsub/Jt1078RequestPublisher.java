@@ -25,7 +25,7 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.util.Collections;
 
-public interface Jt1078RequestPublisher {
+public interface Jt1078RequestPublisher extends Jt1078SubscriberManager {
 
     Jt1078TerminalIdConverter terminalIdConverter();
 
@@ -61,6 +61,11 @@ public interface Jt1078RequestPublisher {
 
     default void unsubscribeWithSimAndChannelNumber(String sim, short channelNumber) {
         this.unsubscribeWithSimAndChannelNumber(terminalIdConverter().convert(sim), channelNumber, null);
+    }
+
+    @Override
+    default void closeSubscriber(String id) {
+        this.unsubscribe(id, null);
     }
 
 }

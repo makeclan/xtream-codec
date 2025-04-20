@@ -1,0 +1,82 @@
+#
+# Copyright 2024 the original author or authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+spring:
+  application:
+    name: jt-808-attachment-server-quick-start-blocking
+  mvc:
+    async:
+      request-timeout: 10s
+  main:
+    # [阻塞]环境下，显式指定 Servlet(不配置也可以,默认就是Tomcat)
+    web-application-type: servlet
+
+demo-app:
+  attachment-server:
+    temporary-path: /tmp/jt-808/attachment
+
+########################################################
+### xtream-codec-server-reactive 配置####################
+########################################################
+jt808-server:
+  # false: 不会进行任何自动配置
+  enabled: true
+  features:
+    dashboard:
+      enabled: true
+      # 示例项目有自己的首页 所以不用重定向到dashboard首页
+      redirect-root-to-base-path: false
+  ## 指令服务器
+  instruction-server:
+    # TCP 服务配置(指令服务器)
+    tcp-server:
+      # 是否启动 TCP 服务
+      enabled: false
+    # UDP 服务配置(指令服务器)
+    udp-server:
+      # 是否启动 UDP 服务
+      enabled: false
+  ## 附件服务器
+  attachment-server:
+    # TCP 服务配置(附件服务器)
+    tcp-server:
+      enabled: true
+      # 绑定所有网卡
+      host: 0.0.0.0
+      # TCP 服务端口
+      port: 3824
+    # UDP 服务配置(附件服务器)
+    udp-server:
+      enabled: true
+      # 绑定所有网卡
+      host: 0.0.0.0
+      # UDP 服务端口
+      port: 3618
+  schedulers:
+    # 阻塞版的调度器都使用虚拟线程
+    request-dispatcher:
+      type: virtual
+    non-blocking-handler:
+      type: virtual
+    blocking-handler:
+      type: virtual
+    event-publisher:
+      type: virtual
+
+logging:
+  level:
+    root: info
+    io.netty.handler.logging.LoggingHandler: debug

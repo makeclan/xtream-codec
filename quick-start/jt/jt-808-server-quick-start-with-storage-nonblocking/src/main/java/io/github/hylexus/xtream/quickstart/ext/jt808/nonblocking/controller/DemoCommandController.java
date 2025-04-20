@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.quickstart.ext.jt808.nonblocking.controller;
 
+import io.github.hylexus.xtream.codec.ext.jt808.boot.condition.ConditionalOnJt808Server;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.BuiltinMessage8104;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808CommandSender;
 import io.github.hylexus.xtream.quickstart.ext.jt808.nonblocking.domain.dto.Command9104Dto;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+@ConditionalOnJt808Server(serverType = ConditionalOnJt808Server.ServerType.INSTRUCTION_SERVER,protocolType = ConditionalOnJt808Server.ProtocolType.ANY)
 @RestController
 @RequestMapping("/api/jt-808-quick-start-with-storage/v1/command")
 public class DemoCommandController {

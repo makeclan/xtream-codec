@@ -1,3 +1,4 @@
+import io.github.hylexus.xtream.codec.gradle.plugins.XtreamCodecFastModePlugin
 import org.cadixdev.gradle.licenser.LicenseExtension
 
 plugins {
@@ -6,7 +7,13 @@ plugins {
 }
 
 application {
+    mainClass.set("io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.Jt808ServerQuickStartWithStorageBlockingApp")
 }
+tasks.bootJar {
+    archiveFileName.set("${project.name}.jar")
+    mainClass.set("io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.Jt808ServerQuickStartWithStorageBlockingApp")
+}
+apply<XtreamCodecFastModePlugin>()
 
 dependencies {
     // common start

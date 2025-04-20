@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class DefaultJt1078RequestPublisher implements Jt1078RequestPublisher {
     private final Jt1078TerminalIdConverter terminalIdConverter;
@@ -39,6 +40,18 @@ public class DefaultJt1078RequestPublisher implements Jt1078RequestPublisher {
     @Override
     public Jt1078TerminalIdConverter terminalIdConverter() {
         return this.terminalIdConverter;
+    }
+
+    @Override
+    public long count(Predicate<Jt1078SubscriberDescriptor> predicate) {
+        return this.channels.values().stream()
+                .flatMap(it -> it.listSubscribers().filter(predicate))
+                .count();
+    }
+
+    @Override
+    public Stream<Jt1078SubscriberDescriptor> list() {
+        return this.channels.values().stream().flatMap(Jt1078Channel::listSubscribers);
     }
 
     @Override

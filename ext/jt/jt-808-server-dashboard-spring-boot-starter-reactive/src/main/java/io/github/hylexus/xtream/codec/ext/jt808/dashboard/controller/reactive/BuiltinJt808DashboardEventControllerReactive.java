@@ -16,9 +16,9 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.reactive;
 
+import io.github.hylexus.xtream.codec.base.web.utils.XtreamWebUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.LinkDataDto;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardEventService;
-import io.github.hylexus.xtream.codec.ext.jt808.utils.JtWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.codec.ServerSentEvent;
@@ -45,13 +45,13 @@ public class BuiltinJt808DashboardEventControllerReactive {
      */
     @GetMapping("/link-data")
     public Flux<ServerSentEvent<Object>> getLinkData(ServerWebExchange exchange, @Validated LinkDataDto dto) {
-        final String clientIp = JtWebUtils.getClientIp(exchange.getRequest().getHeaders()::getFirst, exchange.getRequest().getRemoteAddress()).orElse("unknown");
+        final String clientIp = XtreamWebUtils.getClientIp(exchange.getRequest().getHeaders()::getFirst, exchange.getRequest().getRemoteAddress()).orElse("unknown");
         return this.dashboardEventService.linkData(clientIp, dto);
     }
 
     @PostMapping("/link-data")
     public Flux<ServerSentEvent<Object>> linkData(ServerWebExchange exchange, @Validated @RequestBody LinkDataDto dto) {
-        final String clientIp = JtWebUtils.getClientIp(exchange.getRequest().getHeaders()::getFirst, exchange.getRequest().getRemoteAddress()).orElse("unknown");
+        final String clientIp = XtreamWebUtils.getClientIp(exchange.getRequest().getHeaders()::getFirst, exchange.getRequest().getRemoteAddress()).orElse("unknown");
         return this.dashboardEventService.linkData(clientIp, dto);
     }
 

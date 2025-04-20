@@ -19,15 +19,15 @@ package io.github.hylexus.xtream.codec.ext.jt808.extensions.filter;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestCombiner;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilterChain;
 import reactor.core.publisher.Mono;
 
 /**
  * @author hylexus
  */
-public class Jt808RequestCombinerFilter implements XtreamFilter {
+public class Jt808RequestCombinerFilter implements Jt808RequestFilter {
     public static final int ORDER = -100;
     protected final Jt808RequestCombiner requestCombiner;
     protected final Jt808RequestLifecycleListener lifecycleListener;

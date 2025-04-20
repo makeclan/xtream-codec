@@ -1,8 +1,13 @@
-## 0.0.1-rc.3
+## 0.0.1-rc.3(2025-04-20)
 
 ### ⚡ Non-backward Compatible Changes(NBCs)
 
-XtreamSessionEventListener
+- XtreamSessionEventListener: 自定义事件监听器不应该实现 `XtreamSessionEventListener` 而是应该实现对应的子接口 `Jt808SessionEventListener`
+- XtreamFilter: 自定义过滤器不应该直接实现 `XtreamFilter` 而是应该实现对应的子接口 `Jt808RequestFilter`
+
+### 🐞 Bug Fixes
+
+- 单独启用附件服务器(不启用指令服务器)时启动异常的问题
 
 ## 0.0.1-rc.2(2025-03-10)
 

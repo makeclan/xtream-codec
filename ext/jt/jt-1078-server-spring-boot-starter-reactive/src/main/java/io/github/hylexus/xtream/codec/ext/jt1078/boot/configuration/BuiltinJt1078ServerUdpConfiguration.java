@@ -17,11 +17,11 @@
 package io.github.hylexus.xtream.codec.ext.jt1078.boot.configuration;
 
 import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
+import io.github.hylexus.xtream.codec.ext.jt1078.boot.configuration.utils.Jt1078ConfigurationUtils;
 import io.github.hylexus.xtream.codec.ext.jt1078.boot.properties.XtreamJt1078ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt1078.extensions.Jt1078ServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionManager;
 import io.github.hylexus.xtream.codec.ext.jt1078.utils.Jt1078ServerUdpHandlerAdapterBuilder;
-import io.github.hylexus.xtream.codec.server.reactive.spec.TcpXtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.UdpXtreamNettyHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerAdapter;
@@ -48,6 +48,9 @@ import static io.github.hylexus.xtream.codec.ext.jt1078.utils.Jt1078Constants.*;
 @ConditionalOnProperty(prefix = "jt1078-server.udp-server", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class BuiltinJt1078ServerUdpConfiguration {
 
+    /**
+     * @see Jt1078ConfigurationUtils#jt1078RequestFilterPredicateUdp(XtreamFilter)
+     */
     @Bean(BEAN_NAME_JT1078_UDP_XTREAM_NETTY_HANDLER_ADAPTER)
     @ConditionalOnMissingBean(name = BEAN_NAME_JT1078_UDP_XTREAM_NETTY_HANDLER_ADAPTER)
     UdpXtreamNettyHandlerAdapter udpXtreamNettyHandlerAdapter(
@@ -64,7 +67,7 @@ public class BuiltinJt1078ServerUdpConfiguration {
                 .addHandlerMappings(handlerMappings)
                 .addHandlerAdapters(handlerAdapters)
                 .addHandlerResultHandlers(handlerResultHandlers)
-                .addFilters(xtreamFilters.stream().filter(it -> !(it instanceof TcpXtreamFilter)).toList())
+                .addFilters(xtreamFilters.stream().filter(Jt1078ConfigurationUtils::jt1078RequestFilterPredicateUdp).toList())
                 .addExceptionHandlers(exceptionHandlers)
                 .build();
     }

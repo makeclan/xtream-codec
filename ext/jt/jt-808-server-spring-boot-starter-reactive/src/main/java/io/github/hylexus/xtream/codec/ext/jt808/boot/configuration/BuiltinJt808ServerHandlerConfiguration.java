@@ -46,6 +46,7 @@ import java.util.List;
         BuiltinJt808InstructionServerConfiguration.class,
         BuiltinJt808AttachmentServerConfiguration.class,
         BuiltinJt808ServerActuatorConfiguration.class,
+        BuiltinJt808ServerUdpCommonConfiguration.class,
 })
 public class BuiltinJt808ServerHandlerConfiguration {
 

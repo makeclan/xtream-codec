@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration.attachment;
 
 import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
+import io.github.hylexus.xtream.codec.ext.jt808.boot.configuration.utils.Jt808ConfigurationUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.DelimiterAndLengthFieldBasedByteToMessageDecoder;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808AttachmentServerExchangeCreator;
@@ -24,7 +25,6 @@ import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808AttachmentSessionManag
 import io.github.hylexus.xtream.codec.ext.jt808.utils.BuiltinConfigurationUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.utils.Jt808AttachmentServerTcpHandlerAdapterBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.TcpXtreamNettyHandlerAdapter;
-import io.github.hylexus.xtream.codec.server.reactive.spec.UdpXtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMapping;
@@ -53,6 +53,9 @@ import static io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolConstant.
 @ConditionalOnProperty(prefix = "jt808-server.tcp-attachment-server", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class BuiltinJt808AttachmentServerTcpConfiguration {
 
+    /**
+     * @see Jt808ConfigurationUtils#jt808RequestFilterPredicateTcp(XtreamFilter)
+     */
     @Bean(BEAN_NAME_JT_808_TCP_XTREAM_NETTY_HANDLER_ADAPTER_ATTACHMENT_SERVER)
     @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_TCP_XTREAM_NETTY_HANDLER_ADAPTER_ATTACHMENT_SERVER)
     TcpXtreamNettyHandlerAdapter tcpXtreamNettyHandlerAdapter(
@@ -72,7 +75,7 @@ public class BuiltinJt808AttachmentServerTcpConfiguration {
                 .addHandlerMappings(handlerMappings)
                 .addHandlerAdapters(handlerAdapters)
                 .addHandlerResultHandlers(handlerResultHandlers)
-                .addFilters(xtreamFilters.stream().filter(it -> !(it instanceof UdpXtreamFilter)).toList())
+                .addFilters(xtreamFilters.stream().filter(Jt808ConfigurationUtils::jt808RequestFilterPredicateTcp).toList())
                 .addExceptionHandlers(exceptionHandlers)
                 .build();
     }

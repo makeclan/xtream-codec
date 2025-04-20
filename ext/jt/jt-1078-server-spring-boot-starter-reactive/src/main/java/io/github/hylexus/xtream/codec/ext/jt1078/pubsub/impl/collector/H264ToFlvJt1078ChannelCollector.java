@@ -39,6 +39,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class H264ToFlvJt1078ChannelCollector implements Jt1078ChannelCollector<ByteArrayJt1078Subscription> {
     private static final Logger log = LoggerFactory.getLogger(H264ToFlvJt1078ChannelCollector.class);
@@ -156,6 +159,16 @@ public class H264ToFlvJt1078ChannelCollector implements Jt1078ChannelCollector<B
                 log.error(e.getMessage(), e);
             }
         });
+    }
+
+    @Override
+    public long count(Predicate<Jt1078SubscriberDescriptor> predicate) {
+        return this.subscribers.values().stream().filter(predicate).count();
+    }
+
+    @Override
+    public Stream<Jt1078SubscriberDescriptor> list() {
+        return this.subscribers.values().stream().map(Function.identity());
     }
 
     protected H264ToFlvSubscriber createSubscriber(String uuid, Jt1078SubscriberCreator creator, FluxSink<ByteArrayJt1078Subscription> fluxSink) {

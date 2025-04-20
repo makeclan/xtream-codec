@@ -17,13 +17,13 @@
 package io.github.hylexus.xtream.codec.ext.jt1078.boot.configuration;
 
 import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
+import io.github.hylexus.xtream.codec.ext.jt1078.boot.configuration.utils.Jt1078ConfigurationUtils;
 import io.github.hylexus.xtream.codec.ext.jt1078.boot.properties.XtreamJt1078ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt1078.extensions.Jt1078ServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionManager;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TcpHeatBeatHandler;
 import io.github.hylexus.xtream.codec.ext.jt1078.utils.Jt1078ServerTcpHandlerAdapterBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.TcpXtreamNettyHandlerAdapter;
-import io.github.hylexus.xtream.codec.server.reactive.spec.UdpXtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.TcpSessionIdleStateCheckerProps;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerAdapter;
@@ -61,6 +61,9 @@ public class BuiltinJt1078ServerTcpConfiguration {
         return new SimpleXtreamRequestHandlerHandlerAdapter();
     }
 
+    /**
+     * @see Jt1078ConfigurationUtils#jt1078RequestFilterPredicateTcp(XtreamFilter)
+     */
     @Bean(BEAN_NAME_JT1078_TCP_XTREAM_NETTY_HANDLER_ADAPTER)
     @ConditionalOnMissingBean(name = BEAN_NAME_JT1078_TCP_XTREAM_NETTY_HANDLER_ADAPTER)
     TcpXtreamNettyHandlerAdapter tcpXtreamNettyHandlerAdapter(
@@ -77,7 +80,7 @@ public class BuiltinJt1078ServerTcpConfiguration {
                 .addHandlerMappings(handlerMappings)
                 .addHandlerAdapters(handlerAdapters)
                 .addHandlerResultHandlers(handlerResultHandlers)
-                .addFilters(xtreamFilters.stream().filter(it -> !(it instanceof UdpXtreamFilter)).toList())
+                .addFilters(xtreamFilters.stream().filter(Jt1078ConfigurationUtils::jt1078RequestFilterPredicateTcp).toList())
                 .addExceptionHandlers(exceptionHandlers)
                 .build();
     }

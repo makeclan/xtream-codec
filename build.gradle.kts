@@ -86,8 +86,18 @@ configure(subprojects) {
 
     apply(plugin = "checkstyle")
     checkstyle {
-        toolVersion = "10.9.1"
+        toolVersion = "10.23.0"
         configDirectory.set(rootProject.file("build-script/checkstyle/"))
+    }
+    tasks.withType<Checkstyle> {
+        // 严重影响构建时间
+        onlyIf {
+            val skip = (project.findProperty("xtream.skip.checkstyle") as? String).toBoolean()
+            if (skip && (project.findProperty("xtream.skip.logging.enabled") as? String).toBoolean()) {
+                println("Disabling task: checkstyle in project [${project.name}](xtream.skip.checkstyle==true)")
+            }
+            return@onlyIf !skip
+        }
     }
 
     // 本项目开源协议头
@@ -329,6 +339,8 @@ fun isJavaProject(project: Project): Boolean {
                 "xtream-codec-server-reactive-debug-tcp",
                 "xtream-codec-server-reactive-debug-udp",
                 "jt-808-server-spring-boot-starter-reactive-debug",
+                "jt-808-attachment-server-quick-start-blocking",
+                "jt-808-attachment-server-quick-start-nonblocking",
                 "jt-808-server-quick-start",
                 "jt-808-server-quick-start-with-dashboard",
                 "jt-808-server-quick-start-with-storage-nonblocking",

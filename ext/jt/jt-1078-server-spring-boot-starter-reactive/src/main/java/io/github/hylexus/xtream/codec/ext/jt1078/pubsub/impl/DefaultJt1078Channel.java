@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class DefaultJt1078Channel implements Jt1078Channel {
 
@@ -81,6 +83,19 @@ public class DefaultJt1078Channel implements Jt1078Channel {
             //  ...
             collector.unsubscribe(reason);
         });
+    }
+
+    @Override
+    public long countSubscribers(Predicate<Jt1078SubscriberDescriptor> predicate) {
+        return this.collectors.values().stream()
+                .flatMap(it -> it.list().filter(predicate))
+                .count();
+    }
+
+    @Override
+    public Stream<Jt1078SubscriberDescriptor> listSubscribers() {
+        return this.collectors.values().stream()
+                .flatMap(Jt1078ChannelCollector::list);
     }
 
     protected <S extends Jt1078Subscription> Jt1078ChannelCollector<? extends Jt1078Subscription> getOrCreate(Class<? extends Jt1078ChannelCollector<S>> cls, Jt1078SubscriberCreator creator) {
