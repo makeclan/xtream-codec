@@ -63,6 +63,8 @@ public class AttachmentFileServiceBlocking {
         final String time = DateTimeFormatter.ofPattern("yyyyMMddHH").format(attachmentItem.getGroup().getAlarmIdentifier().getTime());
         return time + File.separator
                + terminalId + File.separator
+               + DateTimeFormatter.ofPattern("mm").format(attachmentItem.getGroup().getAlarmIdentifier().getTime())
+               + "-"
                + attachmentItem.getGroup().getAlarmNo() + File.separator
                + attachmentItem.getFileName();
     }

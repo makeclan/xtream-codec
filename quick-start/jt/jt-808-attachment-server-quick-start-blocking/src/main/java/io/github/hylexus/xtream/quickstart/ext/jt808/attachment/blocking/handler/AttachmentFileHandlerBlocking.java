@@ -49,7 +49,7 @@ import java.util.concurrent.ConcurrentMap;
 @Jt808RequestHandler
 public class AttachmentFileHandlerBlocking {
     private static final Logger log = LoggerFactory.getLogger(AttachmentFileHandlerBlocking.class);
-    // <terminalId, <fileName, AttachmentItem>>
+    // <Jt808Session.id(), <fileName, AttachmentItem>>
     // 只是个示例而已 看你需求自己改造
     private final Cache<String, ConcurrentMap<String, BuiltinMessage1210.AttachmentItem>> attachmentItemCache = Caffeine.newBuilder()
             .expireAfterWrite(Duration.ofMinutes(5))
@@ -63,13 +63,13 @@ public class AttachmentFileHandlerBlocking {
 
     @Jt808RequestHandlerMapping(messageIds = 0x1210)
     @Jt808ResponseBody(messageId = 0x8001)
-    public ServerCommonReplyMessage processMsg0x1210(Jt808RequestEntity<BuiltinMessage1210> requestEntity) {
+    public ServerCommonReplyMessage processMsg0x1210(Jt808RequestEntity<BuiltinMessage1210> requestEntity, Jt808Session session) {
         final BuiltinMessage1210 body = requestEntity.getBody();
         log.info("0x1210 ==> {}", body);
         if (requestEntity.getServerType() == Jt808ServerType.INSTRUCTION_SERVER) {
             log.error("{}", "0x1210 不应该由指令服务器对应的端口处理");
         }
-        final Map<String, BuiltinMessage1210.AttachmentItem> itemMap = this.attachmentItemCache.get(requestEntity.getHeader().terminalId(), key -> new ConcurrentHashMap<>());
+        final Map<String, BuiltinMessage1210.AttachmentItem> itemMap = this.attachmentItemCache.get(session.id(), key -> new ConcurrentHashMap<>());
         for (final BuiltinMessage1210.AttachmentItem item : body.getAttachmentItemList()) {
             item.setGroup(body);
             itemMap.put(item.getFileName().trim(), item);
@@ -79,12 +79,12 @@ public class AttachmentFileHandlerBlocking {
 
     @Jt808RequestHandlerMapping(messageIds = 0x1211)
     @Jt808ResponseBody(messageId = 0x8001)
-    public ServerCommonReplyMessage processMsg0x1211(Jt808RequestEntity<BuiltinMessage1211> requestEntity) {
+    public ServerCommonReplyMessage processMsg0x1211(Jt808RequestEntity<BuiltinMessage1211> requestEntity, Jt808Session session) {
         log.info("0x1211 ==> {}", requestEntity.getBody());
         if (requestEntity.getServerType() == Jt808ServerType.INSTRUCTION_SERVER) {
             log.error("{}", "0x1211 不应该由指令服务器对应的端口处理");
         }
-        final Map<String, BuiltinMessage1210.AttachmentItem> items = this.attachmentItemCache.getIfPresent(requestEntity.getHeader().terminalId());
+        final Map<String, BuiltinMessage1210.AttachmentItem> items = this.attachmentItemCache.getIfPresent(session.id());
         if (items == null) {
             return ServerCommonReplyMessage.success(requestEntity);
         }
@@ -97,18 +97,25 @@ public class AttachmentFileHandlerBlocking {
 
     @Jt808RequestHandlerMapping(messageIds = 0x1212)
     @Jt808ResponseBody(messageId = 0x9212)
-    public BuiltinMessage9212 processMsg0x1212(Jt808RequestEntity<BuiltinMessage1212> requestEntity) {
+    public BuiltinMessage9212 processMsg0x1212(Jt808RequestEntity<BuiltinMessage1212> requestEntity, Jt808Session session) {
 
         final BuiltinMessage1212 body = requestEntity.getBody();
         log.info("0x1212 ==> {}", body);
         if (requestEntity.getServerType() == Jt808ServerType.INSTRUCTION_SERVER) {
             log.error("{}", "0x1212 不应该由指令服务器对应的端口处理");
         }
-        final ConcurrentMap<String, BuiltinMessage1210.AttachmentItem> items = this.attachmentItemCache.getIfPresent(requestEntity.getHeader().terminalId());
+        final ConcurrentMap<String, BuiltinMessage1210.AttachmentItem> items = this.attachmentItemCache.getIfPresent(session.id());
         // 这里可能会出现空指针(示例项目里不做处理，你自己看情况处理)
-        assert items != null;
+        if (items == null) {
+            log.error("xxx: Session [{}] 不存在", session.id());
+            return null;
+        }
         try {
             final BuiltinMessage1210.AttachmentItem attachmentItem = items.get(body.getFileName());
+            if (attachmentItem == null) {
+                log.error("xxx: 文件 {} 元数据不存在", body.getFileName());
+                return null;
+            }
             try {
                 this.attachmentFileService.moveFileToRemoteStorage(requestEntity, attachmentItem, false);
             } catch (Throwable throwable) {
@@ -144,7 +151,7 @@ public class AttachmentFileHandlerBlocking {
 
         log.info("0x30316364 ==> {} -- {} -- {}", body.getFileName().trim(), body.getDataOffset(), body.getDataLength());
 
-        final Map<String, BuiltinMessage1210.AttachmentItem> itemMap = attachmentItemCache.getIfPresent(session.terminalId());
+        final Map<String, BuiltinMessage1210.AttachmentItem> itemMap = attachmentItemCache.getIfPresent(session.id());
         if (itemMap == null) {
             return;
         }
