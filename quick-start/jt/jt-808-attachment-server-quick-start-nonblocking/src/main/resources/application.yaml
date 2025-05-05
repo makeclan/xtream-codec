@@ -34,8 +34,7 @@ jt808-server:
   features:
     dashboard:
       enabled: true
-      # 示例项目有自己的首页 所以不用重定向到dashboard首页
-      redirect-root-to-base-path: false
+      redirect-root-to-base-path: true
   ## 指令服务器
   instruction-server:
     # TCP 服务配置(指令服务器)

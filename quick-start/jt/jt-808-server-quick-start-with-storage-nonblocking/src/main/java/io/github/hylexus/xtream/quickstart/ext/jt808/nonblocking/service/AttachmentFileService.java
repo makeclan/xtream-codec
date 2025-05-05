@@ -23,10 +23,14 @@ import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestEntity;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import reactor.core.publisher.Mono;
 
+import java.io.IOException;
+
 /**
  * @author hylexus
  */
 public interface AttachmentFileService {
+
+    String createFileIfNecessary(String terminalId, BuiltinMessage1210.AttachmentItem attachmentItem) throws IOException;
 
     Mono<Integer> writeDataFragmentAsync(Jt808Session session, BuiltinMessage30316364 body, BuiltinMessage1210.AttachmentItem attachmentItem);
 

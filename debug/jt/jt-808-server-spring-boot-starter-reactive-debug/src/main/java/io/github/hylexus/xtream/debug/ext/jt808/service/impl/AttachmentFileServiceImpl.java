@@ -19,7 +19,6 @@ package io.github.hylexus.xtream.debug.ext.jt808.service.impl;
 
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1210;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage30316364;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.AlarmIdentifier;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.debug.ext.jt808.domain.properties.DemoAppConfigProperties;
 import io.github.hylexus.xtream.debug.ext.jt808.service.AttachmentFileService;
@@ -53,17 +52,9 @@ public class AttachmentFileServiceImpl implements AttachmentFileService {
     }
 
     @Override
-    public Mono<Integer> writeDataFragmentAsync(Jt808Session session, BuiltinMessage30316364 body, BuiltinMessage1210 group) {
-        final AlarmIdentifier alarmIdentifier = group.getAlarmIdentifier();
-        final LocalDateTime localDateTime = alarmIdentifier.getTime();
+    public Mono<Integer> writeDataFragmentAsync(Jt808Session session, BuiltinMessage30316364 body, BuiltinMessage1210.AttachmentItem item) {
         // 这里就瞎写了一个路径  看你需求随便改
-        final String filePath = appProps.getAttachmentServer().getTemporaryPath() + File.separator
-                                + DateTimeFormatter.ofPattern("yyyyMMddHH").format(localDateTime) + File.separator
-                                + session.terminalId() + File.separator
-                                + group.getMessageType() + File.separator
-                                // + group.getAlarmNo() + File.separator
-                                + DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(localDateTime) + "-" + group.getAlarmNo() + File.separator
-                                + body.getFileName().trim();
+        final String filePath = this.generateFilePath(session.terminalId(), item);
 
         // 使用 AsynchronousFileChannel
         // return this.writeDataWithAsynchronousFileChannel(body, filePath);
@@ -73,13 +64,7 @@ public class AttachmentFileServiceImpl implements AttachmentFileService {
 
     private Mono<Integer> writeDataWithRandomAccessFile(BuiltinMessage30316364 body, String filePath) {
         return Mono.<Integer>create(sink -> {
-            try {
-                createFileIfNecessary(filePath);
-            } catch (IOException e) {
-                sink.error(e);
-                return;
-            }
-
+            // 在 0x1211 消息中已经创建过文件了
             try (final RandomAccessFile file = new RandomAccessFile(filePath, "rws")) {
                 file.seek(body.getDataOffset());
                 final int dataLength = (int) body.getDataLength();
@@ -95,13 +80,7 @@ public class AttachmentFileServiceImpl implements AttachmentFileService {
     @SuppressWarnings("unused")
     private Mono<Integer> writeDataWithAsynchronousFileChannel(BuiltinMessage30316364 body, String filePath) {
         return Mono.<Integer>create(sink -> {
-            try {
-                createFileIfNecessary(filePath);
-            } catch (IOException e) {
-                sink.error(e);
-                return;
-            }
-
+            // 在 0x1211 消息中已经创建过文件了
             try (final AsynchronousFileChannel channel = AsynchronousFileChannel.open(
                     Path.of(filePath),
                     StandardOpenOption.WRITE,
@@ -119,18 +98,49 @@ public class AttachmentFileServiceImpl implements AttachmentFileService {
         }).subscribeOn(SCHEDULER);
     }
 
-    static void createFileIfNecessary(String filePath) throws IOException {
+    @Override
+    public String createFileIfNecessary(String terminalId, BuiltinMessage1210.AttachmentItem attachmentItem) throws IOException {
+        final String filePath = this.generateFilePath(terminalId, attachmentItem);
+
+        this.createFileIfNecessary(filePath);
+        return filePath;
+    }
+
+    void createFileIfNecessary(String filePath) throws IOException {
         final File tempFile = new File(filePath);
+        if (tempFile.exists()) {
+            return;
+        }
         if (!tempFile.getParentFile().exists()) {
-            if (!tempFile.getParentFile().mkdirs()) {
-                throw new RuntimeException("新建目录失败:" + tempFile);
+            synchronized (this) {
+                if (!tempFile.getParentFile().exists()) {
+                    if (!tempFile.getParentFile().mkdirs()) {
+                        throw new RuntimeException("新建目录失败:" + tempFile.getParentFile());
+                    }
+                }
             }
         }
+
         if (!tempFile.exists()) {
-            if (!tempFile.createNewFile()) {
-                throw new RuntimeException("新建文件失败:" + tempFile);
+            synchronized (this) {
+                if (!tempFile.exists()) {
+                    if (!tempFile.createNewFile()) {
+                        throw new RuntimeException("新建文件失败:" + tempFile);
+                    }
+                }
             }
         }
+    }
+
+    private String generateFilePath(String terminalId, BuiltinMessage1210.AttachmentItem attachmentItem) {
+        final BuiltinMessage1210 message1210 = attachmentItem.getGroup();
+        final LocalDateTime localDateTime = message1210.getAlarmIdentifier().getTime();
+        return appProps.getAttachmentServer().getTemporaryPath() + File.separator
+               + DateTimeFormatter.ofPattern("yyyyMMddHH").format(localDateTime) + File.separator
+               + terminalId + File.separator
+               + message1210.getMessageType() + File.separator
+               + DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(localDateTime) + "-" + message1210.getAlarmNo() + File.separator
+               + attachmentItem.getFileName().trim();
     }
 
 }

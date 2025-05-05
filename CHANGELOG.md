@@ -1,3 +1,14 @@
+## 0.0.1-rc.4(2025-05-05)
+
+### 🐞 Bug Fixes
+
+- 修复内置 `BuiltinMessage0001` 消息ID标记错误
+- 修复 **Dashboard** 列表分页参数错误
+
+### ⭐ New Features
+
+- 完善 **JT/T 808** 附件服务器示例
+
 ## 0.0.1-rc.3(2025-04-20)
 
 ### ⚡ Non-backward Compatible Changes(NBCs)

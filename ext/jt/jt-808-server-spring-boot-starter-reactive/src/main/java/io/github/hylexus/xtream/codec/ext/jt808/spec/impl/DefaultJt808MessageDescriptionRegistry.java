@@ -73,10 +73,12 @@ public class DefaultJt808MessageDescriptionRegistry implements Jt808MessageDescr
             registry.registerDescription(0x8103, "设置终端参数");
             registry.registerDescription(0x9101, "实时音视频传输请求");
             registry.registerDescription(0x9102, "实时音视频传输控制");
+
             registry.registerDescription(0x1210, "报警附件信息消息");
             registry.registerDescription(0x1211, "文件信息上传");
-            registry.registerDescription(0x1212, "信令数据报文");
+            registry.registerDescription(0x1212, "文件上传完成消息");
             registry.registerDescription(0x30316364, "附件上传消息");
+
             registry.registerDescription(0x9208, "报警附件上传指令");
             registry.registerDescription(0x9212, "文件上传完成消息应答");
         }

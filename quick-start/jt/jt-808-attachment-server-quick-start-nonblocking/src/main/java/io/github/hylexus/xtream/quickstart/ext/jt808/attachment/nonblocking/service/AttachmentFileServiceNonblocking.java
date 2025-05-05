@@ -106,7 +106,7 @@ public class AttachmentFileServiceNonblocking {
 
     private Mono<Boolean> uploadToOss(boolean deleteLocalFile, String localFilePath, String remoteFilePath) {
         return this.doUploadFile(localFilePath, remoteFilePath)
-                .then(Mono.defer(() -> {
+                .flatMap(ignored -> {
                     if (deleteLocalFile) {
                         return Mono.fromCallable(
                                         () -> {
@@ -125,7 +125,7 @@ public class AttachmentFileServiceNonblocking {
                     } else {
                         return Mono.just(true);
                     }
-                }))
+                })
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
@@ -136,13 +136,7 @@ public class AttachmentFileServiceNonblocking {
 
     private Mono<Integer> writeDataWithRandomAccessFile(BuiltinMessage30316364 body, String filePath) {
         return Mono.<Integer>create(sink -> {
-            try {
-                createFileIfNecessary(filePath);
-            } catch (IOException e) {
-                sink.error(e);
-                return;
-            }
-
+            // 文件已经在 0x1211 消息中创建过了
             try (final RandomAccessFile file = new RandomAccessFile(filePath, "rws")) {
                 file.seek(body.getDataOffset());
                 final int dataLength = (int) body.getDataLength();
@@ -158,13 +152,7 @@ public class AttachmentFileServiceNonblocking {
     @SuppressWarnings("unused")
     private Mono<Integer> writeDataWithAsynchronousFileChannel(BuiltinMessage30316364 body, String filePath) {
         return Mono.<Integer>create(sink -> {
-            try {
-                createFileIfNecessary(filePath);
-            } catch (IOException e) {
-                sink.error(e);
-                return;
-            }
-
+            // 文件已经在 0x1211 消息中创建过了
             try (final AsynchronousFileChannel channel = AsynchronousFileChannel.open(
                     Path.of(filePath),
                     StandardOpenOption.WRITE,
@@ -182,16 +170,34 @@ public class AttachmentFileServiceNonblocking {
         }).subscribeOn(SCHEDULER);
     }
 
-    static void createFileIfNecessary(String filePath) throws IOException {
+    public String createFileIfNecessary(String terminalId, BuiltinMessage1210.AttachmentItem attachmentItem) throws IOException {
+        final String filePath = this.generateAlarmFileLocalPath(terminalId, attachmentItem);
+        this.createFileIfNecessary(filePath);
+        return filePath;
+    }
+
+    void createFileIfNecessary(String filePath) throws IOException {
         final File tempFile = new File(filePath);
+        if (tempFile.exists()) {
+            return;
+        }
         if (!tempFile.getParentFile().exists()) {
-            if (!tempFile.getParentFile().mkdirs()) {
-                throw new RuntimeException("新建目录失败:" + tempFile);
+            synchronized (this) {
+                if (!tempFile.getParentFile().exists()) {
+                    if (!tempFile.getParentFile().mkdirs()) {
+                        throw new RuntimeException("新建目录失败:" + tempFile.getParentFile());
+                    }
+                }
             }
         }
+
         if (!tempFile.exists()) {
-            if (!tempFile.createNewFile()) {
-                throw new RuntimeException("新建文件失败:" + tempFile);
+            synchronized (this) {
+                if (!tempFile.exists()) {
+                    if (!tempFile.createNewFile()) {
+                        throw new RuntimeException("新建文件失败:" + tempFile);
+                    }
+                }
             }
         }
     }

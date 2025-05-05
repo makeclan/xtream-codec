@@ -21,11 +21,15 @@ import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMess
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import reactor.core.publisher.Mono;
 
+import java.io.IOException;
+
 /**
  * @author hylexus
  */
 public interface AttachmentFileService {
 
-    Mono<Integer> writeDataFragmentAsync(Jt808Session session, BuiltinMessage30316364 body, BuiltinMessage1210 group);
+    String createFileIfNecessary(String terminalId, BuiltinMessage1210.AttachmentItem attachmentItem) throws IOException;
+
+    Mono<Integer> writeDataFragmentAsync(Jt808Session session, BuiltinMessage30316364 body, BuiltinMessage1210.AttachmentItem item);
 
 }

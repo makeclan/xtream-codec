@@ -32,12 +32,12 @@ class BuiltinMessage0001Test extends BaseCodecTest {
                 .setResult((short) 1);
         final String hex = encode(entity, Jt808ProtocolVersion.VERSION_2019, terminalId2019);
 
-        assertEquals("7e8001400501000000000139123443290000007b020001c97e", hex);
+        assertEquals("7e0001400501000000000139123443290000007b020001497e", hex);
     }
 
     @Test
     void testDecode() {
-        final String hex = "8001400501000000000139123443290000007b020001c9";
+        final String hex = "0001400501000000000139123443290000007b02000149";
         final BuiltinMessage0001 entity = decodeAsEntity(BuiltinMessage0001.class, hex);
         assertEquals(123, entity.getServerFlowId());
         assertEquals(0x0200, entity.getServerMessageId());
