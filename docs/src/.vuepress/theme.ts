@@ -5,7 +5,7 @@ import {path} from "vuepress/utils"
 
 
 export default hopeTheme({
-    hostname: "https://mister-hope.github.io",
+    hostname: "https://hylexus.github.io",
     author: {
         name: "xtream-codec",
         url: "https://github.com/hylexus",
