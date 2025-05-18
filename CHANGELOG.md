@@ -1,3 +1,10 @@
+## 0.0.1-rc.5
+
+### ⭐ New Features
+
+- 新增配置项 `jt808-server.event-publisher.xxx`
+- 新增基于 **disruptor** 的 `XtreamEventPublisher` 实现类 `DisruptorBasedXtreamEventPublisher`
+
 ## 0.0.1-rc.4(2025-05-05)
 
 ### 🐞 Bug Fixes

@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.debug.ext.jt808;
 
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.actuate.request.Jt808DashboardErrorReporter;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.exception.RequestHandlerNotFoundException;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamRequestExceptionHandler;
@@ -26,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+import reactor.netty.channel.AbortedException;
 
 import java.util.function.Consumer;
 
@@ -48,12 +50,29 @@ public class GlobalXtreamServerExceptionHandler implements XtreamRequestExceptio
     @Override
     public Mono<Void> handleRequestException(XtreamExchange exchange, @Nonnull Throwable ex) {
         this.errorReporter.accept(ex);
-        if (ex instanceof RequestHandlerNotFoundException) {
-            log.error("receive unknown msg: {}", exchange.request());
-            return Mono.empty();
-        }
-        log.error("Error: ", ex);
-        return Mono.empty();
+        return switch (ex) {
+            case RequestHandlerNotFoundException ignored -> {
+                log.error("receive unknown msg: {}", exchange.request());
+                yield Mono.empty();
+            }
+            case AbortedException abortedException -> {
+                log.error("AbortedException caught, Close Session", abortedException);
+                yield closeSession(exchange).then();
+            }
+            default -> {
+                log.error("Error: ", ex);
+                yield Mono.empty();
+            }
+        };
+    }
+
+    private static Mono<Jt808Session> closeSession(XtreamExchange exchange) {
+        return exchange.session()
+                .map(Jt808Session.class::cast)
+                .map(session -> {
+                    session.invalidate(() -> "AbortedException");
+                    return session;
+                });
     }
 
 }

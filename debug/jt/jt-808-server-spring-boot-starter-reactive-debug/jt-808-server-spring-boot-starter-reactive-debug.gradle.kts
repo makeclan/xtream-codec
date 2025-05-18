@@ -28,12 +28,14 @@ dependencies {
 
     // 加解密
     api("org.bouncycastle:bcprov-jdk18on")
-//    api(project(":ext:jt:jt-808-server-spring-boot-starter-reactive"))
+    // api(project(":ext:jt:jt-808-server-spring-boot-starter-reactive"))
     api(project(":ext:jt:jt-808-server-dashboard-spring-boot-starter-reactive"))
     api("io.projectreactor:reactor-core-micrometer")
     api("org.springframework.boot:spring-boot-starter-webflux")
     api("org.springframework.boot:spring-boot-starter-validation")
     api("org.springframework.boot:spring-boot-starter-logging")
+    // jt808-server.event-publisher.publisher-type = disruptor
+    api("com.lmax:disruptor")
 
     implementation("jakarta.annotation:jakarta.annotation-api")
 

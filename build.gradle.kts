@@ -62,6 +62,7 @@ configure(subprojects) {
             dependency("com.clickhouse:clickhouse-client:0.7.1")
             dependency("com.clickhouse:clickhouse-r2dbc:0.7.1")
             dependency("io.minio:minio:8.5.14")
+            dependency("com.lmax:disruptor:4.0.0")
         }
 
         group = "xtream-codec"

@@ -166,6 +166,18 @@ jt808-server:
         daemon: true
         colocate: true
         prefer-native: true
+  ### 事件发布器
+  event-publisher:
+    publisher-type: reactor
+    # 当且仅当 jt808-server.event-publisher.publisher-type == reactor 时才生效
+    reactor:
+      thread-name: xtream-event-publisher
+    # 当且仅当 jt808-server.event-publisher.publisher-type == disruptor 时才生效
+    # 依赖 `com.lmax:disruptor:4.0.0`
+    disruptor:
+      ring-buffer-size: 8192
+      daemon: false
+      thread-name: xep-disruptor
   ## Reactor 用到的调度器配置
   schedulers:
     ## [转发请求]的调度器
