@@ -9,14 +9,31 @@ export default defineConfig({
     server: {
         host: '0.0.0.0',
         proxy: {
-            // "/api/jt-808-quick-start-with-storage": {
-            //     target: "http://localhost:8080",
-            //     changeOrigin: true,
-            //     // rewrite: (path) => path.replace(/^\/api/, "/api/v1"),
-            //     rewrite: (path) => path,
-            // },
-            '/dashboard-api': 'http://localhost:8888',
-            '/debug-api/jt1078': 'http://localhost:9999',
+            '/jt-1078-server-spring-boot-starter-reactive-debug': {
+                target: "http://localhost:9999",
+                changeOrigin: true,
+                rewrite: (path) => {
+                    console.log(`Proxying request: ${path} -> http://localhost:9999${path}`);
+                    return path;
+                },
+            },
+            '/dashboard-api/jt1078': {
+                target: "http://localhost:9999",
+                changeOrigin: true,
+                rewrite: (path) => {
+                    console.log(`Proxying request: ${path} -> http://localhost:9999${path}`);
+                    return path;
+                },
+            },
+            '/dashboard-api': {
+                target: "http://localhost:8888",
+                changeOrigin: true,
+                rewrite: (path) => {
+                    console.log(`Proxying request: ${path} -> http://localhost:8888${path}`);
+                    return path;
+                },
+            },
+
         },
-    }
-})
+    },
+});

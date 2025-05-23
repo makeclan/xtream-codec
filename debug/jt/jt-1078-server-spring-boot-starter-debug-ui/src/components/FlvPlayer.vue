@@ -213,7 +213,7 @@ const publishStatusChangeEvent = (from: FlvPlayerStatus, to: FlvPlayerStatus, me
     emit('onPlayerStatusChange', from, to, message)
   }
 }
-defineExpose({play, status})
+defineExpose({play, reset, status})
 
 </script>
 

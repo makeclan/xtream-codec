@@ -48,12 +48,11 @@ public class DefaultXtreamSchedulerRegistry implements XtreamSchedulerRegistry {
             customizer.customize(this);
         }
         this.requestDispatcherScheduler = this.getScheduler(SCHEDULER_NAME_REQUEST_DISPATCHER).orElse(null);
-        this.defaultNonBlockingScheduler = this.getScheduler(SCHEDULER_NAME_NON_BLOCKING)
-                .orElseThrow(() -> new IllegalArgumentException("Cannot determine default non-blocking scheduler"));
-        this.defaultBlockingScheduler = this.getScheduler(SCHEDULER_NAME_BLOCKING)
-                .orElseThrow(() -> new IllegalArgumentException("Cannot determine default blocking scheduler"));
-        this.eventPublisherScheduler = this.getScheduler(SCHEDULER_NAME_EVENT_PUBLISHER)
-                .orElseThrow(() -> new IllegalArgumentException("Cannot determine default eventPublisher scheduler"));
+        this.defaultNonBlockingScheduler = this.getScheduler(SCHEDULER_NAME_NON_BLOCKING).orElse(null);
+        this.defaultBlockingScheduler = this.getScheduler(SCHEDULER_NAME_BLOCKING).orElse(null);
+        this.eventPublisherScheduler = this.getScheduler(SCHEDULER_NAME_EVENT_PUBLISHER).orElse(null);
+
+        this.afterInit();
     }
 
     public DefaultXtreamSchedulerRegistry(Scheduler defaultNonBlockingScheduler, Scheduler defaultBlockingScheduler, Scheduler eventPublisherScheduler) {
@@ -73,6 +72,17 @@ public class DefaultXtreamSchedulerRegistry implements XtreamSchedulerRegistry {
         this.registerScheduler(SCHEDULER_NAME_BLOCKING, defaultBlockingScheduler);
         this.registerScheduler(SCHEDULER_NAME_NON_BLOCKING, defaultNonBlockingScheduler);
         this.registerScheduler(SCHEDULER_NAME_EVENT_PUBLISHER, eventPublisherScheduler);
+
+        this.afterInit();
+    }
+
+    protected void afterInit() {
+        this.getScheduler(SCHEDULER_NAME_NON_BLOCKING)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot determine default non-blocking scheduler"));
+        this.getScheduler(SCHEDULER_NAME_BLOCKING)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot determine default blocking scheduler"));
+        this.getScheduler(SCHEDULER_NAME_EVENT_PUBLISHER)
+                .orElseThrow(() -> new IllegalArgumentException("Cannot determine default eventPublisher scheduler"));
     }
 
     @Override

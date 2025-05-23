@@ -54,7 +54,7 @@ public class BuiltinJt808InstructionServerUdpConfiguration {
     /**
      * @see Jt808ConfigurationUtils#jt808RequestFilterPredicateUdp(XtreamFilter)
      */
-    @Bean(BEAN_NAME_JT_808_UDP_XTREAM_NETTY_HANDLER_ADAPTER_INSTRUCTION_SERVER)
+    @Bean(value = BEAN_NAME_JT_808_UDP_XTREAM_NETTY_HANDLER_ADAPTER_INSTRUCTION_SERVER, destroyMethod = "shutdown")
     @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_UDP_XTREAM_NETTY_HANDLER_ADAPTER_INSTRUCTION_SERVER)
     UdpXtreamNettyHandlerAdapter udpXtreamNettyHandlerAdapter(
             BufferFactoryHolder bufferFactoryHolder,

@@ -44,6 +44,44 @@ public class XtreamJt1078ServerProperties {
     @NestedConfigurationProperty
     private UdpServerProps udpServer = new UdpServerProps();
 
+    /**
+     * 音视频流配置
+     */
+    private AudioVideoStreamProperties audioVideoStream = new AudioVideoStreamProperties();
+
+    @Getter
+    @Setter
+    @ToString
+    public static class AudioVideoStreamProperties {
+        /**
+         * 音视频流 编解码配置
+         */
+        @NestedConfigurationProperty
+        private AvStreamCodecProperties codec = new AvStreamCodecProperties();
+
+        /**
+         * 音视频流 订阅者配置
+         */
+        @NestedConfigurationProperty
+        private AvStreamSubscriberProperties subscriber = new AvStreamSubscriberProperties();
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class AvStreamCodecProperties {
+        @NestedConfigurationProperty
+        private XtreamServerSchedulerProperties scheduler = new XtreamServerSchedulerProperties();
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class AvStreamSubscriberProperties {
+        @NestedConfigurationProperty
+        private XtreamServerSchedulerProperties scheduler = new XtreamServerSchedulerProperties();
+    }
+
     @Getter
     @Setter
     @ToString
@@ -91,7 +129,7 @@ public class XtreamJt1078ServerProperties {
         @NestedConfigurationProperty
         private TcpLoopResourcesProperty loopResources = new TcpLoopResourcesProperty();
 
-        private int maxFrameLength = 1024;
+        private int maxFrameLength = 8192;
     }
 
     @Getter

@@ -12,6 +12,7 @@
         >
           <el-menu-item index="/home">首页</el-menu-item>
           <el-menu-item index="/flv-player">FLV播放器</el-menu-item>
+          <el-menu-item index="/flv-player-with-808-sessions">FLV播放器(下发指令)</el-menu-item>
         </el-menu>
       </el-scrollbar>
     </el-aside>
@@ -27,7 +28,7 @@
 </template>
 
 <style scoped lang="scss">
-$aside-width: 130px;
+$aside-width: 200px;
 $header-height: 50px;
 ::v-deep(.aside-area) {
   .el-scrollbar__view {

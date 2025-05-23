@@ -48,4 +48,7 @@ public interface XtreamNettyHandlerAdapter extends BiFunction<NettyInbound, Nett
     @Override
     Publisher<Void> apply(NettyInbound nettyInbound, NettyOutbound nettyOutbound);
 
+    default void shutdown() {
+    }
+
 }

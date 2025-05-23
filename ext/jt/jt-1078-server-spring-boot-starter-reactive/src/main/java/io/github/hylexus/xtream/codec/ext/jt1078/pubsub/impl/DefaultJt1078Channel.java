@@ -22,6 +22,7 @@ import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TerminalIdConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.scheduler.Scheduler;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -33,15 +34,23 @@ public class DefaultJt1078Channel implements Jt1078Channel {
     private static final Logger log = LoggerFactory.getLogger(DefaultJt1078Channel.class);
     private final ChannelKey key;
     private final Jt1078TerminalIdConverter terminalIdConverter;
-    // <class, collector>
+    // <TypeOfJt1078ChannelCollector, Jt1078ChannelCollector>
+    // 同一个Channel上 同一种类型的Jt1078ChannelCollector 只有一个实例
     private final ConcurrentMap<
             Class<? extends Jt1078ChannelCollector<? extends Jt1078Subscription>>,
             Jt1078ChannelCollector<? extends Jt1078Subscription>
             > collectors = new ConcurrentHashMap<>();
+    private final Scheduler scheduler;
 
-    public DefaultJt1078Channel(ChannelKey key, Jt1078TerminalIdConverter terminalIdConverter) {
+    public DefaultJt1078Channel(ChannelKey key, Jt1078TerminalIdConverter terminalIdConverter, Scheduler scheduler) {
         this.key = key;
         this.terminalIdConverter = terminalIdConverter;
+        this.scheduler = scheduler;
+    }
+
+    @Override
+    public Scheduler scheduler() {
+        return this.scheduler;
     }
 
     @Override
@@ -99,6 +108,6 @@ public class DefaultJt1078Channel implements Jt1078Channel {
     }
 
     protected <S extends Jt1078Subscription> Jt1078ChannelCollector<? extends Jt1078Subscription> getOrCreate(Class<? extends Jt1078ChannelCollector<S>> cls, Jt1078SubscriberCreator creator) {
-        return this.collectors.computeIfAbsent(cls, k -> new H264ToFlvJt1078ChannelCollector(this.key));
+        return this.collectors.computeIfAbsent(cls, k -> new H264ToFlvJt1078ChannelCollector(this.key, this.scheduler));
     }
 }

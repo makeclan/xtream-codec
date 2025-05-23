@@ -84,7 +84,13 @@ public class FlvStreamSubscriberDemoWebSocket implements WebSocketHandler {
 
         return this.publisher
                 .subscribe(H264ToFlvJt1078ChannelCollector.class, params.getSim(), params.getChannel(), Duration.ofSeconds(params.getTimeout()))
-                .publishOn(SCHEDULER)
+                .doOnNext(subscription -> {
+                    // log.info("FlvSubscriber(WebSocket) inbound: {}", FormatUtils.toHexString(subscription.payload()));
+                })
+                // .publishOn(SCHEDULER)
+                .doOnNext(subscription -> {
+                    // log.info("FlvSubscriber(WebSocket) inbound: {}", FormatUtils.toHexString(subscription.payload()));
+                })
                 .onErrorComplete(Jt1078SessionDestroyException.class)
                 .onErrorComplete(TimeoutException.class)
                 .doOnError(Jt1078SessionDestroyException.class, e -> {

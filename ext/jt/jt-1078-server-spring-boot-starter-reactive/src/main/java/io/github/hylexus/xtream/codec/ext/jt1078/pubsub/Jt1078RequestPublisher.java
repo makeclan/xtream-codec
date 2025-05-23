@@ -21,11 +21,14 @@ import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TerminalIdConverter;
 import jakarta.annotation.Nullable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
 
 import java.time.Duration;
 import java.util.Collections;
 
 public interface Jt1078RequestPublisher extends Jt1078SubscriberManager {
+
+    Scheduler scheduler();
 
     Jt1078TerminalIdConverter terminalIdConverter();
 

@@ -48,6 +48,7 @@ import org.springframework.context.annotation.Import;
         XtreamJt1078ServerProperties.class,
 })
 @Import({
+        BuiltinJt1078ServerSchedulerConfiguration.class,
         BuiltinJt1078ServerTcpConfiguration.class,
         BuiltinJt1078ServerUdpConfiguration.class,
         BuiltinJt1078ServerHandlerConfiguration.class,

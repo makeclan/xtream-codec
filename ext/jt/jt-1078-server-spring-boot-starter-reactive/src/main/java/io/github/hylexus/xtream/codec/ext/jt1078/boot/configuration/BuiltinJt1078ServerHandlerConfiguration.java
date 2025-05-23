@@ -16,15 +16,19 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.boot.configuration;
 
+import io.github.hylexus.xtream.codec.ext.jt1078.boot.condition.ConditionalOnJt1078Server;
 import io.github.hylexus.xtream.codec.ext.jt1078.extensions.handler.DefaultJt1078XtreamHandlerMapping;
 import io.github.hylexus.xtream.codec.ext.jt1078.extensions.handler.EventBasedJt1078XtreamRequestHandler;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078RequestPublisher;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.DefaultJt1078RequestPublisher;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TerminalIdConverter;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.resources.Jt1078XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.EmptyXtreamHandlerResultHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+import reactor.core.scheduler.Scheduler;
 
+@ConditionalOnJt1078Server(protocolType = ConditionalOnJt1078Server.ProtocolType.ANY)
 public class BuiltinJt1078ServerHandlerConfiguration {
 
     @Bean
@@ -34,8 +38,9 @@ public class BuiltinJt1078ServerHandlerConfiguration {
     }
 
     @Bean
-    Jt1078RequestPublisher jt1078RequestPublisher(Jt1078TerminalIdConverter idConverter) {
-        return new DefaultJt1078RequestPublisher(idConverter);
+    Jt1078RequestPublisher jt1078RequestPublisher(Jt1078TerminalIdConverter idConverter, Jt1078XtreamSchedulerRegistry schedulerRegistry) {
+        final Scheduler scheduler = schedulerRegistry.audioVideoSubscriberScheduler();
+        return new DefaultJt1078RequestPublisher(idConverter, scheduler);
     }
 
     @Bean

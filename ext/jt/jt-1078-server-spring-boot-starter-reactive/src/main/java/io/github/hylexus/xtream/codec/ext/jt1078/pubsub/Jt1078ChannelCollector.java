@@ -18,12 +18,15 @@ package io.github.hylexus.xtream.codec.ext.jt1078.pubsub;
 
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
 import jakarta.annotation.Nullable;
+import reactor.core.scheduler.Scheduler;
 
 import java.time.Duration;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public interface Jt1078ChannelCollector<S extends Jt1078Subscription> {
+
+    Scheduler scheduler();
 
     void collect(Jt1078Request request);
 

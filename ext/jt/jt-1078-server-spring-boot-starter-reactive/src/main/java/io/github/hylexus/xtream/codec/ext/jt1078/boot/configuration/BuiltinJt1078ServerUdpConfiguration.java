@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt1078.boot.configuration;
 
 import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
+import io.github.hylexus.xtream.codec.ext.jt1078.boot.condition.ConditionalOnJt1078Server;
 import io.github.hylexus.xtream.codec.ext.jt1078.boot.configuration.utils.Jt1078ConfigurationUtils;
 import io.github.hylexus.xtream.codec.ext.jt1078.boot.properties.XtreamJt1078ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt1078.extensions.Jt1078ServerExchangeCreator;
@@ -38,20 +39,19 @@ import io.github.hylexus.xtream.codec.server.reactive.utils.BuiltinConfiguration
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 
 import java.util.List;
 
 import static io.github.hylexus.xtream.codec.ext.jt1078.utils.Jt1078Constants.*;
 
-@ConditionalOnProperty(prefix = "jt1078-server.udp-server", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnJt1078Server(protocolType = ConditionalOnJt1078Server.ProtocolType.UDP)
 public class BuiltinJt1078ServerUdpConfiguration {
 
     /**
      * @see Jt1078ConfigurationUtils#jt1078RequestFilterPredicateUdp(XtreamFilter)
      */
-    @Bean(BEAN_NAME_JT1078_UDP_XTREAM_NETTY_HANDLER_ADAPTER)
+    @Bean(value = BEAN_NAME_JT1078_UDP_XTREAM_NETTY_HANDLER_ADAPTER, destroyMethod = "shutdown")
     @ConditionalOnMissingBean(name = BEAN_NAME_JT1078_UDP_XTREAM_NETTY_HANDLER_ADAPTER)
     UdpXtreamNettyHandlerAdapter udpXtreamNettyHandlerAdapter(
             BufferFactoryHolder bufferFactoryHolder,

@@ -14,6 +14,10 @@
 # limitations under the License.
 #
 
+sample-config:
+  #  设备可以访问的IP或域名(1078 码流将上传到这个地址)
+  jt1078-server-host: 192.168.71.5
+
 jt1078-server:
   enabled: true
   features:
@@ -32,7 +36,7 @@ jt1078-server:
     enabled: true
     host: 0.0.0.0
     port: 7856
-    max-frame-length: 1024
+    max-frame-length: 8192
     session-idle-state-checker:
       writer-idle-time: 0s
       reader-idle-time: 0s
@@ -55,6 +59,69 @@ jt1078-server:
       daemon: true
       prefer-native: true
       colocate: true
+  # 音视频流配置
+  audio-video-stream:
+    # 音视频流 编解码配置
+    codec:
+      scheduler:
+        type: bounded_elastic
+        # 当且仅当 jt1078-server.audio-video-stream.codec.scheduler.type == bounded_elastic 时生效
+        bounded-elastic:
+          daemon: true
+          thread-name-prefix: x78-codec-elastic
+          ## @default reactor.core.scheduler.Schedulers.DEFAULT_BOUNDED_ELASTIC_SIZE
+          thread-capacity: 32
+          ## @default reactor.core.scheduler.Schedulers.DEFAULT_BOUNDED_ELASTIC_QUEUESIZE
+          queued-task-capacity: 2048
+          reject-blocking-task: true
+        # 当且仅当 jt1078-server.audio-video-stream.codec.scheduler.type == parallel 时生效
+        parallel:
+          daemon: true
+          thread-name-prefix: x78-codec-parallel
+          reject-blocking-task: true
+          ## @default reactor.core.scheduler.Schedulers.DEFAULT_POOL_SIZE + 2
+          parallelism: 10
+        # 当且仅当 jt1078-server.audio-video-stream.codec.scheduler.type == virtual 时生效
+        virtual:
+          prefix: x78-codec-vt
+        # 当且仅当 jt1078-server.audio-video-stream.codec.scheduler.type == single 时生效
+        ## !!!仅仅用于测试!!!
+        single:
+          daemon: true
+          thread-name-prefix: x78-codec-single
+          reject-blocking-task: false
+    # 音视频流 订阅者配置
+    subscriber:
+      scheduler:
+        metrics:
+          enabled: false
+          prefix: x78-subscriber
+        type: bounded_elastic
+        # 当且仅当 jt1078-server.audio-video-stream.subscriber.scheduler.type == bounded_elastic 时生效
+        bounded-elastic:
+          daemon: true
+          thread-name-prefix: x78-subscriber-elastic
+          ## @default reactor.core.scheduler.Schedulers.DEFAULT_BOUNDED_ELASTIC_SIZE
+          thread-capacity: 32
+          ## @default reactor.core.scheduler.Schedulers.DEFAULT_BOUNDED_ELASTIC_QUEUESIZE
+          queued-task-capacity: 2048
+          reject-blocking-task: true
+        # 当且仅当 jt1078-server.audio-video-stream.subscriber.scheduler.type == parallel 时生效
+        parallel:
+          daemon: true
+          thread-name-prefix: x78-subscriber-parallel
+          reject-blocking-task: true
+          ## @default reactor.core.scheduler.Schedulers.DEFAULT_POOL_SIZE + 2
+          parallelism: 10
+        # 当且仅当 jt1078-server.audio-video-stream.subscriber.scheduler.type == virtual 时生效
+        virtual:
+          prefix: x78-subscriber-vt
+        # 当且仅当 jt1078-server.audio-video-stream.subscriber.scheduler.type == single 时生效
+        ## !!!仅仅用于测试!!!
+        single:
+          daemon: true
+          thread-name-prefix: x78-subscriber-single
+          reject-blocking-task: false
 
 logging:
   level:

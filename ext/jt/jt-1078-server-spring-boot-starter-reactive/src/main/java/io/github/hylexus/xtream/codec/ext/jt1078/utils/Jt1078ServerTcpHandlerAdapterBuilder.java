@@ -17,9 +17,11 @@
 package io.github.hylexus.xtream.codec.ext.jt1078.utils;
 
 import io.github.hylexus.xtream.codec.ext.jt1078.extensions.handler.Jt1078ServerTcpHandlerAdapter;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.resources.Jt1078XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.TcpXtreamHandlerAdapterBuilder;
 import io.netty.buffer.ByteBufAllocator;
+import reactor.core.scheduler.Scheduler;
 
 public class Jt1078ServerTcpHandlerAdapterBuilder extends TcpXtreamHandlerAdapterBuilder {
 
@@ -30,7 +32,8 @@ public class Jt1078ServerTcpHandlerAdapterBuilder extends TcpXtreamHandlerAdapte
     @Override
     public Jt1078ServerTcpHandlerAdapter build() {
         final XtreamHandler exceptionHandlingHandler = createRequestHandler();
-        return new Jt1078ServerTcpHandlerAdapter(super.byteBufAllocator, super.xtreamExchangeCreator, exceptionHandlingHandler);
+        final Scheduler scheduler = ((Jt1078XtreamSchedulerRegistry) super.schedulerRegistry).audioVideoCodecScheduler();
+        return new Jt1078ServerTcpHandlerAdapter(super.byteBufAllocator, super.xtreamExchangeCreator, exceptionHandlingHandler, scheduler);
     }
 
 }

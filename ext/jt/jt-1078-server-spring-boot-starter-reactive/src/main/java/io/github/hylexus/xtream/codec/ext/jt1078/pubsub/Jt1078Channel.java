@@ -20,6 +20,7 @@ import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TerminalIdConverter;
 import jakarta.annotation.Nullable;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Scheduler;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -28,6 +29,8 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public interface Jt1078Channel {
+
+    Scheduler scheduler();
 
     ChannelKey key();
 

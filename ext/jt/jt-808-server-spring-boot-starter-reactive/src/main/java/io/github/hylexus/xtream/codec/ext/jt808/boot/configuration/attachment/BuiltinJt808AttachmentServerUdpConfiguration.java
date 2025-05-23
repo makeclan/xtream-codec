@@ -18,7 +18,6 @@ package io.github.hylexus.xtream.codec.ext.jt808.boot.configuration.attachment;
 
 import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.condition.ConditionalOnJt808Server;
-import io.github.hylexus.xtream.codec.ext.jt808.boot.configuration.BuiltinJt808ServerUdpCommonConfiguration;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.configuration.utils.Jt808ConfigurationUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808UdpDatagramPackageSplitter;
@@ -42,7 +41,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 
 import java.util.List;
 
@@ -59,7 +57,7 @@ public class BuiltinJt808AttachmentServerUdpConfiguration {
     /**
      * @see Jt808ConfigurationUtils#jt808RequestFilterPredicateUdp(XtreamFilter)
      */
-    @Bean(BEAN_NAME_JT_808_UDP_XTREAM_NETTY_HANDLER_ADAPTER_ATTACHMENT_SERVER)
+    @Bean(value = BEAN_NAME_JT_808_UDP_XTREAM_NETTY_HANDLER_ADAPTER_ATTACHMENT_SERVER, destroyMethod = "shutdown")
     @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_UDP_XTREAM_NETTY_HANDLER_ADAPTER_ATTACHMENT_SERVER)
     UdpXtreamNettyHandlerAdapter udpXtreamNettyHandlerAdapter(
             BufferFactoryHolder bufferFactoryHolder,

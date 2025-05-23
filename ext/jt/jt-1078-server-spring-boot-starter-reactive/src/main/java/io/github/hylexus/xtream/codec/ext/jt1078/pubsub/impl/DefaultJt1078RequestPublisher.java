@@ -20,7 +20,10 @@ import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.*;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TerminalIdConverter;
 import jakarta.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -30,11 +33,19 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class DefaultJt1078RequestPublisher implements Jt1078RequestPublisher {
+    private static final Logger log = LoggerFactory.getLogger(DefaultJt1078RequestPublisher.class);
     private final Jt1078TerminalIdConverter terminalIdConverter;
     private final ConcurrentMap<Jt1078Channel.ChannelKey, Jt1078Channel> channels = new ConcurrentHashMap<>();
+    private final Scheduler scheduler;
 
-    public DefaultJt1078RequestPublisher(Jt1078TerminalIdConverter jt1078TerminalIdConverter) {
+    public DefaultJt1078RequestPublisher(Jt1078TerminalIdConverter jt1078TerminalIdConverter, Scheduler scheduler) {
         this.terminalIdConverter = jt1078TerminalIdConverter;
+        this.scheduler = scheduler;
+    }
+
+    @Override
+    public Scheduler scheduler() {
+        return this.scheduler;
     }
 
     @Override
@@ -56,6 +67,7 @@ public class DefaultJt1078RequestPublisher implements Jt1078RequestPublisher {
 
     @Override
     public Mono<Void> publish(Jt1078Request request) {
+        // log.info("publish request: {}", request);
         final Jt1078Channel.ChannelKey channelKey = Jt1078Channel.ChannelKey.from(request);
         final Jt1078Channel jt1078Channel = this.channels.computeIfAbsent(channelKey, this::createChannel);
         jt1078Channel.publish(request);
@@ -64,8 +76,9 @@ public class DefaultJt1078RequestPublisher implements Jt1078RequestPublisher {
 
     @Override
     public <S extends Jt1078Subscription> Jt1078Subscriber<S> doSubscribe(Class<? extends Jt1078ChannelCollector<S>> cls, Jt1078SubscriberCreator creator) {
-        final Jt1078Channel.ChannelKey key = Jt1078Channel.ChannelKey.of(creator.sim(), creator.channelNumber());
-        final Jt1078Channel jt1078Channel = this.channels.computeIfAbsent(key, k -> new DefaultJt1078Channel(k, this.terminalIdConverter));
+        final String shorterSim = this.terminalIdConverter.convert(creator.sim());
+        final Jt1078Channel.ChannelKey channelKey = Jt1078Channel.ChannelKey.of(shorterSim, creator.channelNumber());
+        final Jt1078Channel jt1078Channel = this.channels.computeIfAbsent(channelKey, this::createChannel);
         return jt1078Channel.doSubscribe(cls, creator);
     }
 
@@ -104,7 +117,7 @@ public class DefaultJt1078RequestPublisher implements Jt1078RequestPublisher {
     }
 
     protected Jt1078Channel createChannel(Jt1078Channel.ChannelKey channelKey) {
-        return new DefaultJt1078Channel(channelKey, this.terminalIdConverter);
+        return new DefaultJt1078Channel(channelKey, this.terminalIdConverter, this.scheduler);
     }
 
 }

@@ -56,7 +56,7 @@ public class BuiltinJt808AttachmentServerTcpConfiguration {
     /**
      * @see Jt808ConfigurationUtils#jt808RequestFilterPredicateTcp(XtreamFilter)
      */
-    @Bean(BEAN_NAME_JT_808_TCP_XTREAM_NETTY_HANDLER_ADAPTER_ATTACHMENT_SERVER)
+    @Bean(value = BEAN_NAME_JT_808_TCP_XTREAM_NETTY_HANDLER_ADAPTER_ATTACHMENT_SERVER, destroyMethod = "shutdown")
     @ConditionalOnMissingBean(name = BEAN_NAME_JT_808_TCP_XTREAM_NETTY_HANDLER_ADAPTER_ATTACHMENT_SERVER)
     TcpXtreamNettyHandlerAdapter tcpXtreamNettyHandlerAdapter(
             BufferFactoryHolder bufferFactoryHolder,

@@ -47,6 +47,8 @@ public abstract class AbstractXtreamHandlerAdapterBuilder<C extends AbstractXtre
     private final List<XtreamRequestExceptionHandler> exceptionHandlers;
     protected XtreamExchangeCreator xtreamExchangeCreator;
 
+    protected XtreamSchedulerRegistry schedulerRegistry;
+
     public AbstractXtreamHandlerAdapterBuilder(ByteBufAllocator allocator) {
         this.handlerMappings = new ArrayList<>();
         this.handlerAdapters = new ArrayList<>();
@@ -175,6 +177,11 @@ public abstract class AbstractXtreamHandlerAdapterBuilder<C extends AbstractXtre
 
     public C setXtreamExchangeCreator(XtreamExchangeCreator xtreamExchangeCreator) {
         this.xtreamExchangeCreator = xtreamExchangeCreator;
+        return self();
+    }
+
+    public C schedulerRegistry(XtreamSchedulerRegistry schedulerRegistry) {
+        this.schedulerRegistry = schedulerRegistry;
         return self();
     }
 

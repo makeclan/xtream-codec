@@ -1,0 +1,47 @@
+/*
+ * Copyright 2024 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.github.hylexus.xtream.debug.ext.jt1078.controller;
+
+import io.github.hylexus.xtream.codec.ext.jt1078.boot.properties.XtreamJt1078ServerProperties;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/jt-1078-server-spring-boot-starter-reactive-debug")
+public class Jt1078DebugCommonController {
+    private final String jt1078ServerHost;
+    private final XtreamJt1078ServerProperties jt1078ServerProperties;
+
+    public Jt1078DebugCommonController(@Value("${sample-config.jt1078-server-host}") String jt1078ServerHost, XtreamJt1078ServerProperties jt1078ServerProperties) {
+        this.jt1078ServerHost = jt1078ServerHost;
+        this.jt1078ServerProperties = jt1078ServerProperties;
+    }
+
+    @GetMapping("/server-config")
+    public Map<String, Object> serverConfig() {
+        return Map.of(
+                "jt1078ServerHost", jt1078ServerHost,
+                "jt1078ServerTcpPort", jt1078ServerProperties.getTcpServer().getPort(),
+                "jt1078ServerUdpPort", jt1078ServerProperties.getUdpServer().getPort()
+        );
+    }
+
+}

@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
+import reactor.core.scheduler.Scheduler;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -48,17 +49,24 @@ public class H264ToFlvJt1078ChannelCollector implements Jt1078ChannelCollector<B
     protected final ConcurrentMap<String, H264ToFlvSubscriber> subscribers = new ConcurrentHashMap<>();
     protected final Jt1078Channel.ChannelKey channelKey;
     protected final DefaultFlvEncoder flvEncoder;
+    protected final Scheduler scheduler;
     static final Set<Jt1078PayloadType> SUPPORTED_PAYLOAD_TYPES = Set.of(
             DefaultJt1078PayloadType.H264
     );
 
-    public H264ToFlvJt1078ChannelCollector(Jt1078Channel.ChannelKey channelKey) {
+    public H264ToFlvJt1078ChannelCollector(Jt1078Channel.ChannelKey channelKey, Scheduler scheduler) {
         this.channelKey = channelKey;
+        this.scheduler = scheduler;
         this.flvEncoder = new DefaultFlvEncoder();
     }
 
     protected boolean isSupported(Jt1078PayloadType payloadType) {
         return SUPPORTED_PAYLOAD_TYPES.contains(payloadType);
+    }
+
+    @Override
+    public Scheduler scheduler() {
+        return this.scheduler;
     }
 
     @Override
@@ -119,18 +127,26 @@ public class H264ToFlvJt1078ChannelCollector implements Jt1078ChannelCollector<B
     public Jt1078Subscriber<ByteArrayJt1078Subscription> doSubscribe(Jt1078SubscriberCreator creator) {
         final String uuid = this.channelKey.generateSubscriberId();
 
-        final Flux<ByteArrayJt1078Subscription> dataStream = Flux.<ByteArrayJt1078Subscription>create(fluxSink -> {
-            log.info("new subscriber created with id: {}", uuid);
-            final H264ToFlvSubscriber subscriber = createSubscriber(uuid, creator, fluxSink);
-            synchronized (this.subscribers) {
-                this.subscribers.put(uuid, subscriber);
-            }
-        }).timeout(creator.timeout()).doFinally(signalType -> {
-            log.info("Subscriber {} removed", uuid);
-            synchronized (this.subscribers) {
-                this.subscribers.remove(uuid);
-            }
-        });
+        final Flux<ByteArrayJt1078Subscription> dataStream = Flux
+                .<ByteArrayJt1078Subscription>create(fluxSink -> {
+                    log.info("new subscriber created with id: {}", uuid);
+                    final H264ToFlvSubscriber subscriber = createSubscriber(uuid, creator, fluxSink);
+                    synchronized (this.subscribers) {
+                        this.subscribers.put(uuid, subscriber);
+                    }
+                })
+                .publishOn(this.scheduler())
+                // todo 优化
+                .onBackpressureDrop(byteArrayJt1078Subscription -> {
+                    log.error("onBackpressureDrop, channelKey={}", channelKey);
+                })
+                .timeout(creator.timeout())
+                .doFinally(signalType -> {
+                    log.info("Subscriber {} removed", uuid);
+                    synchronized (this.subscribers) {
+                        this.subscribers.remove(uuid);
+                    }
+                });
         return new DefaultJt1078Subscriber<>(uuid, dataStream);
     }
 

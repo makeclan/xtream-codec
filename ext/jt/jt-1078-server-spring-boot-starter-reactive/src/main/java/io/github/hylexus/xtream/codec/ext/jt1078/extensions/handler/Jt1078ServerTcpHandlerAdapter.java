@@ -22,15 +22,47 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.DefaultTcpXtreamNettyHandlerAdapter;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import org.reactivestreams.Publisher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
 import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
 
 import java.net.InetSocketAddress;
 
 public class Jt1078ServerTcpHandlerAdapter extends DefaultTcpXtreamNettyHandlerAdapter {
-    public Jt1078ServerTcpHandlerAdapter(ByteBufAllocator allocator, XtreamExchangeCreator xtreamExchangeCreator, XtreamHandler xtreamHandler) {
+    private static final Logger log = LoggerFactory.getLogger(Jt1078ServerTcpHandlerAdapter.class);
+    protected final Scheduler scheduler;
+
+    public Jt1078ServerTcpHandlerAdapter(ByteBufAllocator allocator, XtreamExchangeCreator xtreamExchangeCreator, XtreamHandler xtreamHandler, Scheduler scheduler) {
         super(allocator, xtreamExchangeCreator, xtreamHandler);
+        this.scheduler = scheduler;
+    }
+
+    @Override
+    public Publisher<Void> apply(NettyInbound nettyInbound, NettyOutbound nettyOutbound) {
+        return nettyInbound.receive()
+                .doOnNext(ByteBuf::retain)
+                .publishOn(scheduler)
+                .flatMap(byteBuf -> {
+                    if (byteBuf.readableBytes() <= 0) {
+                        byteBuf.release();
+                        return Mono.empty();
+                    }
+                    final InetSocketAddress remoteAddress = this.initTcpRemoteAddress(nettyInbound);
+                    return this.handleSingleRequest(nettyInbound, nettyOutbound, byteBuf, remoteAddress)
+                            .doFinally(signalType -> byteBuf.release())
+                            .onErrorResume(Throwable.class, throwable -> {
+                                log.error("Unexpected Exception", throwable);
+                                return Mono.empty();
+                            });
+                })
+                .onErrorResume(throwable -> {
+                    log.error("Unexpected Error", throwable);
+                    return Mono.empty();
+                });
     }
 
     protected Mono<Void> handleSingleRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf payload, InetSocketAddress remoteAddress) {

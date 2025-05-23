@@ -17,11 +17,13 @@
 package io.github.hylexus.xtream.codec.ext.jt1078.boot.configuration;
 
 import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
+import io.github.hylexus.xtream.codec.ext.jt1078.boot.condition.ConditionalOnJt1078Server;
 import io.github.hylexus.xtream.codec.ext.jt1078.boot.configuration.utils.Jt1078ConfigurationUtils;
 import io.github.hylexus.xtream.codec.ext.jt1078.boot.properties.XtreamJt1078ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt1078.extensions.Jt1078ServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionManager;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TcpHeatBeatHandler;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.resources.Jt1078XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.ext.jt1078.utils.Jt1078ServerTcpHandlerAdapterBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.TcpXtreamNettyHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
@@ -44,7 +46,6 @@ import io.netty.handler.timeout.IdleStateHandler;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import reactor.netty.Connection;
 
@@ -53,7 +54,7 @@ import java.util.concurrent.TimeUnit;
 
 import static io.github.hylexus.xtream.codec.ext.jt1078.utils.Jt1078Constants.*;
 
-@ConditionalOnProperty(prefix = "jt1078-server.tcp-server", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnJt1078Server(protocolType = ConditionalOnJt1078Server.ProtocolType.TCP)
 public class BuiltinJt1078ServerTcpConfiguration {
 
     @Bean
@@ -64,10 +65,11 @@ public class BuiltinJt1078ServerTcpConfiguration {
     /**
      * @see Jt1078ConfigurationUtils#jt1078RequestFilterPredicateTcp(XtreamFilter)
      */
-    @Bean(BEAN_NAME_JT1078_TCP_XTREAM_NETTY_HANDLER_ADAPTER)
+    @Bean(value = BEAN_NAME_JT1078_TCP_XTREAM_NETTY_HANDLER_ADAPTER, destroyMethod = "shutdown")
     @ConditionalOnMissingBean(name = BEAN_NAME_JT1078_TCP_XTREAM_NETTY_HANDLER_ADAPTER)
     TcpXtreamNettyHandlerAdapter tcpXtreamNettyHandlerAdapter(
             BufferFactoryHolder bufferFactoryHolder,
+            Jt1078XtreamSchedulerRegistry schedulerRegistry,
             Jt1078ServerExchangeCreator exchangeCreator,
             List<XtreamHandlerMapping> handlerMappings,
             List<XtreamHandlerAdapter> handlerAdapters,
@@ -82,6 +84,7 @@ public class BuiltinJt1078ServerTcpConfiguration {
                 .addHandlerResultHandlers(handlerResultHandlers)
                 .addFilters(xtreamFilters.stream().filter(Jt1078ConfigurationUtils::jt1078RequestFilterPredicateTcp).toList())
                 .addExceptionHandlers(exceptionHandlers)
+                .schedulerRegistry(schedulerRegistry)
                 .build();
     }
 
