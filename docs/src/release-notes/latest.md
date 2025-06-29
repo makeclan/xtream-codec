@@ -4,6 +4,25 @@ article: false
 
 # 发版记录
 
+## 0.0.1-rc.6(2025-06-29)
+
+### ⭐ New Features
+
+- 注解支持字符串填充属性 [issue#2](https://github.com/hylexus/xtream-codec/issues/2)
+    - `@XtreamField.paddingLeft()`
+    - `@XtreamField.paddingRight()`
+    - `@RustStyle.str.paddingRight()`
+    - `@RustStyle.str.paddingLeft()`
+    - `@JtStyle.Str.paddingLeft()`
+    - `@JtStyle.Str.paddingRight()`
+
+### 📔 Documentation
+
+新增文档：
+
+- [前置长度字段](/guide/core/annotation-driven/annex/prepend-length-field.md)
+- [字符串填充](/guide/core/annotation-driven/annex/padding.md)
+
 ## 0.0.1-rc.5(2025-05-18)
 
 ### ⭐ New Features

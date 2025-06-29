@@ -38,7 +38,7 @@ export default defineUserConfig({
 
             // 详细说明(默认从index.md中提取或自动生成) | Details (defaults to extracted from index.md or auto-generated)
             // details: 'This file contains links to all documentation sections.',
-            details: '当前文件包含 Xtream-Codec 文档的所有章节。',
+            details: '当前文件包含 Xtream-Codec 文档的所有章节目录。',
 
             // 是否生成llms.txt(默认为true) | Whether to generate llms.txt (defaults to true)
             generateLLMsTxt: true,
