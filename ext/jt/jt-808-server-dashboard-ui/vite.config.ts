@@ -23,9 +23,7 @@ export default defineConfig({
       output: {
         manualChunks: (id) => {
           if (
-            ["@nextui-org/accordion", "@nextui-org/avatar"].some((e) =>
-              id.includes(e),
-            )
+            ["@heroui/accordion", "@heroui/avatar"].some((e) => id.includes(e))
           ) {
             return "vendors1";
           } else if (id.includes("@visx/")) {

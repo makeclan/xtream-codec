@@ -5,11 +5,11 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-} from "@nextui-org/table";
-import { Spinner } from "@nextui-org/spinner";
-import { Pagination } from "@nextui-org/pagination";
+} from "@heroui/table";
+import { Spinner } from "@heroui/spinner";
+import { Pagination } from "@heroui/pagination";
 import React, { FC, useMemo } from "react";
-import { Tooltip } from "@nextui-org/tooltip";
+import { Tooltip } from "@heroui/tooltip";
 
 import { Dic } from "@/types";
 import { usePageList } from "@/hooks/use-page-list.ts";

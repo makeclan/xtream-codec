@@ -3,7 +3,7 @@ import {
   EventSourceMessage,
   fetchEventSource,
 } from "@microsoft/fetch-event-source";
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
+import { Card, CardBody, CardHeader } from "@heroui/card";
 
 import { Thread } from "@/types";
 import { JsonPreview } from "@/components/json-preview.tsx";

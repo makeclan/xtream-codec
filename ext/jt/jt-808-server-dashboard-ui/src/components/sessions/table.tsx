@@ -5,12 +5,12 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-} from "@nextui-org/table";
-import { Spinner } from "@nextui-org/spinner";
-import { Pagination } from "@nextui-org/pagination";
+} from "@heroui/table";
+import { Spinner } from "@heroui/spinner";
+import { Pagination } from "@heroui/pagination";
 import React, { FC, useMemo, useState } from "react";
-import { Tooltip } from "@nextui-org/tooltip";
-import { Chip } from "@nextui-org/chip";
+import { Tooltip } from "@heroui/tooltip";
+import { Chip } from "@heroui/chip";
 
 import { SessionMonitor } from "./monitor.tsx";
 

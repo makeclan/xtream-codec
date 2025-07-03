@@ -1,18 +1,18 @@
-import { CardBody, CardHeader } from "@nextui-org/card";
-import { Chip } from "@nextui-org/chip";
+import { CardBody, CardHeader } from "@heroui/card";
+import { Chip } from "@heroui/chip";
 import { useEffect, useState } from "react";
 import {
   EventSourceMessage,
   fetchEventSource,
 } from "@microsoft/fetch-event-source";
 import { useRouteLoaderData } from "react-router-dom";
-import { Spacer } from "@nextui-org/spacer";
-import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/popover";
-import { getKeyValue } from "@nextui-org/table";
-import { Button } from "@nextui-org/button";
-import { Link } from "@nextui-org/link";
-import { Tab, Tabs } from "@nextui-org/tabs";
-import { Accordion, AccordionItem } from "@nextui-org/accordion";
+import { Spacer } from "@heroui/spacer";
+import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
+import { getKeyValue } from "@heroui/table";
+import { Button } from "@heroui/button";
+import { Link } from "@heroui/link";
+import { Tab, Tabs } from "@heroui/tabs";
+import { Accordion, AccordionItem } from "@heroui/accordion";
 
 import { CountNumber } from "./count-number.tsx";
 import { CountTime } from "./count-time.tsx";
@@ -104,6 +104,9 @@ export const CardBox = () => {
     <>
       <div className="gap-4 grid grid-cols-1 sm:grid-cols-3">
         <SpotlightCard>
+          <CardHeader>
+            <b>服务器信息</b>
+          </CardHeader>
           <CardBody className="overflow-visible p-4 min-h-48">
             <Tabs fullWidth aria-label="Tabs sizes" variant="light">
               <Tab key="version" title="版本">

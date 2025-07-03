@@ -6,7 +6,7 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-} from "@nextui-org/table";
+} from "@heroui/table";
 import { FC } from "react";
 export const MsgMiniTable: FC<{ data: any }> = ({ data }) => {
   const tableData = Object.keys(data).map((key) => {

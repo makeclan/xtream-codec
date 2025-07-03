@@ -1,5 +1,5 @@
-import { Switch } from "@nextui-org/switch";
-import { ThemeProps, useTheme } from "@nextui-org/use-theme";
+import { Switch } from "@heroui/switch";
+import { ThemeProps, useTheme } from "@heroui/use-theme";
 
 import { FaMoonIcon, FaSunIcon } from "@/components/icons.tsx";
 
