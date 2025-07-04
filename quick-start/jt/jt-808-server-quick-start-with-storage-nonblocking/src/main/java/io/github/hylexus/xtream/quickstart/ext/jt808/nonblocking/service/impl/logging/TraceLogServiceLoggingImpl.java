@@ -16,7 +16,7 @@
 
 package io.github.hylexus.xtream.quickstart.ext.jt808.nonblocking.service.impl.logging;
 
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.PageableVo;
+import io.github.hylexus.xtream.codec.base.web.domain.vo.PageableVo;
 import io.github.hylexus.xtream.quickstart.ext.jt808.nonblocking.domain.dto.Jt808TraceLogDto;
 import io.github.hylexus.xtream.quickstart.ext.jt808.nonblocking.domain.event.Jt808EventPayloads;
 import io.github.hylexus.xtream.quickstart.ext.jt808.nonblocking.domain.vo.Jt808TraceLogVo;

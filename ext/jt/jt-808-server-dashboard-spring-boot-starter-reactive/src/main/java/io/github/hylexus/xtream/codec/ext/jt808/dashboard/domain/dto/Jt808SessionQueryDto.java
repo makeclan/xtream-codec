@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto;
 
+import io.github.hylexus.xtream.codec.base.web.domain.dto.PageableDto;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ServerType;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
@@ -26,9 +27,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Jt808SessionQueryDto {
-    private Integer page = 1;
-    private Integer pageSize = 10;
+public class Jt808SessionQueryDto extends PageableDto {
     private String terminalId;
     private Jt808ServerType serverType;
     private Jt808ProtocolVersion protocolVersion;

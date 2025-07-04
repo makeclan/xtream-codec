@@ -5,7 +5,7 @@ import {path} from "vuepress/utils"
 
 
 export default hopeTheme({
-    hostname: "https://mister-hope.github.io",
+    hostname: "https://hylexus.github.io",
     author: {
         name: "xtream-codec",
         url: "https://github.com/hylexus",
@@ -94,6 +94,7 @@ export default hopeTheme({
         vPre: true,
     },
     plugins: {
+        search: true,
         icon: {
             // https://theme-hope.vuejs.press/zh/guide/interface/icon.html
             assets: "fontawesome-with-brands"

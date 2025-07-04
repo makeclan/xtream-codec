@@ -3,7 +3,7 @@ import {request} from "../utils/request.ts";
 
 export const requestTerminalList = async (query: object): Promise<{ data: TerminalVo[], total: number }> => {
     return await request({
-        path: 'dashboard-api/v1/session/instruction-sessions',
+        path: 'dashboard-api/jt808/v1/session/instruction-sessions',
         method: 'GET',
         params: query
     });

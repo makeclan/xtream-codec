@@ -20,10 +20,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808AttachmentSessionManag
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.XtreamTcpHeatBeatHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.TcpSessionIdleStateCheckerProps;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.TcpNettyServerCustomizer;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp.UdpNettyServerCustomizer;
 import io.netty.handler.timeout.IdleStateHandler;
-import org.springframework.util.StringUtils;
 import reactor.netty.Connection;
 
 import java.util.concurrent.TimeUnit;
@@ -33,24 +30,6 @@ import static io.github.hylexus.xtream.codec.ext.jt808.utils.JtProtocolConstant.
 
 public final class BuiltinConfigurationUtils {
     private BuiltinConfigurationUtils() {
-    }
-
-    public static TcpNettyServerCustomizer defaultTcpBasicConfigurer(String host, int port) {
-        return server -> {
-            if (StringUtils.hasText(host)) {
-                server = server.host(host);
-            }
-            return server.port(port);
-        };
-    }
-
-    public static UdpNettyServerCustomizer defaultUdpBasicConfigurer(String host, int port) {
-        return server -> {
-            if (StringUtils.hasText(host)) {
-                server = server.host(host);
-            }
-            return server.port(port);
-        };
     }
 
     public static void addIdleStateHandler(TcpSessionIdleStateCheckerProps props, Jt808SessionManager sessionManager, Jt808AttachmentSessionManager attachmentSessionManager, Connection connection) {

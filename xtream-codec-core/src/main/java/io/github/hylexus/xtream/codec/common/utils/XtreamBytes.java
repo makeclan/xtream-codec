@@ -65,6 +65,11 @@ public class XtreamBytes {
         return allocator.buffer().writeBytes(bytes);
     }
 
+    public static ByteBuf byteBufFromHexString(ByteBuf buffer, String hexString) {
+        final byte[] bytes = XtreamBytes.decodeHex(hexString);
+        return buffer.writeBytes(bytes);
+    }
+
     public static String encodeHex(ByteBuf byteBuf) {
         final StringBuilder builder = new StringBuilder();
         int readableBytes = byteBuf.readableBytes();
@@ -165,6 +170,33 @@ public class XtreamBytes {
 
     public static String readBcd(ByteBuf readable, int length) {
         return BcdOps.decodeBcd8421AsString(readable, length);
+    }
+
+    public static void writeCharSequenceWithLeftPadding(ByteBuf buffer, CharSequence charSequence, Charset charset, int minLength, byte paddingElement) {
+        final int writerIndex = buffer.writerIndex();
+        final int valueLength = buffer.writeCharSequence(charSequence, charset);
+        final int delta = minLength - valueLength;
+        if (delta > 0) {
+            // 重置写指针 从头开始覆盖
+            buffer.writerIndex(writerIndex);
+            writePadding(buffer, paddingElement, delta);
+            buffer.writeCharSequence(charSequence, charset);
+        }
+    }
+
+    public static void writeCharSequenceWithRightPadding(ByteBuf buffer, CharSequence charSequence, Charset charset, int minLength, byte paddingElement) {
+        final int valueLength = buffer.writeCharSequence(charSequence, charset);
+        final int delta = minLength - valueLength;
+        if (delta > 0) {
+            // 尾部追加填充元素
+            writePadding(buffer, paddingElement, delta);
+        }
+    }
+
+    private static void writePadding(ByteBuf buffer, byte paddingElement, int delta) {
+        for (int i = 0; i < delta; i++) {
+            buffer.writeByte(paddingElement);
+        }
     }
 
     public static ByteBuf writeWord(ByteBuf byteBuf, int value) {

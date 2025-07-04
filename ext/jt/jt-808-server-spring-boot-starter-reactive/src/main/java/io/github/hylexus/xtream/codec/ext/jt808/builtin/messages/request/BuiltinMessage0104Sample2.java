@@ -20,6 +20,7 @@ import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
 import io.github.hylexus.xtream.codec.core.type.Preset;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.codec.CustomParameterListFieldCodec;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.codec.ParameterItem;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -36,6 +37,7 @@ import java.util.List;
 @Setter
 @Accessors(chain = true)
 @ToString
+@Jt808ResponseBody(messageId = 0x0104, desc = "查询终端参数应答")
 public class BuiltinMessage0104Sample2 {
     /**
      * 对应的终端参数查询消息的流水号

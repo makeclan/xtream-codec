@@ -19,5 +19,6 @@ dependencies {
 
     implementation("jakarta.annotation:jakarta.annotation-api")
     compileOnly("io.projectreactor:reactor-core-micrometer")
+    compileOnly("com.lmax:disruptor")
 
 }

@@ -17,8 +17,8 @@
 package io.github.hylexus.xtream.debug.ext.jt808.filter;
 
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilterChain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,14 +26,14 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 @Component
-public class Jt808DebugFilter implements XtreamFilter {
+public class Jt808DebugFilter implements Jt808RequestFilter {
 
     private static final Logger log = LoggerFactory.getLogger(Jt808DebugFilter.class);
 
     @Override
     public Mono<Void> filter(XtreamExchange exchange, XtreamFilterChain chain) {
         final Jt808Request jt808Request = exchange.request().castAs(Jt808Request.class);
-        log.info("{}", jt808Request.header());
+        log.info("Filter 示例 TCP+UDP :: {}", jt808Request.header());
         return chain.filter(exchange);
     }
 

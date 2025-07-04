@@ -16,8 +16,8 @@
 
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.service.impl.logging;
 
+import io.github.hylexus.xtream.codec.base.web.domain.vo.PageableVo;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1210;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.PageableVo;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.domain.converter.Jt808EntityConverter;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.domain.dto.Jt808AlarmAttachmentInfoDto;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.domain.entity.Jt808AlarmAttachmentInfoEntity;

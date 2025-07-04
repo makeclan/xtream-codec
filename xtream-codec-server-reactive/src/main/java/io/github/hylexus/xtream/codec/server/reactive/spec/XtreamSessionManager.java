@@ -66,7 +66,7 @@ public interface XtreamSessionManager<S extends XtreamSession> {
      */
     void closeSession(S session, XtreamSessionEventListener.SessionCloseReason reason);
 
-    void addListener(XtreamSessionEventListener listener);
+    void addListener(XtreamSessionEventListener<S> listener);
 
     void shutdown();
 

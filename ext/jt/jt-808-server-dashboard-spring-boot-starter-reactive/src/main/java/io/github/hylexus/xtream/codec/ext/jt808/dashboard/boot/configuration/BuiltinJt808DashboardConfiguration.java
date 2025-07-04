@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.boot.configuration;
 
 import io.github.hylexus.xtream.codec.core.EntityCodec;
+import io.github.hylexus.xtream.codec.ext.jt808.boot.condition.ConditionalOnJt808Server;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808BytesProcessor;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
@@ -30,7 +31,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808Ser
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.SimpleTypes;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.Jt808DashboardRequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.RequestInfoCollector;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.SessionInfoCollector;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.Jt808SessionInfoCollector;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardCodecService;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardMappingService;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardMetricsService;
@@ -38,6 +39,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808Dashboard
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl.DefaultJt808DashboardMappingService;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl.DefaultJt808DashboardMetricsService;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl.Jt808DashboardCodecServiceImpl;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808CommandSender;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808AttachmentSessionManager;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageDescriptionRegistry;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
@@ -78,12 +80,12 @@ public class BuiltinJt808DashboardConfiguration {
 
     @Bean
     @ConditionalOnBean(Jt808SessionManager.class)
-    SessionInfoCollector sessionInfoCollector(
+    Jt808SessionInfoCollector sessionInfoCollector(
             Jt808ServerSimpleMetricsHolder serverSimpleMetricsHolder,
             XtreamEventPublisher eventPublisher,
             @Autowired(required = false) Jt808SessionManager sessionManager,
             @Autowired(required = false) Jt808AttachmentSessionManager attachmentSessionManager) {
-        return new SessionInfoCollector(serverSimpleMetricsHolder, sessionManager, attachmentSessionManager, eventPublisher);
+        return new Jt808SessionInfoCollector(serverSimpleMetricsHolder, sessionManager, attachmentSessionManager, eventPublisher);
     }
 
     @Bean
@@ -155,6 +157,12 @@ public class BuiltinJt808DashboardConfiguration {
     @Bean
     BuiltinJt808DashboardCodecController builtinJt808DashboardCodecController(Jt808DashboardCodecService service) {
         return new BuiltinJt808DashboardCodecController(service);
+    }
+
+    @Bean
+    @ConditionalOnJt808Server(serverType = ConditionalOnJt808Server.ServerType.INSTRUCTION_SERVER, protocolType = ConditionalOnJt808Server.ProtocolType.ANY)
+    BuiltinJt808DashboardCommandController builtinJt808DashboardCommandController(Jt808CommandSender commandSender) {
+        return new BuiltinJt808DashboardCommandController(commandSender);
     }
 
 }

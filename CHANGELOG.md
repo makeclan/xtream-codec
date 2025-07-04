@@ -1,3 +1,44 @@
+## 0.0.1-rc.6(2025-06-29)
+
+### ⭐ New Features
+
+- 注解支持字符串填充属性 [issue#2](https://github.com/hylexus/xtream-codec/issues/2)
+    - `@XtreamField.paddingLeft()`
+    - `@XtreamField.paddingRight()`
+    - `@RustStyle.str.paddingRight()`
+    - `@RustStyle.str.paddingLeft()`
+    - `@JtStyle.Str.paddingLeft()`
+    - `@JtStyle.Str.paddingRight()`
+
+## 0.0.1-rc.5(2025-05-18)
+
+### ⭐ New Features
+
+- 新增配置项 `jt808-server.event-publisher.xxx`
+- 新增基于 **disruptor** 的 `XtreamEventPublisher` 实现类 `DisruptorBasedXtreamEventPublisher`
+
+## 0.0.1-rc.4(2025-05-05)
+
+### 🐞 Bug Fixes
+
+- 修复内置 `BuiltinMessage0001` 消息ID标记错误
+- 修复 **Dashboard** 列表分页参数错误
+
+### ⭐ New Features
+
+- 完善 **JT/T 808** 附件服务器示例
+
+## 0.0.1-rc.3(2025-04-20)
+
+### ⚡ Non-backward Compatible Changes(NBCs)
+
+- XtreamSessionEventListener: 自定义事件监听器不应该实现 `XtreamSessionEventListener` 而是应该实现对应的子接口 `Jt808SessionEventListener`
+- XtreamFilter: 自定义过滤器不应该直接实现 `XtreamFilter` 而是应该实现对应的子接口 `Jt808RequestFilter`
+
+### 🐞 Bug Fixes
+
+- 单独启用附件服务器(不启用指令服务器)时启动异常的问题
+
 ## 0.0.1-rc.2(2025-03-10)
 
 ### 🐞 Bug Fixes

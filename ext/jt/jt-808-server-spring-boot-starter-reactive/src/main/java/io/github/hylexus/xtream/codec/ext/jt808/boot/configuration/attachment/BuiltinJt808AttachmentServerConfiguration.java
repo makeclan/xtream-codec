@@ -22,8 +22,8 @@ import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListe
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808AttachmentServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.impl.BuiltinJt808AttachmentServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808AttachmentSessionManager;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionEventListener;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808AttachmentSessionManager;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionEventListener;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.UdpSessionIdleStateCheckerProps;
 import org.springframework.beans.factory.ObjectProvider;
@@ -52,7 +52,7 @@ public class BuiltinJt808AttachmentServerConfiguration {
     }
 
     @Bean
-    CommandLineRunner xtreamAttachmentSessionEventListenerRegister(Jt808AttachmentSessionManager sessionManager, ObjectProvider<XtreamSessionEventListener> listeners) {
+    CommandLineRunner xtreamAttachmentSessionEventListenerRegister(Jt808AttachmentSessionManager sessionManager, ObjectProvider<Jt808SessionEventListener> listeners) {
         return args -> listeners.orderedStream().forEach(sessionManager::addListener);
     }
 

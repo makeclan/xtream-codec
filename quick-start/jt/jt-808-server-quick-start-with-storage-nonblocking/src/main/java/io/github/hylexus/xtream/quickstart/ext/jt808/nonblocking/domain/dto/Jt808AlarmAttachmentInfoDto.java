@@ -16,7 +16,7 @@
 
 package io.github.hylexus.xtream.quickstart.ext.jt808.nonblocking.domain.dto;
 
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.PageableDto;
+import io.github.hylexus.xtream.codec.base.web.domain.dto.PageableDto;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

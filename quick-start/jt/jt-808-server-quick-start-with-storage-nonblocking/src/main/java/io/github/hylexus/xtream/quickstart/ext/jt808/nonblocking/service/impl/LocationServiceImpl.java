@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.quickstart.ext.jt808.nonblocking.service.impl;
 
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
+import io.github.hylexus.xtream.codec.ext.jt808.boot.condition.ConditionalOnJt808Server;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.properties.XtreamJt808ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage9208;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.location.*;
@@ -35,6 +36,7 @@ import reactor.core.scheduler.Schedulers;
 import java.util.Map;
 
 @Service
+@ConditionalOnJt808Server(serverType = ConditionalOnJt808Server.ServerType.INSTRUCTION_SERVER,protocolType = ConditionalOnJt808Server.ProtocolType.ANY)
 public class LocationServiceImpl implements LocationService {
 
     private static final Logger log = LoggerFactory.getLogger(LocationServiceImpl.class);

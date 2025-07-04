@@ -53,7 +53,7 @@
         from jt_808_request_trace_log req
                  left join jt_808_response_trace_log res on req.request_id = res.request_id
         order by req.received_at desc, current_package_no
-        limit #{dto.size} offset #{dto.offset}
+        limit #{dto.pageSize} offset #{dto.offset}
     </select>
 
 </mapper>

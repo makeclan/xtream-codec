@@ -19,11 +19,13 @@ package io.github.hylexus.xtream.codec.ext.jt808.extensions.impl;
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestLifecycleListener;
 import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808ResponseEncoder;
+import io.github.hylexus.xtream.codec.ext.jt808.exception.Jt808SessionNotFoundException;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808CommandSender;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808FlowIdGenerator;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
@@ -37,6 +39,7 @@ import reactor.core.publisher.MonoSink;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author hylexus
@@ -44,13 +47,13 @@ import java.util.Map;
 public class DefaultJt808XtreamCommandSender implements Jt808CommandSender {
     private static final Logger log = LoggerFactory.getLogger(DefaultJt808XtreamCommandSender.class);
     protected final ByteBufAllocator bufferFactory;
-    protected final XtreamSessionManager<Jt808Session> sessionManager;
+    protected final Jt808SessionManager sessionManager;
     protected final Jt808ResponseEncoder jt808ResponseEncoder;
     protected final Jt808FlowIdGenerator flowIdGenerator;
     private final Map<Jt808CommandKey, MonoSink<Object>> sinkMap = new HashMap<>();
     protected final Jt808RequestLifecycleListener requestLifecycleListener;
 
-    public DefaultJt808XtreamCommandSender(ByteBufAllocator bufferFactory, XtreamSessionManager<Jt808Session> sessionManager, Jt808ResponseEncoder jt808ResponseEncoder, Jt808FlowIdGenerator flowIdGenerator, Jt808RequestLifecycleListener requestLifecycleListener) {
+    public DefaultJt808XtreamCommandSender(ByteBufAllocator bufferFactory, Jt808SessionManager sessionManager, Jt808ResponseEncoder jt808ResponseEncoder, Jt808FlowIdGenerator flowIdGenerator, Jt808RequestLifecycleListener requestLifecycleListener) {
         this.bufferFactory = bufferFactory;
         this.sessionManager = sessionManager;
         this.jt808ResponseEncoder = jt808ResponseEncoder;
@@ -89,16 +92,19 @@ public class DefaultJt808XtreamCommandSender implements Jt808CommandSender {
     }
 
     @Override
-    public Mono<Object> sendObjectAndWaitingResponse(String sessionId, Mono<Object> bodyMono, int messageId) {
+    public <R> Mono<R> sendObjectAndWaitingResponse(String sessionId, Mono<Object> bodyMono, int messageId) {
         return this.getSessionById(sessionId).flatMap(session -> {
             final String terminalId = session.terminalId();
             final Jt808ProtocolVersion version = session.protocolVersion();
             final int flowId = this.flowIdGenerator.nextFlowId();
             final Jt808CommandKey commandKey = Jt808CommandKey.of(terminalId, messageId, flowId);
 
-            final Mono<Object> mono = Mono.create(sink -> {
+            final Mono<R> mono = Mono.create(sink -> {
                 // ...
                 sinkMap.put(commandKey, sink);
+            }).map(it -> {
+                @SuppressWarnings("unchecked") R r = (R) it;
+                return r;
             }).doFinally(signalType -> {
                 // ...
                 sinkMap.remove(commandKey);
@@ -112,6 +118,16 @@ public class DefaultJt808XtreamCommandSender implements Jt808CommandSender {
                 sinkMap.remove(commandKey);
             });
         });
+    }
+
+    @Override
+    public <R> Mono<R> sendObjectAndWaitingResponseWithTerminalId(String terminalId, Mono<Object> body, int messageId) {
+        final Optional<Jt808Session> optionalJt808Session = this.sessionManager.findByTerminalId(terminalId);
+        if (optionalJt808Session.isEmpty()) {
+            return Mono.error(new Jt808SessionNotFoundException(terminalId));
+        }
+        final Jt808Session jt808Session = optionalJt808Session.get();
+        return this.sendObjectAndWaitingResponse(jt808Session.id(), body, messageId);
     }
 
     @Override

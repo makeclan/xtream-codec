@@ -20,6 +20,7 @@ import io.github.hylexus.xtream.codec.common.bean.BeanPropertyMetadata;
 import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.core.ContainerInstanceFactory;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
+import io.github.hylexus.xtream.codec.core.annotation.Padding;
 import io.github.hylexus.xtream.codec.core.annotation.PrependLengthFieldType;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamDateTimeField;
 import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
@@ -210,6 +211,12 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "charset")
             String charset() default "utf-8";
+
+            @AliasFor(annotation = XtreamField.class, attribute = "paddingLeft")
+            Padding paddingLeft() default @Padding(minEncodedLength = 0);
+
+            @AliasFor(annotation = XtreamField.class, attribute = "paddingRight")
+            Padding paddingRight() default @Padding(minEncodedLength = 0);
 
             @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldLength")
             int prependLengthFieldLength() default -1;
@@ -547,6 +554,12 @@ public @interface Preset {
 
             @AliasFor(annotation = XtreamField.class, attribute = "charset")
             String charset() default XtreamConstants.CHARSET_NAME_GBK;
+
+            @AliasFor(annotation = XtreamField.class, attribute = "paddingLeft")
+            Padding paddingLeft() default @Padding(minEncodedLength = 0);
+
+            @AliasFor(annotation = XtreamField.class, attribute = "paddingRight")
+            Padding paddingRight() default @Padding(minEncodedLength = 0);
 
             @AliasFor(annotation = XtreamField.class, attribute = "prependLengthFieldLength")
             int prependLengthFieldLength() default -1;

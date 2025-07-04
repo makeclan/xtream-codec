@@ -24,9 +24,11 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSchedulerRegist
 import io.github.hylexus.xtream.codec.server.reactive.spec.common.XtreamServerConstants;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.builtin.DefaultXtreamEventPublisher;
+import io.github.hylexus.xtream.codec.server.reactive.spec.event.builtin.DisruptorBasedXtreamEventPublisher;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamBlockingHandlerMethodPredicate;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.builtin.DefaultXtreamBlockingHandlerMethodPredicate;
 import io.github.hylexus.xtream.codec.server.reactive.spec.resources.DefaultXtreamSchedulerRegistry;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -52,10 +54,16 @@ public class BuiltinJt808ServerSchedulerConfiguration {
         return new DefaultXtreamSchedulerRegistry(customizers, (config, scheduler) -> scheduler);
     }
 
-    @Bean
+    @Bean(destroyMethod = "shutdown")
     @ConditionalOnMissingBean
-    XtreamEventPublisher xtreamEventPublisher(XtreamSchedulerRegistry schedulerRegistry) {
-        return new DefaultXtreamEventPublisher(schedulerRegistry);
+    XtreamEventPublisher xtreamEventPublisher(XtreamJt808ServerProperties serverProperties, XtreamSchedulerRegistry schedulerRegistry) {
+        final XtreamJt808ServerProperties.XtreamEventPublisherProps publisherProps = serverProperties.getEventPublisher();
+        if (publisherProps.getPublisherType() == XtreamJt808ServerProperties.XtreamEventPublisherProps.PublisherType.REACTOR) {
+            return new DefaultXtreamEventPublisher(schedulerRegistry, publisherProps.getReactor().getThreadName());
+        }
+        final XtreamJt808ServerProperties.EventPublisherDisruptorProps disruptorProps = publisherProps.getDisruptor();
+        final DefaultThreadFactory threadFactory = new DefaultThreadFactory(disruptorProps.getThreadName(), disruptorProps.isDaemon());
+        return new DisruptorBasedXtreamEventPublisher(schedulerRegistry, disruptorProps.getRingBufferSize(), threadFactory);
     }
 
     @Bean(name = XtreamServerConstants.BEAN_NAME_EVENT_PUBLISHER_SCHEDULER)

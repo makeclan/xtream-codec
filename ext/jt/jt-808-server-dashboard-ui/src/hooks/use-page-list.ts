@@ -17,8 +17,8 @@ export const usePageList = (path: string, initPerPage?: number) => {
         path,
         method: "GET",
         params: {
-          page,
-          size: rowsPerPage,
+          pageNumber: page,
+          pageSize: rowsPerPage,
         },
       }),
     {

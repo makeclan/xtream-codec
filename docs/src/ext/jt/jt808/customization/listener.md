@@ -150,56 +150,17 @@ public class DemoJt808RequestLifecycleListener implements Jt808RequestLifecycleL
 }
 ```
 
-## XtreamSessionEventListener
+## Jt808SessionEventListener
 
 ### 作用
 
-监听 `XtreamSession` 状态的变化。
+监听 `Jt808Session` 状态的变化。
 
 ::: details 点击 查看/隐藏 接口定义
 
 ```java
-public interface XtreamSessionEventListener {
+public interface Jt808SessionEventListener extends XtreamSessionEventListener<Jt808Session> {
 
-    /**
-     * {@code Session} 新建之后回调
-     *
-     * @param session 新创建的 {@code Session}
-     * @apiNote 不应该做阻塞或者耗时的操作
-     */
-    default void afterSessionCreate(XtreamSession session) {
-    }
-
-    /**
-     * {@code Session} 关闭之前回调
-     *
-     * @param session 准备关闭的 {@code Session}
-     * @param reason  关闭原因
-     * @apiNote 不应该做阻塞或者耗时的操作
-     */
-    default void beforeSessionClose(XtreamSession session, SessionCloseReason reason) {
-    }
-
-    interface SessionCloseReason {
-        String getReason();
-    }
-
-    enum DefaultSessionCloseReason implements SessionCloseReason {
-        EXPIRED("EXPIRED"),
-        CLOSED_BY_USER("CLOSED_BY_USER"),
-        CLOSED_BY_CLIENT("CLOSED_BY_CLIENT"),
-        ;
-        private final String reason;
-
-        DefaultSessionCloseReason(String reason) {
-            this.reason = reason;
-        }
-
-        @Override
-        public String getReason() {
-            return this.reason;
-        }
-    }
 }
 ```
 
@@ -207,11 +168,11 @@ public interface XtreamSessionEventListener {
 
 ### 示例
 
-要自定义 `XtreamSessionEventListener`，只需要将 `XtreamSessionEventListener` 类型的 **Bean** 加入到 **spring** 容器中即可。
+要自定义 `Jt808SessionEventListener`，只需要将 `Jt808SessionEventListener` 类型的 **Bean** 加入到 **spring** 容器中即可。
 
 ```java
 @Component
-public class DemoXtreamSessionEventListener implements XtreamSessionEventListener {
+public class DemoXtreamSessionEventListener implements Jt808SessionEventListener {
     private static final Logger log = LoggerFactory.getLogger(DemoXtreamSessionEventListener.class);
 
     @Override

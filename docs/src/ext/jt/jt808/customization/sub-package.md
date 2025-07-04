@@ -12,7 +12,7 @@ article: false
 如果内置子包合并逻辑不符合要求，可以自行实现 `Jt808RequestCombinerFilter` 或 `Jt808RequestCombiner`。
 
 ```java
-public class Jt808RequestCombinerFilter implements XtreamFilter {
+public class Jt808RequestCombinerFilter implements Jt808RequestFilter {
     public static final int ORDER = -100;
     protected final Jt808RequestCombiner requestCombiner;
     protected final Jt808RequestLifecycleListener lifecycleListener;

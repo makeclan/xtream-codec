@@ -12,6 +12,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     // common end
 
+    api(project(":xtream-codec-base"))
     api(project(":xtream-codec-server-reactive"))
     api("com.github.ben-manes.caffeine:caffeine")
     api("org.springframework.boot:spring-boot-starter")

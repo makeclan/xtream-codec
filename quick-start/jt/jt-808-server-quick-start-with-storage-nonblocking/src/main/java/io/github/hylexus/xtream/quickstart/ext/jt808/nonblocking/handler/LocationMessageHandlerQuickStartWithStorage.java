@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.quickstart.ext.jt808.nonblocking.handler;
 
+import io.github.hylexus.xtream.codec.ext.jt808.boot.condition.ConditionalOnJt808Server;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.BuiltinMessage0200;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.ServerCommonReplyMessage;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestHandler;
@@ -31,6 +32,7 @@ import reactor.core.publisher.Mono;
 
 @Component
 @Jt808RequestHandler
+@ConditionalOnJt808Server(serverType = ConditionalOnJt808Server.ServerType.INSTRUCTION_SERVER, protocolType = ConditionalOnJt808Server.ProtocolType.ANY)
 public class LocationMessageHandlerQuickStartWithStorage {
     private static final Logger log = LoggerFactory.getLogger(LocationMessageHandlerQuickStartWithStorage.class);
     private final LocationService locationService;

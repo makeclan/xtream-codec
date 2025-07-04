@@ -16,7 +16,11 @@
 
 package io.github.hylexus.xtream.codec.common.utils;
 
+import java.util.Optional;
+
 public final class Numbers {
+    private static final int MASK = 0xFF;
+
     private Numbers() {
     }
 
@@ -32,4 +36,45 @@ public final class Numbers {
         return value & ~(1L << index);
     }
 
+    public static byte[] intTo3Bytes(int value) {
+        return new byte[]{
+                (byte) ((value >>> 16) & MASK),
+                (byte) ((value >>> 8) & MASK),
+                (byte) (value & MASK)
+        };
+    }
+
+    public static Optional<Integer> parseInteger(Object input) {
+        return switch (input) {
+            case null -> Optional.empty();
+            case Number number -> Optional.of(number.intValue());
+            case String s -> parseInteger(s);
+            case Object s -> parseInteger(s.toString());
+        };
+    }
+
+    public static Optional<Integer> parseInteger(String input) {
+        try {
+            return Optional.of(Integer.parseInt(input.trim()));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    public static Optional<Boolean> parseBoolean(Object input) {
+        return switch (input) {
+            case null -> Optional.empty();
+            case Boolean bool -> Optional.of(bool);
+            case String s -> parseBoolean(s);
+            case Object o -> parseBoolean(o.toString());
+        };
+    }
+
+    public static Optional<Boolean> parseBoolean(String input) {
+        try {
+            return Optional.of(Boolean.parseBoolean(input.trim()));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
 }

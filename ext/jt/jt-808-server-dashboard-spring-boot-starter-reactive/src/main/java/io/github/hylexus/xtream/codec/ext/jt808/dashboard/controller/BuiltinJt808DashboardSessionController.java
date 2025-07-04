@@ -16,16 +16,18 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller;
 
+import io.github.hylexus.xtream.codec.base.web.domain.vo.PageableVo;
+import io.github.hylexus.xtream.codec.base.web.exception.XtreamHttpException;
+import io.github.hylexus.xtream.codec.base.web.utils.XtreamWebUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.Jt808SessionQueryDto;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.events.Jt808DashboardSessionCloseReason;
+import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808DashboardSimpleValues;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.Jt808SessionVo;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.PageableVo;
-import io.github.hylexus.xtream.codec.ext.jt808.domain.DefaultRespCode;
-import io.github.hylexus.xtream.codec.ext.jt808.exception.XtreamHttpException;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808AttachmentSessionManager;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionManager;
+import org.springframework.http.HttpHeaders;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
@@ -36,9 +38,8 @@ import java.util.function.Predicate;
 /**
  * @author hylexus
  */
-// todo 接口重命名
 @RestController
-@RequestMapping("/dashboard-api/v1/session")
+@RequestMapping("/dashboard-api/jt808/v1/session")
 public class BuiltinJt808DashboardSessionController {
     private final Jt808SessionManager sessionManager;
     private final Jt808AttachmentSessionManager attachmentSessionManager;
@@ -59,21 +60,21 @@ public class BuiltinJt808DashboardSessionController {
     }
 
     @DeleteMapping("/instruction-session/{sessionId}")
-    public Mono<Map<String, Boolean>> deleteInstructionSession(@PathVariable("sessionId") String sessionId) {
-        return this.closeSession(sessionId, this.sessionManager);
+    public Mono<Map<String, Boolean>> deleteInstructionSession(@PathVariable("sessionId") String sessionId, @RequestHeader HttpHeaders httpHeaders) {
+        return this.closeSession(sessionId, httpHeaders, this.sessionManager);
     }
 
     @DeleteMapping("/attachment-session/{sessionId}")
-    public Mono<Map<String, Boolean>> deleteAttachmentSession(@PathVariable("sessionId") String sessionId) {
-        return this.closeSession(sessionId, this.attachmentSessionManager);
+    public Mono<Map<String, Boolean>> deleteAttachmentSession(@PathVariable("sessionId") String sessionId, @RequestHeader HttpHeaders httpHeaders) {
+        return this.closeSession(sessionId, httpHeaders, this.attachmentSessionManager);
     }
 
-    private Mono<Map<String, Boolean>> closeSession(String sessionId, XtreamSessionManager<Jt808Session> manager) {
+    private Mono<Map<String, Boolean>> closeSession(String sessionId, HttpHeaders httpHeaders, XtreamSessionManager<Jt808Session> manager) {
+        final String clientIp = XtreamWebUtils.getClientIp(httpHeaders::getFirst).orElse("unknown");
         return manager.getSessionById(sessionId)
-                .switchIfEmpty(Mono.defer(() -> Mono.error(new XtreamHttpException("No session found with sessionId: " + sessionId, DefaultRespCode.NOT_FOUND))))
+                .switchIfEmpty(Mono.defer(() -> Mono.error(XtreamHttpException.notFound("No session found with sessionId: " + sessionId))))
                 .map(session -> {
-                    // todo clientIP
-                    final boolean closed = manager.closeSessionById(sessionId, new Jt808DashboardSessionCloseReason("ClosedByDashboardUser", null));
+                    final boolean closed = manager.closeSessionById(sessionId, new Jt808DashboardSimpleValues.Jt808DashboardSessionCloseReason("ClosedByDashboardApi", clientIp));
                     return Map.of("closed", closed);
                 });
     }
@@ -85,14 +86,14 @@ public class BuiltinJt808DashboardSessionController {
             return PageableVo.empty();
         }
         final List<Jt808SessionVo> list = manager
-                .list(dto.getPage(), dto.getPageSize(), filter, this::convertToVo)
+                .list(dto.getPageNumber(), dto.getPageSize(), filter, this::convertToVo)
                 .toList();
         return PageableVo.of(total, list);
     }
 
     Predicate<Jt808Session> createFilter(Jt808SessionQueryDto dto) {
         Predicate<Jt808Session> predicate = it -> true;
-        if (dto.getTerminalId() != null) {
+        if (StringUtils.hasText(dto.getTerminalId())) {
             predicate = predicate.and(it -> it.terminalId().toLowerCase().contains(dto.getTerminalId().toLowerCase()));
         }
         if (dto.getServerType() != null) {

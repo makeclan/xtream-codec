@@ -1,12 +1,20 @@
+import io.github.hylexus.xtream.codec.gradle.plugins.XtreamCodecFastModePlugin
 import org.cadixdev.gradle.licenser.LicenseExtension
 
 plugins {
     id("org.springframework.boot")
     application
+    // id("xtream-codec-fast-mode-plugin")
 }
 
 application {
+    mainClass.set("io.github.hylexus.xtream.quickstart.ext.jt808.nonblocking.Jt808ServerQuickStartWithStorageNonblockingApp")
 }
+tasks.bootJar {
+    archiveFileName.set("${project.name}.jar")
+    mainClass.set("io.github.hylexus.xtream.quickstart.ext.jt808.nonblocking.Jt808ServerQuickStartWithStorageNonblockingApp")
+}
+apply<XtreamCodecFastModePlugin>()
 
 dependencies {
     // common start

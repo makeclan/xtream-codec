@@ -55,8 +55,10 @@
 │         └── jt-808-server-spring-boot-starter-reactive  ## JT/T 808 扩展
 ├── quick-start   ## quick-start 示例
 │     └── jt      ## JT/T 示例
-│         ├── jt-808-server-quick-start                   ## JT/T 808 服务端示例(不带 dashboard)
-│         ├── jt-808-server-quick-start-with-dashboard    ## JT/T 808 服务端示例(带 dashboard)
+│         ├── jt-808-attachment-server-quick-start-blocking           ## JT/T 808 附件服务器服务端示例(不带 dashboard)
+│         ├── jt-808-attachment-server-quick-start-nonblocking        ## JT/T 808 附件服务器服务端示例(不带 dashboard)
+│         ├── jt-808-server-quick-start                               ## JT/T 808 服务端示例(不带 dashboard)
+│         ├── jt-808-server-quick-start-with-dashboard                ## JT/T 808 服务端示例(带 dashboard)
 │         ├── jt-808-server-quick-start-with-storage-blocking         ## JT/T 808 服务端[阻塞版-SpringMvc]示例(带 存储:clickhouse,mysql,postgres,minio)
 │         └── jt-808-server-quick-start-with-storage-nonblocking      ## JT/T 808 服务端[非阻塞版-WebFlux]示例(带 存储:clickhouse,mysql,postgres,minio)
 ├── debug         ## 调试专用(不用理会)

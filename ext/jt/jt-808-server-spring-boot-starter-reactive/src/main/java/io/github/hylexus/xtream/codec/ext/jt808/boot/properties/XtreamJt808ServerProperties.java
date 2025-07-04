@@ -47,7 +47,44 @@ public class XtreamJt808ServerProperties {
     private AttachmentServerProps attachmentServer = new AttachmentServerProps();
 
     @NestedConfigurationProperty
+    private XtreamEventPublisherProps eventPublisher = new XtreamEventPublisherProps();
+
+    @NestedConfigurationProperty
     private SchedulerProperties schedulers = new SchedulerProperties();
+
+    @Getter
+    @Setter
+    @ToString
+    public static class XtreamEventPublisherProps {
+        public PublisherType publisherType = PublisherType.REACTOR;
+
+        @NestedConfigurationProperty
+        private EventPublisherReactorProps reactor = new EventPublisherReactorProps();
+
+        @NestedConfigurationProperty
+        private EventPublisherDisruptorProps disruptor = new EventPublisherDisruptorProps();
+
+        public enum PublisherType {
+            REACTOR,
+            DISRUPTOR,
+        }
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class EventPublisherDisruptorProps {
+        private String threadName = "xep-disruptor";
+        private boolean daemon = false;
+        private int ringBufferSize = 1024 * 8;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class EventPublisherReactorProps {
+        private String threadName = "xtream-event-publisher";
+    }
 
     @Getter
     @Setter

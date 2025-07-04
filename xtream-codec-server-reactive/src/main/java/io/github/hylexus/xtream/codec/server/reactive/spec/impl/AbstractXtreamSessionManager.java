@@ -52,7 +52,7 @@ public abstract class AbstractXtreamSessionManager<S extends XtreamSession> impl
     private final Duration maxIdleTime;
     private final Clock clock = Clock.system(ZoneId.of("Asia/Shanghai"));
     private final Lock lock = new ReentrantLock();
-    protected final List<XtreamSessionEventListener> listenerList = new ArrayList<>();
+    protected final List<XtreamSessionEventListener<S>> listenerList = new ArrayList<>();
 
     public AbstractXtreamSessionManager(
             boolean udpSessionIdleStateCheckerEnabled,
@@ -84,7 +84,7 @@ public abstract class AbstractXtreamSessionManager<S extends XtreamSession> impl
     }
 
     @Override
-    public void addListener(XtreamSessionEventListener listener) {
+    public void addListener(XtreamSessionEventListener<S> listener) {
         this.listenerList.add(listener);
     }
 
@@ -142,8 +142,8 @@ public abstract class AbstractXtreamSessionManager<S extends XtreamSession> impl
         return Mono.just(session);
     }
 
-    protected void invokeListener(Consumer<XtreamSessionEventListener> action) {
-        for (XtreamSessionEventListener xtreamSessionEventListener : this.listenerList) {
+    protected void invokeListener(Consumer<XtreamSessionEventListener<S>> action) {
+        for (XtreamSessionEventListener<S> xtreamSessionEventListener : this.listenerList) {
             try {
                 action.accept(xtreamSessionEventListener);
             } catch (Exception e) {

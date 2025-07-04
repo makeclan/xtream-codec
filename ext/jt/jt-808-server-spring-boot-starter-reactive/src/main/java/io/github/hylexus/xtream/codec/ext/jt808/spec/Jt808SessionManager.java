@@ -16,14 +16,22 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.spec;
 
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSession;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionManager;
 
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public interface Jt808SessionManager extends XtreamSessionManager<Jt808Session> {
+
+    default Optional<Jt808Session> findByTerminalId(String terminalId) {
+        return this.list()
+                .filter(session -> session.terminalId().equals(terminalId))
+                .min(Comparator.comparing(XtreamSession::lastCommunicateTime));
+    }
 
     default Stream<Jt808Session> list(int page, int pageSize, Predicate<Jt808Session> filter) {
         return this.list().filter(filter).sorted(Comparator.comparing(Jt808Session::terminalId)).skip((long) (page - 1) * pageSize).limit(pageSize);

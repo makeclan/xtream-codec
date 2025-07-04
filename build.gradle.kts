@@ -15,6 +15,7 @@ plugins {
 
 val mavenRepoConfig = getMavenRepoConfig()
 val mavenPublications = setOf(
+    "xtream-codec-base",
     "xtream-codec-core",
     "xtream-codec-server-reactive",
     "jt-808-server-spring-boot-starter-reactive",
@@ -61,6 +62,7 @@ configure(subprojects) {
             dependency("com.clickhouse:clickhouse-client:0.7.1")
             dependency("com.clickhouse:clickhouse-r2dbc:0.7.1")
             dependency("io.minio:minio:8.5.14")
+            dependency("com.lmax:disruptor:4.0.0")
         }
 
         group = "xtream-codec"
@@ -68,11 +70,11 @@ configure(subprojects) {
     }
 
     repositories {
-//        mavenLocal()
         extraMavenRepositoryUrls().forEach {
             maven(it)
         }
         mavenCentral()
+        mavenLocal()
     }
 
     tasks.test {
@@ -85,8 +87,18 @@ configure(subprojects) {
 
     apply(plugin = "checkstyle")
     checkstyle {
-        toolVersion = "10.9.1"
+        toolVersion = "10.23.0"
         configDirectory.set(rootProject.file("build-script/checkstyle/"))
+    }
+    tasks.withType<Checkstyle> {
+        // 严重影响构建时间
+        onlyIf {
+            val skip = (project.findProperty("xtream.skip.checkstyle") as? String).toBoolean()
+            if (skip && (project.findProperty("xtream.skip.logging.enabled") as? String).toBoolean()) {
+                println("Disabling task: checkstyle in project [${project.name}](xtream.skip.checkstyle==true)")
+            }
+            return@onlyIf !skip
+        }
     }
 
     // 本项目开源协议头
@@ -210,13 +222,13 @@ configure(subprojects) {
         logging.captureStandardOutput(LogLevel.INFO)
     }
 
-    val sourcesJar by tasks.creating(Jar::class) {
+    val sourcesJar by tasks.registering(Jar::class) {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         archiveClassifier.set("sources")
         from(sourceSets.getByName("main").java.srcDirs)
     }
 
-    val javaDocJar by tasks.creating(Jar::class) {
+    val javaDocJar by tasks.registering(Jar::class) {
         archiveClassifier.set("javadoc")
         from(tasks.named("javadoc"))
     }
@@ -328,10 +340,15 @@ fun isJavaProject(project: Project): Boolean {
                 "xtream-codec-server-reactive-debug-tcp",
                 "xtream-codec-server-reactive-debug-udp",
                 "jt-808-server-spring-boot-starter-reactive-debug",
+                "jt-808-attachment-server-quick-start-blocking",
+                "jt-808-attachment-server-quick-start-nonblocking",
                 "jt-808-server-quick-start",
                 "jt-808-server-quick-start-with-dashboard",
                 "jt-808-server-quick-start-with-storage-nonblocking",
                 "jt-808-server-quick-start-with-storage-blocking",
+                "jt-1078-server-spring-boot-starter-reactive",
+                "jt-1078-server-dashboard-spring-boot-starter-reactive",
+                "jt-1078-server-spring-boot-starter-reactive-debug",
             ).contains(project.name))
 }
 

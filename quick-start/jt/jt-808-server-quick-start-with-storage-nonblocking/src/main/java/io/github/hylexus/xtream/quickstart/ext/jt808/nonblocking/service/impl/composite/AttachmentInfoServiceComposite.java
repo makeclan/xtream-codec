@@ -16,8 +16,8 @@
 
 package io.github.hylexus.xtream.quickstart.ext.jt808.nonblocking.service.impl.composite;
 
+import io.github.hylexus.xtream.codec.base.web.domain.vo.PageableVo;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1210;
-import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.PageableVo;
 import io.github.hylexus.xtream.quickstart.ext.jt808.nonblocking.domain.dto.Jt808AlarmAttachmentInfoDto;
 import io.github.hylexus.xtream.quickstart.ext.jt808.nonblocking.domain.vo.Jt808AlarmAttachmentInfoVo;
 import io.github.hylexus.xtream.quickstart.ext.jt808.nonblocking.service.AttachmentInfoService;

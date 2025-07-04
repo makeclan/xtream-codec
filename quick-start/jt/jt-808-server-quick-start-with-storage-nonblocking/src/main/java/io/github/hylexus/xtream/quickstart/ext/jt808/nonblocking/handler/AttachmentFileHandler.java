@@ -18,11 +18,7 @@ package io.github.hylexus.xtream.quickstart.ext.jt808.nonblocking.handler;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage9212;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1210;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1211;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage1212;
-import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.BuiltinMessage30316364;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.ext.*;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.ServerCommonReplyMessage;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestBody;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestHandler;
@@ -40,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Map;
@@ -72,10 +69,12 @@ public class AttachmentFileHandler {
     @Jt808RequestHandlerMapping(messageIds = 0x1210)
     @Jt808ResponseBody(messageId = 0x8001)
     public Mono<ServerCommonReplyMessage> processMsg0x1210(Jt808RequestEntity<BuiltinMessage1210> requestEntity) {
+        // 结果; 0:成功/确认; 1:失败; 2:消息有误; 3:不支持; 4:报警处理确认
         final BuiltinMessage1210 body = requestEntity.getBody();
-        log.info("0x1210 ==> {}", body);
+        log.info("[0x1210] ==> {}", body);
         if (requestEntity.getServerType() == Jt808ServerType.INSTRUCTION_SERVER) {
-            log.error("{}", "0x1210 不应该由指令服务器对应的端口处理");
+            log.error("[0x1210] 不应该由指令服务器对应的端口处理");
+            return Mono.just(ServerCommonReplyMessage.of(requestEntity, (byte) 3));
         }
         final Map<String, BuiltinMessage1210.AttachmentItem> itemMap = this.attachmentItemCache.get(requestEntity.getHeader().terminalId(), key -> new ConcurrentHashMap<>());
         for (final BuiltinMessage1210.AttachmentItem item : body.getAttachmentItemList()) {
@@ -88,40 +87,68 @@ public class AttachmentFileHandler {
     @Jt808RequestHandlerMapping(messageIds = 0x1211)
     @Jt808ResponseBody(messageId = 0x8001)
     public Mono<ServerCommonReplyMessage> processMsg0x1211(Jt808RequestEntity<BuiltinMessage1211> requestEntity) {
-        log.info("0x1211 ==> {}", requestEntity.getBody());
+        log.info("[0x1211] ==> {}", requestEntity.getBody());
+        // 结果; 0:成功/确认; 1:失败; 2:消息有误; 3:不支持; 4:报警处理确认
         if (requestEntity.getServerType() == Jt808ServerType.INSTRUCTION_SERVER) {
-            log.error("{}", "0x1211 不应该由指令服务器对应的端口处理");
+            log.error("[0x1211] 不应该由指令服务器对应的端口处理");
+            return Mono.just(ServerCommonReplyMessage.of(requestEntity, (byte) 3));
         }
         final Map<String, BuiltinMessage1210.AttachmentItem> items = this.attachmentItemCache.getIfPresent(requestEntity.getHeader().terminalId());
         if (items == null) {
-            return Mono.just(ServerCommonReplyMessage.success(requestEntity));
+            log.error("[0x1211] 未找到对应的 0x1210 元数据: terminalId={}, fileName={}", requestEntity.getHeader().terminalId(), requestEntity.getBody().getFileName());
+            return Mono.just(ServerCommonReplyMessage.of(requestEntity, (byte) 2));
         }
         final BuiltinMessage1210.AttachmentItem attachmentItem = items.get(requestEntity.getBody().getFileName().trim());
-        if (attachmentItem != null) {
-            attachmentItem.setFileType(requestEntity.getBody().getFileType());
+        if (attachmentItem == null) {
+            log.error("[0x1211] 收到未知文件上传请求: terminalId={}, fileName={}", requestEntity.getHeader().terminalId(), requestEntity.getBody().getFileName());
+            return Mono.just(ServerCommonReplyMessage.of(requestEntity, (byte) 2));
         }
-        return Mono.just(ServerCommonReplyMessage.success(requestEntity));
+
+        // 创建本地文件
+        return Mono.<String>create(sink -> {
+            try {
+                attachmentItem.setFileType(requestEntity.getBody().getFileType());
+                final String filePath = this.attachmentFileService.createFileIfNecessary(requestEntity.getHeader().terminalId(), attachmentItem);
+                sink.success(filePath);
+            } catch (IOException e) {
+                sink.error(e);
+            }
+        }).map(ignored -> {
+            // ...
+            return ServerCommonReplyMessage.success(requestEntity);
+        });
     }
 
     @Jt808RequestHandlerMapping(messageIds = 0x1212)
     @Jt808ResponseBody(messageId = 0x9212)
     public Mono<BuiltinMessage9212> processMsg0x1212(Jt808RequestEntity<BuiltinMessage1212> requestEntity) {
         final BuiltinMessage1212 body = requestEntity.getBody();
-        log.info("0x1212 ==> {}", body);
+        log.info("[0x1212] ==> {}", body);
         if (requestEntity.getServerType() == Jt808ServerType.INSTRUCTION_SERVER) {
-            log.error("{}", "0x1212 不应该由指令服务器对应的端口处理");
+            log.error("[0x1212] 不应该由指令服务器对应的端口处理");
+            // 这里可以考虑关掉连接
+            return Mono.empty();
         }
+
         final ConcurrentMap<String, BuiltinMessage1210.AttachmentItem> items = this.attachmentItemCache.getIfPresent(requestEntity.getHeader().terminalId());
-        // 这里可能会出现空指针(示例项目里不做处理，你自己看情况处理)
-        assert items != null;
+        if (items == null) {
+            log.error("[0x1212] 未找到文件元数据, 附件上传之前没有没有发送 0x1210,0x1211 消息??? terminalId={},fileName={}", requestEntity.getHeader().terminalId(), body.getFileName());
+            return Mono.empty();
+        }
         final BuiltinMessage1210.AttachmentItem attachmentItem = items.get(body.getFileName());
+        if (attachmentItem == null) {
+            log.error("[0x1212] 未找到文件元数据, 附件上传之前没有没有发送 0x1210,0x1211 消息??? terminalId={},fileName={}", requestEntity.getHeader().terminalId(), body.getFileName());
+            return Mono.empty();
+        }
+
         final boolean retainLocalTemporaryFile = this.quickStartAppProps.getAttachmentServer().isRetainLocalTemporaryFile();
         return this.attachmentFileService.moveFileToRemoteStorage(requestEntity, attachmentItem, !retainLocalTemporaryFile)
                 .onErrorResume(Throwable.class, throwable -> {
                     log.error("Error occurred while moveFileToRemoteStorage", throwable);
                     return Mono.just(false);
                 })
-                .then(Mono.defer(() -> {
+                .map(ignored -> {
+                    // 这里忽略了需要重传的文件的处理
                     final BuiltinMessage9212 responseMessageBody = new BuiltinMessage9212();
                     responseMessageBody.setFileName(body.getFileName());
                     responseMessageBody.setFileType(body.getFileType());
@@ -130,12 +157,7 @@ public class AttachmentFileHandler {
                     responseMessageBody.setUploadResult((short) 0x00);
                     responseMessageBody.setPackageCountToReTransmit((short) 0);
                     responseMessageBody.setRetransmitItemList(Collections.emptyList());
-                    return Mono.just(responseMessageBody);
-                }))
-                .doFinally(signalType -> {
-                    final String filename = body.getFileName().trim();
-                    log.info("0x1212 ==> 删除缓存 {}", filename);
-                    items.remove(filename);
+                    return responseMessageBody;
                 });
     }
 
@@ -144,21 +166,22 @@ public class AttachmentFileHandler {
      */
     @Jt808RequestHandlerMapping(messageIds = 0x30316364, desc = "苏标扩展码流")
     public Mono<Void> processMsg30316364(Jt808Request request, @Jt808RequestBody BuiltinMessage30316364 body, @Nullable Jt808Session session) {
+        log.info("[0x30316364] ==> {} -- {} -- {}", body.getFileName().trim(), body.getDataOffset(), body.getDataLength());
+
         if (session == null) {
-            log.warn("session == null, 附件上传之前没有没有发送 0x1210,0x1211 消息???");
+            log.error("[0x30316364] session == null, 附件上传之前没有没有发送 0x1210,0x1211 消息???");
             return Mono.empty();
         }
 
-        log.info("0x30316364 ==> {} -- {} -- {}", body.getFileName().trim(), body.getDataOffset(), body.getDataLength());
-
         final Map<String, BuiltinMessage1210.AttachmentItem> itemMap = attachmentItemCache.getIfPresent(session.terminalId());
         if (itemMap == null) {
+            log.error("[0x30316364] itemMap == null, 附件上传之前没有没有发送 0x1210,0x1211 消息???");
             return Mono.empty();
         }
 
         final BuiltinMessage1210.AttachmentItem item = itemMap.get(body.getFileName().trim());
         if (item == null) {
-            log.error("收到未知附件上传消息: {}", body);
+            log.error("[0x30316364] 收到未知附件上传消息: terminalId={},{}", request.terminalId(), body);
             return Mono.empty();
         }
 

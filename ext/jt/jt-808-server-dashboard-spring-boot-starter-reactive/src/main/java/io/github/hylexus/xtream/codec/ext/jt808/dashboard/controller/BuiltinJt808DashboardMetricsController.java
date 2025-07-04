@@ -33,7 +33,7 @@ import reactor.core.publisher.Flux;
 import java.time.Duration;
 
 @RestController
-@RequestMapping("/dashboard-api/v1/metrics")
+@RequestMapping("/dashboard-api/jt808/v1/metrics")
 public class BuiltinJt808DashboardMetricsController {
     private static final Logger log = LoggerFactory.getLogger(BuiltinJt808DashboardMetricsController.class);
 

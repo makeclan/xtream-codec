@@ -24,14 +24,14 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * 终端通用应答 0x8001
+ * 终端通用应答 0x0001
  *
  * @author hylexus
  */
 @Getter
 @Setter
 @Accessors(chain = true)
-@Jt808ResponseBody(messageId = 0x8001, desc = "终端通用应答")
+@Jt808ResponseBody(messageId = 0x0001, desc = "终端通用应答")
 public class BuiltinMessage0001 {
 
     @Preset.JtStyle.Word(desc = "应答流水号 对应的平台消息的流水号")

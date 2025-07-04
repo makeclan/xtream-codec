@@ -16,11 +16,11 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.impl;
 
+import io.github.hylexus.xtream.codec.base.web.exception.XtreamHttpException;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.LinkDataDto;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.events.Jt808DashboardEventPayloads;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.events.Jt808DashboardEventType;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardEventService;
-import io.github.hylexus.xtream.codec.ext.jt808.exception.BadRequestException;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEvent;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventPublisher;
 import io.github.hylexus.xtream.codec.server.reactive.spec.event.XtreamEventSubscriberInfo;
@@ -79,7 +79,7 @@ public class DefaultJt808DashboardEventService implements Jt808DashboardEventSer
             // ...
             return XtreamEvent.DefaultXtreamEventType.of(code)
                     .or(() -> Jt808DashboardEventType.of(code))
-                    .orElseThrow(() -> new BadRequestException("Invalid event code: " + code));
+                    .orElseThrow(() -> XtreamHttpException.badRequest("Invalid event code: " + code));
         }).collect(Collectors.toSet());
     }
 }

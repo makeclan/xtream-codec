@@ -16,9 +16,9 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.servlet;
 
+import io.github.hylexus.xtream.codec.base.web.utils.XtreamWebUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.LinkDataDto;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardEventService;
-import io.github.hylexus.xtream.codec.ext.jt808.utils.JtWebUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ import java.util.Optional;
  * @author hylexus
  */
 @RestController
-@RequestMapping("/dashboard-api/v1/event")
+@RequestMapping("/dashboard-api/jt808/v1/event")
 public class BuiltinJt808DashboardEventControllerServlet {
     private static final Logger log = LoggerFactory.getLogger(BuiltinJt808DashboardEventControllerServlet.class);
     private final Jt808DashboardEventService dashboardEventService;
@@ -47,7 +47,7 @@ public class BuiltinJt808DashboardEventControllerServlet {
      */
     @GetMapping("/link-data")
     public Flux<ServerSentEvent<Object>> getLinkData(HttpServletRequest request, @Validated LinkDataDto dto) {
-        final String clientIp = JtWebUtils.getClientIp(request::getHeader)
+        final String clientIp = XtreamWebUtils.getClientIp(request::getHeader)
                 .or(() -> Optional.ofNullable(request.getRemoteAddr()))
                 .orElse("unknown");
         return this.dashboardEventService.linkData(clientIp, dto);
@@ -55,7 +55,7 @@ public class BuiltinJt808DashboardEventControllerServlet {
 
     @PostMapping("/link-data")
     public Flux<ServerSentEvent<Object>> linkData(HttpServletRequest request, @Validated @RequestBody LinkDataDto dto) {
-        final String clientIp = JtWebUtils.getClientIp(request::getHeader)
+        final String clientIp = XtreamWebUtils.getClientIp(request::getHeader)
                 .or(() -> Optional.ofNullable(request.getRemoteAddr()))
                 .orElse("unknown");
         return this.dashboardEventService.linkData(clientIp, dto);

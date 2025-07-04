@@ -22,6 +22,8 @@ import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.common.utils.XtreamConstants;
 import io.github.hylexus.xtream.codec.core.FieldCodec;
+import io.github.hylexus.xtream.codec.core.annotation.Padding;
+import io.github.hylexus.xtream.codec.core.annotation.XtreamField;
 import io.netty.buffer.ByteBuf;
 
 import java.nio.charset.Charset;
@@ -98,9 +100,21 @@ public class StringFieldCodec implements FieldCodec<String> {
             return input.readCharSequence(length, charset).toString();
         }
 
+        /**
+         * @see <a href="https://github.com/hylexus/xtream-codec/issues/2">https://github.com/hylexus/xtream-codec/issues/2</a>
+         */
         @Override
         protected void doSerialize(BeanPropertyMetadata propertyMetadata, SerializeContext context, ByteBuf output, String value) {
-            output.writeCharSequence(value, charset);
+            final XtreamField xtreamField = propertyMetadata.xtreamFieldAnnotation();
+            if (xtreamField.paddingLeft().minEncodedLength() > 0) {
+                final Padding padding = xtreamField.paddingLeft();
+                XtreamBytes.writeCharSequenceWithLeftPadding(output, value, charset, padding.minEncodedLength(), padding.paddingElement());
+            } else if (xtreamField.paddingRight().minEncodedLength() > 0) {
+                final Padding padding = xtreamField.paddingRight();
+                XtreamBytes.writeCharSequenceWithRightPadding(output, value, charset, padding.minEncodedLength(), padding.paddingElement());
+            } else {
+                output.writeCharSequence(value, charset);
+            }
         }
 
         public Charset getCharset() {

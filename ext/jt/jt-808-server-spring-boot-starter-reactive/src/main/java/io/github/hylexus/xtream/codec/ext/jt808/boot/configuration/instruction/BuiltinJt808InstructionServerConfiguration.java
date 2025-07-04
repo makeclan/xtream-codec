@@ -26,9 +26,9 @@ import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808InstructionServe
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.impl.BuiltinJt808InstructionServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.impl.DefaultJt808XtreamCommandSender;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808FlowIdGenerator;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionEventListener;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.impl.DefaultJt808SessionManager;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionEventListener;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.UdpSessionIdleStateCheckerProps;
 import org.springframework.beans.factory.ObjectProvider;
@@ -56,7 +56,7 @@ public class BuiltinJt808InstructionServerConfiguration {
     }
 
     @Bean
-    CommandLineRunner xtreamSessionEventListenerRegister(Jt808SessionManager sessionManager, ObjectProvider<XtreamSessionEventListener> listeners) {
+    CommandLineRunner xtreamSessionEventListenerRegister(Jt808SessionManager sessionManager, ObjectProvider<Jt808SessionEventListener> listeners) {
         return args -> listeners.orderedStream().forEach(sessionManager::addListener);
     }
 

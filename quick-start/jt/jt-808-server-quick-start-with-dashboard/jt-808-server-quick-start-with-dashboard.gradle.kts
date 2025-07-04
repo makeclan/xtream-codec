@@ -1,3 +1,5 @@
+import io.github.hylexus.xtream.codec.gradle.plugins.XtreamCodecFastModePlugin
+
 plugins {
     id("org.springframework.boot")
     application
@@ -6,6 +8,11 @@ plugins {
 application {
     mainClass.set("io.github.hylexus.xtream.quickstart.ext.jt808.withdashboard.Jt808ServerQuickStartWithDashboardApp")
 }
+tasks.bootJar {
+    archiveFileName.set("${project.name}.jar")
+    mainClass.set("io.github.hylexus.xtream.quickstart.ext.jt808.withdashboard.Jt808ServerQuickStartWithDashboardApp")
+}
+apply<XtreamCodecFastModePlugin>()
 
 dependencies {
     // common start
