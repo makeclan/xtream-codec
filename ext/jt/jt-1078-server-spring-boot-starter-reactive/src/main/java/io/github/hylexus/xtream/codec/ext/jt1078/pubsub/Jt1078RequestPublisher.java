@@ -16,15 +16,14 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.pubsub;
 
+import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.H264Jt1078SubscriberCreator;
+import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.collector.H264ToFlvJt1078ChannelCollector;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TerminalIdConverter;
 import jakarta.annotation.Nullable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
-
-import java.time.Duration;
-import java.util.Collections;
 
 public interface Jt1078RequestPublisher extends Jt1078SubscriberManager {
 
@@ -34,19 +33,15 @@ public interface Jt1078RequestPublisher extends Jt1078SubscriberManager {
 
     Mono<Void> publish(Jt1078Request request);
 
-    default <S extends Jt1078Subscription> Flux<S> subscribe(Class<? extends Jt1078ChannelCollector<S>> cls, String sim, short channelNumber, Duration timeout) {
-        return this.doSubscribe(cls, sim, channelNumber, timeout).dataStream();
+    default Jt1078Subscriber subscribeH264ToFlv(H264Jt1078SubscriberCreator creator) {
+        return this.subscribe(H264ToFlvJt1078ChannelCollector.class, creator);
     }
 
-    default <S extends Jt1078Subscription> Flux<S> subscribe(Class<? extends Jt1078ChannelCollector<S>> cls, Jt1078SubscriberCreator creator) {
-        return this.doSubscribe(cls, creator).dataStream();
+    default Flux<Jt1078Subscription> subscribeH264ToFlvStream(H264Jt1078SubscriberCreator creator) {
+        return this.subscribeH264ToFlv(creator).dataStream();
     }
 
-    <S extends Jt1078Subscription> Jt1078Subscriber<S> doSubscribe(Class<? extends Jt1078ChannelCollector<S>> cls, Jt1078SubscriberCreator creator);
-
-    default <S extends Jt1078Subscription> Jt1078Subscriber<S> doSubscribe(Class<? extends Jt1078ChannelCollector<S>> cls, String sim, short channelNumber, Duration timeout) {
-        return this.doSubscribe(cls, Jt1078SubscriberCreator.builder().sim(sim).channelNumber(channelNumber).timeout(timeout).metadata(Collections.emptyMap()).build());
-    }
+    Jt1078Subscriber subscribe(Class<? extends Jt1078ChannelCollector> cls, Jt1078SubscriberCreator creator);
 
     default void unsubscribe(String id) {
         this.unsubscribe(id, null);

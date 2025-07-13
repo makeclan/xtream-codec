@@ -20,15 +20,14 @@ import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078Subscriber;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078Subscription;
 import reactor.core.publisher.Flux;
 
-public class DefaultJt1078Subscriber<S extends Jt1078Subscription> implements Jt1078Subscriber<S> {
+public class DefaultJt1078Subscriber implements Jt1078Subscriber {
     private final String id;
-    private final Flux<S> dataStream;
+    private final Flux<Jt1078Subscription> dataStream;
 
-    public DefaultJt1078Subscriber(String id, Flux<S> dataStream) {
+    public DefaultJt1078Subscriber(String id, Flux<Jt1078Subscription> dataStream) {
         this.id = id;
         this.dataStream = dataStream;
     }
-
 
     @Override
     public String id() {
@@ -36,7 +35,7 @@ public class DefaultJt1078Subscriber<S extends Jt1078Subscription> implements Jt
     }
 
     @Override
-    public Flux<S> dataStream() {
+    public Flux<Jt1078Subscription> dataStream() {
         return this.dataStream;
     }
 

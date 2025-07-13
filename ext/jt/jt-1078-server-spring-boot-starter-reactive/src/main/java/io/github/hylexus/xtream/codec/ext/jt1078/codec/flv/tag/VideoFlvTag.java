@@ -64,7 +64,7 @@ public interface VideoFlvTag {
          * <p>
          * 只有 H.264 才有该属性
          *
-         * @return {@link #avcPacketType()} == 1 ({@link VideoAvcPacketType#AVC_NALU}) 时为相对时间戳，否则为零
+         * @return {@link #avcPacketType()} == 1 ({@link VideoAvcPacketType#AVC_NALU}) 时为cts，否则为零
          */
         Optional<Integer> compositionTime();
 

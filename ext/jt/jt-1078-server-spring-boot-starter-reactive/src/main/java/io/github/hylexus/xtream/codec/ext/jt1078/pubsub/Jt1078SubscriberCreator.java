@@ -16,8 +16,12 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.pubsub;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.Accessors;
+import lombok.experimental.SuperBuilder;
 
 import java.time.Duration;
 import java.util.Map;
@@ -25,13 +29,20 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true, fluent = true)
-@Builder
+@SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
-public class Jt1078SubscriberCreator {
+public class Jt1078SubscriberCreator implements Jt1078SubscriberCreatorInfo {
     private String sim;
     private short channelNumber;
+
+    @Builder.Default
+    private boolean hasAudio = true;
+
+    @Builder.Default
+    private boolean hasVideo = true;
+
     private Duration timeout;
     private String desc;
     private Map<String, Object> metadata;
+
 }

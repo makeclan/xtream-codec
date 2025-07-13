@@ -41,4 +41,6 @@ public class DemoVideoStreamSubscriberDto {
     // 将 byte[] 以 base64 编码后再发送给客户端(jackson内置默认逻辑)?
     private boolean byteArrayAsBase64 = false;
 
+    private int naluDecoderRingBufferSize = 1 << 18;
+
 }

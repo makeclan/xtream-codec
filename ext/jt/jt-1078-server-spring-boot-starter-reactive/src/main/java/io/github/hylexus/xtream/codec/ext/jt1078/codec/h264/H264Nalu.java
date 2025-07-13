@@ -16,29 +16,20 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.codec.h264;
 
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078DataType;
+import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.netty.buffer.ByteBuf;
 
-import java.util.Optional;
-
 public interface H264Nalu {
-    // 0001 or 001
-    default byte[] startCode() {
-        return new byte[]{0, 0, 0, 1};
-    }
 
     // nalu header
     H264NaluHeader header();
 
-    // nalu data: rbsp(RawByte Sequence Payload)
-    ByteBuf data();
+    // RawByte Sequence Payload
+    // 去掉 startCode、去掉防竞争字节序 之后的部分
+    ByteBuf rbsp();
 
-    // extra msg from jt1078
-    Jt1078DataType dataType();
+    default void close() {
+        XtreamBytes.releaseBuf(this.rbsp());
+    }
 
-    Optional<Integer> lastIFrameInterval();
-
-    Optional<Integer> lastFrameInterval();
-
-    Optional<Long> timestamp();
 }

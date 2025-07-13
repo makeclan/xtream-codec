@@ -22,8 +22,6 @@ import jakarta.annotation.Nullable;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Scheduler;
 
-import java.time.Duration;
-import java.util.Collections;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -38,19 +36,10 @@ public interface Jt1078Channel {
 
     void publish(Jt1078Request request);
 
-    <S extends Jt1078Subscription> Jt1078Subscriber<S> doSubscribe(Class<? extends Jt1078ChannelCollector<S>> cls, Jt1078SubscriberCreator creator);
+    Jt1078Subscriber doSubscribe(Class<? extends Jt1078ChannelCollector> cls, Jt1078SubscriberCreator creator);
 
-    default <S extends Jt1078Subscription> Jt1078Subscriber<S> doSubscribe(Class<? extends Jt1078ChannelCollector<S>> cls, String sim, short channelNumber, Duration timeout) {
-        return this.doSubscribe(cls, Jt1078SubscriberCreator.builder().sim(sim).channelNumber(channelNumber).timeout(timeout).metadata(Collections.emptyMap()).build());
-    }
-
-    default <S extends Jt1078Subscription> Flux<S> subscribe(Class<? extends Jt1078ChannelCollector<S>> cls, Jt1078SubscriberCreator creator) {
+    default Flux<Jt1078Subscription> subscribe(Class<? extends Jt1078ChannelCollector> cls, Jt1078SubscriberCreator creator) {
         return this.doSubscribe(cls, creator).dataStream();
-    }
-
-    default <S extends Jt1078Subscription> Flux<S> subscribe(Class<? extends Jt1078ChannelCollector<S>> cls, String sim, short channelNumber, Duration timeout) {
-        return this.doSubscribe(cls, Jt1078SubscriberCreator.builder().sim(sim).channelNumber(channelNumber).timeout(timeout).metadata(Collections.emptyMap()).build())
-                .dataStream();
     }
 
     void unsubscribe(String id, @Nullable Jt1078Subscriber.Jt1078SubscriberCloseException reason);

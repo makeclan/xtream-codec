@@ -16,22 +16,148 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.collector;
 
-import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.ByteArrayJt1078Subscription;
-import lombok.Getter;
-import lombok.Setter;
+import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
+import io.github.hylexus.xtream.codec.ext.jt1078.codec.audio.AudioPackage;
+import io.github.hylexus.xtream.codec.ext.jt1078.codec.audio.PcmToMp3Encoder;
+import io.github.hylexus.xtream.codec.ext.jt1078.codec.audio.impl.mp3.DefaultPcmToMp3Encoder;
+import io.github.hylexus.xtream.codec.ext.jt1078.codec.flv.FlvEncoder;
+import io.github.hylexus.xtream.codec.ext.jt1078.codec.flv.FlvTagHeader;
+import io.github.hylexus.xtream.codec.ext.jt1078.codec.flv.impl.DefaultFlvEncoder;
+import io.github.hylexus.xtream.codec.ext.jt1078.codec.flv.tag.AudioFlvTag;
+import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078Subscription;
+import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.DefaultJt1078SubscriptionType;
+import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.H264Jt1078SubscriberCreator;
+import io.netty.buffer.ByteBuf;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.FluxSink;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
-@Getter
-@Setter
-public class H264ToFlvSubscriber extends DefaultByteArraySubscriber {
+/**
+ * @author hylexus
+ * @see <a href="https://gitee.com/ldming/JT1078">https://gitee.com/ldming/JT1078</a>
+ * @see <a href="https://gitee.com/matrixy/jtt1078-video-server">https://gitee.com/matrixy/jtt1078-video-server</a>
+ */
+public class H264ToFlvSubscriber extends AbstractInternalSubscriber {
+
+    private static final Logger log = LoggerFactory.getLogger(H264ToFlvSubscriber.class);
 
     private boolean flvHeaderSent;
     private boolean lastIFrameSent;
 
-    public H264ToFlvSubscriber(String id, String sim, short channel, String desc, LocalDateTime createdAt, Map<String, Object> metadata, FluxSink<ByteArrayJt1078Subscription> sink) {
-        super(id, sim, channel, desc, createdAt, metadata, sink);
+    // 每个 subscriber 从零开始
+    private long audioTimestamp = 0;
+    private long videoTimestamp = 0;
+    private long prevAudioTimestamp = 0;
+    private long prevVideoTimestamp = 0;
+
+    // 每个 subscriber 需要单独的 mp3 编码器
+    private final PcmToMp3Encoder pcmToMp3Encoder = new DefaultPcmToMp3Encoder();
+    private final FlvEncoder flvEncoder = new DefaultFlvEncoder(1 << 18);
+    private final H264Jt1078SubscriberCreator subscriberCreator;
+
+    public H264ToFlvSubscriber(String id, H264Jt1078SubscriberCreator creator, FluxSink<Jt1078Subscription> sink) {
+        super(id, creator, LocalDateTime.now(), sink);
+        this.subscriberCreator = creator;
     }
+
+    public synchronized void sendFlvHeader(byte[] basicFrame) {
+        // log.info("basicFrame ======== ");
+        final byte[] flvHeader = this.flvEncoder.createFlvHeader(this.subscriberCreator.hasVideo(), subscriberCreator.hasAudio()).toBytes(true);
+        // flv-header
+        this.sink.next(Jt1078Subscription.fromByteArray(DefaultJt1078SubscriptionType.FLV, flvHeader));
+        // sps + pps
+        this.sink.next(Jt1078Subscription.fromByteArray(DefaultJt1078SubscriptionType.FLV, basicFrame));
+        this.flvHeaderSent = true;
+    }
+
+    public void sendIFrameData(Long timestamp, byte[] iframeData) {
+        // log.info("lastIFrame ======== ");
+        if (this.prevVideoTimestamp == 0) {
+            this.prevVideoTimestamp = timestamp;
+        }
+        resetFlvVideoTagDts(iframeData, this.videoTimestamp);
+        this.sink().next(Jt1078Subscription.fromByteArray(DefaultJt1078SubscriptionType.FLV, iframeData));
+        this.lastIFrameSent = true;
+    }
+
+    public void sendAudioData(long timestamp, AudioPackage audioPackage) {
+        if (!this.flvHeaderSent) {
+            return;
+        }
+        final AudioPackage mp3Package = this.pcmToMp3Encoder.encode(audioPackage);
+        if (mp3Package.isEmpty()) {
+            mp3Package.close();
+            return;
+        }
+        final AudioFlvTag.AudioFlvTagHeader flvTagHeader = AudioFlvTag.newTagHeaderBuilder()
+                .soundFormat(AudioFlvTag.AudioSoundFormat.MP3)
+                .soundRate(AudioFlvTag.AudioSoundRate.RATE_5_5_KHZ)
+                .soundSize(AudioFlvTag.AudioSoundSize.SND_BIT_16)
+                .soundType(AudioFlvTag.AudioSoundType.MONO)
+                .aacPacketType(null)
+                .build();
+
+        final ByteBuf flvAudioTag = this.flvEncoder.encodeAudioTag((int) this.audioTimestamp, flvTagHeader, mp3Package.payload());
+        try {
+            if (this.prevAudioTimestamp == 0) {
+                this.prevAudioTimestamp = timestamp;
+            }
+            log.info("audio-dts: {}", audioTimestamp);
+
+            audioTimestamp += (timestamp - prevAudioTimestamp);
+            prevAudioTimestamp = timestamp;
+
+            this.sink().next(Jt1078Subscription.fromByteArray(DefaultJt1078SubscriptionType.FLV, XtreamBytes.getBytes(flvAudioTag)));
+        } finally {
+            XtreamBytes.releaseBuf(flvAudioTag);
+            mp3Package.close();
+        }
+    }
+
+    public void sendVideoData(long timestamp, byte[] videoData) {
+        if (!this.flvHeaderSent) {
+            return;
+        }
+        if (this.prevVideoTimestamp == 0) {
+            this.prevVideoTimestamp = timestamp;
+        }
+        log.info("video-dts: {}", videoTimestamp);
+
+        resetFlvVideoTagDts(videoData, videoTimestamp);
+        videoTimestamp += (timestamp - prevVideoTimestamp);
+        prevVideoTimestamp = timestamp;
+        this.sink().next(Jt1078Subscription.fromByteArray(DefaultJt1078SubscriptionType.FLV, videoData));
+    }
+
+    /**
+     * 重置视频 Tag 的 dts；每个 subscriber 从零开始累加；
+     *
+     * @see FlvTagHeader#timestamp()
+     * @see FlvTagHeader#timestampExtended()
+     * @see FlvTagHeader#writeTo(ByteBuf)
+     */
+    private static void resetFlvVideoTagDts(byte[] payload, long dts) {
+        // byte[0]: tagType = (0x09) or (0x08)
+        // byte[1,2,3]: dataSize
+        payload[4] = (byte) (dts >> 16);
+        payload[5] = (byte) (dts >> 8);
+        payload[6] = (byte) dts;
+        payload[7] = (byte) (dts >> 24);
+    }
+
+    @Override
+    public void close() {
+        this.pcmToMp3Encoder.close();
+    }
+
+    public boolean isLastIFramePending() {
+        return !this.lastIFrameSent;
+    }
+
+    public boolean isFlvHeaderPending() {
+        return !this.flvHeaderSent;
+    }
+
 }

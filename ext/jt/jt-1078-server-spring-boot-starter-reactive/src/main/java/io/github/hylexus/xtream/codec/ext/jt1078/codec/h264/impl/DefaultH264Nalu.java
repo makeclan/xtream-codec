@@ -16,29 +16,21 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.codec.h264.impl;
 
+import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.ext.jt1078.codec.h264.H264Nalu;
 import io.github.hylexus.xtream.codec.ext.jt1078.codec.h264.H264NaluHeader;
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078DataType;
 import io.netty.buffer.ByteBuf;
 
-import java.util.Optional;
+import java.util.StringJoiner;
 
 public class DefaultH264Nalu implements H264Nalu {
 
     private final H264NaluHeader header;
     private final ByteBuf data;
-    private final Jt1078DataType dataType;
-    private final Integer lastIFrameInterval;
-    private final Integer lastFrameInterval;
-    private final Long timestamp;
 
-    public DefaultH264Nalu(H264NaluHeader header, ByteBuf data, Jt1078DataType dataType, Integer lastIFrameInterval, Integer lastFrameInterval, Long timestamp) {
+    public DefaultH264Nalu(H264NaluHeader header, ByteBuf data) {
         this.header = header;
         this.data = data;
-        this.dataType = dataType;
-        this.lastIFrameInterval = lastIFrameInterval;
-        this.lastFrameInterval = lastFrameInterval;
-        this.timestamp = timestamp;
     }
 
     @Override
@@ -47,39 +39,28 @@ public class DefaultH264Nalu implements H264Nalu {
     }
 
     @Override
-    public ByteBuf data() {
+    public ByteBuf rbsp() {
         return this.data;
     }
 
-    @Override
-    public Jt1078DataType dataType() {
-        return this.dataType;
-    }
-
-    @Override
-    public Optional<Integer> lastIFrameInterval() {
-        return Optional.ofNullable(this.lastIFrameInterval);
-    }
-
-    @Override
-    public Optional<Integer> lastFrameInterval() {
-        return Optional.ofNullable(this.lastFrameInterval);
-    }
-
-    @Override
-    public Optional<Long> timestamp() {
-        return Optional.ofNullable(this.timestamp);
+    final String formatRbsp() {
+        final ByteBuf payload = this.data;
+        if (payload == null) {
+            return "<NULL>";
+        }
+        final int readableBytes = payload.readableBytes();
+        if (readableBytes <= 0) {
+            return "<EMPTY>";
+        }
+        return "ByteBuf[readableBytes=" + readableBytes + ", data=[" + FormatUtils.toString(payload, 0, Math.min(5, readableBytes), ",") + "...] ]";
     }
 
     @Override
     public String toString() {
-        return "DefaultH264Nalu{"
-                + "header=" + header
-                + ", rbsp=" + data
-                + ", dataType=" + dataType
-                + ", lastIFrameInterval=" + lastIFrameInterval
-                + ", lastFrameInterval=" + lastFrameInterval
-                + ", timestamp=" + timestamp
-                + '}';
+        return new StringJoiner(", ", DefaultH264Nalu.class.getSimpleName() + "[", "]")
+                .add("header=" + header)
+                .add("rbsp=" + formatRbsp())
+                .toString();
     }
+
 }

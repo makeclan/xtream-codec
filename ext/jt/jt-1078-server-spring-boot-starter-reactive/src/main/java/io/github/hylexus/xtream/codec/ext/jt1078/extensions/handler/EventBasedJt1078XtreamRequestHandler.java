@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt1078.extensions.handler;
 
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078RequestPublisher;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078DataType;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.SimpleXtreamRequestHandler;
@@ -36,7 +37,14 @@ public class EventBasedJt1078XtreamRequestHandler implements SimpleXtreamRequest
     @Override
     public Mono<Void> handle(XtreamExchange exchange) {
         final Jt1078Request request = exchange.request().castAs(Jt1078Request.class);
-        return requestPublisher.publish(request);
+        final Jt1078DataType dataType = request.dataType();
+        return switch (dataType) {
+            case VIDEO_I, VIDEO_P, VIDEO_B, AUDIO -> requestPublisher.publish(request);
+            case null, default -> {
+                log.error("Invalid data type: {}", dataType);
+                yield Mono.empty();
+            }
+        };
     }
 
 }

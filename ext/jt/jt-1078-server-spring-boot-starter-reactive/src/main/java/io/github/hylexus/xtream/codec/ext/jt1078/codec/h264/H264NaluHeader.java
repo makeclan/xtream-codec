@@ -16,21 +16,17 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.codec.h264;
 
-import io.github.hylexus.xtream.codec.ext.jt1078.codec.h264.impl.DefaultH264NaluHeader;
 import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.StringJoiner;
 
 /**
  * NALU(Network Abstraction Layer Unit)
  */
-public interface H264NaluHeader {
-
-    static H264NaluHeader of(int value) {
-        return new DefaultH264NaluHeader(value);
-    }
+public class H264NaluHeader {
 
     /**
      * bit[7] F 禁止位
@@ -38,37 +34,76 @@ public interface H264NaluHeader {
      * 正常情况下为 0,
      * 某些情况下，如果 NALU 发生了丢失数据的情况可以将该字段置为 1，以便接收方纠错或直接丢掉该 NALU
      */
-    default byte forbiddenBit() {
-        return 0;
-    }
+    private final byte forbiddenBit;
 
     /**
-     * bit[1,2] NRI 表示该 NALU 的重要性(可以作为该 NALU 是否可以被丢弃的标识)
+     * bit[5,6] NRI 表示该 NALU 的重要性(可以作为该 NALU 是否可以被丢弃的标识)
      * <p>
-     * 取值范围: [1,3]
+     * 取值范围: [0,3]
      * <p>
      * 0: DISPOSABLE;
      * 1: LOW;
      * 2: HIGH;
      * 3: HIGHEST
      */
-    byte nalRefIdc();
+    private final byte nalRefIdc;
 
-    default byte nir() {
+    /**
+     * bit[0,4] TYPE
+     * <p>
+     * {@link NaluType#SPS SPS}和 {@link NaluType#PPS PPS} 中存放了解码所需的各种参数信息，是H.264解码的前置条件
+     * <li>这种数据应该在码流数据的最前面</li>
+     * <li>解码(播放)时要先把这两种类型的数据传递给解码(播放)器</li>
+     *
+     * @see NaluType#SPS
+     * @see NaluType#PPS
+     * @see NaluType#SEI
+     * @see NaluType#IDR
+     */
+    private final byte typeValue;
+
+    public H264NaluHeader(int value) {
+        this.forbiddenBit = (byte) ((value >> 7) & 0b1);
+        this.nalRefIdc = (byte) ((value >> 5) & 0b11);
+        this.typeValue = (byte) ((value) & 0b11111);
+    }
+
+    public byte forbiddenBit() {
+        return this.forbiddenBit;
+    }
+
+    public byte nalRefIdc() {
+        return this.nalRefIdc;
+    }
+
+    public byte nir() {
         return this.nalRefIdc();
     }
 
-    /**
-     * bit[3,8) TYPE
-     */
-    byte typeValue();
 
-    default Optional<NaluType> type() {
+    public byte typeValue() {
+        return this.typeValue;
+    }
+
+    public Optional<NaluType> type() {
         return NaluType.findByCode(typeValue());
     }
 
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", H264NaluHeader.class.getSimpleName() + "[", "]")
+                .add("F=" + forbiddenBit)
+                .add("NRI=" + nir())
+                .add("TYPE=" + type().orElse(null))
+                .toString();
+    }
+
+    public static H264NaluHeader of(int value) {
+        return new H264NaluHeader(value);
+    }
+
     @Getter
-    enum NaluType {
+    public enum NaluType {
         /**
          * 未指定
          */
@@ -77,6 +112,8 @@ public interface H264NaluHeader {
          * slice_layer_without_partitioning_rbsp()
          * <p>
          * 一般都是除了 {@link #IDR} 之外的其他视频数据, 有可能是一个 I 帧
+         *
+         * @see #IDR
          */
         SLICE((byte) 1),
         /**
@@ -95,6 +132,8 @@ public interface H264NaluHeader {
          * Instantaneous decoding refresh
          * <p>
          * IDR 一定是 I 帧，反过来不成立
+         *
+         * @see #SLICE
          */
         IDR((byte) 5),
         /**
@@ -131,6 +170,13 @@ public interface H264NaluHeader {
          * seq_parameter_set_extension_rbsp()
          */
         SPS_EXT((byte) 13),
+        // 14~18: 保留
+        /**
+         * slice_layer_without_partitioning_rbsp()
+         */
+        SLICE_19((byte) 19),
+        // 20~23: 保留
+        // 24~31: 未指定
         ;
         private final byte value;
 
@@ -144,6 +190,11 @@ public interface H264NaluHeader {
 
         NaluType(byte value) {
             this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return this.name() + "(" + this.value + ")";
         }
 
         public static Optional<NaluType> findByCode(byte code) {

@@ -83,7 +83,7 @@ public class AvcDecoderConfigurationRecord {
         // sps 长度
         byteBuf.writeShort(spsLength);
         // sps 数据 sequenceParameterSetNALUnit
-        byteBuf.writeBytes(spsData, spsLength);
+        byteBuf.writeBytes(spsData.slice(), spsLength);
 
         // ====== pps ==================
         // pps个数: numOfPictureParameterSets
@@ -92,7 +92,7 @@ public class AvcDecoderConfigurationRecord {
         final int ppsLength = ppsData.readableBytes();
         byteBuf.writeShort(ppsLength);
         // pps 数据 pictureParameterSetNALUnit
-        byteBuf.writeBytes(ppsData, ppsLength);
+        byteBuf.writeBytes(ppsData.slice(), ppsLength);
         return byteBuf.writerIndex() - start;
     }
 }

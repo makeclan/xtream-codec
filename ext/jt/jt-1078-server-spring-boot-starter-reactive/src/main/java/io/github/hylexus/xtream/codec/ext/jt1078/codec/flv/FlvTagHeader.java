@@ -76,7 +76,7 @@ public interface FlvTagHeader {
         // 3 bytes timestamp
         byteBuf.writeBytes(Numbers.intTo3Bytes(timestamp()));
         // 1 byte timestampExtended
-        byteBuf.writeByte(timestampExtended() >>> 24);
+        byteBuf.writeByte(timestamp() >>> 24);
         // 3 bytes streamId
         byteBuf.writeBytes(Numbers.intTo3Bytes(streamId()));
         return 11;

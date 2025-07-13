@@ -16,9 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.pubsub;
 
-import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.ByteArrayJt1078Subscription;
-import io.netty.buffer.ByteBuf;
 
 public interface Jt1078Subscription {
 
@@ -30,11 +28,7 @@ public interface Jt1078Subscription {
         int value();
     }
 
-    static ByteArrayJt1078Subscription forByteBuf(Jt1078SubscriptionType type, ByteBuf payload) {
-        return forByteArray(type, XtreamBytes.getBytes(payload));
-    }
-
-    static ByteArrayJt1078Subscription forByteArray(Jt1078SubscriptionType type, byte[] payload) {
+    static ByteArrayJt1078Subscription fromByteArray(Jt1078SubscriptionType type, byte[] payload) {
         return new ByteArrayJt1078Subscription(type, payload);
     }
 

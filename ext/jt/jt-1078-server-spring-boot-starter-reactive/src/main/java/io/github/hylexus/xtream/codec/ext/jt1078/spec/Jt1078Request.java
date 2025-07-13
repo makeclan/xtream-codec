@@ -80,6 +80,10 @@ public interface Jt1078Request extends XtreamRequest {
         return header().dataTypeValue();
     }
 
+    default Jt1078DataType dataType() {
+        return header().dataType();
+    }
+
     interface Jt1078TraceIdGenerator {
         String generateTraceId(NettyInbound nettyInbound, Jt1078RequestHeader header);
     }

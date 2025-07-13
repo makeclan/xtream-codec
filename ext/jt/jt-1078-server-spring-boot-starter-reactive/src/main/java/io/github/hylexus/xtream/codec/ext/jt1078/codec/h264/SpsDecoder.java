@@ -16,9 +16,12 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.codec.h264;
 
+import io.github.hylexus.xtream.codec.ext.jt1078.codec.h264.impl.DefaultSpsDecoder;
 import io.netty.buffer.ByteBuf;
 
 public interface SpsDecoder {
+
+    SpsDecoder DEFAULT = new DefaultSpsDecoder();
 
     Sps decodeSps(ByteBuf input);
 

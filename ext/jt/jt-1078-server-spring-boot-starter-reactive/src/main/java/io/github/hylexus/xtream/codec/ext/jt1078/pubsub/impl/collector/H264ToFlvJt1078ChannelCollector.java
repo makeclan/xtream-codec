@@ -16,12 +16,19 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.collector;
 
-import io.github.hylexus.xtream.codec.ext.jt1078.codec.flv.FlvHeader;
+import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
+import io.github.hylexus.xtream.codec.ext.jt1078.codec.audio.AudioPackage;
+import io.github.hylexus.xtream.codec.ext.jt1078.codec.audio.Jt1078AudioCodec;
+import io.github.hylexus.xtream.codec.ext.jt1078.codec.audio.impl.BuiltinAudioFormatOptions;
+import io.github.hylexus.xtream.codec.ext.jt1078.codec.audio.impl.adpcm.AdpcmImaJt1078AudioCodec;
+import io.github.hylexus.xtream.codec.ext.jt1078.codec.audio.impl.g711.G711ALawJt1078AudioCodec;
+import io.github.hylexus.xtream.codec.ext.jt1078.codec.audio.impl.g711.G711MuLawJt1078AudioCodec;
+import io.github.hylexus.xtream.codec.ext.jt1078.codec.flv.FlvEncoder;
 import io.github.hylexus.xtream.codec.ext.jt1078.codec.flv.impl.DefaultFlvEncoder;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.*;
-import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.ByteArrayJt1078Subscription;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.DefaultJt1078Subscriber;
-import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.DefaultJt1078SubscriptionType;
+import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.H264Jt1078SubscriberCreator;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078DataType;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078PayloadType;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.DefaultJt1078PayloadType;
@@ -33,7 +40,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.scheduler.Scheduler;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,23 +50,34 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class H264ToFlvJt1078ChannelCollector implements Jt1078ChannelCollector<ByteArrayJt1078Subscription> {
+/**
+ * @author hylexus
+ * @see <a href="https://gitee.com/ldming/JT1078">https://gitee.com/ldming/JT1078</a>
+ * @see <a href="https://gitee.com/matrixy/jtt1078-video-server">https://gitee.com/matrixy/jtt1078-video-server</a>
+ */
+public class H264ToFlvJt1078ChannelCollector implements Jt1078ChannelCollector {
     private static final Logger log = LoggerFactory.getLogger(H264ToFlvJt1078ChannelCollector.class);
-    protected final ConcurrentMap<String, H264ToFlvSubscriber> subscribers = new ConcurrentHashMap<>();
-    protected final Jt1078Channel.ChannelKey channelKey;
-    protected final DefaultFlvEncoder flvEncoder;
-    protected final Scheduler scheduler;
-    static final Set<Jt1078PayloadType> SUPPORTED_PAYLOAD_TYPES = Set.of(
-            DefaultJt1078PayloadType.H264
+    private static final Set<Jt1078PayloadType> SUPPORTED_PAYLOAD_TYPES = Set.of(
+            DefaultJt1078PayloadType.H264,
+            DefaultJt1078PayloadType.ADPCMA,
+            DefaultJt1078PayloadType.G_711A,
+            DefaultJt1078PayloadType.G_711U
     );
 
-    public H264ToFlvJt1078ChannelCollector(Jt1078Channel.ChannelKey channelKey, Scheduler scheduler) {
+    protected final ConcurrentMap<String, H264ToFlvSubscriber> subscribers = new ConcurrentHashMap<>();
+    protected final Jt1078Channel.ChannelKey channelKey;
+    protected final FlvEncoder flvEncoder;
+    protected final Scheduler scheduler;
+    protected Jt1078AudioCodec audioCodec;
+    private long firstVideoTimestamp = -1L;
+
+    public H264ToFlvJt1078ChannelCollector(Jt1078Channel.ChannelKey channelKey, Scheduler scheduler, Jt1078SubscriberCreator creator) {
         this.channelKey = channelKey;
         this.scheduler = scheduler;
-        this.flvEncoder = new DefaultFlvEncoder();
+        this.flvEncoder = new DefaultFlvEncoder(((H264Jt1078SubscriberCreator) creator).h264Meta().naluDecoderRingBufferSize());
     }
 
-    protected boolean isSupported(Jt1078PayloadType payloadType) {
+    protected boolean isSupportedPayloadType(Jt1078PayloadType payloadType) {
         return SUPPORTED_PAYLOAD_TYPES.contains(payloadType);
     }
 
@@ -72,63 +89,86 @@ public class H264ToFlvJt1078ChannelCollector implements Jt1078ChannelCollector<B
     @Override
     public void collect(Jt1078Request request) {
         final Jt1078PayloadType payloadType = request.header().payloadType();
-        if (!this.isSupported(payloadType)) {
+        if (!this.isSupportedPayloadType(payloadType)) {
             this.doErrorLogIfNecessary(request, payloadType);
             return;
         }
-        final List<ByteBuf> bufList = flvEncoder.encode(request);
-        // 一般来说: bufList 只有一个元素 ==> 外层循环次数只有一次
+
+        switch (request.dataType()) {
+            case Jt1078DataType.AUDIO -> this.collectAudioData(request);
+            case Jt1078DataType.VIDEO_I,
+                 Jt1078DataType.VIDEO_B,
+                 Jt1078DataType.VIDEO_P -> this.collectVideoData(request);
+            case TRANSPARENT_TRANSMISSION -> {
+                // ignored
+            }
+            case null -> throw new IllegalStateException("DataType is null");
+        }
+    }
+
+    protected void collectVideoData(Jt1078Request request) {
+        final long timestamp = request.header().timestamp().orElseThrow();
+        if (this.firstVideoTimestamp == -1L) {
+            this.firstVideoTimestamp = timestamp;
+        }
+
+        final List<ByteBuf> bufList = this.flvEncoder.encodeVideoTag(timestamp - this.firstVideoTimestamp, request.body());
         for (final ByteBuf byteBuf : bufList) {
             try {
-                final ByteArrayJt1078Subscription subscription = Jt1078Subscription.forByteBuf(DefaultJt1078SubscriptionType.FLV, byteBuf);
-                // 内层循环的次数取决于订阅者的数量(同一个 SIM 同一个 channel)
+                // log.info("size: {}", byteBuf.readableBytes());
                 for (final H264ToFlvSubscriber subscriber : this.subscribers.values()) {
-                    final FluxSink<ByteArrayJt1078Subscription> sink = subscriber.sink();
-
                     // 1. flv-header + sps + pps
-                    if (!subscriber.isFlvHeaderSent()) {
+                    if (subscriber.isFlvHeaderPending()) {
                         final ByteBuf basicFrame = flvEncoder.getFlvBasicFrame();
                         if (basicFrame != null) {
-                            // header
-                            sink.next(Jt1078Subscription.forByteArray(DefaultJt1078SubscriptionType.FLV, FlvHeader.of(true, this.flvEncoder.isHasAudio()).toBytes(true)));
-                            // sps+pps
-                            sink.next(Jt1078Subscription.forByteBuf(DefaultJt1078SubscriptionType.FLV, basicFrame));
-                            subscriber.setFlvHeaderSent(true);
+                            subscriber.sendFlvHeader(XtreamBytes.getBytes(basicFrame));
                         }
                     }
-
                     // 2. lastIFrame
-                    if (!subscriber.isLastIFrameSent()) {
+                    if (subscriber.isLastIFramePending()) {
                         final ByteBuf lastIFrame = flvEncoder.getLastIFrame();
                         if (lastIFrame != null) {
-                            sink.next(Jt1078Subscription.forByteBuf(DefaultJt1078SubscriptionType.FLV, lastIFrame));
-                            subscriber.setLastIFrameSent(true);
+                            final byte[] iframeData = XtreamBytes.getBytes(lastIFrame);
+                            subscriber.sendIFrameData(timestamp, iframeData);
                         }
                     }
-
                     // 确保先把 关键帧 发送出去(中途订阅)
-                    if (!subscriber.isLastIFrameSent()) {
+                    if (subscriber.isLastIFramePending()) {
                         return;
                     }
                     // 确保先把 flvHeader 发送出去(中途订阅)
-                    if (!subscriber.isFlvHeaderSent()) {
+                    if (subscriber.isFlvHeaderPending()) {
                         return;
                     }
                     // 3. data
-                    sink.next(subscription);
+                    final byte[] videoData = XtreamBytes.getBytes(byteBuf);
+                    subscriber.sendVideoData(timestamp, videoData);
                 }
             } finally {
-                byteBuf.release();
+                XtreamBytes.releaseBuf(byteBuf);
             }
         }
     }
 
+    protected void collectAudioData(Jt1078Request request) {
+        final Jt1078AudioCodec jt1078AudioCodec = this.getAudioCodec(request.payloadType());
+        final AudioPackage pcm = jt1078AudioCodec.toPcm(new AudioPackage(BuiltinAudioFormatOptions.ADPCM_IMA_MONO, request.payload()));
+        try {
+            final long timestamp = request.header().timestamp().orElseThrow();
+            for (final H264ToFlvSubscriber subscriber : this.subscribers.values()) {
+                subscriber.sendAudioData(timestamp, pcm.shallowCopy());
+            }
+        } finally {
+            pcm.close();
+        }
+    }
+
     @Override
-    public Jt1078Subscriber<ByteArrayJt1078Subscription> doSubscribe(Jt1078SubscriberCreator creator) {
+    public Jt1078Subscriber doSubscribe(Jt1078SubscriberCreator creator) {
         final String uuid = this.channelKey.generateSubscriberId();
 
-        final Flux<ByteArrayJt1078Subscription> dataStream = Flux
-                .<ByteArrayJt1078Subscription>create(fluxSink -> {
+        final Flux<Jt1078Subscription> dataStream = Flux
+                .<Jt1078Subscription>create(fluxSink -> {
                     log.info("new subscriber created with id: {}", uuid);
                     final H264ToFlvSubscriber subscriber = createSubscriber(uuid, creator, fluxSink);
                     synchronized (this.subscribers) {
@@ -138,16 +178,20 @@ public class H264ToFlvJt1078ChannelCollector implements Jt1078ChannelCollector<B
                 .publishOn(this.scheduler())
                 // todo 优化
                 .onBackpressureDrop(byteArrayJt1078Subscription -> {
+                    // ...
                     log.error("onBackpressureDrop, channelKey={}", channelKey);
                 })
                 .timeout(creator.timeout())
                 .doFinally(signalType -> {
                     log.info("Subscriber {} removed", uuid);
                     synchronized (this.subscribers) {
-                        this.subscribers.remove(uuid);
+                        final H264ToFlvSubscriber removed = this.subscribers.remove(uuid);
+                        if (removed != null) {
+                            removed.close();
+                        }
                     }
                 });
-        return new DefaultJt1078Subscriber<>(uuid, dataStream);
+        return new DefaultJt1078Subscriber(uuid, dataStream);
     }
 
     @Override
@@ -187,8 +231,8 @@ public class H264ToFlvJt1078ChannelCollector implements Jt1078ChannelCollector<B
         return this.subscribers.values().stream().map(Function.identity());
     }
 
-    protected H264ToFlvSubscriber createSubscriber(String uuid, Jt1078SubscriberCreator creator, FluxSink<ByteArrayJt1078Subscription> fluxSink) {
-        return new H264ToFlvSubscriber(uuid, creator.sim(), creator.channelNumber(), "H.264 --> FLV", LocalDateTime.now(), creator.metadata(), fluxSink);
+    protected H264ToFlvSubscriber createSubscriber(String uuid, Jt1078SubscriberCreator creator, FluxSink<Jt1078Subscription> fluxSink) {
+        return new H264ToFlvSubscriber(uuid, (H264Jt1078SubscriberCreator) creator, fluxSink);
     }
 
     private static final Map<Jt1078PayloadType, Boolean> WARNING_FLAGS = new HashMap<>();
@@ -200,4 +244,19 @@ public class H264ToFlvJt1078ChannelCollector implements Jt1078ChannelCollector<B
             log.error("Unsupported payloadType : {}. sim = {}, channelNumber = {}, dataType = {}, request = {}", payloadType, request.sim(), request.channelNumber(), request.header().dataType(), request);
         }
     }
+
+    protected Jt1078AudioCodec getAudioCodec(Jt1078PayloadType payloadType) {
+        if (this.audioCodec != null) {
+            return this.audioCodec;
+        }
+        if (DefaultJt1078PayloadType.ADPCMA.value() == payloadType.value()) {
+            return new AdpcmImaJt1078AudioCodec();
+        } else if (DefaultJt1078PayloadType.G_711A.value() == payloadType.value()) {
+            return new G711ALawJt1078AudioCodec();
+        } else if (DefaultJt1078PayloadType.G_711U.value() == payloadType.value()) {
+            return new G711MuLawJt1078AudioCodec();
+        }
+        return Jt1078AudioCodec.SILENCE;
+    }
+
 }

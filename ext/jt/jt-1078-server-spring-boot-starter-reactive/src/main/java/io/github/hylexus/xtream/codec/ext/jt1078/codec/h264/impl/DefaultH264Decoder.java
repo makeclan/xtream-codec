@@ -16,105 +16,103 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.codec.h264.impl;
 
-
+import io.github.hylexus.xtream.codec.core.utils.ByteRingBuffer;
 import io.github.hylexus.xtream.codec.ext.jt1078.codec.h264.H264Decoder;
 import io.github.hylexus.xtream.codec.ext.jt1078.codec.h264.H264Nalu;
 import io.github.hylexus.xtream.codec.ext.jt1078.codec.h264.H264NaluHeader;
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078RequestHeader;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 该实现中的状态机算法来自 <a href="https://github.com/samirkumardas/jmuxer/blob/579835d7d72796d3374e0c62929456e7202bcb12/src/parsers/h264.js#LL7C18-L7C18">github--jmuxer--h264.js</a>
- *
- * @see <a href="https://github.com/samirkumardas/jmuxer/blob/579835d7d72796d3374e0c62929456e7202bcb12/src/parsers/h264.js#LL7C18-L7C18">github--jmuxer--h264.js</a>
- * @see <a href="https://gitee.com/ldming/JT1078">https://gitee.com/ldming/JT1078</a>
- * @see <a href="https://gitee.com/matrixy/jtt1078-video-server">https://gitee.com/matrixy/jtt1078-video-server</a>
- */
 public class DefaultH264Decoder implements H264Decoder {
 
+    private final ByteRingBuffer ringBuffer;
+
+    // naluStart 是绝对索引，指向当前 NALU 数据开始的位置（不含StartCode）
+    private int naluStart = -1;
+
+    public DefaultH264Decoder(int capacity) {
+        this.ringBuffer = new ByteRingBuffer(capacity);
+    }
+
     @Override
-    public List<H264Nalu> decode(Jt1078Request request) {
-        final List<H264Nalu> result = new ArrayList<>();
-        final ByteBuf byteBuf = request.body();
-        final int length = byteBuf.readableBytes();
+    public List<H264Nalu> decode(ByteBuf input) {
+        this.ringBuffer.writeBytes(input);
 
-        int i = 0;
-        int state = 0;
-        int sliceStartIndex = -1;
+        int readerIndex = this.ringBuffer.readerIndex();
+        int writerIndex = this.ringBuffer.writerIndex();
 
-        while (i < length) {
-            final byte value = byteBuf.getByte(i++);
-            switch (state) {
-                case 0: {
-                    if (value == 0) {
-                        state = 1;
-                    }
-                    break;
-                }
-                // [0]01,[0]001
-                case 1: {
-                    state = value == 0 ? 2 : 0;
-                    break;
-                }
-                // [00]1,[00]01
-                case 2: {
-                    if (value == 1 && i < length) {
-                        // match [001]
-                        final ByteBuf data = byteBuf.slice(sliceStartIndex, i - state - sliceStartIndex - 1);
-                        final H264Nalu nalu = createH264Nalu(request, data);
-                        result.add(nalu);
-                        sliceStartIndex = i;
-                        state = 0;
-                    } else if (value == 0) {
-                        state = 3;
+        int zeroCount = 0;
+        int i = readerIndex;
+
+        final List<H264Nalu> nalus = new ArrayList<>();
+        while (i < writerIndex) {
+            final byte b = ringBuffer.getByte(i);
+
+            if (b == 0) {
+                zeroCount++;
+                i++;
+            } else if (b == 1 && zeroCount >= 2) {
+                final int startCodeLength = (zeroCount >= 3) ? 4 : 3;
+                final int startCodePosition = i - zeroCount;
+
+                if (naluStart == -1) {
+                    // 第一次找到 StartCode，下一字节是NALU起点
+                    naluStart = startCodePosition + startCodeLength;
+                } else {
+                    // 切割前一个NALU
+                    final int naluLen = startCodePosition - naluStart;
+                    if (naluLen > 0) {
+                        final byte[] naluBytes = ringBuffer.peek(naluStart - readerIndex, naluLen);
+                        final H264Nalu h264Nalu = createH264Nalu(Unpooled.wrappedBuffer(naluBytes));
+                        nalus.add(h264Nalu);
+                        ringBuffer.discard(naluStart - readerIndex + naluLen);
+                        // long discarded =  naluStart - readerIndex +  naluLen;
+                        readerIndex = ringBuffer.readerIndex();
+                        writerIndex = ringBuffer.writerIndex();
+                        i = readerIndex;
+                        naluStart = startCodePosition + startCodeLength;
+                        zeroCount = 0;
+                        continue;
                     } else {
-                        state = 0;
+                        naluStart = startCodePosition + startCodeLength;
                     }
-                    break;
                 }
-                // [000]1
-                case 3: {
-                    // match [0001]
-                    if (value == 1 && i < length) {
-                        if (sliceStartIndex >= 0) {
-                            final ByteBuf data = byteBuf.slice(sliceStartIndex, i - state - sliceStartIndex - 1);
-                            final H264Nalu nalu = createH264Nalu(request, data);
-                            result.add(nalu);
-                        }
-                        sliceStartIndex = i;
-                    }
-                    state = 0;
-                    break;
-                }
-                default: {
-                    break;
-                }
+                zeroCount = 0;
+                i++;
+            } else {
+                zeroCount = 0;
+                i++;
             }
         }
 
-        if (sliceStartIndex >= 0) {
-            final ByteBuf data = byteBuf.slice(sliceStartIndex, length - sliceStartIndex);
-            result.add(createH264Nalu(request, data));
-        }
-
-        return result;
+        return nalus;
     }
 
-    private static H264Nalu createH264Nalu(Jt1078Request request, ByteBuf data) {
+    protected H264Nalu createH264Nalu(ByteBuf data) {
         final H264NaluHeader h264NaluHeader = H264NaluHeader.of(data.getByte(0));
-        final Jt1078RequestHeader header = request.header();
         return new DefaultH264Nalu(
                 h264NaluHeader,
                 // data.slice(1, data.readableBytes() - 1),
-                data.slice(0, data.readableBytes()),
-                header.dataType(),
-                header.lastIFrameInterval().orElse(null),
-                header.lastFrameInterval().orElse(null),
-                header.timestamp().orElse(null)
+                data.slice(0, data.readableBytes())
         );
+    }
+
+    // 读取 ringBuffer 的最后一部分未闭合的数据
+    // 直播的场景下 好像最后一部分数据可有可无 不用考虑
+    public List<H264Nalu> flush() {
+        final List<H264Nalu> nalus = new ArrayList<>();
+        final int size = ringBuffer.readableBytes();
+        if (naluStart != -1 && size > (naluStart - ringBuffer.readerIndex())) {
+            final int offset = naluStart - ringBuffer.readerIndex();
+            final int naluLength = size - offset;
+            final byte[] naluBytes = ringBuffer.peek(offset, naluLength);
+            nalus.add(createH264Nalu(Unpooled.wrappedBuffer(naluBytes)));
+            ringBuffer.discard(size);
+        }
+        naluStart = -1;
+        return nalus;
     }
 }

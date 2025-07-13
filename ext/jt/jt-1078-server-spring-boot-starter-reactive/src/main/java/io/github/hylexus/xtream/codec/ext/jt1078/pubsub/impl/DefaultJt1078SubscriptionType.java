@@ -20,8 +20,6 @@ import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078Subscription;
 
 public enum DefaultJt1078SubscriptionType implements Jt1078Subscription.Jt1078SubscriptionType {
     FLV(1),
-    PASS_THROUGH_RAW_DATA(2),
-    RAW_DATA(3),
     ;
     private final int value;
 

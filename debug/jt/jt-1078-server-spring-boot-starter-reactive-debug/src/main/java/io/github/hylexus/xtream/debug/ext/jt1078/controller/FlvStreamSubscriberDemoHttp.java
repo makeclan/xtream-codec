@@ -18,8 +18,7 @@ package io.github.hylexus.xtream.debug.ext.jt1078.controller;
 
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078RequestPublisher;
-import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.ByteArrayJt1078Subscription;
-import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.collector.H264ToFlvJt1078ChannelCollector;
+import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.H264Jt1078SubscriberCreator;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionDestroyException;
 import io.github.hylexus.xtream.debug.ext.jt1078.model.dto.DemoVideoStreamSubscriberDto;
 import org.slf4j.Logger;
@@ -29,7 +28,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Scheduler;
@@ -64,7 +62,13 @@ public class FlvStreamSubscriberDemoHttp {
 
     private Flux<byte[]> subscribeFlvStream(DemoVideoStreamSubscriberDto params, ServerWebExchange exchange) {
         final int timeout = params.getTimeout();
-        return this.publisher.subscribe(H264ToFlvJt1078ChannelCollector.class, params.getSim(), params.getChannel(), Duration.ofSeconds(timeout))
+        final H264Jt1078SubscriberCreator subscriberCreator = H264Jt1078SubscriberCreator.builder()
+                .sim(params.getSim())
+                .channelNumber(params.getChannel())
+                .timeout(Duration.ofSeconds(timeout))
+                .h264Meta(new H264Jt1078SubscriberCreator.H264Meta(params.getNaluDecoderRingBufferSize()))
+                .build();
+        return this.publisher.subscribeH264ToFlvStream(subscriberCreator)
                 .publishOn(SCHEDULER)
                 .onErrorComplete(Jt1078SessionDestroyException.class)
                 .onErrorComplete(TimeoutException.class)
@@ -81,10 +85,10 @@ public class FlvStreamSubscriberDemoHttp {
                     log.error(e.getMessage(), e);
                 })
                 .doOnNext(subscription -> {
-                    final byte[] payload = subscription.payload();
+                    final byte[] payload = (byte[]) subscription.payload();
                     log.info("FlvSubscriber(Http) outbound: {}", FormatUtils.toHexString(payload));
                 })
-                .map(ByteArrayJt1078Subscription::payload)
+                .map(it -> (byte[]) it.payload())
                 .doFinally(signalType -> {
                     // ...
                     log.info("FlvSubscriber(Http) finished({})", signalType);

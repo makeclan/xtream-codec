@@ -52,6 +52,7 @@ public class WebSocketUtils {
                 .setChannel(channel)
                 .setTimeout(Numbers.parseInteger(params.get("timeout")).orElse(10))
                 .setByteArrayAsBase64(Numbers.parseBoolean(params.get("byteArrayAsBase64")).orElse(false))
+                .setNaluDecoderRingBufferSize(Numbers.parseInteger(params.get("naluDecoderRingBufferSize")).orElse(1 << 18))
                 ;
 
     }

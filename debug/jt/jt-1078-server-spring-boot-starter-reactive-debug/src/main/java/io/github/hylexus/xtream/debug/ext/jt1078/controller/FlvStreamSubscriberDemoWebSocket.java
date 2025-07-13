@@ -19,10 +19,11 @@ package io.github.hylexus.xtream.debug.ext.jt1078.controller;
 
 import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078RequestPublisher;
-import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.collector.H264ToFlvJt1078ChannelCollector;
+import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.H264Jt1078SubscriberCreator;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionDestroyException;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionManager;
 import io.github.hylexus.xtream.debug.ext.jt1078.model.dto.DemoVideoStreamSubscriberDto;
+import io.github.hylexus.xtream.debug.ext.jt1078.pubsub.LocalFlvFileDebugSubscriberV2;
 import io.github.hylexus.xtream.debug.ext.jt1078.utils.WebSocketUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,11 +49,13 @@ public class FlvStreamSubscriberDemoWebSocket implements WebSocketHandler {
     private final UriTemplate uriTemplate;
     public static final Scheduler SCHEDULER = Schedulers.newBoundedElastic(10, 1024, "websocketSubscriber");
     private final Jt1078SessionManager sessionManager;
+    private final LocalFlvFileDebugSubscriberV2 localFlvFileDebugSubscriberV2;
 
     public FlvStreamSubscriberDemoWebSocket(Jt1078RequestPublisher publisher, Jt1078SessionManager sessionManager) {
         this.publisher = publisher;
         this.sessionManager = sessionManager;
         this.uriTemplate = new UriTemplate(PATH_PATTERN);
+        this.localFlvFileDebugSubscriberV2 = new LocalFlvFileDebugSubscriberV2(publisher);
     }
 
     @NonNull
@@ -81,9 +84,15 @@ public class FlvStreamSubscriberDemoWebSocket implements WebSocketHandler {
 
 
     private Mono<Void> subscribeFlvStream(WebSocketSession session, DemoVideoStreamSubscriberDto params) {
-
+        // localFlvFileDebugSubscriberV2.subscribe(params.getSim(), params.getChannel());
+        final H264Jt1078SubscriberCreator h264Jt1078SubscriberCreator = H264Jt1078SubscriberCreator.builder()
+                .sim(params.getSim())
+                .channelNumber(params.getChannel())
+                .timeout(Duration.ofSeconds(params.getTimeout()))
+                .h264Meta(new H264Jt1078SubscriberCreator.H264Meta(params.getNaluDecoderRingBufferSize()))
+                .build();
         return this.publisher
-                .subscribe(H264ToFlvJt1078ChannelCollector.class, params.getSim(), params.getChannel(), Duration.ofSeconds(params.getTimeout()))
+                .subscribeH264ToFlvStream(h264Jt1078SubscriberCreator)
                 .doOnNext(subscription -> {
                     // log.info("FlvSubscriber(WebSocket) inbound: {}", FormatUtils.toHexString(subscription.payload()));
                 })
@@ -103,7 +112,7 @@ public class FlvStreamSubscriberDemoWebSocket implements WebSocketHandler {
                     log.error(e.getMessage(), e);
                 })
                 .flatMap(subscription -> {
-                    final byte[] data = subscription.payload();
+                    final byte[] data = (byte[]) subscription.payload();
 
                     log.debug("FlvSubscriber(WebSocket) outbound: {}", FormatUtils.toHexString(data));
 

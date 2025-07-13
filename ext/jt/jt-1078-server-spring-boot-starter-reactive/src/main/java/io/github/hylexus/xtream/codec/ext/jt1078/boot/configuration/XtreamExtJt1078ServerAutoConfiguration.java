@@ -102,7 +102,7 @@ public class XtreamExtJt1078ServerAutoConfiguration {
     }
 
 
-    @Bean
+    // @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(prefix = "jt1078-server.features.request-combiner", name = "enabled", havingValue = "true", matchIfMissing = true)
     Jt1078RequestCombinerFilter jt1078RequestCombinerFilter(Jt1078RequestCombiner combiner) {

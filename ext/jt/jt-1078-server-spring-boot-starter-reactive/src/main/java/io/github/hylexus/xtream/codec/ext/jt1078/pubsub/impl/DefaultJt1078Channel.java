@@ -36,10 +36,7 @@ public class DefaultJt1078Channel implements Jt1078Channel {
     private final Jt1078TerminalIdConverter terminalIdConverter;
     // <TypeOfJt1078ChannelCollector, Jt1078ChannelCollector>
     // 同一个Channel上 同一种类型的Jt1078ChannelCollector 只有一个实例
-    private final ConcurrentMap<
-            Class<? extends Jt1078ChannelCollector<? extends Jt1078Subscription>>,
-            Jt1078ChannelCollector<? extends Jt1078Subscription>
-            > collectors = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Class<? extends Jt1078ChannelCollector>, Jt1078ChannelCollector> collectors = new ConcurrentHashMap<>();
     private final Scheduler scheduler;
 
     public DefaultJt1078Channel(ChannelKey key, Jt1078TerminalIdConverter terminalIdConverter, Scheduler scheduler) {
@@ -65,17 +62,16 @@ public class DefaultJt1078Channel implements Jt1078Channel {
 
     @Override
     public void publish(Jt1078Request request) {
-        for (final Jt1078ChannelCollector<? extends Jt1078Subscription> collector : this.collectors.values()) {
+        for (final Jt1078ChannelCollector collector : this.collectors.values()) {
             collector.collect(request);
         }
     }
 
     @Override
-    public <S extends Jt1078Subscription> Jt1078Subscriber<S> doSubscribe(Class<? extends Jt1078ChannelCollector<S>> cls, Jt1078SubscriberCreator creator) {
+    public Jt1078Subscriber doSubscribe(Class<? extends Jt1078ChannelCollector> cls, Jt1078SubscriberCreator creator) {
         creator.sim(this.terminalIdConverter.convert(creator.sim()));
-        final Jt1078ChannelCollector<? extends Jt1078Subscription> channelCollector = this.getOrCreate(cls, creator);
-        @SuppressWarnings("unchecked") final Jt1078Subscriber<S> subscriber = (Jt1078Subscriber<S>) channelCollector.doSubscribe(creator);
-        return subscriber;
+        final Jt1078ChannelCollector channelCollector = this.getOrCreate(cls, creator);
+        return channelCollector.doSubscribe(creator);
     }
 
     @Override
@@ -107,7 +103,7 @@ public class DefaultJt1078Channel implements Jt1078Channel {
                 .flatMap(Jt1078ChannelCollector::list);
     }
 
-    protected <S extends Jt1078Subscription> Jt1078ChannelCollector<? extends Jt1078Subscription> getOrCreate(Class<? extends Jt1078ChannelCollector<S>> cls, Jt1078SubscriberCreator creator) {
-        return this.collectors.computeIfAbsent(cls, k -> new H264ToFlvJt1078ChannelCollector(this.key, this.scheduler));
+    protected Jt1078ChannelCollector getOrCreate(Class<? extends Jt1078ChannelCollector> cls, Jt1078SubscriberCreator creator) {
+        return this.collectors.computeIfAbsent(cls, k -> new H264ToFlvJt1078ChannelCollector(this.key, this.scheduler, creator));
     }
 }

@@ -27,6 +27,7 @@ import java.util.Map;
 
 /**
  * @author hylexus
+ * @see <a href="https://www.bilibili.com/video/BV1nG4y1u7HT">https://www.bilibili.com/video/BV1nG4y1u7HT</a>
  * @see <a href="https://github.com/redknotmiaoyuqiao/EyerH264Decoder/blob/59e0a396f0b9c0a4a2c034ba6d44fae22297e979/EyerH264Decoder/NaluPPS.cpp#L11">Github--redknotmiaoyuqiao--EyerH264Decoder/NaluPPS.cpp</a>
  * @see <a href="https://github.com/SmallChi/JT1078/blob/c4931a8ec37678fb5ecedcc749ffe3c9f4c890fe/src/JT1078.Protocol/MessagePack/EXPGolombReader.cs#L24C20-L24C20">Github--SmallChi--JT1078/EXPGolombReader.cs</a>
  * @see <a href="https://www.itu.int/rec/T-REC-H.264">T-REC-H.264-202108-I!!PDF-E.pdf</a>
@@ -59,6 +60,9 @@ public class DefaultSpsDecoder implements SpsDecoder {
         // 255: Extended_SAR
     }
 
+    public DefaultSpsDecoder() {
+    }
+
     /**
      * @see <a href="https://www.jianshu.com/p/42be5bcb0a52">从H.264码流中一眼读出其Profile和Level</a>
      * @see <a href="https://www.bilibili.com/video/BV1nG4y1u7HT">https://www.bilibili.com/video/BV1nG4y1u7HT</a>
@@ -84,12 +88,11 @@ public class DefaultSpsDecoder implements SpsDecoder {
         final int levelIdc = reader.readU8();
         // 4. seq_parameter_set_id
         reader.readUe();
-        if (
-                profileIdc == 100 || profileIdc == 110
-                || profileIdc == 122 || profileIdc == 244 || profileIdc == 44
-                || profileIdc == 83 || profileIdc == 86 || profileIdc == 118
-                || profileIdc == 128 || profileIdc == 138 || profileIdc == 139
-                || profileIdc == 134 || profileIdc == 135) {
+        final boolean isHigh = switch (profileIdc) {
+            case 100, 110, 122, 244, 44, 83, 86, 118, 128, 138, 139, 134, 135 -> true;
+            default -> false;
+        };
+        if (isHigh) {
             // chroma_format_idc
             // 0: 单色
             // 1: yuv 4:2:0
@@ -150,11 +153,11 @@ public class DefaultSpsDecoder implements SpsDecoder {
         reader.readUe();
         // gaps_in_frame_num_value_allowed_flag
         reader.readU1();
-        // pic_width_in_mbs_minus1
+        // pic_width_in_mbs_minus1(横向宏块个数-1, 每个宏块16*16)
         final int picWidthInMbsMinus1 = reader.readUe();
-        // pic_height_in_map_units_minus1
+        // pic_height_in_map_units_minus1(纵向宏块个数-1, 每个宏块16*16)
         final int picHeightInMapUnitsMinus1 = reader.readUe();
-        // frame_mbs_only_flag
+        // frame_mbs_only_flag(1: 帧编码; 0: 场编码1 (2场为1帧)) 计算实际宽高的时候用到
         final int frameMbsOnlyFlag = reader.readU1();
         // !frame_mbs_only_flag
         // 场编码
@@ -191,11 +194,14 @@ public class DefaultSpsDecoder implements SpsDecoder {
             vuiParameters(reader, sarScale);
         }
 
+        // N 个 16*16 的宏块 根据偏移量调整 得到实际大小
         final int width = (((picWidthInMbsMinus1 + 1) * 16) - frameCropLeftOffset * 2 - frameCropRightOffset * 2) * sarScale[0];
 
         final int height = ((2 - frameMbsOnlyFlag) * (picHeightInMapUnitsMinus1 + 1) * 16) - ((frameMbsOnlyFlag == 1 ? 2 : 4) * (frameCropTopOffset + frameCropBottomOffset));
 
         return new Sps()
+                // SPS里还有N多属性
+                // 这里用不到(忽略)
                 .setProfileIdc((byte) profileIdc)
                 .setLevelIdc((byte) levelIdc)
                 .setProfileCompat((byte) profileCompat)

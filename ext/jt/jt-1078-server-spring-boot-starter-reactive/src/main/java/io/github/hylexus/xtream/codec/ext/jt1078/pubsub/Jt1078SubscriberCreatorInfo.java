@@ -14,17 +14,26 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.collector;
+package io.github.hylexus.xtream.codec.ext.jt1078.pubsub;
 
-import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.ByteArrayJt1078Subscription;
-import reactor.core.publisher.FluxSink;
-
-import java.time.LocalDateTime;
+import java.time.Duration;
 import java.util.Map;
 
-public class DefaultByteArraySubscriber extends AbstractInternalSubscriber<ByteArrayJt1078Subscription> {
+// todo 重构
+public interface Jt1078SubscriberCreatorInfo {
 
-    public DefaultByteArraySubscriber(String id, String sim, short channel, String desc, LocalDateTime createdAt, Map<String, Object> metadata, FluxSink<ByteArrayJt1078Subscription> sink) {
-        super(id, sim, channel, desc, createdAt, sink, metadata);
-    }
+    String sim();
+
+    short channelNumber();
+
+    boolean hasAudio();
+
+    boolean hasVideo();
+
+    Duration timeout();
+
+    String desc();
+
+    Map<String, Object> metadata();
+
 }

@@ -20,21 +20,16 @@ import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
 import jakarta.annotation.Nullable;
 import reactor.core.scheduler.Scheduler;
 
-import java.time.Duration;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public interface Jt1078ChannelCollector<S extends Jt1078Subscription> {
+public interface Jt1078ChannelCollector {
 
     Scheduler scheduler();
 
     void collect(Jt1078Request request);
 
-    default Jt1078Subscriber<S> doSubscribe(String sim, short channelNumber, Duration timeout) {
-        return this.doSubscribe(Jt1078SubscriberCreator.builder().sim(sim).channelNumber(channelNumber).timeout(timeout).build());
-    }
-
-    Jt1078Subscriber<S> doSubscribe(Jt1078SubscriberCreator creator);
+    Jt1078Subscriber doSubscribe(Jt1078SubscriberCreator creator);
 
     default void unsubscribe(String id) {
         this.unsubscribe(id, null);

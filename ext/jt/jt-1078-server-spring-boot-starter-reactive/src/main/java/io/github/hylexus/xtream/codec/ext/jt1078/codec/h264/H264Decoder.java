@@ -17,12 +17,12 @@
 package io.github.hylexus.xtream.codec.ext.jt1078.codec.h264;
 
 
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
+import io.netty.buffer.ByteBuf;
 
 import java.util.List;
 
 public interface H264Decoder {
 
-    List<H264Nalu> decode(Jt1078Request request);
+    List<H264Nalu> decode(ByteBuf byteBuf);
 
 }

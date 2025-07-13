@@ -12,7 +12,8 @@ const formData = reactive({
   channelNumber: 2,
   timeout: 20,
   hasVideo: true,
-  hasAudio: false
+  hasAudio: true,
+  naluDecoderRingBufferSize: 1 << 18
 })
 const channelOptions = jt1078ChannelConfig
 const playerConfig = computed(() => {
@@ -20,16 +21,16 @@ const playerConfig = computed(() => {
   return {
     location: option?.location || '未知',
     channel: formData.channelNumber,
-    hasVideo: option?.hasVideo || false,
-    // 目前还不支持音频(没有音频时这里必须写 false; 否则无法播放)
-    hasAudio: false,
+    hasVideo: true,
+    hasAudio: true,
     mediaUrl: playerUrl.value
   } as FlvPlayerConfig
 })
 
 const playerUrl = computed(() => {
   const type = formData.protocol === 'http' || formData.protocol === 'https' ? 'http' : 'websocket';
-  return `${formData.protocol}://${formData.host}:${formData.port}/debug-api/jt1078/stream-data/${type}/flv/${formData.sim}/${formData.channelNumber}?timeout=${formData.timeout}`
+  const naluDecoderRingBufferSize = formData.naluDecoderRingBufferSize;
+  return `${formData.protocol}://${formData.host}:${formData.port}/debug-api/jt1078/stream-data/${type}/flv/${formData.sim}/${formData.channelNumber}?timeout=${formData.timeout}&naluDecoderRingBufferSize=${naluDecoderRingBufferSize}`
 })
 const playerStatus: Ref<FlvPlayerStatus> = ref(FlvPlayerStatus.OFFLINE)
 const onPlayerStatusChange = (from: FlvPlayerStatus, to: FlvPlayerStatus, message?: string) => {
@@ -67,6 +68,21 @@ const onPlayerStatusChange = (from: FlvPlayerStatus, to: FlvPlayerStatus, messag
               <el-tag type="primary" v-else-if="item.hasAudio && item.hasVideo">仅视频(H.264)</el-tag>
             </el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="缓冲区大小">
+          <!--          Nalu解码器环形数组容量-->
+          <template #label>
+            <div style="display: flex;align-items: center;">
+              <span>缓冲区大小</span>
+              <el-tooltip content="Nalu解码器环形数组容量:必须是 2 的 N 次幂"
+                          placement="top">
+                <el-icon class="el-icon-info" style="margin-left: 5px;">
+                  <QuestionFilled/>
+                </el-icon>
+              </el-tooltip>
+            </div>
+          </template>
+          <el-input-number v-model="formData.naluDecoderRingBufferSize"></el-input-number>
         </el-form-item>
         <el-form-item>
           <template #label>

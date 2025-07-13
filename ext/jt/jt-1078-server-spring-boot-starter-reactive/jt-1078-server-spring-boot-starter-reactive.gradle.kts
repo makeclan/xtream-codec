@@ -15,6 +15,7 @@ dependencies {
     api(project(":xtream-codec-server-reactive"))
     api("com.github.ben-manes.caffeine:caffeine")
     api("org.springframework.boot:spring-boot-starter")
+    api("de.sciss:jump3r:1.0.5")
 
     compileOnly("org.springframework.boot:spring-boot-starter-webflux")
     compileOnly("org.springframework.boot:spring-boot-starter-validation")

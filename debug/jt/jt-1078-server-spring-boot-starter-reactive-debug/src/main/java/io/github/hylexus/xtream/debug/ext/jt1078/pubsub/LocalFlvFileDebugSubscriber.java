@@ -19,8 +19,7 @@ package io.github.hylexus.xtream.debug.ext.jt1078.pubsub;
 import io.github.hylexus.xtream.codec.common.utils.XtreamFiles;
 import io.github.hylexus.xtream.codec.common.utils.XtreamResources;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078RequestPublisher;
-import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078SubscriberCreator;
-import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.collector.H264ToFlvJt1078ChannelCollector;
+import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.H264Jt1078SubscriberCreator;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-@Component
+// @Component
 public class LocalFlvFileDebugSubscriber implements DisposableBean {
     private static final Logger log = LoggerFactory.getLogger(LocalFlvFileDebugSubscriber.class);
     private final Jt1078RequestPublisher publisher;
@@ -54,20 +53,20 @@ public class LocalFlvFileDebugSubscriber implements DisposableBean {
             log.info("start subscribe");
             final String sim = session.terminalId();
             final short channelNumber = session.channelNumber();
-            final Jt1078SubscriberCreator creator = Jt1078SubscriberCreator.builder()
+            final H264Jt1078SubscriberCreator creator = H264Jt1078SubscriberCreator.builder()
                     .sim(sim)
                     .channelNumber(channelNumber)
                     .timeout(Duration.ofMinutes(30))
+                    .h264Meta(new H264Jt1078SubscriberCreator.H264Meta(1 << 18))
                     .build();
 
             final OutputStream outputStream = getOutputStream(sim, channelNumber);
-            this.publisher.doSubscribe(H264ToFlvJt1078ChannelCollector.class, creator)
-                    .dataStream()
+            this.publisher.subscribeH264ToFlvStream(creator)
                     .publishOn(Schedulers.boundedElastic())
                     .doOnNext(subscription -> {
                         // log.info("type: {}", subscription.type());
                         try {
-                            outputStream.write(subscription.payload());
+                            outputStream.write((byte[]) subscription.payload());
                             outputStream.flush();
                         } catch (IOException e) {
                             throw new RuntimeException(e);

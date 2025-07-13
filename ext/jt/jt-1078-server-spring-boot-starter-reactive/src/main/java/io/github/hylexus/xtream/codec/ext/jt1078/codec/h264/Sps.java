@@ -24,10 +24,12 @@ import lombok.experimental.Accessors;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @Accessors(chain = true)
 @ToString
 public class Sps {
+    public Sps() {
+    }
+
     private byte profileIdc;
     private byte levelIdc;
     private byte profileCompat;

@@ -16,14 +16,15 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.collector;
 
+import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078SubscriberCreatorInfo;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078Subscription;
 import reactor.core.publisher.FluxSink;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
-public class AbstractInternalSubscriber<S extends Jt1078Subscription>
-        implements InternalSubscriber<S> {
+public abstract class AbstractInternalSubscriber
+        implements InternalSubscriber {
 
     protected final String id;
 
@@ -34,18 +35,23 @@ public class AbstractInternalSubscriber<S extends Jt1078Subscription>
     protected final String desc;
     protected final LocalDateTime createdAt;
 
-    protected final FluxSink<S> sink;
+    protected final FluxSink<Jt1078Subscription> sink;
 
-    protected final Map<String,Object> metadata;
+    protected final Map<String, Object> metadata;
 
-    public AbstractInternalSubscriber(String id, String sim, short channel, String desc, LocalDateTime createdAt, FluxSink<S> sink, Map<String, Object> metadata) {
+    public AbstractInternalSubscriber(
+            String id,
+            Jt1078SubscriberCreatorInfo creator,
+            LocalDateTime createdAt,
+            FluxSink<Jt1078Subscription> sink) {
+
         this.id = id;
-        this.sim = sim;
-        this.channel = channel;
-        this.desc = desc;
+        this.sim = creator.sim();
+        this.channel = creator.channelNumber();
+        this.desc = creator.desc();
         this.createdAt = createdAt;
         this.sink = sink;
-        this.metadata = metadata;
+        this.metadata = creator.metadata();
     }
 
     @Override
@@ -74,7 +80,7 @@ public class AbstractInternalSubscriber<S extends Jt1078Subscription>
     }
 
     @Override
-    public FluxSink<S> sink() {
+    public FluxSink<Jt1078Subscription> sink() {
         return this.sink;
     }
 

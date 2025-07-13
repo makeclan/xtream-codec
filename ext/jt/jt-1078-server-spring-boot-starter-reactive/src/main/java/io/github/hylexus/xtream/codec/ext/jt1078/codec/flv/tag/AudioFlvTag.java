@@ -92,7 +92,7 @@ public interface AudioFlvTag {
 
             byteBuf.writeByte(v);
 
-            // 只有 H.264 才有该属性
+            // 只有 AAC 才有该属性
             this.aacPacketType().ifPresent(t -> byteBuf.writeByte(t.getValue()));
             return byteBuf.writerIndex() - writerIndex;
         }

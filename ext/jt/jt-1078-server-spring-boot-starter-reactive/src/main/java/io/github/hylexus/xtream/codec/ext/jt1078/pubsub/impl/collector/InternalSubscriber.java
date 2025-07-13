@@ -23,7 +23,7 @@ import reactor.core.publisher.FluxSink;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-public interface InternalSubscriber<S extends Jt1078Subscription> extends Jt1078SubscriberDescriptor {
+public interface InternalSubscriber extends Jt1078SubscriberDescriptor {
     String id();
 
     String sim();
@@ -36,7 +36,7 @@ public interface InternalSubscriber<S extends Jt1078Subscription> extends Jt1078
 
     Map<String, Object> metadata();
 
-    FluxSink<S> sink();
+    FluxSink<Jt1078Subscription> sink();
 
     @Override
     default String getId() {
@@ -67,5 +67,7 @@ public interface InternalSubscriber<S extends Jt1078Subscription> extends Jt1078
     default Map<String, Object> getMetadata() {
         return this.metadata();
     }
+
+    void close();
 
 }

@@ -16,15 +16,32 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.codec.flv;
 
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
+import io.github.hylexus.xtream.codec.ext.jt1078.codec.flv.tag.AudioFlvTag;
 import io.netty.buffer.ByteBuf;
 
 import java.util.List;
 
 public interface FlvEncoder {
 
-    List<ByteBuf> encode(Jt1078Request request);
+    default FlvHeader createFlvHeader(boolean hasVideo, boolean hasAudio) {
+        return FlvHeader.of(hasVideo, hasAudio);
+    }
+
+    List<ByteBuf> encodeVideoTag(long timestamp, ByteBuf naluStream);
+
+    ByteBuf encodeAudioTag(int dts, AudioFlvTag.AudioFlvTagHeader audioTagHeader, ByteBuf payload);
+
+    /**
+     * @return ScriptTag + SPS  + PPS
+     */
+    ByteBuf getFlvBasicFrame();
+
+    /**
+     * @return 最近一个关键帧
+     */
+    ByteBuf getLastIFrame();
 
     default void close() {
     }
+
 }

@@ -46,17 +46,19 @@ public interface FlvHeader {
     /**
      * total: 1byte (00000101)
      * <p>
-     * bit[0]: 是否存在视频
+     * - bit[3,7]: 保留(必须为0) TypeFlagsReserved UB[5]
      * <p>
-     * bit[1]: 保留(必须为0)
+     * - bit[2]: 是否存在音频 TypeFlagsAudio UB[1]
      * <p>
-     * bit[2]: 是否存在音频
+     * - bit[1]: 保留(必须为0) TypeFlagsReserved UB[1]
      * <p>
-     * bit[3,7]: 保留(必须为0)
+     * - bit[0]: 是否存在视频 TypeFlagsVideo  UB[1]
      */
     byte flag();
 
     /**
+     * DataOffset UI32
+     * <p>
      * version1 中始终为 9
      * <p>
      * 从起始位置到 body 部分的字节数(即 header 的大小)

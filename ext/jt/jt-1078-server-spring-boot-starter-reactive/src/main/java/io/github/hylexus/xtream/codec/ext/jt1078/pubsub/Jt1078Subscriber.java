@@ -18,7 +18,7 @@ package io.github.hylexus.xtream.codec.ext.jt1078.pubsub;
 
 import reactor.core.publisher.Flux;
 
-public interface Jt1078Subscriber<S extends Jt1078Subscription> {
+public interface Jt1078Subscriber {
 
     /**
      * 这个 uuid 可以用来从外部关闭当前订阅
@@ -30,7 +30,7 @@ public interface Jt1078Subscriber<S extends Jt1078Subscription> {
     /**
      * @return 当前订阅的数据流
      */
-    Flux<S> dataStream();
+    Flux<Jt1078Subscription> dataStream();
 
     abstract class Jt1078SubscriberCloseException extends RuntimeException {
         public Jt1078SubscriberCloseException() {

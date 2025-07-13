@@ -83,4 +83,13 @@ public final class FormatUtils {
     public static String toHexString(byte[] bytes) {
         return ByteBufUtil.hexDump(bytes);
     }
+
+    public static String toString(ByteBuf byteBuf, int from, int length, String delimiter) {
+        final StringBuilder sb = new StringBuilder();
+        for (int i = from; i < length; i++) {
+            sb.append(byteBuf.getByte(i)).append(delimiter);
+        }
+        return sb.toString();
+    }
+
 }
