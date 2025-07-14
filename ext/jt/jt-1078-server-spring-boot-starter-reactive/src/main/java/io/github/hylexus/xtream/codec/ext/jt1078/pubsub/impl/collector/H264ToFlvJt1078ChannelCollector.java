@@ -111,36 +111,10 @@ public class H264ToFlvJt1078ChannelCollector implements Jt1078ChannelCollector {
         if (this.firstVideoTimestamp == -1L) {
             this.firstVideoTimestamp = timestamp;
         }
-
         final List<ByteBuf> bufList = this.flvEncoder.encodeVideoTag(timestamp - this.firstVideoTimestamp, request.body());
         for (final ByteBuf byteBuf : bufList) {
             try {
-                // log.info("size: {}", byteBuf.readableBytes());
                 for (final H264ToFlvSubscriber subscriber : this.subscribers.values()) {
-                    // 1. flv-header + sps + pps
-                    if (subscriber.isFlvHeaderPending()) {
-                        final ByteBuf basicFrame = flvEncoder.getFlvBasicFrame();
-                        if (basicFrame != null) {
-                            subscriber.sendFlvHeader(XtreamBytes.getBytes(basicFrame));
-                        }
-                    }
-                    // 2. lastIFrame
-                    if (subscriber.isLastIFramePending()) {
-                        final ByteBuf lastIFrame = flvEncoder.getLastIFrame();
-                        if (lastIFrame != null) {
-                            final byte[] iframeData = XtreamBytes.getBytes(lastIFrame);
-                            subscriber.sendIFrameData(timestamp, iframeData);
-                        }
-                    }
-                    // 确保先把 关键帧 发送出去(中途订阅)
-                    if (subscriber.isLastIFramePending()) {
-                        return;
-                    }
-                    // 确保先把 flvHeader 发送出去(中途订阅)
-                    if (subscriber.isFlvHeaderPending()) {
-                        return;
-                    }
-                    // 3. data
                     final byte[] videoData = XtreamBytes.getBytes(byteBuf);
                     subscriber.sendVideoData(timestamp, videoData);
                 }
@@ -176,7 +150,7 @@ public class H264ToFlvJt1078ChannelCollector implements Jt1078ChannelCollector {
                     }
                 })
                 .publishOn(this.scheduler())
-                // todo 优化
+                // todo 缓冲区配置
                 .onBackpressureDrop(byteArrayJt1078Subscription -> {
                     // ...
                     log.error("onBackpressureDrop, channelKey={}", channelKey);
@@ -232,7 +206,7 @@ public class H264ToFlvJt1078ChannelCollector implements Jt1078ChannelCollector {
     }
 
     protected H264ToFlvSubscriber createSubscriber(String uuid, Jt1078SubscriberCreator creator, FluxSink<Jt1078Subscription> fluxSink) {
-        return new H264ToFlvSubscriber(uuid, (H264Jt1078SubscriberCreator) creator, fluxSink);
+        return new H264ToFlvSubscriber(uuid, (H264Jt1078SubscriberCreator) creator, this.flvEncoder, fluxSink);
     }
 
     private static final Map<Jt1078PayloadType, Boolean> WARNING_FLAGS = new HashMap<>();

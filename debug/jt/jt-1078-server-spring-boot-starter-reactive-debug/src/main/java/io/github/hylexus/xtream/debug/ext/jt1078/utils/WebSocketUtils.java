@@ -53,6 +53,9 @@ public class WebSocketUtils {
                 .setTimeout(Numbers.parseInteger(params.get("timeout")).orElse(10))
                 .setByteArrayAsBase64(Numbers.parseBoolean(params.get("byteArrayAsBase64")).orElse(false))
                 .setNaluDecoderRingBufferSize(Numbers.parseInteger(params.get("naluDecoderRingBufferSize")).orElse(1 << 18))
+                .setNaluDecoderRingBufferSize(Numbers.parseInteger(params.get("naluDecoderRingBufferSize")).orElse(1 << 18))
+                .setHasAudio(Numbers.parseBoolean(params.get("hasAudio")).orElse(true))
+                .setHasVideo(Numbers.parseBoolean(params.get("hasVideo")).orElse(true))
                 ;
 
     }

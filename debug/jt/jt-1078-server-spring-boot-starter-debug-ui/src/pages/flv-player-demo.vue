@@ -13,24 +13,37 @@ const formData = reactive({
   timeout: 20,
   hasVideo: true,
   hasAudio: true,
-  naluDecoderRingBufferSize: 1 << 18
+  naluDecoderRingBufferSizeExponent: 18,
 })
+const onChannelChange = (ch: number) => {
+  const option = channelOptions.find(it => it.channel === ch)
+  if (option) {
+    formData.hasVideo = option.hasVideo;
+    formData.hasAudio = option.hasAudio;
+  }
+}
+
+const naluDecoderRingBufferSize = computed(() => {
+  return 2 ** formData.naluDecoderRingBufferSizeExponent
+})
+
 const channelOptions = jt1078ChannelConfig
 const playerConfig = computed(() => {
   const option = channelOptions.find(it => it.channel === formData.channelNumber)
   return {
     location: option?.location || '未知',
     channel: formData.channelNumber,
-    hasVideo: true,
-    hasAudio: true,
+    hasVideo: formData.hasVideo,
+    hasAudio: formData.hasAudio,
     mediaUrl: playerUrl.value
   } as FlvPlayerConfig
 })
 
 const playerUrl = computed(() => {
   const type = formData.protocol === 'http' || formData.protocol === 'https' ? 'http' : 'websocket';
-  const naluDecoderRingBufferSize = formData.naluDecoderRingBufferSize;
-  return `${formData.protocol}://${formData.host}:${formData.port}/debug-api/jt1078/stream-data/${type}/flv/${formData.sim}/${formData.channelNumber}?timeout=${formData.timeout}&naluDecoderRingBufferSize=${naluDecoderRingBufferSize}`
+  const bufferSize = naluDecoderRingBufferSize.value;
+  const {hasVideo, hasAudio} = formData
+  return `${formData.protocol}://${formData.host}:${formData.port}/debug-api/jt1078/stream-data/${type}/flv/${formData.sim}/${formData.channelNumber}?timeout=${formData.timeout}&hasVideo=${hasVideo}&hasAudio=${hasAudio}&naluDecoderRingBufferSize=${bufferSize}`
 })
 const playerStatus: Ref<FlvPlayerStatus> = ref(FlvPlayerStatus.OFFLINE)
 const onPlayerStatusChange = (from: FlvPlayerStatus, to: FlvPlayerStatus, message?: string) => {
@@ -61,7 +74,7 @@ const onPlayerStatusChange = (from: FlvPlayerStatus, to: FlvPlayerStatus, messag
           <el-input v-model="formData.sim" placeholder="013800138999"/>
         </el-form-item>
         <el-form-item label="通道">
-          <el-select v-model="formData.channelNumber" filterable placeholder="请选择通道">
+          <el-select v-model="formData.channelNumber" filterable placeholder="请选择通道" @change="onChannelChange">
             <el-option v-for="item in channelOptions" :key="item.channel" :label="item.title" :value="item.channel">
               {{ item.title }}
               <el-tag type="danger" v-if="item.hasAudio && !item.hasVideo">暂不支持</el-tag>
@@ -69,8 +82,15 @@ const onPlayerStatusChange = (from: FlvPlayerStatus, to: FlvPlayerStatus, messag
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="音视频">
+          <el-checkbox v-model="formData.hasAudio">
+            音频
+          </el-checkbox>
+          <el-checkbox v-model="formData.hasVideo">
+            视频
+          </el-checkbox>
+        </el-form-item>
         <el-form-item label="缓冲区大小">
-          <!--          Nalu解码器环形数组容量-->
           <template #label>
             <div style="display: flex;align-items: center;">
               <span>缓冲区大小</span>
@@ -82,7 +102,10 @@ const onPlayerStatusChange = (from: FlvPlayerStatus, to: FlvPlayerStatus, messag
               </el-tooltip>
             </div>
           </template>
-          <el-input-number v-model="formData.naluDecoderRingBufferSize"></el-input-number>
+          <el-input-number v-model="formData.naluDecoderRingBufferSizeExponent" :min="8" :max="31">
+            <template #prefix>2 ^</template>
+          </el-input-number>
+          &nbsp;=&nbsp; {{ naluDecoderRingBufferSize }}
         </el-form-item>
         <el-form-item>
           <template #label>
@@ -99,7 +122,6 @@ const onPlayerStatusChange = (from: FlvPlayerStatus, to: FlvPlayerStatus, messag
           <el-input-number v-model="formData.timeout" placeholder="20" :min="0" :max="60 * 60">
             <template #suffix>秒</template>
           </el-input-number>
-
         </el-form-item>
         <el-form-item label="播放地址">
           <el-input type="textarea" v-model="playerUrl" autosize readonly disabled></el-input>

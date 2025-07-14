@@ -67,9 +67,7 @@ class H264DecoderTest extends AbstractAudioVideoCodecTest {
                     byteBuf.release();
                 }
             }
-            for (final H264Nalu flush : h264Decoder.flush()) {
-                System.out.println(flush);
-            }
+
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

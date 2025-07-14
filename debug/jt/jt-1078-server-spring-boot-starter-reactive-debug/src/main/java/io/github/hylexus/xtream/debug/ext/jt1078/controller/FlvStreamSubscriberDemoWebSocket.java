@@ -90,7 +90,10 @@ public class FlvStreamSubscriberDemoWebSocket implements WebSocketHandler {
                 .channelNumber(params.getChannel())
                 .timeout(Duration.ofSeconds(params.getTimeout()))
                 .h264Meta(new H264Jt1078SubscriberCreator.H264Meta(params.getNaluDecoderRingBufferSize()))
+                .hasAudio(params.isHasAudio())
+                .hasVideo(params.isHasVideo())
                 .build();
+
         return this.publisher
                 .subscribeH264ToFlvStream(h264Jt1078SubscriberCreator)
                 .doOnNext(subscription -> {

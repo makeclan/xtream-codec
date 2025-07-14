@@ -22,7 +22,6 @@ import io.github.hylexus.xtream.codec.ext.jt1078.codec.audio.PcmToMp3Encoder;
 import io.github.hylexus.xtream.codec.ext.jt1078.codec.audio.impl.mp3.DefaultPcmToMp3Encoder;
 import io.github.hylexus.xtream.codec.ext.jt1078.codec.flv.FlvEncoder;
 import io.github.hylexus.xtream.codec.ext.jt1078.codec.flv.FlvTagHeader;
-import io.github.hylexus.xtream.codec.ext.jt1078.codec.flv.impl.DefaultFlvEncoder;
 import io.github.hylexus.xtream.codec.ext.jt1078.codec.flv.tag.AudioFlvTag;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078Subscription;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.DefaultJt1078SubscriptionType;
@@ -52,14 +51,15 @@ public class H264ToFlvSubscriber extends AbstractInternalSubscriber {
     private long prevAudioTimestamp = 0;
     private long prevVideoTimestamp = 0;
 
+    private final H264Jt1078SubscriberCreator subscriberCreator;
     // 每个 subscriber 需要单独的 mp3 编码器
     private final PcmToMp3Encoder pcmToMp3Encoder = new DefaultPcmToMp3Encoder();
-    private final FlvEncoder flvEncoder = new DefaultFlvEncoder(1 << 18);
-    private final H264Jt1078SubscriberCreator subscriberCreator;
+    private final FlvEncoder flvEncoder;
 
-    public H264ToFlvSubscriber(String id, H264Jt1078SubscriberCreator creator, FluxSink<Jt1078Subscription> sink) {
+    public H264ToFlvSubscriber(String id, H264Jt1078SubscriberCreator creator, FlvEncoder flvEncoder, FluxSink<Jt1078Subscription> sink) {
         super(id, creator, LocalDateTime.now(), sink);
         this.subscriberCreator = creator;
+        this.flvEncoder = flvEncoder;
     }
 
     public synchronized void sendFlvHeader(byte[] basicFrame) {
@@ -83,7 +83,7 @@ public class H264ToFlvSubscriber extends AbstractInternalSubscriber {
     }
 
     public void sendAudioData(long timestamp, AudioPackage audioPackage) {
-        if (!this.flvHeaderSent) {
+        if (this.isFlvHeaderPending()) {
             return;
         }
         final AudioPackage mp3Package = this.pcmToMp3Encoder.encode(audioPackage);
@@ -117,17 +117,43 @@ public class H264ToFlvSubscriber extends AbstractInternalSubscriber {
     }
 
     public void sendVideoData(long timestamp, byte[] videoData) {
-        if (!this.flvHeaderSent) {
-            return;
-        }
         if (this.prevVideoTimestamp == 0) {
             this.prevVideoTimestamp = timestamp;
         }
+
+        // 1. flv-header + sps + pps
+        if (this.isFlvHeaderPending()) {
+            final ByteBuf basicFrame = this.flvEncoder.getFlvBasicFrame();
+            if (basicFrame != null) {
+                this.sendFlvHeader(XtreamBytes.getBytes(basicFrame));
+            }
+        }
+
+        // 2. lastIFrame
+        if (this.isLastIFramePending()) {
+            final ByteBuf lastIFrame = this.flvEncoder.getLastIFrame();
+            if (lastIFrame != null) {
+                final byte[] iframeData = XtreamBytes.getBytes(lastIFrame);
+                this.sendIFrameData(timestamp, iframeData);
+            }
+        }
+
+        // 确保先把 关键帧 发送出去(中途订阅)
+        if (this.isLastIFramePending()) {
+            return;
+        }
+        // 确保先把 flvHeader 发送出去(中途订阅)
+        if (this.isFlvHeaderPending()) {
+            return;
+        }
+
         log.info("video-dts: {}", videoTimestamp);
 
         resetFlvVideoTagDts(videoData, videoTimestamp);
         videoTimestamp += (timestamp - prevVideoTimestamp);
         prevVideoTimestamp = timestamp;
+
+        // 3. data
         this.sink().next(Jt1078Subscription.fromByteArray(DefaultJt1078SubscriptionType.FLV, videoData));
     }
 

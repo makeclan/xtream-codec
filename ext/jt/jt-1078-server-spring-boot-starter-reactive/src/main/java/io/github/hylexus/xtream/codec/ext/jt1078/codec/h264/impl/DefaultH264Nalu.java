@@ -52,7 +52,7 @@ public class DefaultH264Nalu implements H264Nalu {
         if (readableBytes <= 0) {
             return "<EMPTY>";
         }
-        return "ByteBuf[readableBytes=" + readableBytes + ", data=[" + FormatUtils.toString(payload, 0, Math.min(5, readableBytes), ",") + "...] ]";
+        return "ByteBuf[readableBytes=" + readableBytes + ", data=[" + FormatUtils.toString(payload, 0, Math.min(20, readableBytes), ", ") + "...] ]";
     }
 
     @Override

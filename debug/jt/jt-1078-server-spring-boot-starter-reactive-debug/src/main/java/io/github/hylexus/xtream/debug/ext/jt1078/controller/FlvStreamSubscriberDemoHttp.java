@@ -67,7 +67,10 @@ public class FlvStreamSubscriberDemoHttp {
                 .channelNumber(params.getChannel())
                 .timeout(Duration.ofSeconds(timeout))
                 .h264Meta(new H264Jt1078SubscriberCreator.H264Meta(params.getNaluDecoderRingBufferSize()))
+                .hasAudio(params.isHasAudio())
+                .hasVideo(params.isHasVideo())
                 .build();
+
         return this.publisher.subscribeH264ToFlvStream(subscriberCreator)
                 .publishOn(SCHEDULER)
                 .onErrorComplete(Jt1078SessionDestroyException.class)

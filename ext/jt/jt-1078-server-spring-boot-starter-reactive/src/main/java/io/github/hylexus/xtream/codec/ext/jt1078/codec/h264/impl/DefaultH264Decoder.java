@@ -30,9 +30,6 @@ public class DefaultH264Decoder implements H264Decoder {
 
     private final ByteRingBuffer ringBuffer;
 
-    // naluStart 是绝对索引，指向当前 NALU 数据开始的位置（不含StartCode）
-    private int naluStart = -1;
-
     public DefaultH264Decoder(int capacity) {
         this.ringBuffer = new ByteRingBuffer(capacity);
     }
@@ -41,49 +38,44 @@ public class DefaultH264Decoder implements H264Decoder {
     public List<H264Nalu> decode(ByteBuf input) {
         this.ringBuffer.writeBytes(input);
 
-        int readerIndex = this.ringBuffer.readerIndex();
-        int writerIndex = this.ringBuffer.writerIndex();
-
-        int zeroCount = 0;
-        int i = readerIndex;
+        int readerIndex = ringBuffer.readerIndex();
+        final int writerIndex = ringBuffer.writerIndex();
 
         final List<H264Nalu> nalus = new ArrayList<>();
-        while (i < writerIndex) {
-            final byte b = ringBuffer.getByte(i);
 
-            if (b == 0) {
-                zeroCount++;
-                i++;
-            } else if (b == 1 && zeroCount >= 2) {
-                final int startCodeLength = (zeroCount >= 3) ? 4 : 3;
-                final int startCodePosition = i - zeroCount;
+        // 当前扫描位置
+        int i = readerIndex;
 
-                if (naluStart == -1) {
-                    // 第一次找到 StartCode，下一字节是NALU起点
-                    naluStart = startCodePosition + startCodeLength;
-                } else {
-                    // 切割前一个NALU
-                    final int naluLen = startCodePosition - naluStart;
-                    if (naluLen > 0) {
-                        final byte[] naluBytes = ringBuffer.peek(naluStart - readerIndex, naluLen);
-                        final H264Nalu h264Nalu = createH264Nalu(Unpooled.wrappedBuffer(naluBytes));
-                        nalus.add(h264Nalu);
-                        ringBuffer.discard(naluStart - readerIndex + naluLen);
-                        // long discarded =  naluStart - readerIndex +  naluLen;
-                        readerIndex = ringBuffer.readerIndex();
-                        writerIndex = ringBuffer.writerIndex();
-                        i = readerIndex;
-                        naluStart = startCodePosition + startCodeLength;
-                        zeroCount = 0;
-                        continue;
-                    } else {
-                        naluStart = startCodePosition + startCodeLength;
+        // 上一个 StartCode 的位置
+        int lastStartCodePos = -1;
+        int lastStartCodeLength = 0;
+
+        while (i < writerIndex - 3) {
+            final int startCodeLength = getStartCodeLength(i);
+
+            if (startCodeLength > 0) {
+                if (lastStartCodePos != -1) {
+                    // 提取上一个 NALU（不含当前 StartCode）
+                    final int naluStart = lastStartCodePos + lastStartCodeLength;
+                    final int naluEnd = i;
+
+                    if (naluEnd > naluStart) {
+                        final byte[] naluData = ringBuffer.peek(naluStart - readerIndex, naluEnd - naluStart);
+                        nalus.add(createH264Nalu(Unpooled.wrappedBuffer(naluData)));
+
+                        // 移动 readerIndex 到当前 StartCode 前
+                        ringBuffer.discard(naluEnd - readerIndex);
+                        readerIndex = ringBuffer.readerIndex(); // 更新 readerIndex
+                        i = readerIndex; // 重置扫描起点
                     }
                 }
-                zeroCount = 0;
-                i++;
+
+                // 记录当前 StartCode 信息
+                lastStartCodePos = i;
+                lastStartCodeLength = startCodeLength;
+
+                i += startCodeLength; // 跳过 StartCode
             } else {
-                zeroCount = 0;
                 i++;
             }
         }
@@ -91,28 +83,36 @@ public class DefaultH264Decoder implements H264Decoder {
         return nalus;
     }
 
+    /**
+     * 检查当前位置是否是 StartCode
+     */
+    private int getStartCodeLength(int pos) {
+        final byte b0 = ringBuffer.getByte(pos);
+        final byte b1 = ringBuffer.getByte(pos + 1);
+        final byte b2 = ringBuffer.getByte(pos + 2);
+
+        // 0x00,0x00,0x01
+        if (b0 == 0 && b1 == 0 && b2 == 1) {
+            return 3;
+        }
+
+        if (pos + 3 < ringBuffer.writerIndex()) {
+            final byte b3 = ringBuffer.getByte(pos + 3);
+            // 0x00,0x00,0x00,0x01
+            if (b0 == 0 && b1 == 0 && b2 == 0 && b3 == 1) {
+                return 4;
+            }
+        }
+
+        return 0;
+    }
+
     protected H264Nalu createH264Nalu(ByteBuf data) {
         final H264NaluHeader h264NaluHeader = H264NaluHeader.of(data.getByte(0));
         return new DefaultH264Nalu(
                 h264NaluHeader,
-                // data.slice(1, data.readableBytes() - 1),
                 data.slice(0, data.readableBytes())
         );
     }
 
-    // 读取 ringBuffer 的最后一部分未闭合的数据
-    // 直播的场景下 好像最后一部分数据可有可无 不用考虑
-    public List<H264Nalu> flush() {
-        final List<H264Nalu> nalus = new ArrayList<>();
-        final int size = ringBuffer.readableBytes();
-        if (naluStart != -1 && size > (naluStart - ringBuffer.readerIndex())) {
-            final int offset = naluStart - ringBuffer.readerIndex();
-            final int naluLength = size - offset;
-            final byte[] naluBytes = ringBuffer.peek(offset, naluLength);
-            nalus.add(createH264Nalu(Unpooled.wrappedBuffer(naluBytes)));
-            ringBuffer.discard(size);
-        }
-        naluStart = -1;
-        return nalus;
-    }
 }

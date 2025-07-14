@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.debug.ext.jt1078.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -42,5 +43,11 @@ public class DemoVideoStreamSubscriberDto {
     private boolean byteArrayAsBase64 = false;
 
     private int naluDecoderRingBufferSize = 1 << 18;
+
+    @JsonProperty("hasAudio")
+    private boolean hasAudio = true;
+
+    @JsonProperty("hasVideo")
+    private boolean hasVideo = true;
 
 }
