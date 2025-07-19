@@ -2,6 +2,7 @@ export interface Jt1078ServerConfig {
     jt1078ServerHost: string;
     jt1078ServerTcpPort: number;
     jt1078ServerUdpPort: number;
+    jt1078ServerWebPort: number;
 }
 
 export enum Jt1078DataType {

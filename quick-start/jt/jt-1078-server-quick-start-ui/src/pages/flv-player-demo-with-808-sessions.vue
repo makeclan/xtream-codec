@@ -2,14 +2,14 @@
 import {computed, onMounted, reactive, Ref, ref} from "vue";
 import FlvPlayer, {FlvPlayerConfig, FlvPlayerStatus} from "../components/FlvPlayer.vue";
 import {jt1078ChannelConfig} from "../types/model.ts";
-import {QuestionFilled, Search} from "@element-plus/icons-vue";
+import {QuestionFilled} from "@element-plus/icons-vue";
 import {
   requestJt1078ServerConfigApi,
   requestProxy9101CommandApi,
   requestProxy9102CommandApi,
   requestProxyJt808SessionsApi
 } from "../api/proxy-api.ts";
-import {Jt808Session} from "../model/jt808-models.ts";
+import {Jt808ProtocolVersion, Jt808Session, TransportProtocolType} from "../model/jt808-models.ts";
 import {
   Command9101CommandType,
   Jt1078DataType,
@@ -17,11 +17,13 @@ import {
   Jt1078StreamType,
   MediaTypeToClose
 } from "../model/jt1078-models.ts";
+import {ElMessage} from "element-plus";
 
 const pageState = reactive({
   commandDialog: {
     visible: false,
     activeTab: "command9101",
+    autoCloseIfSuccess: true,
     command9101: {
       loading: false,
       commandResult: "",
@@ -36,27 +38,46 @@ const pageState = reactive({
   },
 })
 
-const closeCommandPanel = () => pageState.commandDialog.visible = false
+const closeCommandPanel = (panelToSwitch?: string) => {
+  pageState.commandDialog.visible = false
+  console.log(panelToSwitch)
+  if (panelToSwitch) {
+    pageState.commandDialog.activeTab = panelToSwitch
+  }
+}
 
 const jt1078ServerConfig = ref<Jt1078ServerConfig>({} as Jt1078ServerConfig)
-const jt808ProxySession: {
+const jt808ProxySession = reactive<{
   data?: Jt808Session[],
   total?: number,
-  selectedRow?: Jt808Session | undefined
-} = reactive({
+  selectedRow?: Jt808Session | undefined,
+  formData: {
+    terminalId: undefined,
+    protocolVersion: Jt808ProtocolVersion,
+    protocolType: TransportProtocolType,
+    pageNumber: number,
+    pageSize: number,
+  }
+}>({
   data: [],
   total: 0,
   selectedRow: undefined,
+  formData: {
+    terminalId: undefined,
+    protocolVersion: '',
+    protocolType: '',
+    pageNumber: 1,
+    pageSize: 10,
+  }
 })
-const handleRowClick = (row: any, column: any) => {
-  if (column.property === 'ops') {
-    return;
-  }
-  if (!editable.value) {
-    return
-  }
-  jt808ProxySession.selectedRow = row
-  formData.sim = row.terminalId
+const sessionPaginationCurrentChange = async (pageNumber: number) => {
+  jt808ProxySession.formData.pageNumber = pageNumber
+  await loadJt808SessionList()
+}
+const sessionPaginationSizeChange = async (pageSize: number) => {
+  jt808ProxySession.formData.pageNumber = 1
+  jt808ProxySession.formData.pageSize = pageSize
+  await loadJt808SessionList()
 }
 const selectCurrentRowSession = (row: any) => {
   if (!editable.value) {
@@ -68,13 +89,30 @@ const selectCurrentRowSession = (row: any) => {
   pageState.jt808SessionPanel.visible = false
 }
 
-const tableRowClassName = ({row}: { row: any }) => {
+const tableRowClassName = ({row}: { row: Jt808Session }) => {
   if (row.id === jt808ProxySession.selectedRow?.id) {
-    return 'current-row';
+    return 'current-selected-row';
   }
   return '';
 };
-const formData = reactive({
+const formData = reactive<{
+  protocol: 'ws' | 'wss' | 'http' | 'https',
+  host: string,
+  port: number,
+  sim: string | undefined,
+  channelNumber: number,
+  timeout: number,
+  hasVideo: boolean,
+  hasAudio: boolean,
+  naluDecoderRingBufferSizeExponent: number,
+  command9101: { dataType: Jt1078DataType, streamType: Jt1078StreamType, timeout: number },
+  command9102: {
+    commandType: Command9101CommandType,
+    mediaTypeToClose: MediaTypeToClose,
+    streamTypeToSwitch: Jt1078StreamType,
+    timeout: number
+  },
+}>({
   protocol: 'ws',
   host: 'localhost',
   port: 9999,
@@ -155,6 +193,14 @@ const sendCommand9101 = async () => {
   pageState.commandDialog.command9101.commandResult = JSON.stringify(response, null, 2)
 
   if (response.result === 0) {
+    if (pageState.commandDialog.autoCloseIfSuccess) {
+      closeCommandPanel('command9102')
+      ElMessage({
+        message: '0x9101 指令下发成功',
+        type: 'success',
+        showClose: true,
+      })
+    }
     await restartPlayer()
   }
 }
@@ -172,11 +218,30 @@ const sendCommand9102 = async () => {
     pageState.commandDialog.command9102.loading = false
     resetPlayer()
   })
+
+  if (result.result === 0) {
+    if (pageState.commandDialog.autoCloseIfSuccess) {
+      closeCommandPanel('command9101')
+      ElMessage({
+        message: '0x9102 指令下发成功',
+        type: 'success',
+        showClose: true,
+      })
+    }
+  }
   pageState.commandDialog.command9102.commandResult = JSON.stringify(result, null, 2)
+
 }
 
-async function loadJt808SessionList() {
-  const {data, total} = await requestProxyJt808SessionsApi()
+const loadJt808SessionList = async () => {
+  const params = {
+    terminalId: jt808ProxySession.formData.terminalId,
+    pageNumber: jt808ProxySession.formData.pageNumber,
+    protocolType: jt808ProxySession.formData.protocolType,
+    protocolVersion: jt808ProxySession.formData.protocolVersion,
+    pageSize: jt808ProxySession.formData.pageSize,
+  };
+  const {data, total} = await requestProxyJt808SessionsApi(params)
   jt808ProxySession.data = data
   jt808ProxySession.total = total
 }
@@ -192,7 +257,8 @@ const resetPlayer = () => {
 
 onMounted(async () => {
   jt1078ServerConfig.value = await requestJt1078ServerConfigApi()
-  formData.host = jt1078ServerConfig.value.jt1078ServerHost
+  formData.port = jt1078ServerConfig.value.jt1078ServerWebPort
+  formData.host = window.location.hostname
   await loadJt808SessionList();
 })
 </script>
@@ -201,8 +267,8 @@ onMounted(async () => {
   <div class="demo-root">
     <el-card class="form-box">
       <template #header>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div style="display: flex; justify-content: end; width: 100%;">H.264 -&gt; FLV</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; height: 15px;">
+          <div style="display: flex; justify-content: end; width: 100%; font-weight: bold;">H.264 -&gt; FLV</div>
           <div style="display: flex; justify-content: end; width: 100%;">
             <el-button type="success" @click="pageState.jt808SessionPanel.visible = true">选择设备
             </el-button>
@@ -212,8 +278,35 @@ onMounted(async () => {
         </div>
       </template>
       <div>
-        <el-alert v-if="!formData.sim" title="请先【选择设备】" type="error" effect="dark" style="margin-bottom: 20px;"/>
         <el-form label-width="auto" size="small" :disabled="!editable">
+          <el-divider style="margin-top: 0;">JT/T 1078 服务器配置</el-divider>
+          <el-form-item label="1078服务器IP(域名)">
+            <template #label>
+              <div style="display: flex;align-items: center;">
+                <span>1078服务器IP(域名)</span>
+                <el-tooltip content="JT/T 1078 码流会上传到这个地址(设备能访问即可，不一定要公网地址)"
+                            placement="top">
+                  <el-icon class="el-icon-info" style="margin-left: 5px;">
+                    <QuestionFilled/>
+                  </el-icon>
+                </el-tooltip>
+              </div>
+            </template>
+            <el-input v-model="jt1078ServerConfig.jt1078ServerHost"/>
+          </el-form-item>
+          <el-form-item label="1078服务器端口(TCP)">
+            <el-input v-model="jt1078ServerConfig.jt1078ServerTcpPort"/>
+          </el-form-item>
+          <el-form-item label="1078服务器端口(UDP)">
+            <el-input v-model="jt1078ServerConfig.jt1078ServerUdpPort">
+              <template #suffix>
+                <el-tag type="danger">暂不支持UDP</el-tag>
+              </template>
+            </el-input>
+          </el-form-item>
+          <el-divider>码流订阅配置</el-divider>
+          <el-alert v-if="!formData.sim" title="请先【选择设备】" type="error" effect="dark"
+                    style="margin-bottom: 20px;"/>
           <el-form-item label="协议">
             <el-radio-group v-model="formData.protocol">
               <el-radio-button value="ws">WebSocket</el-radio-button>
@@ -222,21 +315,33 @@ onMounted(async () => {
               <el-radio-button value="https">HTTP Secure</el-radio-button>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="域名">
+          <el-form-item label="播放地址域名">
+            <template #label>
+              <div style="display: flex;align-items: center;">
+                <span>播放地址域名</span>
+                <el-tooltip content="FLV视频播放地址域名(浏览器能访问即可，不一定要公网地址)"
+                            placement="top">
+                  <el-icon class="el-icon-info" style="margin-left: 5px;">
+                    <QuestionFilled/>
+                  </el-icon>
+                </el-tooltip>
+              </div>
+            </template>
             <el-input v-model="formData.host" placeholder="localhost"/>
           </el-form-item>
           <el-form-item label="端口">
             <el-input-number v-model="formData.port" placeholder="9999" :min="0" :max="65535"/>
           </el-form-item>
           <el-form-item label="SIM">
-            <el-input v-model="formData.sim" placeholder="终端手机号：点击【选择设备】按钮"/>
+            <div style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+              <el-input v-model="formData.sim" placeholder="终端手机号：点击【选择设备】按钮"/>
+            </div>
           </el-form-item>
           <el-form-item label="通道">
             <el-select v-model="formData.channelNumber" filterable placeholder="请选择通道" @change="onChannelChange">
               <el-option v-for="item in channelOptions" :key="item.channel" :label="item.title" :value="item.channel">
                 {{ item.title }}
-                <el-tag type="danger" v-if="item.hasAudio && !item.hasVideo">暂不支持</el-tag>
-                <el-tag type="primary" v-else-if="item.hasAudio && item.hasVideo">仅视频(H.264)</el-tag>
+                <el-tag :type="!item.hasVideo ? 'danger': 'success'">{{ item.remark }}</el-tag>
               </el-option>
             </el-select>
           </el-form-item>
@@ -282,15 +387,19 @@ onMounted(async () => {
             </el-input-number>
           </el-form-item>
           <el-form-item label="播放地址">
+            <el-alert type="success" style="margin-bottom: 10px;">
+              为方便调试，本示例服务端允许跨域访问
+            </el-alert>
             <el-input type="textarea" v-model="playerUrl" autosize readonly disabled></el-input>
           </el-form-item>
         </el-form>
       </div>
     </el-card>
-    <div style="width: 100%;">
+    <div style="width: 100%; margin-left: 5px;">
       <flv-player
           ref="demoPlayerRef"
           class="player-box flv-player"
+          style="border: 0;"
           :config="playerConfig"
           @on-player-status-change="onPlayerStatusChange"/>
     </div>
@@ -332,6 +441,10 @@ onMounted(async () => {
               <template #suffix>秒</template>
             </el-input-number>
           </el-form-item>
+          <el-form-item label="自动关闭">
+            <el-checkbox v-model="pageState.commandDialog.autoCloseIfSuccess">如果指令下发成功，自动关闭对话框
+            </el-checkbox>
+          </el-form-item>
           <el-form-item label="客户端回复" v-if="pageState.commandDialog.command9101.commandResult">
             <el-input v-model="pageState.commandDialog.command9101.commandResult" type="textarea" autosize readonly
                       disabled/>
@@ -341,7 +454,7 @@ onMounted(async () => {
               <el-button type="success" size="default" @click="sendCommand9101"
                          :loading="pageState.commandDialog.command9101.loading">发送指令
               </el-button>
-              <el-button type="primary" size="default" @click="closeCommandPanel">关闭</el-button>
+              <el-button type="primary" size="default" @click="() => closeCommandPanel(undefined)">关闭</el-button>
             </div>
           </el-form-item>
         </el-form>
@@ -355,8 +468,7 @@ onMounted(async () => {
             <el-select v-model="formData.channelNumber" filterable placeholder="请选择通道">
               <el-option v-for="item in channelOptions" :key="item.channel" :label="item.title" :value="item.channel">
                 {{ item.title }}
-                <el-tag type="danger" v-if="item.hasAudio && !item.hasVideo">暂不支持</el-tag>
-                <el-tag type="primary" v-else-if="item.hasAudio && item.hasVideo">仅视频(H.264)</el-tag>
+                <el-tag :type="!item.hasVideo ? 'danger': 'success'">{{ item.remark }}</el-tag>
               </el-option>
             </el-select>
           </el-form-item>
@@ -387,6 +499,10 @@ onMounted(async () => {
               <template #suffix>秒</template>
             </el-input-number>
           </el-form-item>
+          <el-form-item label="自动关闭">
+            <el-checkbox v-model="pageState.commandDialog.autoCloseIfSuccess">如果指令下发成功，自动关闭对话框
+            </el-checkbox>
+          </el-form-item>
           <el-form-item label="客户端回复" v-if="pageState.commandDialog.command9102.commandResult">
             <el-input v-model="pageState.commandDialog.command9102.commandResult" type="textarea" autosize readonly
                       disabled/>
@@ -396,7 +512,7 @@ onMounted(async () => {
               <el-button type="success" size="default" @click="sendCommand9102"
                          :loading="pageState.commandDialog.command9102.loading">发送指令
               </el-button>
-              <el-button type="primary" size="default" @click="closeCommandPanel">关闭</el-button>
+              <el-button type="primary" size="default" @click="() => closeCommandPanel(undefined)">关闭</el-button>
             </div>
           </el-form-item>
         </el-form>
@@ -408,30 +524,77 @@ onMounted(async () => {
       v-model="pageState.jt808SessionPanel.visible"
       title="JT/T 808 终端列表"
       direction="rtl"
-      size="100%"
-      :z-index="99999"
-      append-to-body
+      size="calc(100vw - 100px)"
   >
     <div>
-      <el-table :data="jt808ProxySession.data" :total="jt808ProxySession.total" :page-size="10" border
-                @row-click="handleRowClick"
+      <el-form inline size="small" style="width: 100%; display: flex; align-items: center; justify-content: center;">
+        <el-form-item label="SIM">
+          <el-input v-model="jt808ProxySession.formData.terminalId" clearable placeholder="终端手机号"/>
+        </el-form-item>
+        <el-form-item label="协议">
+          <el-radio-group v-model="jt808ProxySession.formData.protocolType">
+            <el-radio-button :value="'TCP'" label="TCP"></el-radio-button>
+            <el-radio-button :value="'UDP'" label="UDP"></el-radio-button>
+            <el-radio-button :value="''" label="不限"></el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="版本">
+          <el-radio-group v-model="jt808ProxySession.formData.protocolVersion">
+            <el-radio-button :value="'VERSION_2011'">2011</el-radio-button>
+            <el-radio-button :value="'VERSION_2013'">2013</el-radio-button>
+            <el-radio-button :value="'VERSION_2019'">2019</el-radio-button>
+            <el-radio-button :value="''">不限</el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="loadJt808SessionList">查询</el-button>
+        </el-form-item>
+      </el-form>
+      <el-table :data="jt808ProxySession.data"
+                :total="jt808ProxySession.total"
+                :page-size="10"
+                border
                 :row-class-name="tableRowClassName"
                 style="width: 100%;">
         <el-table-column label="ID" prop="id" fixed="left" show-overflow-tooltip width="510"/>
-        <el-table-column label="协议" prop="protocolType" width="70"/>
-        <el-table-column label="版本" prop="protocolVersion" width="130"/>
-        <el-table-column label="SIM" prop="terminalId" width="200"/>
-        <el-table-column label="最近一次通信时间" prop="lastCommunicateTime" width="210"/>
-        <el-table-column label="创建时间" prop="creationTime" width="210"/>
-        <el-table-column label="操作" fixed="right" width="120" prop="ops">
-          <template #header>
-            <el-button :icon="Search" @click="loadJt808SessionList">刷新</el-button>
+        <el-table-column label="协议" prop="protocolType" width="70">
+          <template #default="scope">
+            <el-tag v-if="scope.row.protocolType === 'TCP'" type="success">TCP</el-tag>
+            <el-tag v-else-if="scope.row.protocolType === 'UDP'" type="success">UDP</el-tag>
+            <el-tag v-else type="primary">{{ scope.row.protocolVersion }}</el-tag>
           </template>
+        </el-table-column>
+        <el-table-column label="版本" prop="protocolVersion" width="80">
+          <template #default="scope">
+            <el-tag v-if="scope.row.protocolVersion === 'VERSION_2011'" type="info">2019</el-tag>
+            <el-tag v-else-if="scope.row.protocolVersion === 'VERSION_2013'" type="success">2013</el-tag>
+            <el-tag v-else-if="scope.row.protocolVersion === 'VERSION_2019'" type="primary">2019</el-tag>
+            <el-tag v-else>{{ scope.row.protocolVersion }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="SIM" prop="terminalId" min-width="200"/>
+        <el-table-column label="最近一次通信时间" prop="lastCommunicateTime" min-width="210"/>
+        <el-table-column label="创建时间" prop="creationTime" min-width="210"/>
+        <el-table-column label="操作" fixed="right" width="120" prop="ops">
           <template #default="scope">
             <el-button type="primary" size="small" @click="selectCurrentRowSession(scope.row)">选择设备</el-button>
           </template>
         </el-table-column>
       </el-table>
+      <div style="width: 100%; display: flex; align-items: center; justify-content: center; margin-top: 10px;">
+        <el-pagination
+            v-model:current-page="jt808ProxySession.formData.pageNumber"
+            v-model:page-size="jt808ProxySession.formData.pageSize"
+            :total="jt808ProxySession.total"
+            :page-sizes="[10, 20, 50, 75, 100, 200, 300, 400]"
+            :default-page-size="10"
+            :default-current-page="1"
+            background
+            layout="total, sizes, prev, pager, next, jumper"
+            @current-change="sessionPaginationCurrentChange"
+            @size-change="sessionPaginationSizeChange"
+        />
+      </div>
     </div>
   </el-drawer>
 </template>
@@ -446,7 +609,7 @@ onMounted(async () => {
     border: 1px solid var(--el-border-color);
     border-radius: 10px;
     width: 100%;
-    height: calc(100vh - 80px);
+    height: calc(100vh - 60px);
     overflow-y: scroll;
   }
 
@@ -462,5 +625,9 @@ onMounted(async () => {
   border: 1px solid var(--el-border-color);
   border-radius: 10px;
   padding: 10px;
+}
+
+:deep(.el-table .current-selected-row) {
+  --el-table-tr-bg-color: var(--el-color-primary-light-5);
 }
 </style>

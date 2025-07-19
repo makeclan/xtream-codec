@@ -25,15 +25,6 @@ export default defineConfig({
                     return path;
                 },
             },
-            '/dashboard-api': {
-                target: "http://localhost:8888",
-                changeOrigin: true,
-                rewrite: (path) => {
-                    // console.log(`Proxying request: ${path} -> http://localhost:8888${path}`);
-                    return path;
-                },
-            },
-
         },
     },
 });

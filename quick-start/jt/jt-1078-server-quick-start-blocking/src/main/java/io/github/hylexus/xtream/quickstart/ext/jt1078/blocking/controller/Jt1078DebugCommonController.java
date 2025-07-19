@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.debug.ext.jt1078.controller;
+package io.github.hylexus.xtream.quickstart.ext.jt1078.blocking.controller;
 
 import io.github.hylexus.xtream.codec.ext.jt1078.boot.properties.XtreamJt1078ServerProperties;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/jt-1078-server-spring-boot-starter-reactive-debug")
+@RequestMapping("/jt-1078-server-quick-start/api/v1/")
 public class Jt1078DebugCommonController {
     private final String jt1078ServerHost;
     private final XtreamJt1078ServerProperties jt1078ServerProperties;
@@ -33,7 +33,7 @@ public class Jt1078DebugCommonController {
 
     public Jt1078DebugCommonController(
             XtreamJt1078ServerProperties jt1078ServerProperties,
-            @Value("${sample-config.jt1078-server-host}") String jt1078ServerHost,
+            @Value("${quick-start-app-config.jt1078-server-host}") String jt1078ServerHost,
             @Value("${server.port}") int webServerPort) {
         this.jt1078ServerHost = jt1078ServerHost;
         this.jt1078ServerProperties = jt1078ServerProperties;

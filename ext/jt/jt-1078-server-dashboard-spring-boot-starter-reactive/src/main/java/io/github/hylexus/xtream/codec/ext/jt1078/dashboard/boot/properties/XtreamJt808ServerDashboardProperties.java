@@ -23,6 +23,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.util.StringUtils;
 
+import java.time.Duration;
+import java.util.List;
+
 @Getter
 @Setter
 @ToString
@@ -46,10 +49,28 @@ public class XtreamJt808ServerDashboardProperties {
     @NestedConfigurationProperty
     private Jt808DashboardProxy jt808DashboardProxy = new Jt808DashboardProxy();
 
+    @NestedConfigurationProperty
+    private CorsProperties dashboardApiCorsFilter = new CorsProperties();
+
     @Getter
     @Setter
     public static class Jt808DashboardProxy {
         private String baseUrl = "http://localhost:8888";
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class CorsProperties {
+        private boolean enabled = false;
+        private String pathPattern = "/dashboard-api/jt1078/v1/stream-data/**";
+        private Boolean allowCredentials = false;
+        private List<String> allowedOrigins;
+        private List<String> allowedOriginPatterns;
+        private List<String> allowedHeaders;
+        private List<String> exposedHeaders;
+        private List<String> allowedMethods;
+        private Duration maxAge;
     }
 
     public String getFormatedBasePath() {

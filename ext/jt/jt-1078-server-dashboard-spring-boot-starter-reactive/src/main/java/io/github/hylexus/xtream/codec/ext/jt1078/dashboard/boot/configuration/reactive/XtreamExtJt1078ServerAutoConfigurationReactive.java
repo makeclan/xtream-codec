@@ -23,13 +23,20 @@ import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.controller.reactive.B
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.service.Jt808ProxyServiceReactive;
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.service.impl.DefaultJt808ProxyServiceReactive;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078RequestPublisher;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.util.StringUtils;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsWebFilter;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.reactive.HandlerMapping;
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
@@ -63,6 +70,65 @@ public class XtreamExtJt1078ServerAutoConfigurationReactive {
         simpleUrlHandlerMapping.setUrlMap(handlerMap);
         simpleUrlHandlerMapping.setOrder(-1);
         return simpleUrlHandlerMapping;
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "jt1078-server.features.dashboard.dashboard-api-cors-filter", name = "enabled", havingValue = "true")
+    public CorsWebFilter jt1078DashboardApiCorsFilter(XtreamJt808ServerDashboardProperties dashboardProperties) {
+        final XtreamJt808ServerDashboardProperties.CorsProperties corsProperties = dashboardProperties.getDashboardApiCorsFilter();
+
+        final CorsConfiguration config = new CorsConfiguration();
+
+        // 1. path-pattern
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration(corsProperties.getPathPattern(), config);
+
+        // 2. allow-credentials
+        if (corsProperties.getAllowCredentials() != null) {
+            config.setAllowCredentials(corsProperties.getAllowCredentials());
+        }
+
+        // 3. allowed-origins or allowed-origin-patterns
+        final List<String> allowedOriginPatterns = filteredNonNullList(corsProperties.getAllowedOriginPatterns());
+        if (allowedOriginPatterns.isEmpty()) {
+            final List<String> allowedOrigins = filteredNonNullList(corsProperties.getAllowedOrigins());
+            if (!allowedOrigins.isEmpty()) {
+                config.setAllowedOrigins(allowedOrigins);
+            }
+        } else {
+            config.setAllowedOriginPatterns(allowedOriginPatterns);
+        }
+
+        // 4. allowed-headers
+        final List<String> allowedHeaders = filteredNonNullList(corsProperties.getAllowedHeaders());
+        if (!allowedHeaders.isEmpty()) {
+            config.setAllowedHeaders(allowedHeaders);
+        }
+
+        // 5. allowed-methods
+        final List<String> allowedMethods = filteredNonNullList(corsProperties.getAllowedMethods());
+        if (!allowedMethods.isEmpty()) {
+            config.setAllowedMethods(allowedMethods);
+        }
+
+        // 6. exposed-headers
+        final List<String> exposedHeaders = filteredNonNullList(corsProperties.getExposedHeaders());
+        if (!exposedHeaders.isEmpty()) {
+            config.setExposedHeaders(exposedHeaders);
+        }
+        // 7. max-age
+        if (corsProperties.getMaxAge() != null) {
+            config.setMaxAge(corsProperties.getMaxAge());
+        }
+
+        return new CorsWebFilter(source);
+    }
+
+    public static List<String> filteredNonNullList(List<String> list) {
+        if (list == null) {
+            return Collections.emptyList();
+        }
+        return list.stream().filter(StringUtils::hasText).toList();
     }
 
 }

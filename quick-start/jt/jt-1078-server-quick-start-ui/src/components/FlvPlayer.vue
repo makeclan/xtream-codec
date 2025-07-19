@@ -266,6 +266,7 @@ defineExpose({play, reset, status})
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 15px;
 
     .player-header-left {
       display: flex;

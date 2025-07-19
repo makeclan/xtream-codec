@@ -29,10 +29,15 @@ import java.util.Map;
 public class Jt1078DebugCommonController {
     private final String jt1078ServerHost;
     private final XtreamJt1078ServerProperties jt1078ServerProperties;
+    private final int webServerPort;
 
-    public Jt1078DebugCommonController(@Value("${quick-start-app-config.jt1078-server-host}") String jt1078ServerHost, XtreamJt1078ServerProperties jt1078ServerProperties) {
+    public Jt1078DebugCommonController(
+            XtreamJt1078ServerProperties jt1078ServerProperties,
+            @Value("${quick-start-app-config.jt1078-server-host}") String jt1078ServerHost,
+            @Value("${server.port}") int webServerPort) {
         this.jt1078ServerHost = jt1078ServerHost;
         this.jt1078ServerProperties = jt1078ServerProperties;
+        this.webServerPort = webServerPort;
     }
 
     @GetMapping("/server-config")
@@ -40,7 +45,8 @@ public class Jt1078DebugCommonController {
         return Map.of(
                 "jt1078ServerHost", jt1078ServerHost,
                 "jt1078ServerTcpPort", jt1078ServerProperties.getTcpServer().getPort(),
-                "jt1078ServerUdpPort", jt1078ServerProperties.getUdpServer().getPort()
+                "jt1078ServerUdpPort", jt1078ServerProperties.getUdpServer().getPort(),
+                "jt1078ServerWebPort", webServerPort
         );
     }
 

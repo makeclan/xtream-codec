@@ -58,7 +58,7 @@ $header-height: 50px;
 
 .main-area {
   z-index: 10;
-  padding: 10px 10px;
+  padding: 5px;
   margin: $header-height 0 0 $aside-width;
   width: calc(100vw - #{$aside-width});
   height: calc(100vh - #{$header-height});

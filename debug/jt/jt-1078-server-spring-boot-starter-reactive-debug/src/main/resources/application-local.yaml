@@ -32,6 +32,17 @@ jt1078-server:
       forward-not-found-to-index: true
       jt808-dashboard-proxy:
         base-url: http://localhost:8888
+      # FIXME 为方便调试 这里允许播放地址跨域访问
+      dashboard-api-cors-filter:
+        enabled: true
+        path-pattern: /dashboard-api/jt1078/v1/stream-data/**
+        allow-credentials: false
+        allowed-origins: '*'
+        allowed-origin-patterns: [ ]
+        allowed-headers: '*'
+        exposed-headers: [ ]
+        allowed-methods: '*'
+        max-age: null
   tcp-server:
     enabled: true
     host: 0.0.0.0
