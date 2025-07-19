@@ -104,7 +104,7 @@ public class H264ToFlvSubscriber extends AbstractInternalSubscriber {
             if (this.prevAudioTimestamp == 0) {
                 this.prevAudioTimestamp = timestamp;
             }
-            log.info("audio-dts: {}", audioTimestamp);
+            // log.info("audio-dts: {}", audioTimestamp);
 
             audioTimestamp += (timestamp - prevAudioTimestamp);
             prevAudioTimestamp = timestamp;
@@ -147,7 +147,7 @@ public class H264ToFlvSubscriber extends AbstractInternalSubscriber {
             return;
         }
 
-        log.info("video-dts: {}", videoTimestamp);
+        // log.info("video-dts: {}", videoTimestamp);
 
         resetFlvVideoTagDts(videoData, videoTimestamp);
         videoTimestamp += (timestamp - prevVideoTimestamp);

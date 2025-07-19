@@ -10,7 +10,7 @@ echo "SUBPROJECT_ROOT_DIR      : ${SUBPROJECT_ROOT_DIR}"
 cd ${XTREAM_PROJECT_ROOT_DIR}
 
 ./gradlew -P buildJt808DashboardUi=true \
--P buildQuickstartUiNonblocking=true \
+-P buildJt808QuickstartUiNonblocking=true \
 -P xtream.skip.fatjar=false \
 -P xtream.skip.checkstyle=false \
 :quick-start:jt:jt-808-server-quick-start-with-storage-nonblocking:clean \

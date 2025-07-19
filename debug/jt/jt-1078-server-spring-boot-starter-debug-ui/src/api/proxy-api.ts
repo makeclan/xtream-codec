@@ -22,7 +22,6 @@ export const requestProxy9102CommandApi = async (data: any): Promise<TerminalCom
     });
 }
 
-///dashboard-api/jt1078/808-dashboard-proxy/v1
 export const requestJt1078ServerConfigApi = async (): Promise<Jt1078ServerConfig> => {
     return await request({
             path: '/jt-1078-server-spring-boot-starter-reactive-debug/server-config',

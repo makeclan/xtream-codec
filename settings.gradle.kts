@@ -52,6 +52,8 @@ include("quick-start:jt:jt-808-server-quick-start")
 include("quick-start:jt:jt-808-server-quick-start-with-dashboard")
 include("quick-start:jt:jt-808-server-quick-start-with-storage-nonblocking")
 include("quick-start:jt:jt-808-server-quick-start-with-storage-blocking")
+include("quick-start:jt:jt-1078-server-quick-start-nonblocking")
+include("quick-start:jt:jt-1078-server-quick-start-blocking")
 
 setBuildFileName(rootProject)
 

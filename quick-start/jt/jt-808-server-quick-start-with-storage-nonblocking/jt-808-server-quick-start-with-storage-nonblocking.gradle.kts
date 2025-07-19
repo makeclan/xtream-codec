@@ -58,13 +58,13 @@ extensions.configure(LicenseExtension::class.java) {
     }
 }
 
-// ./gradlew clean build -P buildQuickstartUiNonblocking=true
-val buildQuickstartUiNonblocking = getConfigAsBoolean("buildQuickstartUiNonblocking") || project.findProperty("buildQuickstartUiNonblocking") == "true"
+// ./gradlew clean build -P buildJt808QuickstartUiNonblocking=true
+val buildJt808QuickstartUiNonblocking = getConfigAsBoolean("buildJt808QuickstartUiNonblocking") || project.findProperty("buildJt808QuickstartUiNonblocking") == "true"
 val quickstartUiDir = file("../jt-808-server-quick-start-with-storage-ui")
-val quickstartUiGroup = "quickstart"
+val quickstartUiGroup = "jt808-quickstart"
 
-tasks.register<Exec>("buildQuickstartUiNonblocking") {
-    onlyIf { buildQuickstartUiNonblocking }
+tasks.register<Exec>("buildJt808QuickstartUiNonblocking") {
+    onlyIf { buildJt808QuickstartUiNonblocking }
     group = quickstartUiGroup
     description = "构建 quickstart-ui"
     workingDir = file(quickstartUiDir)
@@ -79,8 +79,8 @@ tasks.register<Exec>("buildQuickstartUiNonblocking") {
     )
 }
 
-tasks.register<Copy>("copyQuickstartUiDistNonblocking") {
-    onlyIf { buildQuickstartUiNonblocking }
+tasks.register<Copy>("copyJt808QuickstartUiDistNonblocking") {
+    onlyIf { buildJt808QuickstartUiNonblocking }
     group = quickstartUiGroup
     description = "复制 quickstart-ui 构建输出"
     from("${quickstartUiDir}/dist")
@@ -96,15 +96,15 @@ tasks.register<Copy>("copyQuickstartUiDistNonblocking") {
 }
 
 tasks.named("processResources").configure {
-    if (buildQuickstartUiNonblocking) {
-        dependsOn(tasks.named("copyQuickstartUiDistNonblocking"))
+    if (buildJt808QuickstartUiNonblocking) {
+        dependsOn(tasks.named("copyJt808QuickstartUiDistNonblocking"))
     }
 }
 
 tasks.named("build").configure {
-    if (buildQuickstartUiNonblocking) {
-        dependsOn(tasks.named("buildQuickstartUiNonblocking"))
-        dependsOn(tasks.named("copyQuickstartUiDistNonblocking"))
+    if (buildJt808QuickstartUiNonblocking) {
+        dependsOn(tasks.named("buildJt808QuickstartUiNonblocking"))
+        dependsOn(tasks.named("copyJt808QuickstartUiDistNonblocking"))
     }
 }
 

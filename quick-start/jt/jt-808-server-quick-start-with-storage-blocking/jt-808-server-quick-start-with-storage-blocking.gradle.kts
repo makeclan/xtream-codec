@@ -60,13 +60,13 @@ extensions.configure(LicenseExtension::class.java) {
     }
 }
 
-// ./gradlew clean build -P buildQuickstartUiBlocking=true
-val buildQuickstartUiBlocking = getConfigAsBoolean("buildQuickstartUiBlocking") || project.findProperty("buildQuickstartUiBlocking") == "true"
+// ./gradlew clean build -P buildJt808QuickstartUiBlocking=true
+val buildJt808QuickstartUiBlocking = getConfigAsBoolean("buildJt808QuickstartUiBlocking") || project.findProperty("buildJt808QuickstartUiBlocking") == "true"
 val quickstartUiDir = file("../jt-808-server-quick-start-with-storage-ui")
-val quickstartUiGroup = "quickstart"
+val quickstartUiGroup = "jt808-quickstart"
 
-tasks.register<Exec>("buildQuickstartUiBlocking") {
-    onlyIf { buildQuickstartUiBlocking }
+tasks.register<Exec>("buildJt808QuickstartUiBlocking") {
+    onlyIf { buildJt808QuickstartUiBlocking }
     group = quickstartUiGroup
     description = "构建 quickstart-ui"
     workingDir = file(quickstartUiDir)
@@ -81,8 +81,8 @@ tasks.register<Exec>("buildQuickstartUiBlocking") {
     )
 }
 
-tasks.register<Copy>("copyQuickstartUiDistBlocking") {
-    onlyIf { buildQuickstartUiBlocking }
+tasks.register<Copy>("copyJt808QuickstartUiDistBlocking") {
+    onlyIf { buildJt808QuickstartUiBlocking }
     group = quickstartUiGroup
     description = "复制 quickstart-ui 构建输出"
     from("${quickstartUiDir}/dist")
@@ -98,15 +98,15 @@ tasks.register<Copy>("copyQuickstartUiDistBlocking") {
 }
 
 tasks.named("processResources").configure {
-    if (buildQuickstartUiBlocking) {
-        dependsOn(tasks.named("copyQuickstartUiDistBlocking"))
+    if (buildJt808QuickstartUiBlocking) {
+        dependsOn(tasks.named("copyJt808QuickstartUiDistBlocking"))
     }
 }
 
 tasks.named("build").configure {
-    if (buildQuickstartUiBlocking) {
-        dependsOn(tasks.named("buildQuickstartUiBlocking"))
-        dependsOn(tasks.named("copyQuickstartUiDistBlocking"))
+    if (buildJt808QuickstartUiBlocking) {
+        dependsOn(tasks.named("buildJt808QuickstartUiBlocking"))
+        dependsOn(tasks.named("copyJt808QuickstartUiDistBlocking"))
     }
 }
 

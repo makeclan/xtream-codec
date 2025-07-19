@@ -18,11 +18,17 @@ package io.github.hylexus.xtream.codec.ext.jt1078.dashboard.boot.configuration.s
 
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.boot.properties.XtreamJt808ServerDashboardProperties;
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.controller.servlet.BuiltinJt1078DashboardProxyControllerServlet;
+import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.controller.servlet.BuiltinJt1078SubscriptionHttpHandlerServlet;
+import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.controller.servlet.BuiltinJt1078SubscriptionWebSocketHandlerServlet;
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.service.Jt808ProxyServiceServlet;
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.service.impl.DefaultJt808ProxyServiceServlet;
+import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078RequestPublisher;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 
+@EnableWebSocket
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class XtreamExtJt1078ServerAutoConfigurationServlet {
 
@@ -34,6 +40,25 @@ public class XtreamExtJt1078ServerAutoConfigurationServlet {
     @Bean
     BuiltinJt1078DashboardProxyControllerServlet builtinJt1078DashboardProxyControllerServlet(Jt808ProxyServiceServlet proxyServiceServlet) {
         return new BuiltinJt1078DashboardProxyControllerServlet(proxyServiceServlet);
+    }
+
+    @Bean
+    BuiltinJt1078SubscriptionHttpHandlerServlet builtinJt1078SubscriptionHttpHandlerServlet(Jt1078RequestPublisher publisher) {
+        return new BuiltinJt1078SubscriptionHttpHandlerServlet(publisher);
+    }
+
+    @Bean
+    public BuiltinJt1078SubscriptionWebSocketHandlerServlet builtinJt1078SubscriptionWebSocketHandlerServlet(Jt1078RequestPublisher publisher) {
+        return new BuiltinJt1078SubscriptionWebSocketHandlerServlet(publisher);
+    }
+
+    @Bean
+    WebSocketConfigurer builtinJt1078SubscriptionWebSocketConfigurer(BuiltinJt1078SubscriptionWebSocketHandlerServlet webSocketHandler) {
+        return registry -> {
+            // ...
+            registry.addHandler(webSocketHandler, BuiltinJt1078SubscriptionWebSocketHandlerServlet.PATH_PATTERN)
+                    .setAllowedOrigins("*");
+        };
     }
 
 }

@@ -25,6 +25,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.Duration;
 import java.util.Map;
+import java.util.StringJoiner;
 
 @Getter
 @Setter
@@ -32,17 +33,29 @@ import java.util.Map;
 @SuperBuilder
 @NoArgsConstructor
 public class Jt1078SubscriberCreator implements Jt1078SubscriberCreatorInfo {
-    private String sim;
-    private short channelNumber;
+    protected String sim;
+    protected short channelNumber;
 
     @Builder.Default
-    private boolean hasAudio = true;
+    protected boolean hasAudio = true;
 
     @Builder.Default
-    private boolean hasVideo = true;
+    protected boolean hasVideo = true;
 
-    private Duration timeout;
-    private String desc;
-    private Map<String, Object> metadata;
+    protected Duration timeout;
+    protected String desc;
+    protected Map<String, Object> metadata;
 
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Jt1078SubscriberCreator.class.getSimpleName() + "[", "]")
+                .add("sim='" + sim + "'")
+                .add("channelNumber=" + channelNumber)
+                .add("hasAudio=" + hasAudio)
+                .add("hasVideo=" + hasVideo)
+                .add("timeout=" + timeout)
+                .add("desc='" + desc + "'")
+                .add("metadata=" + metadata)
+                .toString();
+    }
 }

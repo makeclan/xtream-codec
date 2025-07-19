@@ -25,6 +25,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
+import java.util.StringJoiner;
+
 @Getter
 @Setter
 @SuperBuilder
@@ -49,6 +51,20 @@ public class H264Jt1078SubscriberCreator extends Jt1078SubscriberCreator {
             this.naluDecoderRingBufferSize = naluDecoderRingBufferSize;
         }
 
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", H264Jt1078SubscriberCreator.class.getSimpleName() + "[", "]")
+                .add("sim='" + sim + "'")
+                .add("channelNumber=" + channelNumber)
+                .add("hasAudio=" + hasAudio)
+                .add("hasVideo=" + hasVideo)
+                .add("h264Meta=" + h264Meta)
+                .add("timeout=" + timeout)
+                .add("desc='" + desc + "'")
+                .add("metadata=" + metadata)
+                .toString();
     }
 
 }

@@ -61,4 +61,6 @@ node_modules/
 
 /quick-start/jt/jt-808-server-quick-start-with-storage-blocking/src/main/resources/application-node3.yaml
 /quick-start/jt/jt-808-server-quick-start-with-storage-blocking/src/main/resources/static/quickstart-ui/
+/quick-start/jt/jt-1078-server-quick-start-nonblocking/src/main/resources/static/quickstart-ui/
+/quick-start/jt/jt-1078-server-quick-start-blocking/src/main/resources/static/quickstart-ui/
 /ext/jt/jt-1078-server-spring-boot-starter-reactive/mock-data/
