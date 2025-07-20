@@ -268,7 +268,10 @@ onMounted(async () => {
     <el-card class="form-box">
       <template #header>
         <div style="display: flex; justify-content: space-between; align-items: center; height: 15px;">
-          <div style="display: flex; justify-content: end; width: 100%; font-weight: bold;">H.264 -&gt; FLV</div>
+          <div style="display: flex; justify-content: end; width: 100%; font-weight: bold;">
+            H.264 -&gt; FLV
+            <el-tag type="success" style="margin-left: 10px;">{{jt1078ServerConfig.webApplicationType}}</el-tag>
+          </div>
           <div style="display: flex; justify-content: end; width: 100%;">
             <el-button type="success" @click="pageState.jt808SessionPanel.visible = true">选择设备
             </el-button>

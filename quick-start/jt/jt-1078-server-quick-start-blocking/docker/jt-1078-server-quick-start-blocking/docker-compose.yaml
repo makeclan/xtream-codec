@@ -26,10 +26,14 @@ services:
     environment:
       - TZ=Asia/Shanghai
       # 如果你不想写 N 多环境变量，可以考虑将配置文件映射到容器中
+      # jt-808-server-quick-start-with-dashboard 服务的 web 端口
       - JT808_SERVER_DASHBOARD_WEB_PORT=8888
     ports:
+      # 808-dashboard-api web 端口(API+UI)
       - "8888:8888"
+      # JT/T 808 TCP 端口
       - "3927:3927"
+      # JT/T 808 UDP 端口
       - "3721:3721"
   jt1078-server-quick-start-service:
     profiles:
@@ -42,11 +46,16 @@ services:
     environment:
       - TZ=Asia/Shanghai
       # 如果你不想写 N 多环境变量，可以考虑将配置文件映射到容器中
+      # 设备可以访问的IP或域名(1078 码流将上传到这个地址)
       - JT1078_SERVER_HOST=192.168.71.5
+      # jt-1078-server-quick-start-nonblocking 项目的 Web 端口
       - JT1078_SERVER_DASHBOARD_WEB_PORT=9999
+      # 下发指令的请求将被转发到 jt-808-server-quick-start-with-dashboard 服务
       - JT808_DASHBOARD_BASE_URL=http://jt808-server-quick-start-service:8888
     ports:
+      # 1078-dashboard-api web 端口(目前只有API没有UI)
       - "9999:9999"
+      # 1078 码流 TCP 端口(暂不支持 UDP)
       - "7856:7856"
 networks:
   jt1078-quick-start-network:

@@ -1,10 +1,4 @@
-import axios, {
-    AxiosInstance,
-    AxiosRequestConfig,
-    AxiosError,
-    CancelTokenSource,
-    InternalAxiosRequestConfig,
-} from "axios";
+import axios, {AxiosError, AxiosInstance, AxiosRequestConfig, CancelTokenSource, InternalAxiosRequestConfig,} from "axios";
 import {ElMessage} from "element-plus";
 
 interface ExtendedAxiosRequestConfig extends AxiosRequestConfig {

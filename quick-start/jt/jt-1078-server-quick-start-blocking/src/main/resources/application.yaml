@@ -22,7 +22,3 @@ spring:
   main:
     # SpringMvc 和 Webflux 都在类路径下，这里指定使用 SpringMvc
     web-application-type: servlet
-  web:
-    resources:
-      static-locations:
-        - classpath:/static/quickstart-ui/

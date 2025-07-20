@@ -25,7 +25,7 @@ export const requestProxy9102CommandApi = async (data: any): Promise<TerminalCom
 
 export const requestJt1078ServerConfigApi = async (): Promise<Jt1078ServerConfig> => {
     return await request({
-            path: '/jt-1078-server-quick-start/api/v1/server-config',
+            path: 'jt-1078-server-quick-start-api/v1/server-config',
             method: 'get',
         }
     )

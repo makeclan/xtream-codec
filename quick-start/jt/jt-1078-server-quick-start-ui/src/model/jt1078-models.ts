@@ -1,4 +1,5 @@
 export interface Jt1078ServerConfig {
+    webApplicationType: string;
     jt1078ServerHost: string;
     jt1078ServerTcpPort: number;
     jt1078ServerUdpPort: number;

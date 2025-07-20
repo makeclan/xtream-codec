@@ -1,5 +1,17 @@
 ## TODO
 
+- [ ] 9: [xtream-codec-core](xtream-codec-core)
+    - [ ] 注解增强
+- [ ] 8: [JT/T 1078 扩展](ext/jt/jt-808-server-spring-boot-starter-reactive)
+    - [ ] 码流断开时未消费的数据未释放的问题
+    - [ ] 音频
+        - [x] ADPCMA
+        - [x] G711
+        - [ ] G726
+    - [ ] 视频
+        - [x] H.264
+        - [ ] H.265
+    - [ ] [jt-1078-server-dashboard-ui](ext/jt/jt-1078-server-dashboard-ui) 开发
 - [ ] 7: [jt-808-server-dashboard-ui](ext/jt/jt-808-server-dashboard-ui) 优化
 - [x] 6: 补充 **JT/T 808** 解析示例
     - 示例位于 `io.github.hylexus.xtream.codec.ext.jt808.builtin.messages` 包

@@ -6,10 +6,11 @@ import UnoCSS from 'unocss/vite'
 // https://vite.dev/config/
 export default defineConfig({
     plugins: [vue(), ElementPlus({}), UnoCSS()],
+    base: '/jt1078-quick-start-ui/',
     server: {
         host: '0.0.0.0',
         proxy: {
-            '/jt-1078-server-quick-start': {
+            '/jt-1078-server-quick-start-api': {
                 target: "http://localhost:9999",
                 changeOrigin: true,
                 rewrite: (path) => {

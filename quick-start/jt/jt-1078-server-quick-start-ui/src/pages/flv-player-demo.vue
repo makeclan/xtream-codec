@@ -69,6 +69,7 @@ onMounted(async () => {
         <div style="display: flex; justify-content: center; align-items: center; height: 15px;">
           <div style="font-weight: bold;">H.264 -&gt; FLV</div>
           <el-tag type="primary" style="margin-left: 10px;">手动推流</el-tag>
+          <el-tag type="success" style="margin-left: 10px;">{{jt1078ServerConfig.webApplicationType}}</el-tag>
         </div>
       </template>
       <div>
