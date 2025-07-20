@@ -61,6 +61,8 @@ public class DemoJt808RequestHandler {
                 requestBody.getServerMessageId(),
                 requestBody.getServerFlowId()
         );
+        // 可能有下发的指令等待回复，这里写入回复信息
+        // FIXME: 这里只是个示例 看你情况修改
         commandSender.setClientResponse(commandKey, requestBody);
     }
 

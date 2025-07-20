@@ -23,6 +23,8 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.netty.buffer.ByteBuf;
 import reactor.netty.NettyInbound;
 
+import java.util.UUID;
+
 /**
  * @author hylexus
  */
@@ -86,6 +88,13 @@ public interface Jt1078Request extends XtreamRequest {
 
     interface Jt1078TraceIdGenerator {
         String generateTraceId(NettyInbound nettyInbound, Jt1078RequestHeader header);
+
+        class Default implements Jt1078TraceIdGenerator {
+            @Override
+            public String generateTraceId(NettyInbound nettyInbound, Jt1078RequestHeader header) {
+                return UUID.randomUUID().toString().replace("-", "");
+            }
+        }
     }
 
     interface Jt1078RequestBuilder extends XtreamRequest.XtreamRequestBuilder {

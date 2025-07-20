@@ -1,0 +1,148 @@
+#
+# Copyright 2024 the original author or authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+jt1078-server:
+  # false: 不会进行任何自动配置
+  enabled: true
+  ## 内置功能
+  features:
+    ### Dashboard 配置
+    dashboard:
+      ### 是否启用 Dashboard
+      enabled: true
+      # 将 `/` 307 到 `/dashboard-ui-1078/`
+      redirect-root-to-base-path: true
+      # 将 `base-path` 开头的 404 请求转发到 `index.html`
+      # 如果不开启这个配置，刷新 dashboard 页面时会出现404(也就是说只能刷新 `base-path` 根路由，其他子路由刷新会是 404)
+      forward-not-found-to-index: true
+      # 可选配置: jt808 服务 dashboard 地址
+      # 下发指令的请求会被转发到这个地址
+      jt808-dashboard-proxy:
+        base-url: http://localhost:8888
+      # 为方便调试 这里允许播放地址跨域访问
+      dashboard-api-cors-filter:
+        enabled: false
+        path-pattern: /dashboard-api/jt1078/v1/stream-data/**
+        allow-credentials: false
+        allowed-origins: '*'
+        allowed-origin-patterns: [ ]
+        allowed-headers: '*'
+        exposed-headers: [ ]
+        allowed-methods: '*'
+        max-age: null
+  # TCP 服务配置(1078码流)
+  tcp-server:
+    # 是否启动 TCP 服务
+    enabled: true
+    # 绑定所有网卡
+    host: 0.0.0.0
+    # TCP 服务端口(处理 1078 码流)
+    port: 7856
+    ## 报文的最大长度
+    max-frame-length: 8192
+    ## 会话空闲状态检查器(TCP)
+    session-idle-state-checker:
+      writer-idle-time: 0s
+      reader-idle-time: 0s
+      all-idle-time: 10m
+    ## 请求处理线程
+    loop-resources:
+      ## @default reactor.netty.resources.LoopResources.DEFAULT_IO_SELECT_COUNT: -1
+      # select-count: 1
+      ## @default reactor.netty.resources.LoopResources.DEFAULT_IO_WORKER_COUNT
+      # worker-count: 10
+      ## x78: xtream-jt1078
+      thread-name-prefix: x78-tcp
+      daemon: true
+      prefer-native: true
+      colocate: true
+  # FIXME 1078服务暂不支持UDP(后续版本会支持UDP,这里只是个占位符)
+  udp-server:
+    enabled: false
+    host: 0.0.0.0
+    port: 7963
+    session-idle-state-checker:
+      max-idle-time: 10m
+      check-interval: 10s
+      check-backoff-time: 10s
+    loop-resources:
+      thread-name-prefix: x78-udp
+      daemon: true
+      prefer-native: true
+      colocate: true
+  # 音视频流配置
+  audio-video-stream:
+    # 音视频流 编解码配置
+    codec:
+      scheduler:
+        type: bounded_elastic
+        # 当且仅当 jt1078-server.audio-video-stream.codec.scheduler.type == bounded_elastic 时生效
+        bounded-elastic:
+          daemon: true
+          thread-name-prefix: x78-codec-elastic
+          ## @default reactor.core.scheduler.Schedulers.DEFAULT_BOUNDED_ELASTIC_SIZE
+          thread-capacity: 32
+          ## @default reactor.core.scheduler.Schedulers.DEFAULT_BOUNDED_ELASTIC_QUEUESIZE
+          queued-task-capacity: 2048
+          reject-blocking-task: true
+        # 当且仅当 jt1078-server.audio-video-stream.codec.scheduler.type == parallel 时生效
+        parallel:
+          daemon: true
+          thread-name-prefix: x78-codec-parallel
+          reject-blocking-task: true
+          ## @default reactor.core.scheduler.Schedulers.DEFAULT_POOL_SIZE + 2
+          parallelism: 10
+        # 当且仅当 jt1078-server.audio-video-stream.codec.scheduler.type == virtual 时生效
+        virtual:
+          prefix: x78-codec-vt
+        # 当且仅当 jt1078-server.audio-video-stream.codec.scheduler.type == single 时生效
+        ## !!!仅仅用于测试!!!
+        single:
+          daemon: true
+          thread-name-prefix: x78-codec-single
+          reject-blocking-task: false
+    # 音视频流 订阅者配置
+    subscriber:
+      scheduler:
+        metrics:
+          enabled: false
+          prefix: x78-subscriber
+        type: bounded_elastic
+        # 当且仅当 jt1078-server.audio-video-stream.subscriber.scheduler.type == bounded_elastic 时生效
+        bounded-elastic:
+          daemon: true
+          thread-name-prefix: x78-subscriber-elastic
+          ## @default reactor.core.scheduler.Schedulers.DEFAULT_BOUNDED_ELASTIC_SIZE
+          thread-capacity: 32
+          ## @default reactor.core.scheduler.Schedulers.DEFAULT_BOUNDED_ELASTIC_QUEUESIZE
+          queued-task-capacity: 2048
+          reject-blocking-task: true
+        # 当且仅当 jt1078-server.audio-video-stream.subscriber.scheduler.type == parallel 时生效
+        parallel:
+          daemon: true
+          thread-name-prefix: x78-subscriber-parallel
+          reject-blocking-task: true
+          ## @default reactor.core.scheduler.Schedulers.DEFAULT_POOL_SIZE + 2
+          parallelism: 10
+        # 当且仅当 jt1078-server.audio-video-stream.subscriber.scheduler.type == virtual 时生效
+        virtual:
+          prefix: x78-subscriber-vt
+        # 当且仅当 jt1078-server.audio-video-stream.subscriber.scheduler.type == single 时生效
+        ## !!!仅仅用于测试!!!
+        single:
+          daemon: true
+          thread-name-prefix: x78-subscriber-single
+          reject-blocking-task: false

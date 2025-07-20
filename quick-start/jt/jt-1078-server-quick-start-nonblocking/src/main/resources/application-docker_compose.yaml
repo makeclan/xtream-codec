@@ -15,11 +15,11 @@
 #
 
 server:
-  port: 9999
+  port: ${JT1078_SERVER_DASHBOARD_WEB_PORT:9999}
 
 quick-start-app-config:
   # 设备可以访问的IP或域名(1078 码流将上传到这个地址)
-  jt1078-server-host: 192.168.71.5
+  jt1078-server-host: ${JT1078_SERVER_HOST:192.168.71.5}
 
 # 完整配置见 ext/jt/jt-1078-server-spring-boot-starter-reactive/src/main/resources/META-INF/default-xtream-jt1078-server-config.yml
 # 完整配置见 ext/jt/jt-1078-server-spring-boot-starter-reactive/src/main/resources/META-INF/default-xtream-jt1078-server-config.yml
@@ -33,7 +33,7 @@ jt1078-server:
       # 可选配置: jt808 服务 dashboard 地址
       # 下发指令的请求会被转发到这个地址
       jt808-dashboard-proxy:
-        base-url: http://localhost:8888
+        base-url: ${JT808_DASHBOARD_BASE_URL:http://localhost:8888}
       # FIXME 为方便调试 这里允许播放地址跨域访问
       dashboard-api-cors-filter:
         enabled: true

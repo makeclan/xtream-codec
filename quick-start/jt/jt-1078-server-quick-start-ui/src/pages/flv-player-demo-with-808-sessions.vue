@@ -547,7 +547,7 @@ onMounted(async () => {
           </el-radio-group>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="loadJt808SessionList">查询</el-button>
+          <el-button type="primary" @click="loadJt808SessionList">查询 / 刷新</el-button>
         </el-form-item>
       </el-form>
       <el-table :data="jt808ProxySession.data"

@@ -72,8 +72,8 @@ public class BuiltinJt1078SubscriptionHttpHandlerReactive {
                         log.error("FlvSubscriber(Http/{}) closed: {}", subscriber.id(), subscriberCreator, throwable);
                     }
                 })
-                // .onErrorComplete(Jt1078SessionDestroyException.class)
-                // .onErrorComplete(TimeoutException.class)
+                .onErrorComplete(Jt1078SessionDestroyException.class)
+                .onErrorComplete(TimeoutException.class)
                 .map(it -> (byte[]) it.payload())
                 .doFinally(signalType -> {
                     // ...

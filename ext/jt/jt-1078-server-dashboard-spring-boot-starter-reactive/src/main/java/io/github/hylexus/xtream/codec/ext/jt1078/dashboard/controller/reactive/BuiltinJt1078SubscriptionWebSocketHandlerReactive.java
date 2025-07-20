@@ -80,8 +80,8 @@ public class BuiltinJt1078SubscriptionWebSocketHandlerReactive implements WebSoc
                         log.error("FlvSubscriber(WebSocket/{}) closed: {}", subscriber.id(), subscriberCreator, throwable);
                     }
                 })
-                // .onErrorComplete(Jt1078SessionDestroyException.class)
-                // .onErrorComplete(TimeoutException.class)
+                .onErrorComplete(Jt1078SessionDestroyException.class)
+                .onErrorComplete(TimeoutException.class)
                 .flatMap(subscription -> {
                     final byte[] data = (byte[]) subscription.payload();
                     final WebSocketMessage webSocketMessage = session.binaryMessage(factory -> factory.wrap(data));

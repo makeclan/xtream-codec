@@ -1,0 +1,2 @@
+org.springframework.boot.env.EnvironmentPostProcessor=\
+  io.github.hylexus.xtream.codec.ext.jt1078.processor.BuiltinJt1078ServerDefaultEnvironmentPostProcessor

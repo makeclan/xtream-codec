@@ -1,0 +1,53 @@
+#
+# Copyright 2024 the original author or authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+services:
+  jt808-server-quick-start-service:
+    profiles:
+      - jt808_server
+    image: registry.cn-hangzhou.aliyuncs.com/xtream-codec/jt-808-server-quick-start-with-dashboard:latest
+    pull_policy: always
+    container_name: jt-808-server-quick-start-with-dashboard
+    networks:
+      - jt1078-quick-start-network
+    environment:
+      - TZ=Asia/Shanghai
+      # 如果你不想写 N 多环境变量，可以考虑将配置文件映射到容器中
+      - JT808_SERVER_DASHBOARD_WEB_PORT=8888
+    ports:
+      - "8888:8888"
+      - "3927:3927"
+      - "3721:3721"
+  jt1078-server-quick-start-service:
+    profiles:
+      - jt1078_server
+    image: registry.cn-hangzhou.aliyuncs.com/xtream-codec/jt-1078-server-quick-start-blocking:latest
+    pull_policy: always
+    container_name: jt-1078-server-quick-start-blocking
+    networks:
+      - jt1078-quick-start-network
+    environment:
+      - TZ=Asia/Shanghai
+      # 如果你不想写 N 多环境变量，可以考虑将配置文件映射到容器中
+      - JT1078_SERVER_HOST=192.168.71.5
+      - JT1078_SERVER_DASHBOARD_WEB_PORT=9999
+      - JT808_DASHBOARD_BASE_URL=http://jt808-server-quick-start-service:8888
+    ports:
+      - "9999:9999"
+      - "7856:7856"
+networks:
+  jt1078-quick-start-network:
+    driver: bridge

@@ -63,6 +63,14 @@ public class Jt808QuickStartRequestHandler {
     @Jt808RequestHandlerMapping(messageIds = 0x0001)
     public void processMessage0001(Jt808Request request, @Jt808RequestBody BuiltinMessage0001 requestBody) {
         log.info("receive message [0x0001]: {}", requestBody);
+        final Jt808CommandSender.Jt808CommandKey commandKey = Jt808CommandSender.Jt808CommandKey.of(
+                request.terminalId(),
+                requestBody.getServerMessageId(),
+                requestBody.getServerFlowId()
+        );
+        // 可能有下发的指令等待回复，这里写入回复信息
+        // FIXME: 这里只是个示例 看你情况修改
+        this.jt808CommandSender.setClientResponse(commandKey, requestBody);
     }
 
     @Jt808RequestHandlerMapping(messageIds = 0x0104)
@@ -73,6 +81,7 @@ public class Jt808QuickStartRequestHandler {
                 request.messageId(),
                 requestBody.getFlowId()
         );
+        // FIXME: 这里只是个示例 看你情况修改
         this.jt808CommandSender.setClientResponse(commandKey, requestBody);
         return ServerCommonReplyMessage.success(request);
     }

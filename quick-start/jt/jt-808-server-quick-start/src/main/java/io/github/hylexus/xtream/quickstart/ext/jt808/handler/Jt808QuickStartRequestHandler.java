@@ -19,6 +19,7 @@ package io.github.hylexus.xtream.quickstart.ext.jt808.handler;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.*;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.BuiltinMessage8100;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.ServerCommonReplyMessage;
+import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808CommandSender;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestBody;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestHandler;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestHandlerMapping;
@@ -41,9 +42,11 @@ public class Jt808QuickStartRequestHandler {
 
     private static final Logger log = LoggerFactory.getLogger(Jt808QuickStartRequestHandler.class);
     private final Jt808SessionManager jt808SessionManager;
+    private final Jt808CommandSender commandSender;
 
-    public Jt808QuickStartRequestHandler(Jt808SessionManager jt808SessionManager) {
+    public Jt808QuickStartRequestHandler(Jt808SessionManager jt808SessionManager, Jt808CommandSender commandSender) {
         this.jt808SessionManager = jt808SessionManager;
+        this.commandSender = commandSender;
     }
 
     /**
@@ -63,6 +66,14 @@ public class Jt808QuickStartRequestHandler {
     @Jt808RequestHandlerMapping(messageIds = 0x0001)
     public Mono<Void> processMessage0001(Jt808Request request, @Jt808RequestBody BuiltinMessage0001 requestBody) {
         log.info("receive message [0x0001]: {}", requestBody);
+        final Jt808CommandSender.Jt808CommandKey commandKey = Jt808CommandSender.Jt808CommandKey.of(
+                request.terminalId(),
+                requestBody.getServerMessageId(),
+                requestBody.getServerFlowId()
+        );
+        // 可能有下发的指令等待回复，这里写入回复信息
+        // FIXME: 这里只是个示例 看你情况修改
+        commandSender.setClientResponse(commandKey, requestBody);
         return Mono.empty();
     }
 

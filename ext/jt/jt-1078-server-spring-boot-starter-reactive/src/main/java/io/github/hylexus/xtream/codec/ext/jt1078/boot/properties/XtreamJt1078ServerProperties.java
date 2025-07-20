@@ -35,8 +35,8 @@ public class XtreamJt1078ServerProperties {
 
     private boolean enabled = true;
 
-    @NestedConfigurationProperty
-    private Features features = new Features();
+    // @NestedConfigurationProperty
+    // private Features features = new Features();
 
     @NestedConfigurationProperty
     private TcpServerProps tcpServer = new TcpServerProps();
@@ -82,41 +82,41 @@ public class XtreamJt1078ServerProperties {
         private XtreamServerSchedulerProperties scheduler = new XtreamServerSchedulerProperties();
     }
 
-    @Getter
-    @Setter
-    @ToString
-    public static class Features {
+    // @Getter
+    // @Setter
+    // @ToString
+    // public static class Features {
+    //
+    //     // @NestedConfigurationProperty
+    //     // private RequestLoggerFeature requestLogger = new RequestLoggerFeature();
+    //
+    //     @NestedConfigurationProperty
+    //     private RequestCombinerFeature requestCombiner = new RequestCombinerFeature();
+    // }
 
-        // @NestedConfigurationProperty
-        // private RequestLoggerFeature requestLogger = new RequestLoggerFeature();
+    // @Getter
+    // @Setter
+    // @ToString
+    // public static class RequestCombinerFeature {
+    //     private boolean enabled = true;
+    //
+    //     @NestedConfigurationProperty
+    //     private RequestSubPacketStorage subPackageStorage = new RequestSubPacketStorage();
+    // }
 
-        @NestedConfigurationProperty
-        private RequestCombinerFeature requestCombiner = new RequestCombinerFeature();
-    }
-
-    @Getter
-    @Setter
-    @ToString
-    public static class RequestCombinerFeature {
-        private boolean enabled = true;
-
-        @NestedConfigurationProperty
-        private RequestSubPacketStorage subPackageStorage = new RequestSubPacketStorage();
-    }
-
-    @Getter
-    @Setter
-    @ToString
-    public static class RequestSubPacketStorage {
-        /**
-         * 缓存最大大小
-         */
-        private int maximumSize = 1024;
-        /**
-         * 缓存条目的存活时间
-         */
-        private Duration ttl = Duration.ofSeconds(60);
-    }
+    // @Getter
+    // @Setter
+    // @ToString
+    // public static class RequestSubPacketStorage {
+    //     /**
+    //      * 缓存最大大小
+    //      */
+    //     private int maximumSize = 1024;
+    //     /**
+    //      * 缓存条目的存活时间
+    //      */
+    //     private Duration ttl = Duration.ofSeconds(60);
+    // }
 
     @Getter
     @Setter
@@ -149,7 +149,7 @@ public class XtreamJt1078ServerProperties {
     @Setter
     @ToString
     public static class TcpLoopResourcesProperty {
-        private String threadNamePrefix = "xtream-tcp";
+        private String threadNamePrefix = "x78-tcp";
         private int selectCount = LoopResources.DEFAULT_IO_SELECT_COUNT;
         private int workerCount = LoopResources.DEFAULT_IO_WORKER_COUNT;
         private boolean daemon = true;
@@ -161,7 +161,7 @@ public class XtreamJt1078ServerProperties {
     @Setter
     @ToString
     public static class UdpLoopResourcesProperty {
-        private String threadNamePrefix = "xtream-udp";
+        private String threadNamePrefix = "x78-udp";
         private int selectCount = LoopResources.DEFAULT_IO_SELECT_COUNT;
         private int workerCount = LoopResources.DEFAULT_IO_WORKER_COUNT;
         private boolean daemon = true;
