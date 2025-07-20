@@ -1,3 +1,15 @@
+## 0.0.1-rc.6(2025-06-29)
+
+### ⭐ New Features
+
+- 注解支持字符串填充属性 [issue#2](https://github.com/hylexus/xtream-codec/issues/2)
+    - `@XtreamField.paddingLeft()`
+    - `@XtreamField.paddingRight()`
+    - `@RustStyle.str.paddingRight()`
+    - `@RustStyle.str.paddingLeft()`
+    - `@JtStyle.Str.paddingLeft()`
+    - `@JtStyle.Str.paddingRight()`
+
 ## 0.0.1-rc.5(2025-05-18)
 
 ### ⭐ New Features

@@ -33,6 +33,15 @@ export const zhSidebar = sidebar({
                         '/guide/core/annotation-driven/custom-annotation.md',
                         '/guide/core/annotation-driven/entity-codec.md',
                         '/guide/core/annotation-driven/entity-codec-tracker.md',
+                        {
+                            text: "附录(建议阅读)",
+                            icon: "fa-solid fa-book-open-reader", collapsible: false,
+                            children: [
+                                '/guide/core/annotation-driven/annex/',
+                                '/guide/core/annotation-driven/annex/prepend-length-field.md',
+                                '/guide/core/annotation-driven/annex/padding.md',
+                            ]
+                        }
                     ]
                 },
                 {

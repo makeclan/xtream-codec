@@ -65,6 +65,20 @@ public @interface XtreamField {
     String charset() default XtreamConstants.CHARSET_NAME_GBK;
 
     /**
+     * 只有 {@link String} 类型 <strong>序列化</strong> 时用到
+     *
+     * @since @since 0.0.1-rc.6
+     */
+    Padding paddingRight() default @Padding(minEncodedLength = 0);
+
+    /**
+     * 只有 {@link String} 类型 <strong>序列化</strong> 时用到
+     *
+     * @since @since 0.0.1-rc.6
+     */
+    Padding paddingLeft() default @Padding(minEncodedLength = 0);
+
+    /**
      * 编码时: 自动给当前字段前面写入 N 字节, 表示当前字段的长度
      * <p>
      * 解码时: 自动读取 N 字节, 作为当前字段的长度
