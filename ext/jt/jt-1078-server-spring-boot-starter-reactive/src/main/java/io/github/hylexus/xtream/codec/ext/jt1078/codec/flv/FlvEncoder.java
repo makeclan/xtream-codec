@@ -44,4 +44,25 @@ public interface FlvEncoder {
     default void close() {
     }
 
+    /**
+     * <pre>{@code
+     * 5 bits: object type
+     * if (object type == 31)
+     *     6 bits + 32: object type
+     * 4 bits: frequency index
+     * if (frequency index == 15)
+     *     24 bits: frequency
+     * 4 bits: channel configuration
+     * var bits: AOT Specific Config
+     * }</pre>
+     *
+     * @see <a href="https://wiki.multimedia.cx/index.php?title=MPEG-4_Audio">https://wiki.multimedia.cx/index.php?title=MPEG-4_Audio</a>
+     */
+    default byte[] createAacSequenceHeader(AudioFlvTag.AacSeqHeaderObjectType objectType, AudioFlvTag.AacSeqHeaderSampleRate rate, AudioFlvTag.AacSeqHeaderChannelConfig channelConfiguration) {
+        final byte sampleRate = rate.value();
+        final byte config1 = (byte) ((objectType.value() << 3) | ((sampleRate & 0XE) >> 1));
+        final byte config2 = (byte) (((sampleRate & 0X1) << 7) | (channelConfiguration.value() << 3));
+        return new byte[]{config1, config2};
+    }
+
 }

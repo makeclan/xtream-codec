@@ -28,6 +28,7 @@ public class DefaultAudioFlvFlvTagHeader implements AudioFlvTag.AudioFlvTagHeade
     private AudioFlvTag.AudioSoundSize soundSize;
     private AudioFlvTag.AudioSoundType soundType;
     private AudioFlvTag.AudioAacPacketType aacPacketType;
+    private byte[] aacSequenceHeader;
 
     public DefaultAudioFlvFlvTagHeader() {
     }
@@ -35,12 +36,13 @@ public class DefaultAudioFlvFlvTagHeader implements AudioFlvTag.AudioFlvTagHeade
     public DefaultAudioFlvFlvTagHeader(
             AudioFlvTag.AudioSoundFormat soundFormat, AudioFlvTag.AudioSoundRate soundRate,
             AudioFlvTag.AudioSoundSize soundSize, AudioFlvTag.AudioSoundType soundType,
-            AudioFlvTag.AudioAacPacketType aacPacketType) {
+            AudioFlvTag.AudioAacPacketType aacPacketType, byte[] aacSequenceHeader) {
         this.soundFormat = soundFormat;
         this.soundRate = soundRate;
         this.soundSize = soundSize;
         this.soundType = soundType;
         this.aacPacketType = aacPacketType;
+        this.aacSequenceHeader = aacSequenceHeader;
     }
 
     @Override
@@ -88,13 +90,24 @@ public class DefaultAudioFlvFlvTagHeader implements AudioFlvTag.AudioFlvTagHeade
     }
 
     @Override
-    public Optional<AudioFlvTag.AudioAacPacketType> aacPacketType() {
-        return Optional.ofNullable(this.aacPacketType);
+    public AudioFlvTag.AudioAacPacketType aacPacketType() {
+        return this.aacPacketType;
     }
 
     @Override
     public AudioFlvTag.AudioFlvTagHeaderBuilder aacPacketType(AudioFlvTag.AudioAacPacketType aacPacketType) {
         this.aacPacketType = aacPacketType;
+        return this;
+    }
+
+    @Override
+    public byte[] aacSequenceHeader() {
+        return this.aacSequenceHeader;
+    }
+
+    @Override
+    public AudioFlvTag.AudioFlvTagHeaderBuilder aacSequenceHeader(byte[] aacSequenceHeader) {
+        this.aacSequenceHeader = aacSequenceHeader;
         return this;
     }
 
@@ -105,7 +118,8 @@ public class DefaultAudioFlvFlvTagHeader implements AudioFlvTag.AudioFlvTagHeade
                 Objects.requireNonNull(this.soundRate, "soundFormat is null"),
                 Objects.requireNonNull(this.soundSize, "soundSize is null"),
                 Objects.requireNonNull(this.soundType, "soundType is null"),
-                this.aacPacketType
+                this.aacPacketType,
+                this.aacSequenceHeader
         );
     }
 }

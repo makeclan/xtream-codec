@@ -209,7 +209,6 @@ public class DefaultFlvEncoder implements FlvEncoder {
         final ByteBuf buffer = this.allocator.buffer();
         this.writeScriptTag(buffer, sps);
         this.writeFirstVideoTag(buffer, sps, timestamp);
-        this.flvBasicFrame = buffer;
         return buffer;
     }
 

@@ -37,7 +37,7 @@ public interface Jt1078ChannelCollector {
 
     void unsubscribe(String id, @Nullable Jt1078Subscriber.Jt1078SubscriberCloseException reason);
 
-    void unsubscribe(@Nullable Jt1078Subscriber.Jt1078SubscriberCloseException reason);
+    void close(@Nullable Jt1078Subscriber.Jt1078SubscriberCloseException reason);
 
     long count(Predicate<Jt1078SubscriberDescriptor> predicate);
 

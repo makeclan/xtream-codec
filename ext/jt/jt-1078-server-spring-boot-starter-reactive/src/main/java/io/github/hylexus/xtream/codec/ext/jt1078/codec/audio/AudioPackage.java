@@ -27,6 +27,10 @@ public record AudioPackage(AudioFormatOptions options, ByteBuf payload, int payl
     public AudioPackage {
     }
 
+    public static AudioPackage of(AudioFormatOptions options, ByteBuf payload) {
+        return new AudioPackage(options, payload);
+    }
+
     public AudioPackage(AudioFormatOptions options, ByteBuf payload) {
         this(options, payload, payload == null ? 0 : payload.readableBytes());
     }

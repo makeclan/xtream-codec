@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.collector;
 
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
+import io.github.hylexus.xtream.codec.ext.jt1078.codec.audio.AudioFormatOptions;
 import io.github.hylexus.xtream.codec.ext.jt1078.codec.audio.AudioPackage;
 import io.github.hylexus.xtream.codec.ext.jt1078.codec.audio.PcmToMp3Encoder;
 import io.github.hylexus.xtream.codec.ext.jt1078.codec.audio.impl.mp3.DefaultPcmToMp3Encoder;
@@ -50,6 +51,8 @@ public class H264ToFlvSubscriber extends AbstractInternalSubscriber {
     private long videoTimestamp = 0;
     private long prevAudioTimestamp = 0;
     private long prevVideoTimestamp = 0;
+
+    private boolean aacSequenceHeaderSent = false;
 
     private final H264Jt1078SubscriberCreator subscriberCreator;
     // 每个 subscriber 需要单独的 mp3 编码器
@@ -86,6 +89,57 @@ public class H264ToFlvSubscriber extends AbstractInternalSubscriber {
         if (this.isFlvHeaderPending()) {
             return;
         }
+        final AudioFormatOptions sourceAudioOptions = audioPackage.options();
+        if (sourceAudioOptions.isPcm()) {
+            this.sendAsMp3(timestamp, audioPackage);
+        } else if (sourceAudioOptions.isAac()) {
+            this.sendAsAac(timestamp, audioPackage);
+        } else {
+            log.warn("Unsupported audio format: {}", sourceAudioOptions);
+        }
+    }
+
+    // TODO 重构重复代码
+    private void sendAsAac(long timestamp, AudioPackage audioPackage) {
+        final AudioFlvTag.AudioFlvTagHeaderBuilder audioTagHeaderBuilder = AudioFlvTag.newTagHeaderBuilder()
+                .soundFormat(AudioFlvTag.AudioSoundFormat.AAC)
+                .soundRate(AudioFlvTag.AudioSoundRate.RATE_22_KHZ)
+                .soundSize(AudioFlvTag.AudioSoundSize.SND_BIT_16)
+                .soundType(AudioFlvTag.AudioSoundType.STEREO);
+
+        // todo 暴露参数给订阅者
+        if (aacSequenceHeaderSent) {
+            audioTagHeaderBuilder.aacPacketType(AudioFlvTag.AudioAacPacketType.AAC_RAW);
+        } else {
+            final byte[] aacSequenceHeader = this.flvEncoder.createAacSequenceHeader(
+                    AudioFlvTag.AacSeqHeaderObjectType.TYPE_1_AAC_MAIN,
+                    AudioFlvTag.AacSeqHeaderSampleRate.RATE_8_16000_HZ,
+                    AudioFlvTag.AacSeqHeaderChannelConfig.CONFIG_2_2_CHANNELS
+            );
+            audioTagHeaderBuilder
+                    .aacPacketType(AudioFlvTag.AudioAacPacketType.AAC_SEQ_HEADER)
+                    .aacSequenceHeader(aacSequenceHeader);
+            this.aacSequenceHeaderSent = true;
+        }
+
+        final AudioFlvTag.AudioFlvTagHeader flvTagHeader = audioTagHeaderBuilder.build();
+        final ByteBuf flvAudioTag = this.flvEncoder.encodeAudioTag((int) this.audioTimestamp, flvTagHeader, audioPackage.payload());
+        try {
+            if (this.prevAudioTimestamp == 0) {
+                this.prevAudioTimestamp = timestamp;
+            }
+            // log.info("audio-dts: {}", audioTimestamp);
+
+            audioTimestamp += (timestamp - prevAudioTimestamp);
+            prevAudioTimestamp = timestamp;
+
+            this.sink().next(Jt1078Subscription.fromByteArray(DefaultJt1078SubscriptionType.FLV, XtreamBytes.getBytes(flvAudioTag)));
+        } finally {
+            XtreamBytes.releaseBuf(flvAudioTag);
+        }
+    }
+
+    private void sendAsMp3(long timestamp, AudioPackage audioPackage) {
         final AudioPackage mp3Package = this.pcmToMp3Encoder.encode(audioPackage);
         if (mp3Package.isEmpty()) {
             mp3Package.close();

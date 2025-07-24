@@ -89,4 +89,13 @@ public interface AudioFormatOptions {
         // 向上取整字节
         return (numSamples * bitDepth() * channelCount() + 7) / 8;
     }
+
+    default boolean isAac() {
+        return false;
+    }
+
+    default boolean isPcm() {
+        return false;
+    }
+
 }

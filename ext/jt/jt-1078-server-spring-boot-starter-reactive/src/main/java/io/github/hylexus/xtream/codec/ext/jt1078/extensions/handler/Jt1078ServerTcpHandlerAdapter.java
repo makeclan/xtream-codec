@@ -44,6 +44,9 @@ public class Jt1078ServerTcpHandlerAdapter extends DefaultTcpXtreamNettyHandlerA
     @Override
     public Publisher<Void> apply(NettyInbound nettyInbound, NettyOutbound nettyOutbound) {
         return nettyInbound.receive()
+                // .onBackpressureBuffer(1024,(buffer)->{
+                //     log.error("Buffer Overflow");
+                // }, BufferOverflowStrategy.DROP_OLDEST)
                 .doOnNext(ByteBuf::retain)
                 .publishOn(scheduler)
                 .flatMap(byteBuf -> {

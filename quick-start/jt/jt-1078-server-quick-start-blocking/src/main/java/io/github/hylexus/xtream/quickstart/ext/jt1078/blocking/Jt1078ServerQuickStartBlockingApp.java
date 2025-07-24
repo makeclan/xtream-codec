@@ -24,7 +24,7 @@ public class Jt1078ServerQuickStartBlockingApp {
 
     public static void main(String[] args) {
         // FIXME 如果你不了解 ResourceLeakDetector 是做什么的,请务必注释掉下面这行代码!!!
-        io.netty.util.ResourceLeakDetector.setLevel(io.netty.util.ResourceLeakDetector.Level.PARANOID);
+        // io.netty.util.ResourceLeakDetector.setLevel(io.netty.util.ResourceLeakDetector.Level.PARANOID);
         SpringApplication.run(Jt1078ServerQuickStartBlockingApp.class, args);
     }
 

@@ -74,6 +74,10 @@ public enum BuiltinAudioFormatOptions implements AudioFormatOptions {
      * PCM 有符号数 40bit 小端 单声道
      */
     PCM_S40_LE_MONO(AudioFamily.PCM, 8_000, 40, 40, 1),
+    /**
+     * AAC 编码，采样率 44100Hz，比特率 128kbps，位深度 16bit，双声道
+     */
+    AAC_STEREO(AudioFamily.AAC, 44100, 128, 16, 2),
     ;
 
     public enum AudioFamily {
@@ -81,7 +85,9 @@ public enum BuiltinAudioFormatOptions implements AudioFormatOptions {
         G726(0),
         ADPCM(1),
         G711(2),
-        PCM(3);
+        PCM(3),
+        AAC(4),
+        ;
         private final int familyCode;
 
         AudioFamily(int familyCode) {
@@ -156,6 +162,11 @@ public enum BuiltinAudioFormatOptions implements AudioFormatOptions {
         return audioFamily == AudioFamily.PCM;
     }
 
+    @Override
+    public boolean isAac() {
+        return this.audioFamily == AudioFamily.AAC;
+    }
+
     /**
      * 估算解码后 PCM 数据的字节数。
      *
@@ -190,6 +201,7 @@ public enum BuiltinAudioFormatOptions implements AudioFormatOptions {
                     sampleRate, channelCount, encodedBitsPerSample
             );
             case PCM -> String.format("-f s%dle -ar %d -ac %d", bitDepth, sampleRate, channelCount);
+            case AAC -> String.format("-f aac -ar %d -ac %d -b:a %dk", sampleRate, channelCount, encodedBitsPerSample);
             case null, default -> throw new IllegalStateException("AudioFamily is not supported");
         };
     }

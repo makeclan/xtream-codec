@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.scheduler.Scheduler;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
@@ -76,18 +77,21 @@ public class DefaultJt1078Channel implements Jt1078Channel {
 
     @Override
     public void unsubscribe(String id, Jt1078Subscriber.Jt1078SubscriberCloseException reason) {
-        this.collectors.forEach((cls, collector) -> {
-            // ...
+        for (Map.Entry<Class<? extends Jt1078ChannelCollector>, Jt1078ChannelCollector> entry : this.collectors.entrySet()) {
+            final Jt1078ChannelCollector collector = entry.getValue();
             collector.unsubscribe(id, reason);
-        });
+        }
     }
 
     @Override
-    public void close(Jt1078Subscriber.Jt1078SubscriberCloseException reason) {
-        this.collectors.forEach((cls, collector) -> {
-            //  ...
-            collector.unsubscribe(reason);
-        });
+    public synchronized void close(Jt1078Subscriber.Jt1078SubscriberCloseException reason) {
+        final var iterator = this.collectors.entrySet().iterator();
+        while (iterator.hasNext()) {
+            final var entry = iterator.next();
+            iterator.remove();
+            final Jt1078ChannelCollector collector = entry.getValue();
+            collector.close(reason);
+        }
     }
 
     @Override
@@ -103,7 +107,7 @@ public class DefaultJt1078Channel implements Jt1078Channel {
                 .flatMap(Jt1078ChannelCollector::list);
     }
 
-    protected Jt1078ChannelCollector getOrCreate(Class<? extends Jt1078ChannelCollector> cls, Jt1078SubscriberCreator creator) {
+    protected synchronized Jt1078ChannelCollector getOrCreate(Class<? extends Jt1078ChannelCollector> cls, Jt1078SubscriberCreator creator) {
         return this.collectors.computeIfAbsent(cls, k -> new H264ToFlvJt1078ChannelCollector(this.key, this.scheduler, creator));
     }
 }

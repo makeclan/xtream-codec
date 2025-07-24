@@ -46,11 +46,11 @@
     - quick-start
         - [基于 Webflux](quick-start/jt/jt-1078-server-quick-start-nonblocking/docker/jt-1078-server-quick-start-nonblocking)
         - [基于 Servlet](quick-start/jt/jt-1078-server-quick-start-blocking/docker/jt-1078-server-quick-start-blocking)
-    - 参考资料:
-        - [https://gitee.com/ldming/JT1078](https://gitee.com/ldming/JT1078)
+    - 参考资料(以下排名不分先后):
         - [https://rtmp.veriskope.com/pdf/video_file_format_spec_v10.pdf](https://rtmp.veriskope.com/pdf/video_file_format_spec_v10.pdf)
-        - [https://gitee.com/matrixy/jtt1078-video-server](https://gitee.com/matrixy/jtt1078-video-server)
-        - [https://gitee.com/hui_hui_zhou/open-source-repository](https://gitee.com/hui_hui_zhou/open-source-repository)
+        - [Gitee - matrixy/jtt1078-video-server](https://gitee.com/matrixy/jtt1078-video-server)
+        - [Gitee - sky/jt1078](https://gitee.com/hui_hui_zhou/open-source-repository)
+        - [Gitee - ldming/JT1078](https://gitee.com/ldming/JT1078)
         - [https://www.bilibili.com/video/BV1nG4y1u7HT](https://www.bilibili.com/video/BV1nG4y1u7HT)
         - [https://www.jianshu.com/p/916899d4833b](https://www.jianshu.com/p/916899d4833b)
         - [https://www.jianshu.com/p/07657d85617e](https://www.jianshu.com/p/07657d85617e)
