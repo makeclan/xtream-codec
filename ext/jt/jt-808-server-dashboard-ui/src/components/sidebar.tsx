@@ -1,12 +1,14 @@
-import { Link } from "@nextui-org/link";
+import { Link } from "@heroui/link";
 import { useState } from "react";
-import { Listbox, ListboxItem } from "@nextui-org/listbox";
+import { Listbox, ListboxItem } from "@heroui/listbox";
 import clsx from "clsx";
-import { Tooltip } from "@nextui-org/tooltip";
-import { Button } from "@nextui-org/button";
+import { Tooltip } from "@heroui/tooltip";
+import { Button } from "@heroui/button";
+import { useRouteLoaderData } from "react-router-dom";
 
 import { FaChevronRightIcon, LogoIcon } from "@/components/icons";
 import { siteConfig } from "@/config/site.ts";
+import { ServerInfo } from "@/types";
 
 const TopContent = () => {
   return (
@@ -21,6 +23,19 @@ const TopContent = () => {
 
 export const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { config } = useRouteLoaderData("root") as { config: ServerInfo };
+
+  const sideNavList = siteConfig.sidenav.filter(
+    (item) =>
+      !(
+        item.href === "/attachment" &&
+        !config.jt808ServerConfig?.attachmentServer?.tcpSerer?.enabled
+      ) &&
+      !(
+        item.href === "/instruction" &&
+        !config.jt808ServerConfig?.instructionServer?.tcpSerer?.enabled
+      ),
+  );
 
   return (
     <div className="relative">
@@ -31,10 +46,10 @@ export const Sidebar = () => {
           "relative flex h-full flex-col !border-r-small border-divider p-6 transition-width items-center",
           isOpen ? "w-56" : "w-16 px-2 py-6",
         )}
-        disabledKeys={["/debug", "/threads", "/dump"]}
+        disabledKeys={["/debug"]}
         topContent={<TopContent />}
       >
-        {siteConfig.sidenav.map((link) => {
+        {sideNavList.map((link) => {
           const LinkIcon = link.icon;
           const iconClasses =
             "pointer-events-none flex-shrink-0 xw-6 mx-1 fa-fw text-xl";

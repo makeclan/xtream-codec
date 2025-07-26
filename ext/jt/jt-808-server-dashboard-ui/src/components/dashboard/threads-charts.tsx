@@ -7,7 +7,7 @@ import {
 } from "@visx/xychart";
 import { lightTheme, darkTheme, XYChartTheme, Tooltip } from "@visx/xychart";
 import { FC, useEffect, useState } from "react";
-import { ThemeProps, useTheme } from "@nextui-org/use-theme";
+import { ThemeProps, useTheme } from "@heroui/use-theme";
 import { curveLinear } from "@visx/curve";
 
 interface Threads {

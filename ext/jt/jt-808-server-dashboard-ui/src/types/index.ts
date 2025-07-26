@@ -106,7 +106,10 @@ export interface ServerInfo {
   // 服务启动时间
   serverStartupTime: string;
   // 服务配置(application.yaml#jt808-server.*)
-  jt808ServerConfig: {};
+  jt808ServerConfig: {
+    instructionServer: any;
+    attachmentServer: any;
+  };
   java: JavaInfo;
   os: OsInfo;
 }

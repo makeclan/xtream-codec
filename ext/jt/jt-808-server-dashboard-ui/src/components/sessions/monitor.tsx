@@ -1,21 +1,21 @@
-import type { SharedSelection } from "@nextui-org/system";
+import type { SharedSelection } from "@heroui/system";
 
 import {
   Drawer,
   DrawerBody,
   DrawerContent,
   DrawerHeader,
-} from "@nextui-org/drawer";
-import { Input } from "@nextui-org/input";
-import { Spacer } from "@nextui-org/spacer";
+} from "@heroui/drawer";
+import { Input } from "@heroui/input";
+import { Spacer } from "@heroui/spacer";
 import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-} from "@nextui-org/dropdown";
-import { Button } from "@nextui-org/button";
-import { ScrollShadow } from "@nextui-org/scroll-shadow";
+} from "@heroui/dropdown";
+import { Button } from "@heroui/button";
+import { ScrollShadow } from "@heroui/scroll-shadow";
 import {
   Dispatch,
   FC,
@@ -29,9 +29,9 @@ import {
   EventSourceMessage,
   fetchEventSource,
 } from "@microsoft/fetch-event-source";
-import { Card, CardBody } from "@nextui-org/card";
+import { Card, CardBody } from "@heroui/card";
 import clsx from "clsx";
-import { Avatar } from "@nextui-org/avatar";
+import { Avatar } from "@heroui/avatar";
 
 import {
   FaChevronDownIcon,

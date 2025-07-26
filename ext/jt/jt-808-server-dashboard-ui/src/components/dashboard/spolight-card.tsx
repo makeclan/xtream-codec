@@ -1,5 +1,5 @@
 import { ReactNode, useRef } from "react";
-import { Card } from "@nextui-org/card";
+import { Card } from "@heroui/card";
 
 import { useMouseMove } from "@/hooks/use-mouse-move.ts";
 export const SpotlightCard = ({

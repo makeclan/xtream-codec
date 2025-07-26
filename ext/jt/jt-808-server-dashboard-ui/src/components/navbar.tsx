@@ -1,10 +1,10 @@
-import { Button } from "@nextui-org/button";
-import { Link } from "@nextui-org/link";
+import { Button } from "@heroui/button";
+import { Link } from "@heroui/link";
 import {
   Navbar as NextUINavbar,
   NavbarContent,
   NavbarItem,
-} from "@nextui-org/navbar";
+} from "@heroui/navbar";
 import confetti from "canvas-confetti";
 
 import { siteConfig } from "@/config/site";
