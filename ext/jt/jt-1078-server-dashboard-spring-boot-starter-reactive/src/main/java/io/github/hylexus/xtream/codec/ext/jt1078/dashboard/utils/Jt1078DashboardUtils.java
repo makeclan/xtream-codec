@@ -27,6 +27,7 @@ import org.springframework.web.util.UriTemplate;
 import java.net.URI;
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public final class Jt1078DashboardUtils {
@@ -111,7 +112,11 @@ public final class Jt1078DashboardUtils {
                 ;
     }
 
-    public static H264Jt1078SubscriberCreator toH264Jt1078SubscriberCreator(Jt1078VideoStreamSubscriberDto params) {
+    public static H264Jt1078SubscriberCreator toH264Jt1078SubscriberCreator(Jt1078VideoStreamSubscriberDto params, Map<String, Object> metadata) {
+        if (metadata == null) {
+            metadata = new LinkedHashMap<>();
+        }
+        metadata.put("source", "Dashboard");
         return H264Jt1078SubscriberCreator.builder()
                 .sim(params.getSim())
                 .channelNumber(params.getChannel())
@@ -119,6 +124,8 @@ public final class Jt1078DashboardUtils {
                 .h264Meta(new H264Jt1078SubscriberCreator.H264Meta(params.getNaluDecoderRingBufferSize()))
                 .hasAudio(params.isHasAudio())
                 .hasVideo(params.isHasVideo())
+                .metadata(metadata)
+                .desc("Created By Dashboard Api")
                 .build();
     }
 

@@ -16,9 +16,9 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller;
 
+import io.github.hylexus.xtream.codec.base.web.annotation.ClientIp;
 import io.github.hylexus.xtream.codec.base.web.domain.vo.PageableVo;
 import io.github.hylexus.xtream.codec.base.web.exception.XtreamHttpException;
-import io.github.hylexus.xtream.codec.base.web.utils.XtreamWebUtils;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.Jt808SessionQueryDto;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.values.Jt808DashboardSimpleValues;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.vo.Jt808SessionVo;
@@ -26,7 +26,6 @@ import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808AttachmentSessionManag
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Session;
 import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionManager;
-import org.springframework.http.HttpHeaders;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -60,17 +59,16 @@ public class BuiltinJt808DashboardSessionController {
     }
 
     @DeleteMapping("/instruction-session/{sessionId}")
-    public Mono<Map<String, Boolean>> deleteInstructionSession(@PathVariable("sessionId") String sessionId, @RequestHeader HttpHeaders httpHeaders) {
-        return this.closeSession(sessionId, httpHeaders, this.sessionManager);
+    public Mono<Map<String, Boolean>> deleteInstructionSession(@PathVariable("sessionId") String sessionId, @ClientIp String clientIp) {
+        return this.closeSession(sessionId, this.sessionManager, clientIp);
     }
 
     @DeleteMapping("/attachment-session/{sessionId}")
-    public Mono<Map<String, Boolean>> deleteAttachmentSession(@PathVariable("sessionId") String sessionId, @RequestHeader HttpHeaders httpHeaders) {
-        return this.closeSession(sessionId, httpHeaders, this.attachmentSessionManager);
+    public Mono<Map<String, Boolean>> deleteAttachmentSession(@PathVariable("sessionId") String sessionId, @ClientIp String clientIp) {
+        return this.closeSession(sessionId, this.attachmentSessionManager, clientIp);
     }
 
-    private Mono<Map<String, Boolean>> closeSession(String sessionId, HttpHeaders httpHeaders, XtreamSessionManager<Jt808Session> manager) {
-        final String clientIp = XtreamWebUtils.getClientIp(httpHeaders::getFirst).orElse("unknown");
+    private Mono<Map<String, Boolean>> closeSession(String sessionId, XtreamSessionManager<Jt808Session> manager, String clientIp) {
         return manager.getSessionById(sessionId)
                 .switchIfEmpty(Mono.defer(() -> Mono.error(XtreamHttpException.notFound("No session found with sessionId: " + sessionId))))
                 .map(session -> {

@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.dashboard.controller.reactive;
 
+import io.github.hylexus.xtream.codec.base.web.annotation.ClientIp;
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.domain.dto.Jt1078VideoStreamSubscriberDto;
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.utils.Jt1078DashboardUtils;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078RequestPublisher;
@@ -33,6 +34,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 @Controller
@@ -50,13 +53,15 @@ public class BuiltinJt1078SubscriptionHttpHandlerReactive {
             value = "/dashboard-api/jt1078/v1/stream-data/http/flv/{sim}/{channel}",
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
     )
-    public ResponseEntity<Flux<byte[]>> subscribeFlvStream(@Validated Jt1078VideoStreamSubscriberDto dto) {
-        final Flux<byte[]> flvStream = this.doSubscribeFlvStream(dto);
+    public ResponseEntity<Flux<byte[]>> subscribeFlvStream(@Validated Jt1078VideoStreamSubscriberDto dto, @ClientIp String clientIp) {
+        final Flux<byte[]> flvStream = this.doSubscribeFlvStream(dto, clientIp);
         return ResponseEntity.ok().body(flvStream);
     }
 
-    private Flux<byte[]> doSubscribeFlvStream(Jt1078VideoStreamSubscriberDto params) {
-        final H264Jt1078SubscriberCreator subscriberCreator = Jt1078DashboardUtils.toH264Jt1078SubscriberCreator(params);
+    private Flux<byte[]> doSubscribeFlvStream(Jt1078VideoStreamSubscriberDto params, String clientIp) {
+        final Map<String, Object> metadata = new HashMap<>();
+        metadata.put("clientIp", clientIp);
+        final H264Jt1078SubscriberCreator subscriberCreator = Jt1078DashboardUtils.toH264Jt1078SubscriberCreator(params, metadata);
         final Jt1078Subscriber subscriber = this.publisher.subscribeH264ToFlv(subscriberCreator);
 
         log.info("FlvSubscriber(Http/{}) created: {}", subscriber.id(), subscriberCreator);

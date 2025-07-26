@@ -27,6 +27,7 @@ import jakarta.annotation.Nonnull;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.config.annotation.CorsRegistration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -39,6 +40,9 @@ import java.util.List;
 import static io.github.hylexus.xtream.codec.ext.jt1078.dashboard.boot.configuration.reactive.XtreamExtJt1078ServerAutoConfigurationReactive.filteredNonNullList;
 
 @EnableWebSocket
+@Import({
+        XtreamExtJt1078WebMvcAutoConfiguration.class,
+})
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class XtreamExtJt1078ServerAutoConfigurationServlet {
 

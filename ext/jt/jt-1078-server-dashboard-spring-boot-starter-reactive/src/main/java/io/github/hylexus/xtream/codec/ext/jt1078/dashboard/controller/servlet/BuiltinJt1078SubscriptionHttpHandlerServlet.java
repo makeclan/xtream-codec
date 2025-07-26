@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.dashboard.controller.servlet;
 
+import io.github.hylexus.xtream.codec.base.web.annotation.ClientIp;
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.domain.dto.Jt1078VideoStreamSubscriberDto;
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.utils.Jt1078DashboardUtils;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078RequestPublisher;
@@ -23,7 +24,6 @@ import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078Subscriber;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078Subscription;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.H264Jt1078SubscriberCreator;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionDestroyException;
-import jakarta.servlet.http.HttpServletRequest;
 import org.apache.catalina.connector.ClientAbortException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +35,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 @Controller
@@ -52,15 +54,16 @@ public class BuiltinJt1078SubscriptionHttpHandlerServlet {
             value = "/dashboard-api/jt1078/v1/stream-data/http/flv/{sim}/{channel}",
             produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
     )
-    public ResponseBodyEmitter subscribeFlvStream(
-            @Validated Jt1078VideoStreamSubscriberDto dto) {
+    public ResponseBodyEmitter subscribeFlvStream(@Validated Jt1078VideoStreamSubscriberDto dto, @ClientIp String clientIp) {
         final ResponseBodyEmitter sseEmitter = new ResponseBodyEmitter(0L);
-        this.doSubscribeFlvStream(dto, sseEmitter);
+        this.doSubscribeFlvStream(dto, clientIp, sseEmitter);
         return sseEmitter;
     }
 
-    private void doSubscribeFlvStream(Jt1078VideoStreamSubscriberDto dto, ResponseBodyEmitter sseEmitter) {
-        final H264Jt1078SubscriberCreator subscriberCreator = Jt1078DashboardUtils.toH264Jt1078SubscriberCreator(dto);
+    private void doSubscribeFlvStream(Jt1078VideoStreamSubscriberDto dto, String clientIp, ResponseBodyEmitter sseEmitter) {
+        final Map<String, Object> metadata = new HashMap<>();
+        metadata.put("clientIp", clientIp);
+        final H264Jt1078SubscriberCreator subscriberCreator = Jt1078DashboardUtils.toH264Jt1078SubscriberCreator(dto, metadata);
         final Jt1078Subscriber subscriber = this.publisher.subscribeH264ToFlv(subscriberCreator);
         sseEmitter.onCompletion(() -> this.publisher.unsubscribe(subscriber.id()));
 

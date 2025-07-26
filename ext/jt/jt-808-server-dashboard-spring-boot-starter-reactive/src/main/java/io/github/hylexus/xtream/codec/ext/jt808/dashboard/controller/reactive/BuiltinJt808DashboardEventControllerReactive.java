@@ -16,7 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.reactive;
 
-import io.github.hylexus.xtream.codec.base.web.utils.XtreamWebUtils;
+import io.github.hylexus.xtream.codec.base.web.annotation.ClientIp;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.LinkDataDto;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardEventService;
 import org.slf4j.Logger;
@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 
 /**
@@ -44,14 +43,12 @@ public class BuiltinJt808DashboardEventControllerReactive {
      * @see <a href="https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events">https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events</a>
      */
     @GetMapping("/link-data")
-    public Flux<ServerSentEvent<Object>> getLinkData(ServerWebExchange exchange, @Validated LinkDataDto dto) {
-        final String clientIp = XtreamWebUtils.getClientIp(exchange.getRequest().getHeaders()::getFirst, exchange.getRequest().getRemoteAddress()).orElse("unknown");
+    public Flux<ServerSentEvent<Object>> getLinkData(@Validated LinkDataDto dto, @ClientIp String clientIp) {
         return this.dashboardEventService.linkData(clientIp, dto);
     }
 
     @PostMapping("/link-data")
-    public Flux<ServerSentEvent<Object>> linkData(ServerWebExchange exchange, @Validated @RequestBody LinkDataDto dto) {
-        final String clientIp = XtreamWebUtils.getClientIp(exchange.getRequest().getHeaders()::getFirst, exchange.getRequest().getRemoteAddress()).orElse("unknown");
+    public Flux<ServerSentEvent<Object>> linkData(@Validated @RequestBody LinkDataDto dto, @ClientIp String clientIp) {
         return this.dashboardEventService.linkData(clientIp, dto);
     }
 

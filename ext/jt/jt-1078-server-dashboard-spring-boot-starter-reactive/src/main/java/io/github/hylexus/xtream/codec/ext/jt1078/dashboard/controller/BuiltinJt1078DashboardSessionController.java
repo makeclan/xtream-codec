@@ -16,16 +16,17 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.dashboard.controller;
 
+import io.github.hylexus.xtream.codec.base.web.annotation.ClientIp;
 import io.github.hylexus.xtream.codec.base.web.domain.vo.PageableVo;
-import io.github.hylexus.xtream.codec.base.web.utils.XtreamWebUtils;
+import io.github.hylexus.xtream.codec.base.web.exception.XtreamHttpException;
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.domain.dto.Jt1078SessionQueryDto;
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.domain.value.Jt1078DashboardSimpleValues;
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.domain.vo.Jt1078SessionVo;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Session;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionManager;
-import org.springframework.http.HttpHeaders;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
@@ -47,14 +48,22 @@ public class BuiltinJt1078DashboardSessionController {
     public PageableVo<Jt1078SessionVo> sessionList(Jt1078SessionQueryDto dto) {
         final Predicate<Jt1078Session> filter = createFilter(dto);
         final long total = this.sessionManager.count(filter);
-        final List<Jt1078SessionVo> list = this.sessionManager.list(dto.getPageNumber(), dto.getPageSize(), filter, this::convertToVo)
+        final List<Jt1078SessionVo> list = this.sessionManager.list(dto.getPageNumber(), dto.getPageSize(), filter, BuiltinJt1078DashboardSessionController::convertToVo)
                 .toList();
         return PageableVo.of(total, list);
     }
 
+    @GetMapping("/session/{sessionId}")
+    public Mono<Jt1078SessionVo> session(@PathVariable("sessionId") String sessionId) {
+        return this.sessionManager.getSessionById(sessionId)
+                .switchIfEmpty(Mono.defer(() -> {
+                    // ...
+                    return Mono.error(XtreamHttpException.notFound("No session found with sessionId: " + sessionId));
+                })).map(BuiltinJt1078DashboardSessionController::convertToVo);
+    }
+
     @DeleteMapping("/session/{sessionId}")
-    public Object closeSession(@PathVariable("sessionId") String sessionId, @RequestHeader HttpHeaders httpHeaders) {
-        final String clientIp = XtreamWebUtils.getClientIp(httpHeaders::getFirst).orElse("unknown");
+    public Object closeSession(@PathVariable("sessionId") String sessionId, @ClientIp String clientIp) {
         final boolean success = sessionManager.closeSessionById(
                 sessionId,
                 new Jt1078DashboardSimpleValues.Jt1078DashboardSessionCloseReason("ClosedByDashboardApi", clientIp)
@@ -68,7 +77,7 @@ public class BuiltinJt1078DashboardSessionController {
     Predicate<Jt1078Session> createFilter(Jt1078SessionQueryDto dto) {
         Predicate<Jt1078Session> predicate = it -> true;
         if (StringUtils.hasText(dto.getTerminalId())) {
-            predicate = predicate.and(it -> it.terminalId().toLowerCase().contains(dto.getTerminalId().toLowerCase()));
+            predicate = predicate.and(it -> it.terminalId().toLowerCase().contains(dto.getTerminalId().trim().toLowerCase()));
         }
         if (dto.getProtocolType() != null) {
             predicate = predicate.and(it -> it.type() == dto.getProtocolType());
@@ -76,7 +85,7 @@ public class BuiltinJt1078DashboardSessionController {
         return predicate;
     }
 
-    Jt1078SessionVo convertToVo(Jt1078Session it) {
+    static Jt1078SessionVo convertToVo(Jt1078Session it) {
         return new Jt1078SessionVo()
                 .setId(it.id())
                 .setTerminalId(it.terminalId())

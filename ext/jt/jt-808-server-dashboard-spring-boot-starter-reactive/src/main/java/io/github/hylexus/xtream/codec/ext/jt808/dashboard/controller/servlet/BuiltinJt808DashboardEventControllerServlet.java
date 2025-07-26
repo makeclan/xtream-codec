@@ -16,18 +16,15 @@
 
 package io.github.hylexus.xtream.codec.ext.jt808.dashboard.controller.servlet;
 
-import io.github.hylexus.xtream.codec.base.web.utils.XtreamWebUtils;
+import io.github.hylexus.xtream.codec.base.web.annotation.ClientIp;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.domain.dto.LinkDataDto;
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardEventService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
-
-import java.util.Optional;
 
 /**
  * @author hylexus
@@ -46,18 +43,12 @@ public class BuiltinJt808DashboardEventControllerServlet {
      * @see <a href="https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events">https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events</a>
      */
     @GetMapping("/link-data")
-    public Flux<ServerSentEvent<Object>> getLinkData(HttpServletRequest request, @Validated LinkDataDto dto) {
-        final String clientIp = XtreamWebUtils.getClientIp(request::getHeader)
-                .or(() -> Optional.ofNullable(request.getRemoteAddr()))
-                .orElse("unknown");
+    public Flux<ServerSentEvent<Object>> getLinkData(@Validated LinkDataDto dto, @ClientIp String clientIp) {
         return this.dashboardEventService.linkData(clientIp, dto);
     }
 
     @PostMapping("/link-data")
-    public Flux<ServerSentEvent<Object>> linkData(HttpServletRequest request, @Validated @RequestBody LinkDataDto dto) {
-        final String clientIp = XtreamWebUtils.getClientIp(request::getHeader)
-                .or(() -> Optional.ofNullable(request.getRemoteAddr()))
-                .orElse("unknown");
+    public Flux<ServerSentEvent<Object>> linkData(@Validated @RequestBody LinkDataDto dto, @ClientIp String clientIp) {
         return this.dashboardEventService.linkData(clientIp, dto);
     }
 

@@ -22,6 +22,7 @@ import io.github.hylexus.xtream.codec.ext.jt808.dashboard.handler.Jt808ServerDas
 import io.github.hylexus.xtream.codec.ext.jt808.dashboard.service.Jt808DashboardEventService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.RouterFunction;
@@ -33,6 +34,9 @@ import java.net.URI;
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
+@Import({
+        XtreamExtJt808WebFluxAutoConfiguration.class,
+})
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 public class XtreamExtJt808ServerAutoConfigurationReactive {
 

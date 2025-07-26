@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.dashboard.controller.servlet;
 
+import io.github.hylexus.xtream.codec.base.web.utils.XtreamWebUtils;
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.domain.dto.Jt1078VideoStreamSubscriberDto;
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.exception.WebSocketCloseException;
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.utils.Jt1078DashboardUtils;
@@ -37,6 +38,8 @@ import reactor.core.scheduler.Schedulers;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 public class BuiltinJt1078SubscriptionWebSocketHandlerServlet extends AbstractWebSocketHandler {
@@ -54,9 +57,11 @@ public class BuiltinJt1078SubscriptionWebSocketHandlerServlet extends AbstractWe
 
     @Override
     public void afterConnectionEstablished(@Nonnull WebSocketSession session) {
-
+        final String clientIp = XtreamWebUtils.getClient(session).map(XtreamWebUtils::filterClientIp).orElseThrow();
         final Jt1078VideoStreamSubscriberDto dto = Jt1078DashboardUtils.parseJt1078VideoStreamSubscriberDto(session, uriTemplate);
-        final H264Jt1078SubscriberCreator subscriberCreator = Jt1078DashboardUtils.toH264Jt1078SubscriberCreator(dto);
+        final Map<String, Object> metadata = new LinkedHashMap<>();
+        metadata.put("clientIp", clientIp);
+        final H264Jt1078SubscriberCreator subscriberCreator = Jt1078DashboardUtils.toH264Jt1078SubscriberCreator(dto, metadata);
         final Jt1078Subscriber subscriber = this.publisher.subscribeH264ToFlv(subscriberCreator);
         session.getAttributes().put(ATTR_KEY_SUBSCRIBER, subscriber);
 

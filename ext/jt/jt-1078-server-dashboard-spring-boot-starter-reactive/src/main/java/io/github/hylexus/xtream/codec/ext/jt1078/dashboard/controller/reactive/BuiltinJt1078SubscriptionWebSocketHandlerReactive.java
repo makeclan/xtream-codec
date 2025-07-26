@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.dashboard.controller.reactive;
 
+import io.github.hylexus.xtream.codec.base.web.utils.XtreamWebUtils;
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.domain.dto.Jt1078VideoStreamSubscriberDto;
 import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.utils.Jt1078DashboardUtils;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078RequestPublisher;
@@ -33,6 +34,8 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 public class BuiltinJt1078SubscriptionWebSocketHandlerReactive implements WebSocketHandler {
@@ -50,20 +53,22 @@ public class BuiltinJt1078SubscriptionWebSocketHandlerReactive implements WebSoc
     @Override
     @Nonnull
     public Mono<Void> handle(@Nonnull WebSocketSession session) {
+        final String clientIp = XtreamWebUtils.getClientIp(session).map(XtreamWebUtils::filterClientIp).orElseThrow();
         final Jt1078VideoStreamSubscriberDto dto = Jt1078DashboardUtils.parseJt1078VideoStreamSubscriberDto(session, uriTemplate);
 
         // websocket inbound
         final Mono<Void> input = session.receive().then();
 
         // websocket outbound: FLV 数据流
-        final Mono<Void> flvStream = this.subscribeFlvStream(session, dto);
+        final Mono<Void> flvStream = this.subscribeFlvStream(session, clientIp, dto);
 
         return Mono.zip(input, flvStream).then();
     }
 
-    private Mono<Void> subscribeFlvStream(WebSocketSession session, Jt1078VideoStreamSubscriberDto params) {
-
-        final H264Jt1078SubscriberCreator subscriberCreator = Jt1078DashboardUtils.toH264Jt1078SubscriberCreator(params);
+    private Mono<Void> subscribeFlvStream(WebSocketSession session, String clientIp, Jt1078VideoStreamSubscriberDto params) {
+        final Map<String, Object> metadata = new LinkedHashMap<>();
+        metadata.put("clientIp", clientIp);
+        final H264Jt1078SubscriberCreator subscriberCreator = Jt1078DashboardUtils.toH264Jt1078SubscriberCreator(params, metadata);
         final Jt1078Subscriber subscriber = this.publisher.subscribeH264ToFlv(subscriberCreator);
 
         log.info("FlvSubscriber(WebSocket/{}) created: {}", subscriber.id(), subscriberCreator);
