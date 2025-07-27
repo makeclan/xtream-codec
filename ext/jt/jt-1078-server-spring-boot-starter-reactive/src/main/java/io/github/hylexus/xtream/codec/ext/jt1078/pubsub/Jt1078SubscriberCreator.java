@@ -34,6 +34,7 @@ import java.util.StringJoiner;
 @NoArgsConstructor
 public class Jt1078SubscriberCreator implements Jt1078SubscriberCreatorInfo {
     protected String sim;
+    protected String rawSim;
     protected short channelNumber;
 
     @Builder.Default

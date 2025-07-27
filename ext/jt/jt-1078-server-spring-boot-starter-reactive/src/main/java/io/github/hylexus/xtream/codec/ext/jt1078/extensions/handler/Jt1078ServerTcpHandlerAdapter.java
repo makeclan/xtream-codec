@@ -16,11 +16,12 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.extensions.handler;
 
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchangeCreator;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
+import io.github.hylexus.xtream.codec.ext.jt1078.codec.Jt1078ByteToMessageDecoder;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.DefaultJt1078Request;
+import io.github.hylexus.xtream.codec.server.reactive.spec.*;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamExchange;
+import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamResponse;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.DefaultTcpXtreamNettyHandlerAdapter;
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
@@ -31,6 +32,7 @@ import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
 
 import java.net.InetSocketAddress;
+import java.util.UUID;
 
 public class Jt1078ServerTcpHandlerAdapter extends DefaultTcpXtreamNettyHandlerAdapter {
     private static final Logger log = LoggerFactory.getLogger(Jt1078ServerTcpHandlerAdapter.class);
@@ -43,24 +45,17 @@ public class Jt1078ServerTcpHandlerAdapter extends DefaultTcpXtreamNettyHandlerA
 
     @Override
     public Publisher<Void> apply(NettyInbound nettyInbound, NettyOutbound nettyOutbound) {
-        return nettyInbound.receive()
+        return nettyInbound.receiveObject()
+                .map(Jt1078ByteToMessageDecoder.Jt1078PackageInfo.class::cast)
                 // .onBackpressureBuffer(1024,(buffer)->{
                 //     log.error("Buffer Overflow");
                 // }, BufferOverflowStrategy.DROP_OLDEST)
-                .doOnNext(ByteBuf::retain)
+                // .doOnNext(it->it.body().retain())
                 .publishOn(scheduler)
-                .flatMap(byteBuf -> {
-                    if (byteBuf.readableBytes() <= 0) {
-                        byteBuf.release();
-                        return Mono.empty();
-                    }
+                .flatMap((Jt1078ByteToMessageDecoder.Jt1078PackageInfo byteBuf) -> {
                     final InetSocketAddress remoteAddress = this.initTcpRemoteAddress(nettyInbound);
-                    return this.handleSingleRequest(nettyInbound, nettyOutbound, byteBuf, remoteAddress)
-                            .doFinally(signalType -> byteBuf.release())
-                            .onErrorResume(Throwable.class, throwable -> {
-                                log.error("Unexpected Exception", throwable);
-                                return Mono.empty();
-                            });
+                    final XtreamExchange exchange = this.createTcpExchange(allocator, nettyInbound, nettyOutbound, byteBuf, remoteAddress);
+                    return this.doTcpExchange(exchange);
                 })
                 .onErrorResume(throwable -> {
                     log.error("Unexpected Error", throwable);
@@ -68,12 +63,21 @@ public class Jt1078ServerTcpHandlerAdapter extends DefaultTcpXtreamNettyHandlerA
                 });
     }
 
-    protected Mono<Void> handleSingleRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf payload, InetSocketAddress remoteAddress) {
-        final XtreamExchange exchange = this.xtreamExchangeCreator.createTcpExchange(allocator, nettyInbound, nettyOutbound, payload, remoteAddress);
-        return this.doTcpExchange(exchange).doFinally(signalType -> {
-            // ...
-            // exchange.request().release();
-        });
+    protected XtreamExchange createTcpExchange(ByteBufAllocator allocator, NettyInbound nettyInbound, NettyOutbound nettyOutbound, Jt1078ByteToMessageDecoder.Jt1078PackageInfo byteBuf, InetSocketAddress remoteAddress) {
+        final XtreamRequest.Type type = XtreamRequest.Type.TCP;
+        final String requestId = UUID.randomUUID().toString().replace("-", "");
+        final XtreamRequest request = new DefaultJt1078Request(
+                requestId,
+                requestId, allocator,
+                nettyInbound,
+                XtreamInbound.Type.TCP,
+                remoteAddress,
+                byteBuf.header(),
+                byteBuf.body()
+        );
+        final DefaultXtreamResponse response = new DefaultXtreamResponse(allocator, nettyOutbound, type, remoteAddress);
+
+        return new DefaultXtreamExchange(sessionManager, request, response);
     }
 
 }

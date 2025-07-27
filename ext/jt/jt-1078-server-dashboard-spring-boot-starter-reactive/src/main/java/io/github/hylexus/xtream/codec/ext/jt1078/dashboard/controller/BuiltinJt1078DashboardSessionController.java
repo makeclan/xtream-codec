@@ -89,6 +89,7 @@ public class BuiltinJt1078DashboardSessionController {
         return new Jt1078SessionVo()
                 .setId(it.id())
                 .setTerminalId(it.terminalId())
+                .setRawTerminalId(it.rawTerminalId())
                 .setProtocolType(it.type())
                 .setCreationTime(it.creationTime())
                 .setLastCommunicateTime(it.lastCommunicateTime())

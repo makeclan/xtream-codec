@@ -22,6 +22,7 @@ import io.github.hylexus.xtream.codec.ext.jt1078.extensions.handler.EventBasedJt
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078RequestPublisher;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.DefaultJt1078RequestPublisher;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TerminalIdConverter;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.RemoveLeadingZerosJt1078TerminalIdConverter;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.resources.Jt1078XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.EmptyXtreamHandlerResultHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -34,7 +35,7 @@ public class BuiltinJt1078ServerHandlerConfiguration {
     @Bean
     @ConditionalOnMissingBean
     Jt1078TerminalIdConverter jt1078TerminalIdConverter() {
-        return new Jt1078TerminalIdConverter.DefaultJt1078TerminalIdConverter();
+        return new RemoveLeadingZerosJt1078TerminalIdConverter();
     }
 
     @Bean

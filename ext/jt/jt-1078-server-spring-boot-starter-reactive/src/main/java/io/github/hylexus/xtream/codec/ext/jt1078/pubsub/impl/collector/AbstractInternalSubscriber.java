@@ -30,6 +30,8 @@ public abstract class AbstractInternalSubscriber
 
     protected final String sim;
 
+    protected final String rawSim;
+
     protected final short channel;
 
     protected final String desc;
@@ -47,6 +49,7 @@ public abstract class AbstractInternalSubscriber
 
         this.id = id;
         this.sim = creator.sim();
+        this.rawSim = creator.rawSim();
         this.channel = creator.channelNumber();
         this.desc = creator.desc();
         this.createdAt = createdAt;
@@ -62,6 +65,11 @@ public abstract class AbstractInternalSubscriber
     @Override
     public String sim() {
         return this.sim;
+    }
+
+    @Override
+    public String rawSim() {
+        return this.rawSim;
     }
 
     @Override

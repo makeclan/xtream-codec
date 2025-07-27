@@ -34,6 +34,8 @@ public interface Jt1078Session extends XtreamSession {
 
     String terminalId();
 
+    String rawTerminalId();
+
     short channelNumber();
 
 }

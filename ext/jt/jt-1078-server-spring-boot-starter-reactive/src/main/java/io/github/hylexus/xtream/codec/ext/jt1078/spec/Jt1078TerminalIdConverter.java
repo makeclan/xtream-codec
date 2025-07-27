@@ -16,33 +16,23 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.spec;
 
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.RemoveLeadingZerosJt1078TerminalIdConverter;
+
 /**
- * 1078 的 SIM 为 BCD[6]，但是
- * <ol>
- *     <li>v2011 或 2013 版的终端手机号就是 BCD[6]</li>
- *     <li>v2019的终端手机号是 BCD[10]</li>
- * </ol>
- * 默认实现: 截取最后 12(BCD[6]) 个字符
+ * 1078 的 SIM 为 {@code BCD[6]} 或 {@code BCD[10]}
  * <p>
+ * 内置了两个实现类:
+ * <li>{@link RemoveLeadingZerosJt1078TerminalIdConverter 移除前导零的实现}（默认）</li>
+ * <li>{@link io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.PadLeadingZerosJt1078TerminalIdConverter 填充前导零的实现}</li>
  *
  * @see Jt1078RequestHeader#sim()
- * @see DefaultJt1078TerminalIdConverter
+ * @see RemoveLeadingZerosJt1078TerminalIdConverter
+ * @see io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.PadLeadingZerosJt1078TerminalIdConverter
  */
 public interface Jt1078TerminalIdConverter {
 
-    String convert(String original);
+    Jt1078TerminalIdConverter DEFAULT = new RemoveLeadingZerosJt1078TerminalIdConverter();
 
-    class DefaultJt1078TerminalIdConverter implements Jt1078TerminalIdConverter {
-        @Override
-        public String convert(String original) {
-            // BCD[6] ==> 12
-            // 视为 2013||2011 版
-            if (original.length() <= 12) {
-                return original;
-            }
-            // 视为 2019 ==> 只保留最后 12 位
-            return original.substring(original.length() - 12);
-        }
-    }
+    String convert(String original);
 
 }

@@ -106,6 +106,8 @@ public interface Jt1078RequestHeader {
      */
     String offset8();
 
+    String rawSim();
+
     /**
      * bytes[8,14)    BCD[6]    SIM卡号
      *
@@ -307,6 +309,8 @@ public interface Jt1078RequestHeader {
         Jt1078RequestHeaderBuilder offset6(int value);
 
         Jt1078RequestHeaderBuilder offset8(String value);
+
+        Jt1078RequestHeaderBuilder rawSim(String value);
 
         Jt1078RequestHeaderBuilder offset14(short value);
 

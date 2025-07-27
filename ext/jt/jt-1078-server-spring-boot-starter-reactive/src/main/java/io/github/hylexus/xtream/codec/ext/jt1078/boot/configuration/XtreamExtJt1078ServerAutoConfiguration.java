@@ -60,13 +60,6 @@ public class XtreamExtJt1078ServerAutoConfiguration {
         return new BufferFactoryHolder(ByteBufAllocator.DEFAULT);
     }
 
-    // @Bean
-    // @ConditionalOnMissingBean
-    // Jt1078RequestCombiner jt1078RequestCombiner(BufferFactoryHolder factoryHolder, XtreamJt1078ServerProperties properties) {
-    //     final XtreamJt1078ServerProperties.RequestCombinerFeature combiner = properties.getFeatures().getRequestCombiner();
-    //     return new CaffeineJt1078RequestCombiner(factoryHolder.getAllocator(), combiner.getSubPackageStorage().getMaximumSize(), combiner.getSubPackageStorage().getTtl());
-    // }
-
     @Bean
     @ConditionalOnMissingBean
     Jt1078RequestDecoder jt808RequestDecoder() {

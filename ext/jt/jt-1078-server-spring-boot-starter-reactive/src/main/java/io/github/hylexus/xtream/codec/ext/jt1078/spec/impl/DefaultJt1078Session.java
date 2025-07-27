@@ -38,14 +38,16 @@ public class DefaultJt1078Session extends AbstractXtreamOutbound implements Jt10
     private volatile Instant lastCommunicateTime;
     protected final Map<String, Object> attributes = new HashMap<>();
     private final String terminalId;
+    private final String rawTerminalId;
     private final short channelNumber;
 
-    public DefaultJt1078Session(String id, ByteBufAllocator byteBufAllocator, NettyOutbound delegate, XtreamRequest.Type type, String terminalId, short channelNumber, InetSocketAddress remoteAddress, XtreamSessionManager<Jt1078Session> sessionManager) {
+    public DefaultJt1078Session(String id, ByteBufAllocator byteBufAllocator, NettyOutbound delegate, XtreamRequest.Type type, String terminalId, short channelNumber, InetSocketAddress remoteAddress, XtreamSessionManager<Jt1078Session> sessionManager, String rawTerminalId) {
         super(byteBufAllocator, delegate, type, remoteAddress);
         this.id = id;
         this.sessionManager = sessionManager;
         this.terminalId = terminalId;
         this.channelNumber = channelNumber;
+        this.rawTerminalId = rawTerminalId;
         this.creationTime = this.lastCommunicateTime = Instant.now();
     }
 
@@ -95,6 +97,11 @@ public class DefaultJt1078Session extends AbstractXtreamOutbound implements Jt10
     @Override
     public String terminalId() {
         return this.terminalId;
+    }
+
+    @Override
+    public String rawTerminalId() {
+        return this.rawTerminalId;
     }
 
     @Override

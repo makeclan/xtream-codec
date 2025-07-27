@@ -35,6 +35,7 @@ public class DefaultJt1078RequestHeader implements Jt1078RequestHeader, Jt1078Re
     private Jt1078PayloadType payloadType;
     private int offset6;
     private String offset8;
+    private String rawSim;
     private short offset14;
     private short offset15;
     private Jt1078DataType dataType;
@@ -51,7 +52,7 @@ public class DefaultJt1078RequestHeader implements Jt1078RequestHeader, Jt1078Re
 
     public DefaultJt1078RequestHeader(
             short offset4, short offset5,
-            int offset6, String offset8,
+            int offset6, String offset8, String rawSim,
             short offset14, short offset15,
             Long offset16, Integer offset24,
             Integer offset26, int offset28,
@@ -61,6 +62,7 @@ public class DefaultJt1078RequestHeader implements Jt1078RequestHeader, Jt1078Re
         this.offset5(offset5);
         this.offset6 = offset6;
         this.offset8 = offset8;
+        this.rawSim = rawSim;
         this.offset14 = offset14;
         this.offset15(offset15);
         this.offset16 = offset16;
@@ -131,6 +133,17 @@ public class DefaultJt1078RequestHeader implements Jt1078RequestHeader, Jt1078Re
     @Override
     public Jt1078RequestHeaderBuilder offset8(String value) {
         this.offset8 = value;
+        return this;
+    }
+
+    @Override
+    public String rawSim() {
+        return this.rawSim;
+    }
+
+    @Override
+    public Jt1078RequestHeaderBuilder rawSim(String value) {
+        this.rawSim = value;
         return this;
     }
 
@@ -241,7 +254,7 @@ public class DefaultJt1078RequestHeader implements Jt1078RequestHeader, Jt1078Re
     @Override
     public Jt1078RequestHeader build() {
         return new DefaultJt1078RequestHeader(
-                this.offset4, this.offset5, this.offset6, this.offset8, this.offset14,
+                this.offset4, this.offset5, this.offset6, this.offset8, this.rawSim, this.offset14,
                 this.offset15, this.offset16, this.offset24, this.offset26, this.offset28,
                 this.combined
         );

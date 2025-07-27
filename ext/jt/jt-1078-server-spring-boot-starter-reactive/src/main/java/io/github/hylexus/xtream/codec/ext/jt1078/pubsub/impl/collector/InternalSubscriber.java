@@ -28,6 +28,8 @@ public interface InternalSubscriber extends Jt1078SubscriberDescriptor {
 
     String sim();
 
+    String rawSim();
+
     short channel();
 
     String desc();
@@ -46,6 +48,11 @@ public interface InternalSubscriber extends Jt1078SubscriberDescriptor {
     @Override
     default String getSim() {
         return this.sim();
+    }
+
+    @Override
+    default String getRawSim() {
+        return this.rawSim();
     }
 
     @Override

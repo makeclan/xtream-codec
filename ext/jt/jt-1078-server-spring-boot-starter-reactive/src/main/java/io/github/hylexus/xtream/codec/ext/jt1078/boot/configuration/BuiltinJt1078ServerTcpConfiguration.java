@@ -20,9 +20,11 @@ import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
 import io.github.hylexus.xtream.codec.ext.jt1078.boot.condition.ConditionalOnJt1078Server;
 import io.github.hylexus.xtream.codec.ext.jt1078.boot.configuration.utils.Jt1078ConfigurationUtils;
 import io.github.hylexus.xtream.codec.ext.jt1078.boot.properties.XtreamJt1078ServerProperties;
+import io.github.hylexus.xtream.codec.ext.jt1078.codec.Jt1078ByteToMessageDecoder;
 import io.github.hylexus.xtream.codec.ext.jt1078.extensions.Jt1078ServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionManager;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TcpHeatBeatHandler;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TerminalIdConverter;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.resources.Jt1078XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.ext.jt1078.utils.Jt1078ServerTcpHandlerAdapterBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.TcpXtreamNettyHandlerAdapter;
@@ -40,8 +42,6 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.resources.DefaultTcpX
 import io.github.hylexus.xtream.codec.server.reactive.spec.resources.TcpXtreamNettyResourceFactory;
 import io.github.hylexus.xtream.codec.server.reactive.spec.resources.XtreamNettyResourceFactory;
 import io.github.hylexus.xtream.codec.server.reactive.utils.BuiltinConfigurationUtils;
-import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -109,7 +109,8 @@ public class BuiltinJt1078ServerTcpConfiguration {
             @Qualifier(BEAN_NAME_JT1078_TCP_XTREAM_NETTY_RESOURCE_FACTORY) TcpXtreamNettyResourceFactory resourceFactory,
             ObjectProvider<TcpNettyServerCustomizer> customizers,
             Jt1078SessionManager sessionManager,
-            XtreamJt1078ServerProperties serverProperties) {
+            XtreamJt1078ServerProperties serverProperties,
+            Jt1078TerminalIdConverter terminalIdConverter) {
 
         final XtreamJt1078ServerProperties.TcpServerProps tcpServer = serverProperties.getTcpServer();
         return XtreamServerBuilder.newTcpServerBuilder()
@@ -123,10 +124,9 @@ public class BuiltinJt1078ServerTcpConfiguration {
                     addTcpIdleStateHandler(sessionManager, serverProperties, connection);
                     // 分包
                     // stripDelimiter=true
+                    // todo 最大包大小限制
                     final int frameLength = serverProperties.getTcpServer().getMaxFrameLength();
-                    // todo 自定义分包器
-                    final DelimiterBasedFrameDecoder frameDecoder = new DelimiterBasedFrameDecoder(frameLength, true, Unpooled.copiedBuffer(new byte[]{0x30, 0x31, 0x63, 0x64}));
-                    connection.addHandlerFirst(BEAN_NAME_JT1078_CHANNEL_FRAME_DECODER, frameDecoder);
+                    connection.addHandlerFirst(BEAN_NAME_JT1078_CHANNEL_FRAME_DECODER, new Jt1078ByteToMessageDecoder(terminalIdConverter));
                 }))
                 // loopResources
                 .addServerCustomizer(server -> server.runOn(resourceFactory.loopResources(), resourceFactory.preferNative()))

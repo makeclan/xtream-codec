@@ -45,7 +45,7 @@ public class DefaultJt1078SessionManager
                 response.type(),
                 request.header().sim(),
                 request.channelNumber(), response.remoteAddress(),
-                this
+                this, request.header().rawSim()
         );
     }
 }

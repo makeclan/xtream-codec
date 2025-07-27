@@ -26,6 +26,8 @@ public interface Jt1078SubscriberDescriptor {
 
     String getSim();
 
+    String getRawSim();
+
     short getChannel();
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")

@@ -14,28 +14,20 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt1078.pubsub;
+package io.github.hylexus.xtream.codec.ext.jt1078.spec.impl;
 
-import java.time.Duration;
-import java.util.Map;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TerminalIdConverter;
 
-// todo 重构
-public interface Jt1078SubscriberCreatorInfo {
+/**
+ * 去除前导零
+ *
+ * @author hylexus
+ */
+public class RemoveLeadingZerosJt1078TerminalIdConverter implements Jt1078TerminalIdConverter {
 
-    String sim();
-
-    String rawSim();
-
-    short channelNumber();
-
-    boolean hasAudio();
-
-    boolean hasVideo();
-
-    Duration timeout();
-
-    String desc();
-
-    Map<String, Object> metadata();
+    @Override
+    public String convert(String original) {
+        return original.replaceFirst("^0*", "");
+    }
 
 }

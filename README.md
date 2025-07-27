@@ -113,3 +113,45 @@
 
 - 请参考生成的 **.jar** 文件中的 `META-INF/NOTICE.txt` 文件 。
 - 或者, 执行 `./gradlew clean generateLicenseReport` 之后查看生成的 `build/reports/dependency-license/THIRD-PARTY-NOTICES.txt` 文件。
+
+## TODO
+
+- [JT/T 1078 扩展](ext/jt/jt-1078-server-spring-boot-starter-reactive)
+    - [ ] 代码简化
+    - [ ] 码流断开时未消费的数据未释放的问题
+    - [ ] 音频
+        - [x] ADPCMA（以下参考资料排名不分先后）
+            - [https://wiki.multimedia.cx/index.php/IMA_ADPCM](https://wiki.multimedia.cx/index.php/IMA_ADPCM)
+            - [https://www.hentai.org.cn/article?id=8](https://www.hentai.org.cn/article?id=8)
+            - [https://github.com/pdeljanov/Symphonia.git](https://github.com/pdeljanov/Symphonia.git)
+            - [https://www.cs.columbia.edu/~hgs/audio/dvi/IMA_ADPCM.pdf](https://www.cs.columbia.edu/~hgs/audio/dvi/IMA_ADPCM.pdf)
+            - [https://ww1.microchip.com/downloads/en/AppNotes/00643b.pdf](https://ww1.microchip.com/downloads/en/AppNotes/00643b.pdf)
+        - [x] G711
+            - 翻译自 [mazcpnt/maz-g711](https://gitee.com/mazcpnt/maz-g711/blob/master/maz_cpnt_g711.c)
+        - [ ] G726
+        - [x] AAC
+            - 感谢 [@sky](https://gitee.com/hui_hui_zhou/open-source-repository)
+    - [ ] 视频
+        - [x] H.264（以下参考资料排名不分先后）
+            - [https://rtmp.veriskope.com/pdf/video_file_format_spec_v10.pdf](https://rtmp.veriskope.com/pdf/video_file_format_spec_v10.pdf)
+            - [https://gitee.com/ldming/JT1078](https://gitee.com/ldming/JT1078)
+            - [https://gitee.com/matrixy/jtt1078-video-server](https://gitee.com/matrixy/jtt1078-video-server)
+            - [https://gitee.com/hui_hui_zhou/open-source-repository](https://gitee.com/hui_hui_zhou/open-source-repository)
+            - [https://www.cnblogs.com/CoderTian/p/8278369.html](https://www.cnblogs.com/CoderTian/p/8278369.html)
+            - [https://sample-videos.com/index.php#sample-flv-video](https://sample-videos.com/index.php#sample-flv-video)
+            - [https://www.jianshu.com/p/916899d4833b](https://www.jianshu.com/p/916899d4833b)
+            - [https://www.jianshu.com/p/07657d85617e](https://www.jianshu.com/p/07657d85617e)
+            - [https://www.cnblogs.com/chyingp/p/flv-getting-started.html](https://www.cnblogs.com/chyingp/p/flv-getting-started.html)
+        - [ ] H.265
+    - SIM
+        - [x] `BCD[6]`
+        - [x] `BCD[10]`
+            - 感谢 [@sky](https://gitee.com/hui_hui_zhou/open-source-repository)
+    - [ ] [jt-1078-server-dashboard-ui](ext/jt/jt-1078-server-dashboard-ui) 开发
+- [JT/T 808 扩展](ext/jt/jt-808-server-spring-boot-starter-reactive)
+    - [ ] 术语重命名为 `Jt808` 标准中出现的单词
+    - [ ] [jt-808-server-dashboard-ui](ext/jt/jt-808-server-dashboard-ui) 完善
+- [xtream-codec-core](xtream-codec-core)
+    - [ ] 注解增强
+- [xtream-codec-server-reactive](xtream-codec-server-reactive)
+    - [ ] 简化初始化代码

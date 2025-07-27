@@ -32,6 +32,7 @@ import java.time.Instant;
 public class Jt1078SessionVo {
     private String id;
     private String terminalId;
+    private String rawTerminalId;
     private XtreamRequest.Type protocolType;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "GMT+8")
