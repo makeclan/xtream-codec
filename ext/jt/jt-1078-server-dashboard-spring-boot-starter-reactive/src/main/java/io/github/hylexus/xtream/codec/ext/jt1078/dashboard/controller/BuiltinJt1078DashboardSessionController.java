@@ -76,11 +76,17 @@ public class BuiltinJt1078DashboardSessionController {
 
     Predicate<Jt1078Session> createFilter(Jt1078SessionQueryDto dto) {
         Predicate<Jt1078Session> predicate = it -> true;
-        if (StringUtils.hasText(dto.getTerminalId())) {
-            predicate = predicate.and(it -> it.terminalId().toLowerCase().contains(dto.getTerminalId().trim().toLowerCase()));
+        if (StringUtils.hasText(dto.getSim())) {
+            predicate = predicate.and(it -> it.rawSim().toLowerCase().contains(dto.getSim().trim().toLowerCase()));
         }
         if (dto.getProtocolType() != null) {
             predicate = predicate.and(it -> it.type() == dto.getProtocolType());
+        }
+        if (dto.getAudioType() != null) {
+            predicate = predicate.and(it -> it.audioType() == dto.getAudioType());
+        }
+        if (dto.getVideoType() != null) {
+            predicate = predicate.and(it -> it.videoType() == dto.getVideoType());
         }
         return predicate;
     }
@@ -88,9 +94,11 @@ public class BuiltinJt1078DashboardSessionController {
     static Jt1078SessionVo convertToVo(Jt1078Session it) {
         return new Jt1078SessionVo()
                 .setId(it.id())
-                .setTerminalId(it.terminalId())
-                .setRawTerminalId(it.rawTerminalId())
+                .setConvertedSim(it.convertedSim())
+                .setRawSim(it.rawSim())
                 .setProtocolType(it.type())
+                .setAudioType(it.audioType())
+                .setVideoType(it.videoType())
                 .setCreationTime(it.creationTime())
                 .setLastCommunicateTime(it.lastCommunicateTime())
                 ;

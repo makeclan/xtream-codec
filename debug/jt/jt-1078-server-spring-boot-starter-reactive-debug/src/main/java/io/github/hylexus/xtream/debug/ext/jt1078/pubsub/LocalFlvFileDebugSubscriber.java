@@ -24,7 +24,6 @@ import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.stereotype.Component;
 import reactor.core.scheduler.Schedulers;
 
 import java.io.*;
@@ -51,10 +50,10 @@ public class LocalFlvFileDebugSubscriber implements DisposableBean {
     public void subscribe(Jt1078Session session) {
         new Thread(() -> {
             log.info("start subscribe");
-            final String sim = session.terminalId();
+            final String sim = session.rawSim();
             final short channelNumber = session.channelNumber();
             final H264Jt1078SubscriberCreator creator = H264Jt1078SubscriberCreator.builder()
-                    .sim(sim)
+                    .rawSim(sim)
                     .channelNumber(channelNumber)
                     .timeout(Duration.ofMinutes(30))
                     .h264Meta(new H264Jt1078SubscriberCreator.H264Meta(1 << 18))

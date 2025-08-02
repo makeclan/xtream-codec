@@ -70,19 +70,19 @@ public interface Jt1078SessionManager extends XtreamSessionManager<Jt1078Session
     }
 
     default Stream<Jt1078Session> list(int page, int pageSize, Predicate<Jt1078Session> filter) {
-        return this.list().filter(filter).sorted(Comparator.comparing(Jt1078Session::terminalId)).skip((long) (page - 1) * pageSize).limit(pageSize);
+        return this.list().filter(filter).sorted(Comparator.comparing(Jt1078Session::rawSim)).skip((long) (page - 1) * pageSize).limit(pageSize);
     }
 
     default Stream<Jt1078Session> list(int page, int pageSize) {
-        return this.list().sorted(Comparator.comparing(Jt1078Session::terminalId)).skip((long) (page - 1) * pageSize).limit(pageSize);
+        return this.list().sorted(Comparator.comparing(Jt1078Session::rawSim)).skip((long) (page - 1) * pageSize).limit(pageSize);
     }
 
     default <T> Stream<T> list(int page, int pageSize, Predicate<Jt1078Session> filter, Function<Jt1078Session, T> converter) {
-        return this.list().filter(filter).sorted(Comparator.comparing(Jt1078Session::terminalId)).skip((long) (page - 1) * pageSize).limit(pageSize).map(converter);
+        return this.list().filter(filter).sorted(Comparator.comparing(Jt1078Session::rawSim)).skip((long) (page - 1) * pageSize).limit(pageSize).map(converter);
     }
 
     default <T> Stream<T> list(int page, int pageSize, Function<Jt1078Session, T> converter) {
-        return this.list().sorted(Comparator.comparing(Jt1078Session::terminalId)).skip((long) (page - 1) * pageSize).map(converter).limit(pageSize);
+        return this.list().sorted(Comparator.comparing(Jt1078Session::rawSim)).skip((long) (page - 1) * pageSize).map(converter).limit(pageSize);
     }
 
 }

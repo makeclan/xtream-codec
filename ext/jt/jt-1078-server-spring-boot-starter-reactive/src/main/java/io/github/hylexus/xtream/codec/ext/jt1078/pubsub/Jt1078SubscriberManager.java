@@ -31,11 +31,11 @@ public interface Jt1078SubscriberManager {
 
     default Stream<Jt1078SubscriberDescriptor> list(String sim) {
         final String converted = simConverter().convert(sim);
-        return list().filter(it -> it.getSim().equals(converted));
+        return list().filter(it -> it.convertedSim().equals(converted));
     }
 
     default Stream<Jt1078SubscriberDescriptor> list(String sim, short channel) {
-        return this.list(sim).filter(it -> it.getChannel() == channel);
+        return this.list(sim).filter(it -> it.channel() == channel);
     }
 
     void closeSubscriber(String id);

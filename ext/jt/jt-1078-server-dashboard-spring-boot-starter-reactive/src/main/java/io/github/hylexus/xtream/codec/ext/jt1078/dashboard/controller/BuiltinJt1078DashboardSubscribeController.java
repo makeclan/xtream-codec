@@ -54,7 +54,7 @@ public class BuiltinJt1078DashboardSubscribeController {
 
     @GetMapping("/subscriber/{id}")
     public Jt1078SubscriberDescriptor subscriber(@PathVariable("id") String id) {
-        return this.subscriberManager.list().filter(it -> it.getId().equals(id))
+        return this.subscriberManager.list().filter(it -> it.id().equals(id))
                 .findFirst()
                 .orElseThrow(() -> XtreamHttpException.notFound("Subscriber not found"));
     }
@@ -68,7 +68,7 @@ public class BuiltinJt1078DashboardSubscribeController {
     static Predicate<Jt1078SubscriberDescriptor> createFilter(Jt1078SubscriberQueryDto dto) {
         Predicate<Jt1078SubscriberDescriptor> predicate = it -> true;
         if (StringUtils.hasText(dto.getSim())) {
-            predicate = predicate.and(it -> it.getSim().toLowerCase().contains(dto.getSim().trim().toLowerCase()));
+            predicate = predicate.and(it -> it.rawSim().toLowerCase().contains(dto.getSim().trim().toLowerCase()));
         }
         return predicate;
     }

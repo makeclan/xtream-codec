@@ -17,6 +17,9 @@
 package io.github.hylexus.xtream.codec.ext.jt1078.spec;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import io.github.hylexus.xtream.codec.common.utils.Numbers;
 import io.github.hylexus.xtream.codec.ext.jt1078.exception.Jt1078MessageDecodeException;
 
 import java.util.HashMap;
@@ -72,21 +75,45 @@ public enum Jt1078PayloadType {
         this.desc = desc;
     }
 
-    private static final Map<Byte, Jt1078PayloadType> MAPPING = new HashMap<>();
+    private static final Map<Byte, Jt1078PayloadType> VALUE_TO_ENUM = new HashMap<>();
+    private static final Map<String, Jt1078PayloadType> NAME_TO_ENUM = new HashMap<>();
 
     static {
         for (Jt1078PayloadType value : values()) {
-            MAPPING.put(value.value, value);
+            VALUE_TO_ENUM.put(value.value, value);
+            NAME_TO_ENUM.put(value.name(), value);
         }
     }
 
     public static Optional<Jt1078PayloadType> fromByte(byte pt) {
-        return Optional.ofNullable(MAPPING.get(pt));
+        return Optional.ofNullable(VALUE_TO_ENUM.get(pt));
     }
 
     public static Jt1078PayloadType createOrError(byte pt) {
         return Jt1078PayloadType.fromByte(pt)
                 .orElseThrow(() -> new Jt1078MessageDecodeException("Unknown payLoadType " + pt));
+    }
+
+    @JsonValue
+    public Map<String, Object> jsonValue() {
+        return Map.of("name", this.name(), "value", this.value);
+    }
+
+    @JsonCreator
+    public static Jt1078PayloadType jsonCreator(Object o) {
+        return switch (o) {
+            case Number n -> Jt1078PayloadType.fromByte(n.byteValue()).orElse(null);
+            case String s -> {
+                final String trimmed = s.trim();
+                if (trimmed.isEmpty()) {
+                    yield null;
+                }
+                yield Numbers.parseInteger(trimmed)
+                        .flatMap(n -> Jt1078PayloadType.fromByte(n.byteValue()))
+                        .orElseGet(() -> NAME_TO_ENUM.get(trimmed.toUpperCase()));
+            }
+            case null, default -> null;
+        };
     }
 
     public byte value() {

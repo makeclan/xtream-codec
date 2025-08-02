@@ -56,7 +56,8 @@ public class H264Jt1078SubscriberCreator extends Jt1078SubscriberCreator {
     @Override
     public String toString() {
         return new StringJoiner(", ", H264Jt1078SubscriberCreator.class.getSimpleName() + "[", "]")
-                .add("sim='" + sim + "'")
+                .add("convertedSim='" + convertedSim + "'")
+                .add("rawSim='" + rawSim + "'")
                 .add("channelNumber=" + channelNumber)
                 .add("hasAudio=" + hasAudio)
                 .add("hasVideo=" + hasVideo)

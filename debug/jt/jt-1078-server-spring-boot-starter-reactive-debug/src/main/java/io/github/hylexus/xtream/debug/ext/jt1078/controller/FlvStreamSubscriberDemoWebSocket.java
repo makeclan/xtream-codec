@@ -86,7 +86,7 @@ public class FlvStreamSubscriberDemoWebSocket implements WebSocketHandler {
     private Mono<Void> subscribeFlvStream(WebSocketSession session, DemoVideoStreamSubscriberDto params) {
         // localFlvFileDebugSubscriberV2.subscribe(params.getSim(), params.getChannel());
         final H264Jt1078SubscriberCreator h264Jt1078SubscriberCreator = H264Jt1078SubscriberCreator.builder()
-                .sim(params.getSim())
+                .rawSim(params.getSim())
                 .channelNumber(params.getChannel())
                 .timeout(Duration.ofSeconds(params.getTimeout()))
                 .h264Meta(new H264Jt1078SubscriberCreator.H264Meta(params.getNaluDecoderRingBufferSize()))

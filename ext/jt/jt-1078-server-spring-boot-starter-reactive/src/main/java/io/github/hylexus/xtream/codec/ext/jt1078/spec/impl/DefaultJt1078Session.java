@@ -16,6 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.spec.impl;
 
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078PayloadType;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Session;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionEventListener;
@@ -33,13 +34,15 @@ import java.util.StringJoiner;
 public class DefaultJt1078Session extends AbstractXtreamOutbound implements Jt1078Session {
     private final XtreamSessionManager<Jt1078Session> sessionManager;
     private final String id;
-    private volatile boolean verified;
     private final Instant creationTime;
-    private volatile Instant lastCommunicateTime;
+    private Instant lastCommunicateTime;
     protected final Map<String, Object> attributes = new HashMap<>();
     private final String terminalId;
     private final String rawTerminalId;
     private final short channelNumber;
+
+    private Jt1078PayloadType audioType;
+    private Jt1078PayloadType videoType;
 
     public DefaultJt1078Session(String id, ByteBufAllocator byteBufAllocator, NettyOutbound delegate, XtreamRequest.Type type, String terminalId, short channelNumber, InetSocketAddress remoteAddress, XtreamSessionManager<Jt1078Session> sessionManager, String rawTerminalId) {
         super(byteBufAllocator, delegate, type, remoteAddress);
@@ -49,17 +52,6 @@ public class DefaultJt1078Session extends AbstractXtreamOutbound implements Jt10
         this.channelNumber = channelNumber;
         this.rawTerminalId = rawTerminalId;
         this.creationTime = this.lastCommunicateTime = Instant.now();
-    }
-
-    @Override
-    public boolean verified() {
-        return this.verified;
-    }
-
-    @Override
-    public Jt1078Session verified(boolean verified) {
-        this.verified = verified;
-        return this;
     }
 
     @Override
@@ -95,18 +87,40 @@ public class DefaultJt1078Session extends AbstractXtreamOutbound implements Jt10
     }
 
     @Override
-    public String terminalId() {
+    public String rawSim() {
         return this.terminalId;
     }
 
     @Override
-    public String rawTerminalId() {
+    public String convertedSim() {
         return this.rawTerminalId;
     }
 
     @Override
     public short channelNumber() {
         return this.channelNumber;
+    }
+
+    @Override
+    public Jt1078PayloadType audioType() {
+        return this.audioType;
+    }
+
+    @Override
+    public Jt1078Session audioType(Jt1078PayloadType type) {
+        this.audioType = type;
+        return this;
+    }
+
+    @Override
+    public Jt1078PayloadType videoType() {
+        return this.videoType;
+    }
+
+    @Override
+    public Jt1078Session videoType(Jt1078PayloadType type) {
+        this.videoType = type;
+        return this;
     }
 
     @Override

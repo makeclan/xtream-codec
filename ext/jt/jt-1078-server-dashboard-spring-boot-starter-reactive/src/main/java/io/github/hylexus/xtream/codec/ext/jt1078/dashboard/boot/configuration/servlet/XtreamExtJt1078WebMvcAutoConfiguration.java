@@ -17,8 +17,10 @@
 package io.github.hylexus.xtream.codec.ext.jt1078.dashboard.boot.configuration.servlet;
 
 import io.github.hylexus.xtream.codec.base.web.handler.servlet.ClientIpArgumentResolverServlet;
+import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.utils.StringToJt1078PayloadTypeConverter;
 import jakarta.annotation.Nonnull;
 import org.springframework.context.annotation.Bean;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -34,6 +36,11 @@ public class XtreamExtJt1078WebMvcAutoConfiguration {
             @Override
             public void addArgumentResolvers(@Nonnull List<HandlerMethodArgumentResolver> resolvers) {
                 resolvers.add(new ClientIpArgumentResolverServlet());
+            }
+
+            @Override
+            public void addFormatters(@Nonnull FormatterRegistry registry) {
+                registry.addConverter(new StringToJt1078PayloadTypeConverter());
             }
 
         };

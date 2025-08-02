@@ -33,8 +33,8 @@ public class BuiltinJt1078SessionCloseListener implements Jt1078SessionEventList
 
     @Override
     public void beforeSessionClose(Jt1078Session session, SessionCloseReason reason) {
-        log.info("Unsubscribe [{}/{}], because [{}]", session.sim(), session.channelNumber(), reason);
-        this.publisher.unsubscribeWithSimAndChannelNumber(session.sim(), session.channelNumber(), new Jt1078SessionDestroyException("session closed"));
+        log.info("Unsubscribe [{}/{}], because [{}]", session.convertedSim(), session.channelNumber(), reason);
+        this.publisher.unsubscribeWithSimAndChannelNumber(session.convertedSim(), session.channelNumber(), new Jt1078SessionDestroyException("session closed"));
     }
 
 }

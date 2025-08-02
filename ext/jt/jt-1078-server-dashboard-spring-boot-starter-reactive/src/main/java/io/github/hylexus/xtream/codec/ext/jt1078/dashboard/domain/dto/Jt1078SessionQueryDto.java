@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt1078.dashboard.domain.dto;
 
 import io.github.hylexus.xtream.codec.base.web.domain.dto.PageableDto;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078PayloadType;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +27,8 @@ import lombok.ToString;
 @Setter
 @ToString
 public class Jt1078SessionQueryDto extends PageableDto {
-    private String terminalId;
+    private String sim;
     private XtreamRequest.Type protocolType;
+    private Jt1078PayloadType audioType;
+    private Jt1078PayloadType videoType;
 }

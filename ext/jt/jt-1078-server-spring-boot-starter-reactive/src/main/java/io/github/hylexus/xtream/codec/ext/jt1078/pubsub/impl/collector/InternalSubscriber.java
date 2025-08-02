@@ -16,64 +16,15 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.collector;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078SubscriberDescriptor;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078Subscription;
 import reactor.core.publisher.FluxSink;
 
-import java.time.LocalDateTime;
-import java.util.Map;
-
 public interface InternalSubscriber extends Jt1078SubscriberDescriptor {
-    String id();
 
-    String sim();
-
-    String rawSim();
-
-    short channel();
-
-    String desc();
-
-    LocalDateTime createdAt();
-
-    Map<String, Object> metadata();
-
+    @JsonIgnore
     FluxSink<Jt1078Subscription> sink();
-
-    @Override
-    default String getId() {
-        return this.id();
-    }
-
-    @Override
-    default String getSim() {
-        return this.sim();
-    }
-
-    @Override
-    default String getRawSim() {
-        return this.rawSim();
-    }
-
-    @Override
-    default short getChannel() {
-        return this.channel();
-    }
-
-    @Override
-    default LocalDateTime getCreatedAt() {
-        return this.createdAt();
-    }
-
-    @Override
-    default String getDesc() {
-        return this.desc();
-    }
-
-    @Override
-    default Map<String, Object> getMetadata() {
-        return this.metadata();
-    }
 
     void close();
 

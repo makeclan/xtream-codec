@@ -14,28 +14,20 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt1078.pubsub;
+package io.github.hylexus.xtream.codec.ext.jt1078.dashboard.utils;
 
-import java.time.Duration;
-import java.util.Map;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078PayloadType;
+import jakarta.annotation.Nonnull;
+import org.springframework.core.convert.converter.Converter;
 
-// todo 重构
-public interface Jt1078SubscriberCreatorInfo {
+public class StringToJt1078PayloadTypeConverter implements Converter<String, Jt1078PayloadType> {
 
-    String sim();
+    public StringToJt1078PayloadTypeConverter() {
+    }
 
-    String rawSim();
-
-    short channelNumber();
-
-    boolean hasAudio();
-
-    boolean hasVideo();
-
-    Duration timeout();
-
-    String desc();
-
-    Map<String, Object> metadata();
+    @Override
+    public Jt1078PayloadType convert(@Nonnull String source) {
+        return Jt1078PayloadType.jsonCreator(source);
+    }
 
 }

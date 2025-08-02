@@ -63,7 +63,7 @@ public class FlvStreamSubscriberDemoHttp {
     private Flux<byte[]> subscribeFlvStream(DemoVideoStreamSubscriberDto params, ServerWebExchange exchange) {
         final int timeout = params.getTimeout();
         final H264Jt1078SubscriberCreator subscriberCreator = H264Jt1078SubscriberCreator.builder()
-                .sim(params.getSim())
+                .rawSim(params.getSim())
                 .channelNumber(params.getChannel())
                 .timeout(Duration.ofSeconds(timeout))
                 .h264Meta(new H264Jt1078SubscriberCreator.H264Meta(params.getNaluDecoderRingBufferSize()))

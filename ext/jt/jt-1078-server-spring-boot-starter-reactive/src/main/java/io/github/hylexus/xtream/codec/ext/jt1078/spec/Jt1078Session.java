@@ -22,20 +22,20 @@ import java.time.Instant;
 
 public interface Jt1078Session extends XtreamSession {
 
-    boolean verified();
-
-    Jt1078Session verified(boolean verified);
-
     Jt1078Session lastCommunicateTime(Instant current);
 
-    default String sim() {
-        return this.terminalId();
-    }
+    String rawSim();
 
-    String terminalId();
-
-    String rawTerminalId();
+    String convertedSim();
 
     short channelNumber();
+
+    Jt1078PayloadType audioType();
+
+    Jt1078Session audioType(Jt1078PayloadType type);
+
+    Jt1078PayloadType videoType();
+
+    Jt1078Session videoType(Jt1078PayloadType type);
 
 }

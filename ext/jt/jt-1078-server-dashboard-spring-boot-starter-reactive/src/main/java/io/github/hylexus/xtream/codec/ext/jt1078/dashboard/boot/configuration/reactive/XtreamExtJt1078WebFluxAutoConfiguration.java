@@ -17,8 +17,10 @@
 package io.github.hylexus.xtream.codec.ext.jt1078.dashboard.boot.configuration.reactive;
 
 import io.github.hylexus.xtream.codec.base.web.handler.reactive.ClientIpArgumentResolverReactive;
+import io.github.hylexus.xtream.codec.ext.jt1078.dashboard.utils.StringToJt1078PayloadTypeConverter;
 import jakarta.annotation.Nonnull;
 import org.springframework.context.annotation.Bean;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 import org.springframework.web.reactive.result.method.annotation.ArgumentResolverConfigurer;
 
@@ -32,6 +34,11 @@ public class XtreamExtJt1078WebFluxAutoConfiguration {
             @Override
             public void configureArgumentResolvers(@Nonnull ArgumentResolverConfigurer configurer) {
                 configurer.addCustomResolver(new ClientIpArgumentResolverReactive());
+            }
+
+            @Override
+            public void addFormatters(@Nonnull FormatterRegistry registry) {
+                registry.addConverter(new StringToJt1078PayloadTypeConverter());
             }
 
         };

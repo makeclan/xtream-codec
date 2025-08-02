@@ -17,6 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt1078.dashboard.domain.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078PayloadType;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,9 +32,11 @@ import java.time.Instant;
 @Accessors(chain = true)
 public class Jt1078SessionVo {
     private String id;
-    private String terminalId;
-    private String rawTerminalId;
+    private String convertedSim;
+    private String rawSim;
     private XtreamRequest.Type protocolType;
+    private Jt1078PayloadType audioType;
+    private Jt1078PayloadType videoType;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS", timezone = "GMT+8")
     private Instant creationTime;

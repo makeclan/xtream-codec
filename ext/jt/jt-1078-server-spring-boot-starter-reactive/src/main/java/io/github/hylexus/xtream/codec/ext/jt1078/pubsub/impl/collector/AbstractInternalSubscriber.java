@@ -16,7 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.collector;
 
-import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078SubscriberCreatorInfo;
+import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078SubscriberCreator;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078Subscription;
 import reactor.core.publisher.FluxSink;
 
@@ -28,33 +28,21 @@ public abstract class AbstractInternalSubscriber
 
     protected final String id;
 
-    protected final String sim;
+    protected final Jt1078SubscriberCreator creator;
 
-    protected final String rawSim;
-
-    protected final short channel;
-
-    protected final String desc;
     protected final LocalDateTime createdAt;
 
     protected final FluxSink<Jt1078Subscription> sink;
 
-    protected final Map<String, Object> metadata;
-
     public AbstractInternalSubscriber(
             String id,
-            Jt1078SubscriberCreatorInfo creator,
+            Jt1078SubscriberCreator creator,
             LocalDateTime createdAt,
             FluxSink<Jt1078Subscription> sink) {
-
+        this.creator = creator;
         this.id = id;
-        this.sim = creator.sim();
-        this.rawSim = creator.rawSim();
-        this.channel = creator.channelNumber();
-        this.desc = creator.desc();
         this.createdAt = createdAt;
         this.sink = sink;
-        this.metadata = creator.metadata();
     }
 
     @Override
@@ -63,23 +51,23 @@ public abstract class AbstractInternalSubscriber
     }
 
     @Override
-    public String sim() {
-        return this.sim;
+    public String convertedSim() {
+        return this.creator.convertedSim();
     }
 
     @Override
     public String rawSim() {
-        return this.rawSim;
+        return this.creator.rawSim();
     }
 
     @Override
     public short channel() {
-        return this.channel;
+        return this.creator.channelNumber();
     }
 
     @Override
     public String desc() {
-        return this.desc;
+        return this.creator.desc();
     }
 
     @Override
@@ -88,12 +76,13 @@ public abstract class AbstractInternalSubscriber
     }
 
     @Override
+    public Map<String, Object> metadata() {
+        return this.creator.metadata();
+    }
+
+    @Override
     public FluxSink<Jt1078Subscription> sink() {
         return this.sink;
     }
 
-    @Override
-    public Map<String, Object> metadata() {
-        return this.metadata;
-    }
 }

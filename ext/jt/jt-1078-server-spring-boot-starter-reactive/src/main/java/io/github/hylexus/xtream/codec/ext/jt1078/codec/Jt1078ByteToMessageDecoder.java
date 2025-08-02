@@ -75,21 +75,31 @@ public class Jt1078ByteToMessageDecoder extends ByteToMessageDecoder {
             if (requestWithSimLength6 != null) {
                 this.simLength = 6;
                 this.initSession(requestWithSimLength6);
-                out.add(requestWithSimLength6);
+                this.emitDecodedRequest(out, requestWithSimLength6);
             } else {
                 final Jt1078Request requestWithSimLength10 = this.tryDecodeRequest(in, 10);
                 if (requestWithSimLength10 != null) {
                     this.simLength = 10;
                     this.initSession(requestWithSimLength10);
-                    out.add(requestWithSimLength10);
+                    this.emitDecodedRequest(out, requestWithSimLength10);
                 } else {
                     throw new IllegalStateException("Parse JT/T 1078 stream-data error");
                 }
             }
         } else {
             final Jt1078Request packageInfo = this.decodeRequest(in, this.simLength);
-            out.add(packageInfo);
-            this.session.lastCommunicateTime(Instant.now());
+            this.emitDecodedRequest(out, packageInfo);
+        }
+    }
+
+    private void emitDecodedRequest(List<Object> out, Jt1078Request request) {
+        out.add(request);
+        this.session.lastCommunicateTime(Instant.now());
+        if (this.session.audioType() == null && request.header().payloadType().isAudio()) {
+            this.session.audioType(request.header().payloadType());
+        }
+        if (this.session.videoType() == null && request.header().payloadType().isVideo()) {
+            this.session.videoType(request.header().payloadType());
         }
     }
 

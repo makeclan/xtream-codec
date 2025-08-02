@@ -118,7 +118,7 @@ public final class Jt1078DashboardUtils {
         }
         metadata.put("source", "Dashboard");
         return H264Jt1078SubscriberCreator.builder()
-                .sim(params.getSim())
+                .rawSim(params.getSim())
                 .channelNumber(params.getChannel())
                 .timeout(Duration.ofSeconds(params.getTimeout()))
                 .h264Meta(new H264Jt1078SubscriberCreator.H264Meta(params.getNaluDecoderRingBufferSize()))

@@ -17,25 +17,34 @@
 package io.github.hylexus.xtream.codec.ext.jt1078.pubsub;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
 public interface Jt1078SubscriberDescriptor {
-    String getId();
+    @JsonProperty("id")
+    String id();
 
-    String getSim();
+    @JsonProperty("convertedSim")
+    String convertedSim();
 
-    String getRawSim();
+    @JsonProperty("rawSim")
+    String rawSim();
 
-    short getChannel();
+    @JsonProperty("channel")
+    short channel();
 
+    @JsonProperty("createdAt")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
-    LocalDateTime getCreatedAt();
+    LocalDateTime createdAt();
 
-    default String getDesc() {
+    @JsonProperty("desc")
+    default String desc() {
         return "Jt1078Subscriber";
     }
 
-    Map<String, Object> getMetadata();
+    @JsonProperty("metadata")
+    Map<String, Object> metadata();
+
 }

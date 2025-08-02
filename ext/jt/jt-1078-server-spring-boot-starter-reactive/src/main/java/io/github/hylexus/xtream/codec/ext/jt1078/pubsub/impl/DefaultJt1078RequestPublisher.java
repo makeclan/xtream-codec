@@ -76,7 +76,8 @@ public class DefaultJt1078RequestPublisher implements Jt1078RequestPublisher {
 
     @Override
     public Jt1078Subscriber subscribe(Class<? extends Jt1078ChannelCollector> cls, Jt1078SubscriberCreator creator) {
-        final String shorterSim = this.jt1078SimConverter.convert(creator.sim());
+        creator.convertedSim(this.jt1078SimConverter.convert(creator.rawSim()));
+        final String shorterSim = creator.convertedSim();
         final Jt1078Channel.ChannelKey channelKey = Jt1078Channel.ChannelKey.of(shorterSim, creator.channelNumber());
         final Jt1078Channel jt1078Channel = this.channels.computeIfAbsent(channelKey, this::createChannel);
         return jt1078Channel.doSubscribe(cls, creator);

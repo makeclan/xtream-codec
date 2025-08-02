@@ -32,8 +32,8 @@ import java.util.StringJoiner;
 @Accessors(chain = true, fluent = true)
 @SuperBuilder
 @NoArgsConstructor
-public class Jt1078SubscriberCreator implements Jt1078SubscriberCreatorInfo {
-    protected String sim;
+public class Jt1078SubscriberCreator {
+    protected String convertedSim;
     protected String rawSim;
     protected short channelNumber;
 
@@ -50,7 +50,8 @@ public class Jt1078SubscriberCreator implements Jt1078SubscriberCreatorInfo {
     @Override
     public String toString() {
         return new StringJoiner(", ", Jt1078SubscriberCreator.class.getSimpleName() + "[", "]")
-                .add("sim='" + sim + "'")
+                .add("convertedSim='" + convertedSim + "'")
+                .add("rawSim='" + rawSim + "'")
                 .add("channelNumber=" + channelNumber)
                 .add("hasAudio=" + hasAudio)
                 .add("hasVideo=" + hasVideo)
