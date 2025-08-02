@@ -48,7 +48,7 @@ public class Jt1078ByteToMessageDecoder extends ByteToMessageDecoder {
     private static final Logger log = LoggerFactory.getLogger(Jt1078ByteToMessageDecoder.class);
 
     private final ByteBufAllocator allocator = ByteBufAllocator.DEFAULT;
-    private final Jt1078TerminalIdConverter terminalIdConverter;
+    private final Jt1078SimConverter jt1078SimConverter;
     private final Connection connection;
     private final Jt1078SessionManager sessionManager;
     private final InetSocketAddress remoteAddress;
@@ -56,8 +56,8 @@ public class Jt1078ByteToMessageDecoder extends ByteToMessageDecoder {
     private int simLength = 0;
     private Jt1078Session session;
 
-    public Jt1078ByteToMessageDecoder(Jt1078TerminalIdConverter terminalIdConverter, Connection connection, Jt1078SessionManager sessionManager) {
-        this.terminalIdConverter = terminalIdConverter;
+    public Jt1078ByteToMessageDecoder(Jt1078SimConverter jt1078SimConverter, Connection connection, Jt1078SessionManager sessionManager) {
+        this.jt1078SimConverter = jt1078SimConverter;
         this.connection = connection;
         this.sessionManager = sessionManager;
         this.remoteAddress = this.initTcpRemoteAddress(connection.inbound());
@@ -150,7 +150,7 @@ public class Jt1078ByteToMessageDecoder extends ByteToMessageDecoder {
         final String sim = reader.readBcd(simLen);
         // SIM-rawSim
         headerBuilder.rawSim(sim);
-        final String convertedSim = this.terminalIdConverter.convert(sim);
+        final String convertedSim = this.jt1078SimConverter.convert(sim);
         // SIM-convertedSim
         headerBuilder.convertedSim(convertedSim);
         // 通道号

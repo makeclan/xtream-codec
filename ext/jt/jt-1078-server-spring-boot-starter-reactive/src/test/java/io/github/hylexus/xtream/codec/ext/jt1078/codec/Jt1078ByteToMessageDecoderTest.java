@@ -133,7 +133,7 @@ class Jt1078ByteToMessageDecoderTest {
 
     private static Jt1078ByteToMessageDecoder createDecoder() {
         return new Jt1078ByteToMessageDecoder(
-                Jt1078TerminalIdConverter.DEFAULT,
+                Jt1078SimConverter.DEFAULT,
                 new NettyConnectionMock(),
                 new DefaultJt1078SessionManager(
                         false,

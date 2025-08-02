@@ -19,7 +19,7 @@ package io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.*;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.collector.H264ToFlvJt1078ChannelCollector;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TerminalIdConverter;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SimConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.scheduler.Scheduler;
@@ -34,15 +34,15 @@ public class DefaultJt1078Channel implements Jt1078Channel {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultJt1078Channel.class);
     private final ChannelKey key;
-    private final Jt1078TerminalIdConverter terminalIdConverter;
+    private final Jt1078SimConverter jt1078SimConverter;
     // <TypeOfJt1078ChannelCollector, Jt1078ChannelCollector>
     // 同一个Channel上 同一种类型的Jt1078ChannelCollector 只有一个实例
     private final ConcurrentMap<Class<? extends Jt1078ChannelCollector>, Jt1078ChannelCollector> collectors = new ConcurrentHashMap<>();
     private final Scheduler scheduler;
 
-    public DefaultJt1078Channel(ChannelKey key, Jt1078TerminalIdConverter terminalIdConverter, Scheduler scheduler) {
+    public DefaultJt1078Channel(ChannelKey key, Jt1078SimConverter jt1078SimConverter, Scheduler scheduler) {
         this.key = key;
-        this.terminalIdConverter = terminalIdConverter;
+        this.jt1078SimConverter = jt1078SimConverter;
         this.scheduler = scheduler;
     }
 
@@ -57,8 +57,8 @@ public class DefaultJt1078Channel implements Jt1078Channel {
     }
 
     @Override
-    public Jt1078TerminalIdConverter terminalIdConverter() {
-        return this.terminalIdConverter;
+    public Jt1078SimConverter simConverter() {
+        return this.jt1078SimConverter;
     }
 
     @Override
@@ -71,7 +71,7 @@ public class DefaultJt1078Channel implements Jt1078Channel {
     @Override
     public Jt1078Subscriber doSubscribe(Class<? extends Jt1078ChannelCollector> cls, Jt1078SubscriberCreator creator) {
         creator.rawSim(creator.sim());
-        creator.sim(this.terminalIdConverter.convert(creator.sim()));
+        creator.sim(this.jt1078SimConverter.convert(creator.sim()));
         final Jt1078ChannelCollector channelCollector = this.getOrCreate(cls, creator);
         return channelCollector.doSubscribe(creator);
     }

@@ -26,14 +26,12 @@ import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078RequestPublisher;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078RequestHandler;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionManager;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TcpHeatBeatHandler;
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TerminalIdConverter;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SimConverter;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.DefaultJt1078RequestHandler;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.resources.Jt1078XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.TcpXtreamNettyHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.TcpSessionIdleStateCheckerProps;
-import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerAdapter;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.SimpleXtreamRequestHandlerHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.XtreamServerBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.TcpNettyServerCustomizer;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.TcpXtreamServer;
@@ -57,11 +55,6 @@ import static io.github.hylexus.xtream.codec.ext.jt1078.utils.Jt1078Constants.*;
 
 @ConditionalOnJt1078Server(protocolType = ConditionalOnJt1078Server.ProtocolType.TCP)
 public class BuiltinJt1078ServerTcpConfiguration {
-
-    @Bean
-    XtreamHandlerAdapter mockAdapter() {
-        return new SimpleXtreamRequestHandlerHandlerAdapter();
-    }
 
     /**
      * @see Jt1078ConfigurationUtils#jt1078RequestFilterPredicateTcp(XtreamFilter)
@@ -106,7 +99,7 @@ public class BuiltinJt1078ServerTcpConfiguration {
             ObjectProvider<TcpNettyServerCustomizer> customizers,
             Jt1078SessionManager sessionManager,
             XtreamJt1078ServerProperties serverProperties,
-            Jt1078TerminalIdConverter terminalIdConverter) {
+            Jt1078SimConverter jt1078SimConverter) {
 
         final XtreamJt1078ServerProperties.TcpServerProps tcpServer = serverProperties.getTcpServer();
         return XtreamServerBuilder.newTcpServerBuilder()
@@ -121,7 +114,7 @@ public class BuiltinJt1078ServerTcpConfiguration {
                     final DelimiterBasedFrameDecoder frameDecoder = new DelimiterBasedFrameDecoder(frameLength, true, Unpooled.copiedBuffer(new byte[]{0x30, 0x31, 0x63, 0x64}));
                     connection.addHandlerLast(BEAN_NAME_JT1078_CHANNEL_FRAME_DECODER, frameDecoder);
                     // 2. 请求解码
-                    connection.addHandlerLast(BEAN_NAME_JT1078_REQUEST_DECODER, new Jt1078ByteToMessageDecoder(terminalIdConverter, connection, sessionManager));
+                    connection.addHandlerLast(BEAN_NAME_JT1078_REQUEST_DECODER, new Jt1078ByteToMessageDecoder(jt1078SimConverter, connection, sessionManager));
                     // 3. 空闲检测
                     addTcpIdleStateHandler(sessionManager, serverProperties, connection);
                 }))

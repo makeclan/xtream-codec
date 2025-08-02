@@ -16,21 +16,21 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.pubsub;
 
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TerminalIdConverter;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SimConverter;
 
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public interface Jt1078SubscriberManager {
 
-    Jt1078TerminalIdConverter terminalIdConverter();
+    Jt1078SimConverter simConverter();
 
     long count(Predicate<Jt1078SubscriberDescriptor> predicate);
 
     Stream<Jt1078SubscriberDescriptor> list();
 
     default Stream<Jt1078SubscriberDescriptor> list(String sim) {
-        final String converted = terminalIdConverter().convert(sim);
+        final String converted = simConverter().convert(sim);
         return list().filter(it -> it.getSim().equals(converted));
     }
 

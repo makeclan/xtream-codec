@@ -17,7 +17,7 @@
 package io.github.hylexus.xtream.codec.ext.jt1078.pubsub;
 
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TerminalIdConverter;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SimConverter;
 import jakarta.annotation.Nullable;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Scheduler;
@@ -32,7 +32,7 @@ public interface Jt1078Channel {
 
     ChannelKey key();
 
-    Jt1078TerminalIdConverter terminalIdConverter();
+    Jt1078SimConverter simConverter();
 
     void publish(Jt1078Request request);
 

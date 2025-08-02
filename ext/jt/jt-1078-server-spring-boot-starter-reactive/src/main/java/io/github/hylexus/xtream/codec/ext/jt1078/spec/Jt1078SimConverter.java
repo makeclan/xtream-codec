@@ -16,22 +16,23 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.spec;
 
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.RemoveLeadingZerosJt1078TerminalIdConverter;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.PadLeadingZerosJt1078SimConverter;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.RemoveLeadingZerosJt1078SimConverter;
 
 /**
  * 1078 的 SIM 为 {@code BCD[6]} 或 {@code BCD[10]}
  * <p>
  * 内置了两个实现类:
- * <li>{@link RemoveLeadingZerosJt1078TerminalIdConverter 移除前导零的实现}（默认）</li>
- * <li>{@link io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.PadLeadingZerosJt1078TerminalIdConverter 填充前导零的实现}</li>
+ * <li>{@link RemoveLeadingZerosJt1078SimConverter 移除前导零的实现}（默认）</li>
+ * <li>{@link PadLeadingZerosJt1078SimConverter 填充前导零的实现}</li>
  *
  * @see Jt1078RequestHeader#convertedSim()
- * @see RemoveLeadingZerosJt1078TerminalIdConverter
- * @see io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.PadLeadingZerosJt1078TerminalIdConverter
+ * @see RemoveLeadingZerosJt1078SimConverter
+ * @see PadLeadingZerosJt1078SimConverter
  */
-public interface Jt1078TerminalIdConverter {
+public interface Jt1078SimConverter {
 
-    Jt1078TerminalIdConverter DEFAULT = new RemoveLeadingZerosJt1078TerminalIdConverter();
+    Jt1078SimConverter DEFAULT = new RemoveLeadingZerosJt1078SimConverter();
 
     String convert(String original);
 

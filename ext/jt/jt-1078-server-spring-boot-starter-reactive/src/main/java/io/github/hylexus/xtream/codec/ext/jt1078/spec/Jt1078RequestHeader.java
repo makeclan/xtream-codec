@@ -91,14 +91,14 @@ public interface Jt1078RequestHeader {
 
     /**
      * @return SIM 卡号
-     * @see Jt1078TerminalIdConverter
+     * @see Jt1078SimConverter
      */
     String rawSim();
 
     /**
      * bytes[8,14) BCD[6] SIM卡号
      *
-     * @see Jt1078TerminalIdConverter
+     * @see Jt1078SimConverter
      */
     String convertedSim();
 

@@ -16,14 +16,14 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.spec.impl;
 
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TerminalIdConverter;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SimConverter;
 
 /**
  * 去除前导零
  *
  * @author hylexus
  */
-public class RemoveLeadingZerosJt1078TerminalIdConverter implements Jt1078TerminalIdConverter {
+public class RemoveLeadingZerosJt1078SimConverter implements Jt1078SimConverter {
 
     @Override
     public String convert(String original) {

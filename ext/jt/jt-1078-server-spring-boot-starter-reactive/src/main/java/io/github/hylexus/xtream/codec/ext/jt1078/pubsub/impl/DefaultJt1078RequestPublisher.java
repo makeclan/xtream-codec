@@ -18,7 +18,7 @@ package io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl;
 
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.*;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TerminalIdConverter;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SimConverter;
 import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,12 +34,12 @@ import java.util.stream.Stream;
 
 public class DefaultJt1078RequestPublisher implements Jt1078RequestPublisher {
     private static final Logger log = LoggerFactory.getLogger(DefaultJt1078RequestPublisher.class);
-    private final Jt1078TerminalIdConverter terminalIdConverter;
+    private final Jt1078SimConverter jt1078SimConverter;
     private final ConcurrentMap<Jt1078Channel.ChannelKey, Jt1078Channel> channels = new ConcurrentHashMap<>();
     private final Scheduler scheduler;
 
-    public DefaultJt1078RequestPublisher(Jt1078TerminalIdConverter jt1078TerminalIdConverter, Scheduler scheduler) {
-        this.terminalIdConverter = jt1078TerminalIdConverter;
+    public DefaultJt1078RequestPublisher(Jt1078SimConverter jt1078SimConverter, Scheduler scheduler) {
+        this.jt1078SimConverter = jt1078SimConverter;
         this.scheduler = scheduler;
     }
 
@@ -49,8 +49,8 @@ public class DefaultJt1078RequestPublisher implements Jt1078RequestPublisher {
     }
 
     @Override
-    public Jt1078TerminalIdConverter terminalIdConverter() {
-        return this.terminalIdConverter;
+    public Jt1078SimConverter simConverter() {
+        return this.jt1078SimConverter;
     }
 
     @Override
@@ -76,7 +76,7 @@ public class DefaultJt1078RequestPublisher implements Jt1078RequestPublisher {
 
     @Override
     public Jt1078Subscriber subscribe(Class<? extends Jt1078ChannelCollector> cls, Jt1078SubscriberCreator creator) {
-        final String shorterSim = this.terminalIdConverter.convert(creator.sim());
+        final String shorterSim = this.jt1078SimConverter.convert(creator.sim());
         final Jt1078Channel.ChannelKey channelKey = Jt1078Channel.ChannelKey.of(shorterSim, creator.channelNumber());
         final Jt1078Channel jt1078Channel = this.channels.computeIfAbsent(channelKey, this::createChannel);
         return jt1078Channel.doSubscribe(cls, creator);
@@ -117,7 +117,7 @@ public class DefaultJt1078RequestPublisher implements Jt1078RequestPublisher {
     }
 
     protected Jt1078Channel createChannel(Jt1078Channel.ChannelKey channelKey) {
-        return new DefaultJt1078Channel(channelKey, this.terminalIdConverter, this.scheduler);
+        return new DefaultJt1078Channel(channelKey, this.jt1078SimConverter, this.scheduler);
     }
 
 }

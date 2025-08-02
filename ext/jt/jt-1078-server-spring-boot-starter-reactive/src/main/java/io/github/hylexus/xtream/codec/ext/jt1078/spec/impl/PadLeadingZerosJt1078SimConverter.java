@@ -16,7 +16,7 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.spec.impl;
 
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TerminalIdConverter;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SimConverter;
 
 /**
  * 添加前导零，按照如下顺序转换：
@@ -30,7 +30,7 @@ import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TerminalIdConverter;
  *
  * @author hylexus
  */
-public class PadLeadingZerosJt1078TerminalIdConverter implements Jt1078TerminalIdConverter {
+public class PadLeadingZerosJt1078SimConverter implements Jt1078SimConverter {
 
     @Override
     public String convert(String original) {

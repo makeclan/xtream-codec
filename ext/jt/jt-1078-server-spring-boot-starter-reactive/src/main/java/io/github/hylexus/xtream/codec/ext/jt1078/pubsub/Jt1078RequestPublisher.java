@@ -19,7 +19,7 @@ package io.github.hylexus.xtream.codec.ext.jt1078.pubsub;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.H264Jt1078SubscriberCreator;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.collector.H264ToFlvJt1078ChannelCollector;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TerminalIdConverter;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SimConverter;
 import jakarta.annotation.Nullable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -29,7 +29,7 @@ public interface Jt1078RequestPublisher extends Jt1078SubscriberManager {
 
     Scheduler scheduler();
 
-    Jt1078TerminalIdConverter terminalIdConverter();
+    Jt1078SimConverter simConverter();
 
     Mono<Void> publish(Jt1078Request request);
 
@@ -52,13 +52,13 @@ public interface Jt1078RequestPublisher extends Jt1078SubscriberManager {
     void unsubscribeWithSim(String sim, @Nullable Jt1078Subscriber.Jt1078SubscriberCloseException reason);
 
     default void unsubscribeWithSim(String sim) {
-        this.unsubscribeWithSim(terminalIdConverter().convert(sim), null);
+        this.unsubscribeWithSim(simConverter().convert(sim), null);
     }
 
     void unsubscribeWithSimAndChannelNumber(String sim, short channelNumber, @Nullable Jt1078Subscriber.Jt1078SubscriberCloseException reason);
 
     default void unsubscribeWithSimAndChannelNumber(String sim, short channelNumber) {
-        this.unsubscribeWithSimAndChannelNumber(terminalIdConverter().convert(sim), channelNumber, null);
+        this.unsubscribeWithSimAndChannelNumber(simConverter().convert(sim), channelNumber, null);
     }
 
     @Override
