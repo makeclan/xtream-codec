@@ -27,4 +27,5 @@ public final class Jt1078Constants {
     public static final String BEAN_NAME_JT1078_TCP_XTREAM_SERVER = "jt1078TcpXtreamServer";
     public static final String BEAN_NAME_JT1078_UDP_XTREAM_SERVER = "jt1078UdpXtreamServer";
     public static final String BEAN_NAME_JT1078_CHANNEL_FRAME_DECODER = "jt1078ChannelFrameDecoder";
+    public static final String BEAN_NAME_JT1078_REQUEST_DECODER = "jt1078RequestDecoder";
 }

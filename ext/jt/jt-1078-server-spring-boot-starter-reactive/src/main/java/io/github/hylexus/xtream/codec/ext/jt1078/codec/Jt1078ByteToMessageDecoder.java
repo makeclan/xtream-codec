@@ -17,116 +17,127 @@
 package io.github.hylexus.xtream.codec.ext.jt1078.codec;
 
 import io.github.hylexus.xtream.codec.common.utils.XtreamByteReader;
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078RequestHeader;
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TerminalIdConverter;
+import io.github.hylexus.xtream.codec.ext.jt1078.extensions.handler.Jt1078ServerTcpHandlerAdapter;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.*;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.DefaultJt1078Request;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.DefaultJt1078RequestHeader;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.DefaultJt1078Session;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamInbound;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import reactor.netty.Connection;
+import reactor.netty.NettyInbound;
 
+import java.net.InetSocketAddress;
+import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 这个实现来自 <a href="https://gitee.com/hui_hui_zhou/open-source-repository">sky/jt1078</a> 的作者 sky
+ *
+ * @see <a href="https://gitee.com/hui_hui_zhou/open-source-repository">sky/jt1078</a>
+ * @see Jt1078ServerTcpHandlerAdapter
  */
 public class Jt1078ByteToMessageDecoder extends ByteToMessageDecoder {
 
-    public record Jt1078PackageInfo(
-            Jt1078RequestHeader header,
-            ByteBuf body) {
+    private static final Logger log = LoggerFactory.getLogger(Jt1078ByteToMessageDecoder.class);
 
-        @SuppressWarnings("Redundent")
-        public Jt1078PackageInfo {
-        }
-    }
-
+    private final ByteBufAllocator allocator = ByteBufAllocator.DEFAULT;
     private final Jt1078TerminalIdConverter terminalIdConverter;
+    private final Connection connection;
+    private final Jt1078SessionManager sessionManager;
+    private final InetSocketAddress remoteAddress;
 
     private int simLength = 0;
+    private Jt1078Session session;
 
-    public Jt1078ByteToMessageDecoder(Jt1078TerminalIdConverter terminalIdConverter) {
+    public Jt1078ByteToMessageDecoder(Jt1078TerminalIdConverter terminalIdConverter, Connection connection, Jt1078SessionManager sessionManager) {
         this.terminalIdConverter = terminalIdConverter;
+        this.connection = connection;
+        this.sessionManager = sessionManager;
+        this.remoteAddress = this.initTcpRemoteAddress(connection.inbound());
     }
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        this.decodePackage(in, out);
-    }
+    public void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
+        if (in.readableBytes() <= 0) {
+            in.release();
+            return;
+        }
 
-    enum State {
-        // 报文格式错误
-        PACKAGE_FORMAT_ERROR,
-        // 等待更多数据(报文不完整)
-        WAITING_FOR_MORE_DATA_ARRIVE,
-        // 使用 BCD[6] 解析成功
-        DECODED_AS_SIM_LENGTH_6,
-        // 尝试使用 BCD[10] 解析
-        RETRY_WITH_SIM_LENGTH_10,
-    }
-
-    // for Junit
-    void decodePackage(ByteBuf in, List<Object> out) {
         if (this.simLength == 0) {
-            final State state = this.decodePackage(in, 6, out);
-            switch (state) {
-                case WAITING_FOR_MORE_DATA_ARRIVE -> {
-                    // ignored
-                }
-                case DECODED_AS_SIM_LENGTH_6 -> this.simLength = 6;
-                case RETRY_WITH_SIM_LENGTH_10 -> {
+            final Jt1078Request requestWithSimLength6 = this.tryDecodeRequest(in, 6);
+            if (requestWithSimLength6 != null) {
+                this.simLength = 6;
+                this.initSession(requestWithSimLength6);
+                out.add(requestWithSimLength6);
+            } else {
+                final Jt1078Request requestWithSimLength10 = this.tryDecodeRequest(in, 10);
+                if (requestWithSimLength10 != null) {
                     this.simLength = 10;
-                    final State newState = this.decodePackage(in, 10, out);
-                    if (newState == State.RETRY_WITH_SIM_LENGTH_10) {
-                        throw new IllegalStateException("Parse JT/T 1078 stream-data error");
-                    }
+                    this.initSession(requestWithSimLength10);
+                    out.add(requestWithSimLength10);
+                } else {
+                    throw new IllegalStateException("Parse JT/T 1078 stream-data error");
                 }
-                case PACKAGE_FORMAT_ERROR -> throw new IllegalStateException("Parse JT/T 1078 stream-data error");
-                default -> throw new IllegalStateException("Unexpected value: " + state);
             }
         } else {
-            this.decodePackage(in, this.simLength, out);
+            final Jt1078Request packageInfo = this.decodeRequest(in, this.simLength);
+            out.add(packageInfo);
+            this.session.lastCommunicateTime(Instant.now());
         }
     }
 
+    private void initSession(Jt1078Request first) {
+        final String sessionId = this.sessionManager.sessionIdGenerator().generateTcpSessionId(this.connection.channel());
+        final DefaultJt1078Session jt1078Session = new DefaultJt1078Session(
+                sessionId,
+                this.allocator,
+                this.connection.outbound(),
+                XtreamInbound.Type.TCP,
+                first.header().convertedSim(),
+                first.header().channelNumber(),
+                this.remoteAddress,
+                this.sessionManager,
+                first.header().rawSim()
+        );
+        this.session = jt1078Session;
+        this.sessionManager.createSession(jt1078Session);
+    }
 
-    State decodePackage(ByteBuf in, int simLen, List<Object> out) {
-        final int readerIndex = in.readerIndex();
-        if (in.readableBytes() < simLen + 24) {
-            return State.WAITING_FOR_MORE_DATA_ARRIVE;
-        }
+    protected InetSocketAddress initTcpRemoteAddress(NettyInbound nettyInbound) {
+        final InetSocketAddress[] remoteAddress = new InetSocketAddress[1];
+        nettyInbound.withConnection(connection -> remoteAddress[0] = (InetSocketAddress) connection.channel().remoteAddress());
+        return remoteAddress[0];
+    }
 
-        in.markReaderIndex();
-        if (in.getInt(readerIndex) != 0x30316364) {
-            return State.PACKAGE_FORMAT_ERROR;
-        }
-
-        final int dataType = (in.getByte(readerIndex + simLen + 9) >> 4) & 0x0F;
+    Jt1078Request tryDecodeRequest(ByteBuf in, int simLen) {
+        // 这里输入的报文没有 30316364 前缀
+        // +5 = 1byte(V,P,X,CC) + 1byte(M,PT) + 2byte(sequenceNumber) + 1byte(channelNumber)
+        final int dataType = (in.getByte(simLen + 5) >> 4) & 0x0F;
         final int lengthFieldOffset = switch (dataType) {
             // 透传
-            case 0x04 -> simLen + 10;
+            case 0x04 -> simLen + 6;
             // 音频
-            case 0x03 -> simLen + 18;
+            case 0x03 -> simLen + 14;
             // 视频
-            default -> simLen + 22;
+            default -> simLen + 18;
         };
-        final int packageSize = in.getShort(readerIndex + lengthFieldOffset) + lengthFieldOffset + 2;
-        if (packageSize < 0) {
-            return State.RETRY_WITH_SIM_LENGTH_10;
+        final short messageBodyLength = in.getShort(lengthFieldOffset);
+        final int totalPackageSize = messageBodyLength + lengthFieldOffset + 2;
+        if (totalPackageSize == in.readableBytes()) {
+            return this.decodeRequest(in, simLen);
         }
-        // 下一包的开始标记
-        if (in.readableBytes() < packageSize + 4) {
-            in.resetReaderIndex();
-            return State.WAITING_FOR_MORE_DATA_ARRIVE;
-        }
-        if (in.getInt(readerIndex + packageSize) != 0x30316364) {
-            return State.RETRY_WITH_SIM_LENGTH_10;
-        }
-        this.doParsePackageInfo(out, in.readSlice(packageSize), simLen);
-        return State.DECODED_AS_SIM_LENGTH_6;
+        return null;
     }
 
-    private void doParsePackageInfo(List<Object> out, ByteBuf in, int simLen) {
-        final XtreamByteReader reader = XtreamByteReader.of(in.skipBytes(4));
+    private Jt1078Request decodeRequest(ByteBuf in, int simLen) {
+        final XtreamByteReader reader = XtreamByteReader.of(in);
         final DefaultJt1078RequestHeader headerBuilder = new DefaultJt1078RequestHeader();
         // V + P + X + CC
         reader.readU8(headerBuilder::offset4);
@@ -164,8 +175,17 @@ public class Jt1078ByteToMessageDecoder extends ByteToMessageDecoder {
         // 数据体长度字段
         final int bodyLength = reader.readU16();
         headerBuilder.msgBodyLength(bodyLength);
-        final ByteBuf body = reader.readable().readSlice(bodyLength);
-        final Jt1078PackageInfo packageInfo = new Jt1078PackageInfo(headerBuilder, body);
-        out.add(packageInfo);
+        final ByteBuf body = in.readRetainedSlice(bodyLength);
+
+        final String requestId = UUID.randomUUID().toString().replace("-", "");
+        return new DefaultJt1078Request(
+                requestId,
+                allocator,
+                this.connection.inbound(),
+                XtreamInbound.Type.TCP,
+                remoteAddress,
+                headerBuilder,
+                body
+        );
     }
 }

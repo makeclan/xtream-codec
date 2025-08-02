@@ -20,9 +20,11 @@ import io.github.hylexus.xtream.codec.common.utils.FormatUtils;
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.*;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.DefaultJt1078RequestHeader;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.DefaultJt1078SessionManager;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
+import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.UdpSessionIdleStateCheckerProps;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.CompositeByteBuf;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
@@ -32,56 +34,49 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class Jt1078ByteToMessageDecoderTest {
 
-
     @Test
     void test() {
-        final CompositeByteBuf compositeByteBuf = loadRawStreamData("mock-data/raw-stream/sim-length-6-h264-adpcma.txt");
-        final Jt1078ByteToMessageDecoder decoder = new Jt1078ByteToMessageDecoder(Jt1078TerminalIdConverter.DEFAULT);
-        final List<Object> packageInfoList = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            decoder.decodePackage(compositeByteBuf, packageInfoList);
-        }
-
-        for (int i = 0; i < packageInfoList.size(); i++) {
-            final Jt1078ByteToMessageDecoder.Jt1078PackageInfo packageInfo = (Jt1078ByteToMessageDecoder.Jt1078PackageInfo) packageInfoList.get(i);
-            final Jt1078RequestHeader header = packageInfo.header();
+        final Jt1078ByteToMessageDecoder decoder = createDecoder();
+        final int[] seq = {0};
+        forEachLine("mock-data/raw-stream/sim-length-6-h264-adpcma.txt", byteBuf -> {
+            final ArrayList<Object> resultList = new ArrayList<>();
+            decoder.decode(null, byteBuf.skipBytes(4).slice(), resultList);
+            final Jt1078Request request = (Jt1078Request) resultList.getFirst();
+            System.out.println(request);
+            final int i = seq[0]++;
+            final Jt1078RequestHeader header = request.header();
             assertEquals(i, header.sequenceNumber());
             assertEquals(6, header.simLength());
             assertEquals("13800138999", header.convertedSim());
             assertEquals(2, header.channelNumber());
             assertTrue(header.msgBodyLength() <= 950);
-        }
-
-        compositeByteBuf.release();
-        assertEquals(0, compositeByteBuf.refCnt());
+        });
     }
 
     @Test
     void test2() {
-        final CompositeByteBuf compositeByteBuf = loadRawStreamData("mock-data/raw-stream/sim-length-10-h264-g711a.txt");
-        final Jt1078ByteToMessageDecoder decoder = new Jt1078ByteToMessageDecoder(Jt1078TerminalIdConverter.DEFAULT);
-        final List<Object> packageInfoList = new ArrayList<>();
-        for (int i = 0; i < 400; i++) {
-            decoder.decodePackage(compositeByteBuf, packageInfoList);
-        }
-
-        for (int i = 0; i < packageInfoList.size(); i++) {
-            final Jt1078ByteToMessageDecoder.Jt1078PackageInfo packageInfo = (Jt1078ByteToMessageDecoder.Jt1078PackageInfo) packageInfoList.get(i);
-            final Jt1078RequestHeader header = packageInfo.header();
+        final Jt1078ByteToMessageDecoder decoder = createDecoder();
+        final int[] seq = {0};
+        forEachLine("mock-data/raw-stream/sim-length-10-h264-g711a.txt", byteBuf -> {
+            final ArrayList<Object> resultList = new ArrayList<>();
+            decoder.decode(null, byteBuf.skipBytes(4).slice(), resultList);
+            final Jt1078Request request = (Jt1078Request) resultList.getFirst();
+            System.out.println(request);
+            final int i = seq[0]++;
+            final Jt1078RequestHeader header = request.header();
             assertEquals(i, header.sequenceNumber());
             assertEquals(10, header.simLength());
             assertEquals("20232609559", header.convertedSim());
             assertEquals(1, header.channelNumber());
             assertTrue(header.msgBodyLength() <= 950);
-        }
-
-        compositeByteBuf.release();
-        assertEquals(0, compositeByteBuf.refCnt());
+            assertEquals(1, resultList.size());
+        });
     }
 
     @Test
@@ -101,21 +96,19 @@ class Jt1078ByteToMessageDecoderTest {
         header.msgBodyLength(5);
 
         final ByteBuf byteBuf = header.encode(true).writeBytes(new byte[]{1, 2, 3, 4, 5});
-        final CompositeByteBuf byteBufList = ByteBufAllocator.DEFAULT.compositeBuffer()
-                .addComponent(true, byteBuf.slice())
-                .addComponent(true, byteBuf.slice());
         try {
-            final Jt1078ByteToMessageDecoder decoder = new Jt1078ByteToMessageDecoder(Jt1078TerminalIdConverter.DEFAULT);
-            final List<Object> packageInfoList = new ArrayList<>();
-            for (int i = 0; i < 3; i++) {
-                decoder.decodePackage(byteBufList, packageInfoList);
-            }
             assertEquals("3031636481e2007b0138001389990220000000000001b2070021002c00050102030405", FormatUtils.toHexString(byteBuf));
+
+            final Jt1078ByteToMessageDecoder decoder = createDecoder();
+            final List<Object> packageInfoList = new ArrayList<>();
+            decoder.decode(null, byteBuf.skipBytes(4).slice(), packageInfoList);
             assertEquals(1, packageInfoList.size());
-            final Jt1078ByteToMessageDecoder.Jt1078PackageInfo packageInfo = (Jt1078ByteToMessageDecoder.Jt1078PackageInfo) packageInfoList.getFirst();
-            assertArrayEquals(new byte[]{1, 2, 3, 4, 5}, XtreamBytes.getBytes(packageInfo.body()));
-            assertHeaderEquals(header, packageInfo.header());
+            final Jt1078Request request = (Jt1078Request) packageInfoList.getFirst();
+            assertArrayEquals(new byte[]{1, 2, 3, 4, 5}, XtreamBytes.getBytes(request.body()));
+            assertHeaderEquals(header, request.header());
         } finally {
+            assertEquals(2, byteBuf.refCnt());
+            XtreamBytes.releaseBuf(byteBuf);
             XtreamBytes.releaseBuf(byteBuf);
             assertEquals(0, byteBuf.refCnt());
         }
@@ -138,8 +131,19 @@ class Jt1078ByteToMessageDecoderTest {
         assertEquals(expected.msgBodyLength(), actual.msgBodyLength());
     }
 
-    static CompositeByteBuf loadRawStreamData(String resourceName) {
-        final CompositeByteBuf buffer = ByteBufAllocator.DEFAULT.compositeBuffer();
+    private static Jt1078ByteToMessageDecoder createDecoder() {
+        return new Jt1078ByteToMessageDecoder(
+                Jt1078TerminalIdConverter.DEFAULT,
+                new NettyConnectionMock(),
+                new DefaultJt1078SessionManager(
+                        false,
+                        new UdpSessionIdleStateCheckerProps(),
+                        new XtreamSessionIdGenerator.DefalutXtreamSessionIdGenerator()
+                )
+        );
+    }
+
+    static void forEachLine(String resourceName, Consumer<ByteBuf> consumer) {
         try (
                 final InputStream inputStream = Jt1078ByteToMessageDecoderTest.class.getClassLoader().getResourceAsStream(resourceName);
                 final BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream), StandardCharsets.UTF_8))
@@ -153,11 +157,17 @@ class Jt1078ByteToMessageDecoderTest {
                 if (line.startsWith("//") || line.startsWith("#")) {
                     continue;
                 }
-                buffer.addComponent(true, XtreamBytes.byteBufFromHexString(ByteBufAllocator.DEFAULT, line));
+                final ByteBuf byteBuf = XtreamBytes.byteBufFromHexString(ByteBufAllocator.DEFAULT, line);
+                try {
+                    consumer.accept(byteBuf);
+                } finally {
+                    assertEquals(2, byteBuf.refCnt());
+                    XtreamBytes.releaseBuf(byteBuf);
+                    XtreamBytes.releaseBuf(byteBuf);
+                    assertEquals(0, byteBuf.refCnt());
+                }
             }
-            return buffer;
         } catch (Exception e) {
-            XtreamBytes.releaseBuf(buffer);
             throw new RuntimeException(e);
         }
     }

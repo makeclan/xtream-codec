@@ -20,7 +20,6 @@ import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078RequestPublisher;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078DataType;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078RequestHandler;
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
@@ -34,7 +33,7 @@ public class DefaultJt1078RequestHandler implements Jt1078RequestHandler {
     }
 
     @Override
-    public Mono<Void> handleRequest(Jt1078Session session, Jt1078Request request) {
+    public Mono<Void> handleRequest(Jt1078Request request) {
         final Jt1078DataType dataType = request.dataType();
         return switch (dataType) {
             case VIDEO_I, VIDEO_P, VIDEO_B, AUDIO -> requestPublisher.publish(request);

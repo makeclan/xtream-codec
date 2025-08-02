@@ -53,4 +53,15 @@ public class DefaultJt1078SessionManager
         });
     }
 
+    @Override
+    public void createSession(Jt1078Session session) {
+        this.sessions.put(session.id(), session);
+        if (session.type() == XtreamInbound.Type.TCP) {
+            this.tcpSessionCount.incrementAndGet();
+        } else {
+            this.udpSessionCount.incrementAndGet();
+        }
+        this.invokeListener(listener -> listener.afterSessionCreate(session));
+    }
+
 }

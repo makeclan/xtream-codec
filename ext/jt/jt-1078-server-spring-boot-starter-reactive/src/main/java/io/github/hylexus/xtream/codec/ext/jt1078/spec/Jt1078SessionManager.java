@@ -57,6 +57,8 @@ public interface Jt1078SessionManager extends XtreamSessionManager<Jt1078Session
 
     Mono<Jt1078Session> createSession(String sessionId, Mono<Jt1078Session> sessionLoader);
 
+    void createSession(Jt1078Session session);
+
     default Mono<Jt1078Session> getOrCreateSession(String sessionId, Supplier<Jt1078Session> creator) {
         return Mono.defer(() -> {
             // ...

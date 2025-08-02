@@ -41,6 +41,8 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.resources.DefaultTcpX
 import io.github.hylexus.xtream.codec.server.reactive.spec.resources.TcpXtreamNettyResourceFactory;
 import io.github.hylexus.xtream.codec.server.reactive.spec.resources.XtreamNettyResourceFactory;
 import io.github.hylexus.xtream.codec.server.reactive.utils.BuiltinConfigurationUtils;
+import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -112,15 +114,16 @@ public class BuiltinJt1078ServerTcpConfiguration {
                 .addServerCustomizer(BuiltinConfigurationUtils.defaultTcpBasicConfigurer(tcpServer.getHost(), tcpServer.getPort()))
                 // handler
                 .addServerCustomizer(server -> server.handle(tcpXtreamNettyHandlerAdapter))
-                // 分包 + 空闲检测
+                // 分包 + 请求解码 + 空闲检测
                 .addServerCustomizer(server -> server.doOnConnection(connection -> {
-                    // 空闲检测
-                    addTcpIdleStateHandler(sessionManager, serverProperties, connection);
-                    // 分包
-                    // stripDelimiter=true
-                    // todo 最大包大小限制
+                    // 1. 分包(stripDelimiter=true)
                     final int frameLength = serverProperties.getTcpServer().getMaxFrameLength();
-                    connection.addHandlerFirst(BEAN_NAME_JT1078_CHANNEL_FRAME_DECODER, new Jt1078ByteToMessageDecoder(terminalIdConverter));
+                    final DelimiterBasedFrameDecoder frameDecoder = new DelimiterBasedFrameDecoder(frameLength, true, Unpooled.copiedBuffer(new byte[]{0x30, 0x31, 0x63, 0x64}));
+                    connection.addHandlerLast(BEAN_NAME_JT1078_CHANNEL_FRAME_DECODER, frameDecoder);
+                    // 2. 请求解码
+                    connection.addHandlerLast(BEAN_NAME_JT1078_REQUEST_DECODER, new Jt1078ByteToMessageDecoder(terminalIdConverter, connection, sessionManager));
+                    // 3. 空闲检测
+                    addTcpIdleStateHandler(sessionManager, serverProperties, connection);
                 }))
                 // loopResources
                 .addServerCustomizer(server -> server.runOn(resourceFactory.loopResources(), resourceFactory.preferNative()))

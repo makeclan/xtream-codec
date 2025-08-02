@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt1078.spec;
+package io.github.hylexus.xtream.codec.ext.jt1078.codec;
 
-import reactor.core.publisher.Mono;
+import io.netty.channel.Channel;
+import io.netty.channel.local.LocalChannel;
+import jakarta.annotation.Nonnull;
+import reactor.netty.Connection;
 
-public interface Jt1078RequestHandler {
+public class NettyConnectionMock implements Connection {
 
-    Mono<Void> handleRequest(Jt1078Request request);
+    @Override
+    @Nonnull
+    public Channel channel() {
+        return new LocalChannel();
+    }
 
 }
