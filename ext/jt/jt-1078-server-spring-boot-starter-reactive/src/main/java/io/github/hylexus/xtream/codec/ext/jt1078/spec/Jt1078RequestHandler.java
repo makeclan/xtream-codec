@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package io.github.hylexus.xtream.codec.ext.jt1078.extensions;
+package io.github.hylexus.xtream.codec.ext.jt1078.spec;
 
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchangeCreator;
+import reactor.core.publisher.Mono;
 
-public interface Jt1078ServerExchangeCreator extends XtreamExchangeCreator {
+public interface Jt1078RequestHandler {
+
+    Mono<Void> handleRequest(Jt1078Session session, Jt1078Request request);
+
 }

@@ -25,7 +25,7 @@ import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.RemoveLeadingZerosJt1
  * <li>{@link RemoveLeadingZerosJt1078TerminalIdConverter 移除前导零的实现}（默认）</li>
  * <li>{@link io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.PadLeadingZerosJt1078TerminalIdConverter 填充前导零的实现}</li>
  *
- * @see Jt1078RequestHeader#sim()
+ * @see Jt1078RequestHeader#convertedSim()
  * @see RemoveLeadingZerosJt1078TerminalIdConverter
  * @see io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.PadLeadingZerosJt1078TerminalIdConverter
  */

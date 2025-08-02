@@ -16,14 +16,57 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.spec;
 
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionManager;
+import reactor.core.publisher.Mono;
 
 import java.util.Comparator;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public interface Jt1078SessionManager extends XtreamSessionManager<Jt1078Session> {
+
+    /**
+     * @deprecated JT/T 1078 没有实现 {@link XtreamExchange}; 请使用 {{@link #getOrCreateSession(String, Supplier)}}
+     */
+    @Override
+    @Deprecated
+    default Mono<Jt1078Session> getSession(XtreamExchange exchange) {
+        return Mono.error(new UnsupportedOperationException());
+    }
+
+    @Override
+    @Deprecated
+    default Mono<Jt1078Session> getSession(XtreamExchange exchange, boolean createNewIfMissing) {
+        return Mono.error(new UnsupportedOperationException());
+    }
+
+    @Override
+    @Deprecated
+    default Mono<Jt1078Session> createSession(XtreamExchange exchange) {
+        return Mono.error(new UnsupportedOperationException());
+    }
+
+    @Override
+    @Deprecated
+    default Mono<Jt1078Session> createSession(String sessionId, XtreamExchange exchange) {
+        return Mono.error(new UnsupportedOperationException());
+    }
+
+    Mono<Jt1078Session> createSession(String sessionId, Mono<Jt1078Session> sessionLoader);
+
+    default Mono<Jt1078Session> getOrCreateSession(String sessionId, Supplier<Jt1078Session> creator) {
+        return Mono.defer(() -> {
+            // ...
+            return this.getSessionById(sessionId).switchIfEmpty(Mono.defer(() -> {
+                final Jt1078Session newSession = creator.get();
+                return this.createSession(sessionId, Mono.just(newSession));
+            }));
+        });
+    }
+
     default Stream<Jt1078Session> list(int page, int pageSize, Predicate<Jt1078Session> filter) {
         return this.list().filter(filter).sorted(Comparator.comparing(Jt1078Session::terminalId)).skip((long) (page - 1) * pageSize).limit(pageSize);
     }

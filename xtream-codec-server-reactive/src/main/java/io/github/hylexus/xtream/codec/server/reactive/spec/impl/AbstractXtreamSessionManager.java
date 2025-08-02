@@ -46,12 +46,12 @@ public abstract class AbstractXtreamSessionManager<S extends XtreamSession> impl
     private static final Logger log = LoggerFactory.getLogger(AbstractXtreamSessionManager.class);
     protected final XtreamSessionIdGenerator sessionIdGenerator;
     protected final ConcurrentMap<String, S> sessions = new ConcurrentHashMap<>();
-    private final AtomicLong tcpSessionCount = new AtomicLong(0);
-    private final AtomicLong udpSessionCount = new AtomicLong(0);
+    protected final AtomicLong tcpSessionCount = new AtomicLong(0);
+    protected final AtomicLong udpSessionCount = new AtomicLong(0);
     protected final XtreamIntervalChecker checker;
-    private final Duration maxIdleTime;
-    private final Clock clock = Clock.system(ZoneId.of("Asia/Shanghai"));
-    private final Lock lock = new ReentrantLock();
+    protected final Duration maxIdleTime;
+    protected final Clock clock = Clock.system(ZoneId.of("Asia/Shanghai"));
+    protected final Lock lock = new ReentrantLock();
     protected final List<XtreamSessionEventListener<S>> listenerList = new ArrayList<>();
 
     public AbstractXtreamSessionManager(

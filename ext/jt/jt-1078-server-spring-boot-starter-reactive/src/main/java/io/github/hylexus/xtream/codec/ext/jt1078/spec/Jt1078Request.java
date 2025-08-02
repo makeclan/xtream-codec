@@ -17,31 +17,16 @@
 package io.github.hylexus.xtream.codec.ext.jt1078.spec;
 
 
-import io.github.hylexus.xtream.codec.common.exception.NotYetImplementedException;
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamRequest;
 import io.netty.buffer.ByteBuf;
-import reactor.netty.NettyInbound;
-
-import java.util.UUID;
 
 /**
  * @author hylexus
  */
 public interface Jt1078Request extends XtreamRequest {
-    /**
-     * 同一次请求 该值应该确保一致（包括分包消息）。
-     *
-     * @see #requestId()
-     * @see Jt1078TraceIdGenerator
-     */
-    String traceId();
 
     Jt1078RequestHeader header();
-
-    default ByteBuf createRawByteBuf() {
-        throw new NotYetImplementedException();
-    }
 
     /**
      * 请求体
@@ -54,12 +39,18 @@ public interface Jt1078Request extends XtreamRequest {
         XtreamBytes.releaseBuf(this.body());
     }
 
+    /**
+     * @deprecated JT/T 1078 中没必要实现这个方法
+     */
     @Override
-    Jt1078RequestBuilder mutate();
+    @Deprecated
+    default Jt1078RequestBuilder mutate() {
+        throw new UnsupportedOperationException();
+    }
 
     // short-cut methods
     default String sim() {
-        return header().sim();
+        return header().convertedSim();
     }
 
     default short channelNumber() {
@@ -70,36 +61,15 @@ public interface Jt1078Request extends XtreamRequest {
         return header().msgBodyLength();
     }
 
-    default byte pt() {
-        return header().pt();
-    }
-
     default Jt1078PayloadType payloadType() {
         return header().payloadType();
-    }
-
-    default byte dataTypeValue() {
-        return header().dataTypeValue();
     }
 
     default Jt1078DataType dataType() {
         return header().dataType();
     }
 
-    interface Jt1078TraceIdGenerator {
-        String generateTraceId(NettyInbound nettyInbound, Jt1078RequestHeader header);
-
-        class Default implements Jt1078TraceIdGenerator {
-            @Override
-            public String generateTraceId(NettyInbound nettyInbound, Jt1078RequestHeader header) {
-                return UUID.randomUUID().toString().replace("-", "");
-            }
-        }
-    }
-
     interface Jt1078RequestBuilder extends XtreamRequest.XtreamRequestBuilder {
-
-        Jt1078RequestBuilder traceId(String traceId);
 
         Jt1078RequestBuilder header(Jt1078RequestHeader header);
 

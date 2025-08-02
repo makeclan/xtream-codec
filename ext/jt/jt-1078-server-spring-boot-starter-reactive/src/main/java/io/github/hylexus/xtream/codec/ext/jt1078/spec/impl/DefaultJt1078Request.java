@@ -18,7 +18,6 @@ package io.github.hylexus.xtream.codec.ext.jt1078.spec.impl;
 
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078RequestHeader;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamRequestBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.DefaultXtreamRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
@@ -30,20 +29,13 @@ import java.net.InetSocketAddress;
  * @author hylexus
  */
 public class DefaultJt1078Request extends DefaultXtreamRequest implements Jt1078Request {
-    protected final String traceId;
     private final Jt1078RequestHeader header;
 
     public DefaultJt1078Request(
-            String requestId, String traceId, ByteBufAllocator allocator, NettyInbound nettyInbound, Type type, InetSocketAddress remoteAddress,
+            String requestId, ByteBufAllocator allocator, NettyInbound nettyInbound, Type type, InetSocketAddress remoteAddress,
             Jt1078RequestHeader header, ByteBuf payload) {
         super(requestId, allocator, nettyInbound, type, payload, remoteAddress);
         this.header = header;
-        this.traceId = traceId;
-    }
-
-    @Override
-    public String traceId() {
-        return this.traceId;
     }
 
     @Override
@@ -51,9 +43,14 @@ public class DefaultJt1078Request extends DefaultXtreamRequest implements Jt1078
         return this.header;
     }
 
+    /**
+     * @deprecated JT/T 1078 中没必要实现这个方法
+     */
     @Override
+    @Deprecated
+    @SuppressWarnings("deprecation")
     public Jt1078RequestBuilder mutate() {
-        return new DefaultJt1078RequestBuilder(this);
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -61,41 +58,4 @@ public class DefaultJt1078Request extends DefaultXtreamRequest implements Jt1078
         return "DefaultJt1078Request{" + "header=" + header + '}';
     }
 
-    public static class DefaultJt1078RequestBuilder
-            extends AbstractXtreamRequestBuilder<Jt1078RequestBuilder, Jt1078Request>
-            implements Jt1078RequestBuilder {
-        protected String traceId;
-        protected Jt1078RequestHeader header;
-
-        public DefaultJt1078RequestBuilder(Jt1078Request delegateRequest) {
-            super(delegateRequest);
-            this.traceId = delegateRequest.traceId();
-        }
-
-        @Override
-        public Jt1078RequestBuilder traceId(String traceId) {
-            this.traceId = traceId;
-            return this;
-        }
-
-        @Override
-        public Jt1078RequestBuilder header(Jt1078RequestHeader header) {
-            this.header = header;
-            return this;
-        }
-
-        @Override
-        public Jt1078Request build() {
-            return new DefaultJt1078Request(
-                    this.delegateRequest.requestId(),
-                    this.traceId,
-                    this.delegateRequest.bufferFactory(),
-                    this.delegateRequest.underlyingInbound(),
-                    this.delegateRequest.type(),
-                    this.remoteAddress != null ? this.remoteAddress : this.delegateRequest.remoteAddress(),
-                    this.header != null ? this.header : this.delegateRequest.header(),
-                    this.payload == null ? this.delegateRequest.payload() : this.payload
-            );
-        }
-    }
 }

@@ -19,13 +19,8 @@ package io.github.hylexus.xtream.codec.ext.jt1078.boot.configuration;
 import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
 import io.github.hylexus.xtream.codec.ext.jt1078.boot.listener.XtreamExtJt1078ServerStartupListener;
 import io.github.hylexus.xtream.codec.ext.jt1078.boot.properties.XtreamJt1078ServerProperties;
-import io.github.hylexus.xtream.codec.ext.jt1078.codec.Jt1078RequestDecoder;
-import io.github.hylexus.xtream.codec.ext.jt1078.codec.impl.DefaultJt1078RequestDecoder;
-import io.github.hylexus.xtream.codec.ext.jt1078.extensions.Jt1078ServerExchangeCreator;
-import io.github.hylexus.xtream.codec.ext.jt1078.extensions.impl.DefaultJt1078ServerExchangeCreator;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.BuiltinJt1078SessionCloseListener;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078RequestPublisher;
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionEventListener;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionManager;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.DefaultJt1078SessionManager;
@@ -62,12 +57,6 @@ public class XtreamExtJt1078ServerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    Jt1078RequestDecoder jt808RequestDecoder() {
-        return new DefaultJt1078RequestDecoder(new Jt1078Request.Jt1078TraceIdGenerator.Default());
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
     XtreamSessionIdGenerator xtreamSessionIdGenerator() {
         return new XtreamSessionIdGenerator.DefalutXtreamSessionIdGenerator();
     }
@@ -83,22 +72,9 @@ public class XtreamExtJt1078ServerAutoConfiguration {
     }
 
     @Bean
-    Jt1078ServerExchangeCreator jt1078ServerExchangeCreator(Jt1078RequestDecoder decoder, Jt1078SessionManager sessionManager) {
-        return new DefaultJt1078ServerExchangeCreator(sessionManager, decoder);
-    }
-
-    @Bean
     XtreamExtJt1078ServerStartupListener xtreamExtJt1078ServerStartupListener(XtreamJt1078ServerProperties serverProperties) {
         return new XtreamExtJt1078ServerStartupListener(serverProperties);
     }
-
-
-    // @Bean
-    // @ConditionalOnMissingBean
-    // @ConditionalOnProperty(prefix = "jt1078-server.features.request-combiner", name = "enabled", havingValue = "true", matchIfMissing = true)
-    // Jt1078RequestCombinerFilter jt1078RequestCombinerFilter(Jt1078RequestCombiner combiner) {
-    //     return new Jt1078RequestCombinerFilter(combiner);
-    // }
 
     @Bean
     BuiltinJt1078SessionCloseListener builtinJt1078SessionCloseListener(Jt1078RequestPublisher publisher) {

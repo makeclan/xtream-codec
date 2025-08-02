@@ -28,62 +28,26 @@ import java.util.Optional;
 /**
  * @author hylexus
  */
-public class DefaultJt1078RequestHeader implements Jt1078RequestHeader, Jt1078RequestHeader.Jt1078RequestHeaderBuilder {
+public class DefaultJt1078RequestHeader implements Jt1078RequestHeader {
 
     private short offset4;
-    private short offset5;
+    @SuppressWarnings("checkstyle:MemberName")
+    private byte m;
     private Jt1078PayloadType payloadType;
-    private int offset6;
-    private String offset8;
+    private int sequenceNumber;
+    private int simLength;
     private String rawSim;
-    private short offset14;
-    private short offset15;
+    private String convertedSim;
+    private short channelNumber;
     private Jt1078DataType dataType;
     private Jt1078SubPackageIdentifier subPackageIdentifier;
-    private Long offset16;
-    private Integer offset24;
-    private Integer offset26;
-    private int offset28;
+    private Long timestamp;
+    private Integer lastIFrameInterval;
+    private Integer lastFrameInterval;
+    private int msgBodyLength;
 
-    private boolean combined = false;
 
     public DefaultJt1078RequestHeader() {
-    }
-
-    public DefaultJt1078RequestHeader(
-            short offset4, short offset5,
-            int offset6, String offset8, String rawSim,
-            short offset14, short offset15,
-            Long offset16, Integer offset24,
-            Integer offset26, int offset28,
-            boolean isCombined) {
-
-        this.offset4 = offset4;
-        this.offset5(offset5);
-        this.offset6 = offset6;
-        this.offset8 = offset8;
-        this.rawSim = rawSim;
-        this.offset14 = offset14;
-        this.offset15(offset15);
-        this.offset16 = offset16;
-        this.offset24 = offset24;
-        this.offset26 = offset26;
-        this.offset28 = offset28;
-        this.combined = isCombined;
-    }
-
-    public DefaultJt1078RequestHeader(Jt1078RequestHeader another) {
-        this.offset4(another.offset4())
-                .offset5(another.offset5())
-                .offset6(another.offset6())
-                .offset8(another.offset8())
-                .offset14(another.offset14())
-                .offset15(another.offset15())
-                .offset16(another.offset16().orElse(null))
-                .offset24(another.offset24().orElse(null))
-                .offset26(another.offset26().orElse(null))
-                .offset28(another.offset28())
-                .isCombined(another.isCombined());
     }
 
     @Override
@@ -91,22 +55,24 @@ public class DefaultJt1078RequestHeader implements Jt1078RequestHeader, Jt1078Re
         return this.offset4;
     }
 
-    @Override
-    public Jt1078RequestHeaderBuilder offset4(short value) {
-        this.offset4 = value;
-        return this;
+    public void offset4(short value) {
+        this.offset4 = (short) (value & 0xFF);
+    }
+
+    public void markerBitAndPayloadType(short value) {
+        this.m((byte) ((value >> 7) & 0b01));
+        this.payloadType((byte) (value & 0b0111_1111));
     }
 
     @Override
-    public short offset5() {
-        return this.offset5;
+    @SuppressWarnings("checkstyle:methodname")
+    public byte m() {
+        return this.m;
     }
 
-    @Override
-    public Jt1078RequestHeaderBuilder offset5(short value) {
-        this.offset5 = value;
-        this.payloadType = Jt1078PayloadType.createOrDefault(this.pt());
-        return this;
+    @SuppressWarnings("checkstyle:methodname")
+    public void m(byte value) {
+        this.m = value;
     }
 
     @Override
@@ -114,26 +80,30 @@ public class DefaultJt1078RequestHeader implements Jt1078RequestHeader, Jt1078Re
         return this.payloadType;
     }
 
-    @Override
-    public int offset6() {
-        return this.offset6;
+    public void payloadType(byte value) {
+        this.payloadType = Jt1078PayloadType.createOrError(value);
+    }
+
+    public void payloadType(Jt1078PayloadType payloadType) {
+        this.payloadType = payloadType;
     }
 
     @Override
-    public Jt1078RequestHeaderBuilder offset6(int value) {
-        this.offset6 = value;
-        return this;
+    public int sequenceNumber() {
+        return this.sequenceNumber;
+    }
+
+    public void sequenceNumber(int value) {
+        this.sequenceNumber = value;
     }
 
     @Override
-    public String offset8() {
-        return this.offset8;
+    public int simLength() {
+        return this.simLength;
     }
 
-    @Override
-    public Jt1078RequestHeaderBuilder offset8(String value) {
-        this.offset8 = value;
-        return this;
+    public void simLength(int value) {
+        this.simLength = value;
     }
 
     @Override
@@ -141,43 +111,34 @@ public class DefaultJt1078RequestHeader implements Jt1078RequestHeader, Jt1078Re
         return this.rawSim;
     }
 
-    @Override
-    public Jt1078RequestHeaderBuilder rawSim(String value) {
+    public void rawSim(String value) {
         this.rawSim = value;
+    }
+
+    @Override
+    public String convertedSim() {
+        return this.convertedSim;
+    }
+
+    public void convertedSim(String value) {
+        this.convertedSim = value;
+    }
+
+    @Override
+    public short channelNumber() {
+        return this.channelNumber;
+    }
+
+    public DefaultJt1078RequestHeader channelNumber(short value) {
+        this.channelNumber = value;
         return this;
     }
 
-    @Override
-    public short offset14() {
-        return this.offset14;
-    }
-
-    @Override
-    public Jt1078RequestHeaderBuilder offset14(short value) {
-        this.offset14 = value;
-        return this;
-    }
-
-
-    @Override
-    public short offset15() {
-        return this.offset15;
-    }
-
-    @Override
-    public Jt1078RequestHeaderBuilder offset15(short value) {
-        this.offset15 = value;
-        this.dataType = Jt1078DataType.of(this.dataTypeValue())
+    public void dataTypeAndSubPackageIdentifier(short value) {
+        this.dataType = Jt1078DataType.of(Jt1078RequestHeader.dataTypeValue(value))
                 .orElseThrow(() -> new Jt1078DecodeException("Unknown dataType: " + value));
-        this.subPackageIdentifier = Jt1078SubPackageIdentifier.of(this.subPackageIdentifierValue())
+        this.subPackageIdentifier = Jt1078SubPackageIdentifier.of(Jt1078RequestHeader.subPackageIdentifierValue(value))
                 .orElseThrow(() -> new Jt1078DecodeException("Unknown subPackageIdentifier " + value));
-        return this;
-    }
-
-    @Override
-    public Jt1078RequestHeaderBuilder dataType(short value) {
-        this.offset15 = (short) ((this.offset15 & 0x0F) | ((value & 0x0F) << 4));
-        return this;
     }
 
     @Override
@@ -185,10 +146,8 @@ public class DefaultJt1078RequestHeader implements Jt1078RequestHeader, Jt1078Re
         return dataType;
     }
 
-    @Override
-    public Jt1078RequestHeaderBuilder subPackageIdentifier(short value) {
-        this.offset15 = (short) ((this.offset15 & 0xF0) | (value & 0x0F));
-        return this;
+    public void dataType(Jt1078DataType dataType) {
+        this.dataType = dataType;
     }
 
     @Override
@@ -196,85 +155,67 @@ public class DefaultJt1078RequestHeader implements Jt1078RequestHeader, Jt1078Re
         return subPackageIdentifier;
     }
 
-    @Override
-    public Optional<Long> offset16() {
-        return Optional.ofNullable(this.offset16);
+    public void subPackageIdentifier(Jt1078SubPackageIdentifier subPackageIdentifier) {
+        this.subPackageIdentifier = subPackageIdentifier;
     }
 
     @Override
-    public Jt1078RequestHeaderBuilder offset16(Long value) {
-        this.offset16 = value;
+    public Optional<Long> timestamp() {
+        return Optional.ofNullable(this.timestamp);
+    }
+
+    public DefaultJt1078RequestHeader timestamp(Long value) {
+        this.timestamp = value;
         return this;
     }
 
     @Override
-    public Optional<Integer> offset24() {
-        return Optional.ofNullable(this.offset24);
+    public Optional<Integer> lastIFrameInterval() {
+        return Optional.ofNullable(this.lastIFrameInterval);
+    }
+
+    public void lastIFrameInterval(Integer value) {
+        this.lastIFrameInterval = value;
     }
 
     @Override
-    public Jt1078RequestHeaderBuilder offset24(Integer value) {
-        this.offset24 = value;
-        return this;
+    public Optional<Integer> lastFrameInterval() {
+        return Optional.ofNullable(this.lastFrameInterval);
+    }
+
+    public void lastFrameInterval(Integer value) {
+        this.lastFrameInterval = value;
     }
 
     @Override
-    public Optional<Integer> offset26() {
-        return Optional.ofNullable(this.offset26);
+    public int msgBodyLength() {
+        return this.msgBodyLength;
     }
 
-    @Override
-    public Jt1078RequestHeaderBuilder offset26(Integer value) {
-        this.offset26 = value;
-        return this;
-    }
-
-    @Override
-    public int offset28() {
-        return this.offset28;
-    }
-
-    @Override
-    public Jt1078RequestHeaderBuilder offset28(int value) {
-        this.offset28 = value;
-        return this;
-    }
-
-    @Override
-    public boolean isCombined() {
-        return this.combined;
-    }
-
-    @Override
-    public Jt1078RequestHeaderBuilder isCombined(boolean isCombined) {
-        this.combined = isCombined;
-        return this;
-    }
-
-    @Override
-    public Jt1078RequestHeader build() {
-        return new DefaultJt1078RequestHeader(
-                this.offset4, this.offset5, this.offset6, this.offset8, this.rawSim, this.offset14,
-                this.offset15, this.offset16, this.offset24, this.offset26, this.offset28,
-                this.combined
-        );
+    public void msgBodyLength(int value) {
+        this.msgBodyLength = value;
     }
 
     @Override
     public String toString() {
         return "DefaultJt1078RequestHeader{"
-               + "isCombined=" + isCombined()
+               + "V=" + this.v()
+               + ", P=" + this.p()
+               + ", X=" + this.x()
+               + ", CC=" + this.cc()
                + ", M=" + m()
                + ", PT=" + payloadType()
-               + ", offset6(sequenceNumber)=" + offset6
-               + ", sim='" + sim() + '\''
-               + ", channelNumber=" + channelNumber()
+               + ", sequenceNumber=" + sequenceNumber
+               + ", simLength=" + simLength
+               + ", convertedSim='" + convertedSim + '\''
+               + ", rawSim='" + rawSim + '\''
+               + ", channelNumber=" + channelNumber
                + ", dataType=" + dataType
                + ", subPackageIdentifier=" + subPackageIdentifier
-               + ", timestamp=" + offset16
-               + ", lastIFrameInterval=" + offset24
-               + ", lastFrameInterval=" + offset26
-               + ", msgBodyLength=" + offset28
+               + ", timestamp=" + timestamp
+               + ", lastIFrameInterval=" + lastIFrameInterval
+               + ", lastFrameInterval=" + lastFrameInterval
+               + ", msgBodyLength=" + msgBodyLength
                + '}';
     }
 }

@@ -16,15 +16,14 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.spec.impl;
 
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Session;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionManager;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamResponse;
+import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamInbound;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionIdGenerator;
 import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.UdpSessionIdleStateCheckerProps;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamSessionManager;
-import io.netty.buffer.ByteBufAllocator;
+import reactor.core.publisher.Mono;
 
 public class DefaultJt1078SessionManager
         extends AbstractXtreamSessionManager<Jt1078Session>
@@ -35,17 +34,23 @@ public class DefaultJt1078SessionManager
     }
 
     @Override
+    @Deprecated
     protected Jt1078Session doCreateSession(String sessionId, XtreamExchange exchange) {
-        final Jt1078Request request = (Jt1078Request) exchange.request();
-        final XtreamResponse response = exchange.response();
-        return new DefaultJt1078Session(
-                sessionId,
-                ByteBufAllocator.DEFAULT,
-                response.outbound(),
-                response.type(),
-                request.header().sim(),
-                request.channelNumber(), response.remoteAddress(),
-                this, request.header().rawSim()
-        );
+        throw new UnsupportedOperationException();
     }
+
+    @Override
+    public Mono<Jt1078Session> createSession(String sessionId, Mono<Jt1078Session> sessionLoader) {
+        return sessionLoader.map(session -> {
+            this.sessions.put(sessionId, session);
+            if (session.type() == XtreamInbound.Type.TCP) {
+                this.tcpSessionCount.incrementAndGet();
+            } else {
+                this.udpSessionCount.incrementAndGet();
+            }
+            this.invokeListener(listener -> listener.afterSessionCreate(session));
+            return session;
+        });
+    }
+
 }

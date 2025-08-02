@@ -18,7 +18,6 @@ package io.github.hylexus.xtream.codec.ext.jt1078.spec;
 
 
 import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.DefaultJt1078RequestHeader;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 
@@ -31,6 +30,8 @@ public interface Jt1078RequestHeader {
 
     /**
      * bytes[4,5)
+     * <p>
+     * V, P, X, CC
      */
     short offset4();
 
@@ -68,73 +69,47 @@ public interface Jt1078RequestHeader {
 
     /**
      * bytes[5,6)
-     */
-    short offset5();
-
-    /**
+     * <p>
      * M: 1bit; 标志位，确定是否是完整数据帧的边界
      */
     @SuppressWarnings("checkstyle:methodname")
-    default byte m() {
-        return (byte) ((this.offset5() >> 7) & 0b01);
-    }
+    byte m();
 
     /**
+     * bytes[5,6)
+     * <p>
      * PT: 7bits; 负载类型
-     */
-    default byte pt() {
-        return (byte) (this.offset5() & 0b0111_1111);
-    }
-
-    /**
-     * PT: 负载类型
      */
     Jt1078PayloadType payloadType();
 
     /**
      * bytes[6,8)    包序号
      */
-    int offset6();
+    int sequenceNumber();
 
-    default int sequenceNumber() {
-        return offset6();
-    }
+    int simLength();
 
     /**
      * @return SIM 卡号
      * @see Jt1078TerminalIdConverter
      */
-    String offset8();
-
     String rawSim();
 
     /**
-     * bytes[8,14)    BCD[6]    SIM卡号
+     * bytes[8,14) BCD[6] SIM卡号
      *
      * @see Jt1078TerminalIdConverter
      */
-    default String sim() {
-        return offset8();
-    }
+    String convertedSim();
 
     /**
      * bytes[14,15)    逻辑通道号
      */
-    short offset14();
-
-    /**
-     * bytes[14,15)    逻辑通道号
-     */
-    default short channelNumber() {
-        return offset14();
-    }
+    short channelNumber();
 
     /**
      * bytes[15,16)
-     */
-    short offset15();
-
-    /**
+     * <p>
      * 数据类型
      *
      * @param offset15 消息头中第15个字节的高四位
@@ -142,13 +117,6 @@ public interface Jt1078RequestHeader {
      */
     static byte dataTypeValue(short offset15) {
         return (byte) ((offset15 >> 4) & 0x0f);
-    }
-
-    /**
-     * 数据类型
-     */
-    default byte dataTypeValue() {
-        return dataTypeValue(this.offset15());
     }
 
     /**
@@ -167,15 +135,8 @@ public interface Jt1078RequestHeader {
     }
 
     /**
-     * 分包处理标记
+     * bytes[15,16)
      *
-     * @return 分包处理标记
-     */
-    default byte subPackageIdentifierValue() {
-        return subPackageIdentifierValue(this.offset15());
-    }
-
-    /**
      * @return 分包处理标记
      */
     Jt1078SubPackageIdentifier subPackageIdentifier();
@@ -194,51 +155,24 @@ public interface Jt1078RequestHeader {
         return (dataType & 0x0f) != 0b0100;
     }
 
-    static int msgLengthFieldIndex(boolean hasIdentifier, boolean hasTimestampField, boolean hasFrameIntervalFields) {
-        int index = 28;
-        if (!hasTimestampField) {
-            // -8: timestamp
-            index -= 8;
-        }
-        if (!hasFrameIntervalFields) {
-            // -2: lastFrameInterval
-            // -2: lastIFrameInterval
-            index = index - 2 - 2;
-        }
-        if (!hasIdentifier) {
-            // 0x30,0x31,0x63,0x64
-            index -= 4;
-        }
-        return index;
-    }
-
-    Optional<Long> offset16();
-
     /**
      * bytes[16,24)    BYTE[8] 时间戳
      *
      * @return 当 {@link #dataType()} == 0x0100 时返回 {@link Optional#empty()}
      */
-    default Optional<Long> timestamp() {
-        return offset16();
-    }
-
-    Optional<Integer> offset24();
+    Optional<Long> timestamp();
 
     /**
      * bytes[24,26)    WORD    该帧与上一个关键帧之间的相对时间(ms)
      *
      * @return 当 {@link #dataType()} == 0x0100 || {@link #dataType()} == 0x0011 时返回 {@link Optional#empty()}
      * @see #dataTypeValue(short)
-     * @see #dataTypeValue()
+     * @see #dataType()
      * @see #hasFrameIntervalFields(byte)
      * @see #lastFrameInterval()
      */
-    default Optional<Integer> lastIFrameInterval() {
-        return offset24();
-    }
+    Optional<Integer> lastIFrameInterval();
 
-    Optional<Integer> offset26();
 
     /**
      * bytes[24,26)    WORD    该帧与上一帧之间的相对时间(ms)
@@ -249,23 +183,28 @@ public interface Jt1078RequestHeader {
      * @see #hasFrameIntervalFields(byte)
      * @see #lastIFrameInterval()
      */
-    default Optional<Integer> lastFrameInterval() {
-        return offset26();
-    }
-
-    int offset28();
+    Optional<Integer> lastFrameInterval();
 
     /**
      * bytes[28,30)    WORD    数据体长度
      */
-    default int msgBodyLength() {
-        return offset28();
+    int msgBodyLength();
+
+    static byte generateOffset4() {
+        return generateOffset4((byte) 2, (byte) 0, (byte) 0, (byte) 1);
     }
 
-    boolean isCombined();
-
-    default Jt1078RequestHeaderBuilder mutate() {
-        return newBuilder(this);
+    static byte generateOffset4(byte v, byte p, byte x, byte cc) {
+        return (byte)
+                (
+                        (byte) ((v & 0b11) << 6)
+                        // P(1bit): 固定为 0
+                        | (byte) ((p & 0b1) << 5)
+                        // X(1bit): 固定为 0
+                        | (byte) ((x & 0b1) << 4)
+                        // CC(4bit): 固定为 1
+                        | (byte) (cc & 0x0F)
+                );
     }
 
     default ByteBuf encode(boolean withIdentifier) {
@@ -282,66 +221,15 @@ public interface Jt1078RequestHeader {
             buffer.writeByte(0x64);
         }
         buffer.writeByte(this.offset4());
-        buffer.writeByte(this.offset5());
-        buffer.writeShort(this.offset6());
-        XtreamBytes.writeBcd(buffer, this.offset8());
-        buffer.writeByte(this.offset14());
-        buffer.writeByte(this.offset15());
-        this.offset16().ifPresent(buffer::writeLong);
-        this.offset24().ifPresent(buffer::writeShort);
-        this.offset26().ifPresent(buffer::writeShort);
-        buffer.writeShort(this.offset28());
+        buffer.writeByte(this.m() << 7 | (this.payloadType().value() & 0b0111_1111));
+        buffer.writeShort(this.sequenceNumber());
+        XtreamBytes.writeBcd(buffer, this.rawSim());
+        buffer.writeByte(this.channelNumber());
+        buffer.writeByte((this.dataType().value() << 4) | (this.subPackageIdentifier().value() & 0x0F));
+        this.timestamp().ifPresent(buffer::writeLong);
+        this.lastIFrameInterval().ifPresent(buffer::writeShort);
+        this.lastFrameInterval().ifPresent(buffer::writeShort);
+        buffer.writeShort(this.msgBodyLength());
     }
 
-    static Jt1078RequestHeaderBuilder newBuilder() {
-        return new DefaultJt1078RequestHeader();
-    }
-
-    static Jt1078RequestHeaderBuilder newBuilder(Jt1078RequestHeader another) {
-        return new DefaultJt1078RequestHeader(another);
-    }
-
-    interface Jt1078RequestHeaderBuilder {
-        Jt1078RequestHeaderBuilder offset4(short value);
-
-        Jt1078RequestHeaderBuilder offset5(short value);
-
-        Jt1078RequestHeaderBuilder offset6(int value);
-
-        Jt1078RequestHeaderBuilder offset8(String value);
-
-        Jt1078RequestHeaderBuilder rawSim(String value);
-
-        Jt1078RequestHeaderBuilder offset14(short value);
-
-        Jt1078RequestHeaderBuilder offset15(short value);
-
-        Jt1078RequestHeaderBuilder dataType(short value);
-
-        default Jt1078RequestHeaderBuilder dataType(Jt1078DataType dataType) {
-            return this.dataType(dataType.value());
-        }
-
-        Jt1078RequestHeaderBuilder subPackageIdentifier(short value);
-
-        default Jt1078RequestHeaderBuilder subPackageIdentifier(Jt1078SubPackageIdentifier identifier) {
-            return this.subPackageIdentifier(identifier.value());
-        }
-
-        Jt1078RequestHeaderBuilder offset16(Long value);
-
-        Jt1078RequestHeaderBuilder offset24(Integer value);
-
-        Jt1078RequestHeaderBuilder offset26(Integer value);
-
-        Jt1078RequestHeaderBuilder offset28(int value);
-
-        default Jt1078RequestHeaderBuilder msgBodyLength(int newLength) {
-            return this.offset28(newLength);
-        }
-
-        Jt1078RequestHeaderBuilder isCombined(boolean isCombined);
-
-        Jt1078RequestHeader build();
-    }
 }

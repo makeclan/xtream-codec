@@ -21,19 +21,18 @@ import io.github.hylexus.xtream.codec.ext.jt1078.boot.condition.ConditionalOnJt1
 import io.github.hylexus.xtream.codec.ext.jt1078.boot.configuration.utils.Jt1078ConfigurationUtils;
 import io.github.hylexus.xtream.codec.ext.jt1078.boot.properties.XtreamJt1078ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt1078.codec.Jt1078ByteToMessageDecoder;
-import io.github.hylexus.xtream.codec.ext.jt1078.extensions.Jt1078ServerExchangeCreator;
+import io.github.hylexus.xtream.codec.ext.jt1078.extensions.handler.Jt1078ServerTcpHandlerAdapter;
+import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078RequestPublisher;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078RequestHandler;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionManager;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TcpHeatBeatHandler;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TerminalIdConverter;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.DefaultJt1078RequestHandler;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.resources.Jt1078XtreamSchedulerRegistry;
-import io.github.hylexus.xtream.codec.ext.jt1078.utils.Jt1078ServerTcpHandlerAdapterBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.TcpXtreamNettyHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.TcpSessionIdleStateCheckerProps;
 import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerAdapter;
-import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerMapping;
-import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamHandlerResultHandler;
-import io.github.hylexus.xtream.codec.server.reactive.spec.handler.XtreamRequestExceptionHandler;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.SimpleXtreamRequestHandlerHandlerAdapter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.XtreamServerBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.TcpNettyServerCustomizer;
@@ -47,9 +46,9 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+import reactor.core.scheduler.Scheduler;
 import reactor.netty.Connection;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static io.github.hylexus.xtream.codec.ext.jt1078.utils.Jt1078Constants.*;
@@ -70,22 +69,17 @@ public class BuiltinJt1078ServerTcpConfiguration {
     TcpXtreamNettyHandlerAdapter tcpXtreamNettyHandlerAdapter(
             BufferFactoryHolder bufferFactoryHolder,
             Jt1078XtreamSchedulerRegistry schedulerRegistry,
-            Jt1078ServerExchangeCreator exchangeCreator,
-            List<XtreamHandlerMapping> handlerMappings,
-            List<XtreamHandlerAdapter> handlerAdapters,
-            List<XtreamHandlerResultHandler> handlerResultHandlers,
-            List<XtreamFilter> xtreamFilters,
-            List<XtreamRequestExceptionHandler> exceptionHandlers) {
+            Jt1078SessionManager sessionManager,
+            Jt1078RequestPublisher requestPublisher) {
 
-        return new Jt1078ServerTcpHandlerAdapterBuilder(bufferFactoryHolder.getAllocator())
-                .setXtreamExchangeCreator(exchangeCreator)
-                .addHandlerMappings(handlerMappings)
-                .addHandlerAdapters(handlerAdapters)
-                .addHandlerResultHandlers(handlerResultHandlers)
-                .addFilters(xtreamFilters.stream().filter(Jt1078ConfigurationUtils::jt1078RequestFilterPredicateTcp).toList())
-                .addExceptionHandlers(exceptionHandlers)
-                .schedulerRegistry(schedulerRegistry)
-                .build();
+        final Scheduler scheduler = schedulerRegistry.audioVideoCodecScheduler();
+        final Jt1078RequestHandler handler = new DefaultJt1078RequestHandler(requestPublisher);
+        return new Jt1078ServerTcpHandlerAdapter(
+                bufferFactoryHolder.getAllocator(),
+                scheduler,
+                sessionManager,
+                handler
+        );
     }
 
     @Bean(BEAN_NAME_JT1078_TCP_XTREAM_NETTY_RESOURCE_FACTORY)

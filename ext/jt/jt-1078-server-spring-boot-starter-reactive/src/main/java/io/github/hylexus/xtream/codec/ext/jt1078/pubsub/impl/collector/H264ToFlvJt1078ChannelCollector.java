@@ -32,12 +32,10 @@ import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.H264Jt1078Subscribe
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078DataType;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078PayloadType;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.DefaultJt1078PayloadType;
 import io.netty.buffer.ByteBuf;
 import jakarta.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.core.publisher.BufferOverflowStrategy;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.scheduler.Scheduler;
@@ -60,11 +58,11 @@ import java.util.stream.Stream;
 public class H264ToFlvJt1078ChannelCollector implements Jt1078ChannelCollector {
     private static final Logger log = LoggerFactory.getLogger(H264ToFlvJt1078ChannelCollector.class);
     private static final Set<Jt1078PayloadType> SUPPORTED_PAYLOAD_TYPES = Set.of(
-            DefaultJt1078PayloadType.H264,
-            DefaultJt1078PayloadType.ADPCMA,
-            DefaultJt1078PayloadType.G_711A,
-            DefaultJt1078PayloadType.G_711U,
-            DefaultJt1078PayloadType.AAC
+            Jt1078PayloadType.H264,
+            Jt1078PayloadType.ADPCMA,
+            Jt1078PayloadType.G_711A,
+            Jt1078PayloadType.G_711U,
+            Jt1078PayloadType.AAC
     );
 
     protected final ConcurrentMap<String, H264ToFlvSubscriber> subscribers = new ConcurrentHashMap<>();
@@ -247,13 +245,13 @@ public class H264ToFlvJt1078ChannelCollector implements Jt1078ChannelCollector {
         if (this.audioCodec != null) {
             return this.audioCodec;
         }
-        if (DefaultJt1078PayloadType.ADPCMA.value() == payloadType.value()) {
+        if (Jt1078PayloadType.ADPCMA.value() == payloadType.value()) {
             return new AdpcmImaJt1078AudioCodec();
-        } else if (DefaultJt1078PayloadType.G_711A.value() == payloadType.value()) {
+        } else if (Jt1078PayloadType.G_711A.value() == payloadType.value()) {
             return new G711ALawJt1078AudioCodec();
-        } else if (DefaultJt1078PayloadType.G_711U.value() == payloadType.value()) {
+        } else if (Jt1078PayloadType.G_711U.value() == payloadType.value()) {
             return new G711MuLawJt1078AudioCodec();
-        } else if (DefaultJt1078PayloadType.AAC.value() == payloadType.value()) {
+        } else if (Jt1078PayloadType.AAC.value() == payloadType.value()) {
             return new AacJt1078AudioCodec();
         }
         return Jt1078AudioCodec.SILENCE;

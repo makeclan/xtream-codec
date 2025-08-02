@@ -19,6 +19,7 @@ package io.github.hylexus.xtream.codec.ext.jt1078.codec;
 import io.github.hylexus.xtream.codec.common.utils.XtreamByteReader;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078RequestHeader;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TerminalIdConverter;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.DefaultJt1078RequestHeader;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -125,41 +126,46 @@ public class Jt1078ByteToMessageDecoder extends ByteToMessageDecoder {
     }
 
     private void doParsePackageInfo(List<Object> out, ByteBuf in, int simLen) {
-        final XtreamByteReader reader = XtreamByteReader.of(in.skipBytes(5));
-        final Jt1078RequestHeader.Jt1078RequestHeaderBuilder headerBuilder = Jt1078RequestHeader.newBuilder();
-        reader.readU8(headerBuilder::offset5);
+        final XtreamByteReader reader = XtreamByteReader.of(in.skipBytes(4));
+        final DefaultJt1078RequestHeader headerBuilder = new DefaultJt1078RequestHeader();
+        // V + P + X + CC
+        reader.readU8(headerBuilder::offset4);
+        // M + PT
+        reader.readU8(headerBuilder::markerBitAndPayloadType);
         // 包序号
-        reader.readU16(headerBuilder::offset6);
+        reader.readU16(headerBuilder::sequenceNumber);
         // SIM
+        headerBuilder.simLength(simLen);
         final String sim = reader.readBcd(simLen);
+        // SIM-rawSim
         headerBuilder.rawSim(sim);
         final String convertedSim = this.terminalIdConverter.convert(sim);
-        headerBuilder.offset8(convertedSim);
+        // SIM-convertedSim
+        headerBuilder.convertedSim(convertedSim);
         // 通道号
-        reader.readU8(headerBuilder::offset14);
-        // dataTypeAndSubPackageIdentifier
-        final short offset15 = reader.readU8();
-        headerBuilder.offset15(offset15);
-        final byte dataType = Jt1078RequestHeader.dataTypeValue(offset15);
+        reader.readU8(headerBuilder::channelNumber);
+        // 数据类型 + 分包处理标记
+        final short dataTypeAndSubPackageIdentifier = reader.readU8();
+        headerBuilder.dataTypeAndSubPackageIdentifier(dataTypeAndSubPackageIdentifier);
+        final byte dataType = Jt1078RequestHeader.dataTypeValue(dataTypeAndSubPackageIdentifier);
         final boolean hasTimestampField = Jt1078RequestHeader.hasTimestampField(dataType);
         final boolean hasFrameIntervalFields = Jt1078RequestHeader.hasFrameIntervalFields(dataType);
         if (hasTimestampField) {
             // 时间戳
-            reader.readI64(headerBuilder::offset16);
+            reader.readI64(headerBuilder::timestamp);
         }
         if (hasFrameIntervalFields) {
             // Last I Frame Interval
-            reader.readU16(headerBuilder::offset24);
+            reader.readU16(headerBuilder::lastIFrameInterval);
             // Last Frame Interval
-            reader.readU16(headerBuilder::offset26);
+            reader.readU16(headerBuilder::lastFrameInterval);
         }
 
         // 数据体长度字段
         final int bodyLength = reader.readU16();
-        headerBuilder.offset28(bodyLength);
+        headerBuilder.msgBodyLength(bodyLength);
         final ByteBuf body = reader.readable().readSlice(bodyLength);
-        final Jt1078RequestHeader header = headerBuilder.build();
-        final Jt1078PackageInfo packageInfo = new Jt1078PackageInfo(header, body);
+        final Jt1078PackageInfo packageInfo = new Jt1078PackageInfo(headerBuilder, body);
         out.add(packageInfo);
     }
 }
