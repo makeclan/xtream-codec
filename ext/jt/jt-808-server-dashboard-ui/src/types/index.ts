@@ -54,6 +54,7 @@ export enum EventType {
 export interface Metrics {
   [key: string]: any;
 }
+
 export interface Thread {
   time: string;
   name?: string;
@@ -61,6 +62,7 @@ export interface Thread {
     [key: string]: number;
   };
 }
+
 export interface JavaRuntime {
   name: String;
   version: String;
@@ -101,18 +103,35 @@ export interface Dependencies {
   xtreamCodec: DependencyInfo;
 }
 
+export interface TcpServerProperties {
+  enabled: boolean;
+  // 省略其他属性
+}
+
+export interface UdpServerProperties {
+  enabled: boolean;
+  // 省略其他属性
+}
+
 export interface ServerInfo {
   dependencies: Dependencies;
   // 服务启动时间
   serverStartupTime: string;
   // 服务配置(application.yaml#jt808-server.*)
   jt808ServerConfig: {
-    instructionServer: any;
-    attachmentServer: any;
+    instructionServer?: {
+      tcpServer: TcpServerProperties;
+      udpServer: UdpServerProperties;
+    };
+    attachmentServer?: {
+      tcpServer: TcpServerProperties;
+      udpServer: UdpServerProperties;
+    };
   };
   java: JavaInfo;
   os: OsInfo;
 }
+
 export interface Dic {
   [key: string]: any;
 }

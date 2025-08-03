@@ -25,17 +25,22 @@ export const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { config } = useRouteLoaderData("root") as { config: ServerInfo };
 
-  const sideNavList = siteConfig.sidenav.filter(
-    (item) =>
-      !(
-        item.href === "/attachment" &&
-        !config.jt808ServerConfig?.attachmentServer?.tcpSerer?.enabled
-      ) &&
-      !(
-        item.href === "/instruction" &&
-        !config.jt808ServerConfig?.instructionServer?.tcpSerer?.enabled
-      ),
-  );
+  const sideNavList = siteConfig.sidenav.filter((item) => {
+    if (item.href === "/attachment") {
+      return (
+        config.jt808ServerConfig?.attachmentServer?.tcpServer?.enabled ||
+        config.jt808ServerConfig?.attachmentServer?.udpServer?.enabled
+      );
+    }
+    if (item.href === "/instruction") {
+      return (
+        config.jt808ServerConfig?.instructionServer?.tcpServer?.enabled ||
+        config.jt808ServerConfig?.instructionServer?.udpServer?.enabled
+      );
+    }
+
+    return true;
+  });
 
   return (
     <div className="relative">
