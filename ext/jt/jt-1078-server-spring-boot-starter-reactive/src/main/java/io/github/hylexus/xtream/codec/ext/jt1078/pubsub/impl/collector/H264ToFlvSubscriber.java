@@ -27,6 +27,7 @@ import io.github.hylexus.xtream.codec.ext.jt1078.codec.flv.tag.AudioFlvTag;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078Subscription;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.DefaultJt1078SubscriptionType;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.H264Jt1078SubscriberCreator;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078PayloadType;
 import io.netty.buffer.ByteBuf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,27 +86,32 @@ public class H264ToFlvSubscriber extends AbstractInternalSubscriber {
         this.lastIFrameSent = true;
     }
 
-    public void sendAudioData(long timestamp, AudioPackage audioPackage) {
+    public void sendAudioData(long timestamp, AudioPackage audioPackage, Jt1078PayloadType type) {
         if (this.isFlvHeaderPending()) {
             return;
         }
         final AudioFormatOptions sourceAudioOptions = audioPackage.options();
         if (sourceAudioOptions.isPcm()) {
-            this.sendAsMp3(timestamp, audioPackage);
+            this.sendAsMp3(timestamp, audioPackage, type);
         } else if (sourceAudioOptions.isAac()) {
-            this.sendAsAac(timestamp, audioPackage);
+            this.sendAsAac(timestamp, audioPackage, type);
         } else {
             log.warn("Unsupported audio format: {}", sourceAudioOptions);
         }
     }
 
     // TODO 重构重复代码
-    private void sendAsAac(long timestamp, AudioPackage audioPackage) {
+    private void sendAsAac(long timestamp, AudioPackage audioPackage, Jt1078PayloadType type) {
         final AudioFlvTag.AudioFlvTagHeaderBuilder audioTagHeaderBuilder = AudioFlvTag.newTagHeaderBuilder()
                 .soundFormat(AudioFlvTag.AudioSoundFormat.AAC)
                 .soundRate(AudioFlvTag.AudioSoundRate.RATE_22_KHZ)
                 .soundSize(AudioFlvTag.AudioSoundSize.SND_BIT_16)
                 .soundType(AudioFlvTag.AudioSoundType.STEREO);
+
+        if (this.rawAudioType == null) {
+            this.rawAudioType = type;
+            this.convertedAudioType = "AAC";
+        }
 
         // todo 暴露参数给订阅者
         if (aacSequenceHeaderSent) {
@@ -139,12 +145,18 @@ public class H264ToFlvSubscriber extends AbstractInternalSubscriber {
         }
     }
 
-    private void sendAsMp3(long timestamp, AudioPackage audioPackage) {
+    private void sendAsMp3(long timestamp, AudioPackage audioPackage, Jt1078PayloadType type) {
         final AudioPackage mp3Package = this.pcmToMp3Encoder.encode(audioPackage);
         if (mp3Package.isEmpty()) {
             mp3Package.close();
             return;
         }
+
+        if (this.rawAudioType == null) {
+            this.rawAudioType = type;
+            this.convertedAudioType = "MP3";
+        }
+
         final AudioFlvTag.AudioFlvTagHeader flvTagHeader = AudioFlvTag.newTagHeaderBuilder()
                 .soundFormat(AudioFlvTag.AudioSoundFormat.MP3)
                 .soundRate(AudioFlvTag.AudioSoundRate.RATE_5_5_KHZ)
@@ -170,9 +182,13 @@ public class H264ToFlvSubscriber extends AbstractInternalSubscriber {
         }
     }
 
-    public void sendVideoData(long timestamp, byte[] videoData) {
+    public void sendVideoData(long timestamp, byte[] videoData, Jt1078PayloadType type) {
         if (this.prevVideoTimestamp == 0) {
             this.prevVideoTimestamp = timestamp;
+        }
+
+        if (this.rawVideoType == null) {
+            this.rawVideoType = type;
         }
 
         // 1. flv-header + sps + pps

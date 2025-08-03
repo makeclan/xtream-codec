@@ -18,6 +18,7 @@ package io.github.hylexus.xtream.codec.ext.jt1078.pubsub.impl.collector;
 
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078SubscriberCreator;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078Subscription;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078PayloadType;
 import reactor.core.publisher.FluxSink;
 
 import java.time.LocalDateTime;
@@ -33,6 +34,11 @@ public abstract class AbstractInternalSubscriber
     protected final LocalDateTime createdAt;
 
     protected final FluxSink<Jt1078Subscription> sink;
+
+    protected Jt1078PayloadType rawAudioType;
+    protected Jt1078PayloadType rawVideoType;
+
+    protected String convertedAudioType;
 
     public AbstractInternalSubscriber(
             String id,
@@ -63,6 +69,21 @@ public abstract class AbstractInternalSubscriber
     @Override
     public short channel() {
         return this.creator.channelNumber();
+    }
+
+    @Override
+    public Jt1078PayloadType rawAudioType() {
+        return this.rawAudioType;
+    }
+
+    @Override
+    public Jt1078PayloadType rawVideoType() {
+        return this.rawVideoType;
+    }
+
+    @Override
+    public String convertedAudioType() {
+        return this.convertedAudioType;
     }
 
     @Override

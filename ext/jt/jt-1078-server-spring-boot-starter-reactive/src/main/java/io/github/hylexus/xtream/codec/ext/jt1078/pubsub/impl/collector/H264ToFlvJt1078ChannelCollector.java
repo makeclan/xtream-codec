@@ -121,7 +121,7 @@ public class H264ToFlvJt1078ChannelCollector implements Jt1078ChannelCollector {
             try {
                 for (final H264ToFlvSubscriber subscriber : this.subscribers.values()) {
                     final byte[] videoData = XtreamBytes.getBytes(byteBuf);
-                    subscriber.sendVideoData(timestamp, videoData);
+                    subscriber.sendVideoData(timestamp, videoData, request.payloadType());
                 }
             } finally {
                 XtreamBytes.releaseBuf(byteBuf);
@@ -135,7 +135,7 @@ public class H264ToFlvJt1078ChannelCollector implements Jt1078ChannelCollector {
         try {
             final long timestamp = request.header().timestamp().orElseThrow();
             for (final H264ToFlvSubscriber subscriber : this.subscribers.values()) {
-                subscriber.sendAudioData(timestamp, pcm.shallowCopy());
+                subscriber.sendAudioData(timestamp, pcm.shallowCopy(), request.payloadType());
             }
         } finally {
             pcm.close();

@@ -18,6 +18,7 @@ package io.github.hylexus.xtream.codec.ext.jt1078.pubsub;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078PayloadType;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -34,6 +35,15 @@ public interface Jt1078SubscriberDescriptor {
 
     @JsonProperty("channel")
     short channel();
+
+    @JsonProperty("rawAudioType")
+    Jt1078PayloadType rawAudioType();
+
+    @JsonProperty("rawVideoType")
+    Jt1078PayloadType rawVideoType();
+
+    @JsonProperty("convertedAudioType")
+    String convertedAudioType();
 
     @JsonProperty("createdAt")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
