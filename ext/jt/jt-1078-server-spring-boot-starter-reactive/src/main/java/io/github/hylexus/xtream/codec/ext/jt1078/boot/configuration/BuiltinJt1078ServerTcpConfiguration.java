@@ -18,19 +18,17 @@ package io.github.hylexus.xtream.codec.ext.jt1078.boot.configuration;
 
 import io.github.hylexus.xtream.codec.common.utils.BufferFactoryHolder;
 import io.github.hylexus.xtream.codec.ext.jt1078.boot.condition.ConditionalOnJt1078Server;
-import io.github.hylexus.xtream.codec.ext.jt1078.boot.configuration.utils.Jt1078ConfigurationUtils;
 import io.github.hylexus.xtream.codec.ext.jt1078.boot.properties.XtreamJt1078ServerProperties;
 import io.github.hylexus.xtream.codec.ext.jt1078.codec.Jt1078ByteToMessageDecoder;
 import io.github.hylexus.xtream.codec.ext.jt1078.extensions.handler.Jt1078ServerTcpHandlerAdapter;
 import io.github.hylexus.xtream.codec.ext.jt1078.pubsub.Jt1078RequestPublisher;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078RequestHandler;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionManager;
-import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TcpHeatBeatHandler;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SimConverter;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078TcpHeatBeatHandler;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.DefaultJt1078RequestHandler;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.resources.Jt1078XtreamSchedulerRegistry;
 import io.github.hylexus.xtream.codec.server.reactive.spec.TcpXtreamNettyHandlerAdapter;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamFilter;
 import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.TcpSessionIdleStateCheckerProps;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.XtreamServerBuilder;
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.tcp.TcpNettyServerCustomizer;
@@ -56,9 +54,6 @@ import static io.github.hylexus.xtream.codec.ext.jt1078.utils.Jt1078Constants.*;
 @ConditionalOnJt1078Server(protocolType = ConditionalOnJt1078Server.ProtocolType.TCP)
 public class BuiltinJt1078ServerTcpConfiguration {
 
-    /**
-     * @see Jt1078ConfigurationUtils#jt1078RequestFilterPredicateTcp(XtreamFilter)
-     */
     @Bean(value = BEAN_NAME_JT1078_TCP_XTREAM_NETTY_HANDLER_ADAPTER, destroyMethod = "shutdown")
     @ConditionalOnMissingBean(name = BEAN_NAME_JT1078_TCP_XTREAM_NETTY_HANDLER_ADAPTER)
     TcpXtreamNettyHandlerAdapter tcpXtreamNettyHandlerAdapter(

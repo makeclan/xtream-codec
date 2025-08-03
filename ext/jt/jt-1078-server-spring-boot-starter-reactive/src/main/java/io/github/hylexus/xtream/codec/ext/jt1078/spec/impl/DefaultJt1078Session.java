@@ -37,20 +37,22 @@ public class DefaultJt1078Session extends AbstractXtreamOutbound implements Jt10
     private final Instant creationTime;
     private Instant lastCommunicateTime;
     protected final Map<String, Object> attributes = new HashMap<>();
-    private final String terminalId;
-    private final String rawTerminalId;
+    private final int simLength;
+    private final String convertedSim;
+    private final String rawSim;
     private final short channelNumber;
 
     private Jt1078PayloadType audioType;
     private Jt1078PayloadType videoType;
 
-    public DefaultJt1078Session(String id, ByteBufAllocator byteBufAllocator, NettyOutbound delegate, XtreamRequest.Type type, String terminalId, short channelNumber, InetSocketAddress remoteAddress, XtreamSessionManager<Jt1078Session> sessionManager, String rawTerminalId) {
+    public DefaultJt1078Session(ByteBufAllocator byteBufAllocator, NettyOutbound delegate, XtreamSessionManager<Jt1078Session> sessionManager, String id, XtreamRequest.Type type, int simLength, String rawSim, String convertedSim, short channelNumber, InetSocketAddress remoteAddress) {
         super(byteBufAllocator, delegate, type, remoteAddress);
         this.id = id;
+        this.simLength = simLength;
         this.sessionManager = sessionManager;
-        this.terminalId = terminalId;
+        this.convertedSim = convertedSim;
+        this.rawSim = rawSim;
         this.channelNumber = channelNumber;
-        this.rawTerminalId = rawTerminalId;
         this.creationTime = this.lastCommunicateTime = Instant.now();
     }
 
@@ -81,6 +83,11 @@ public class DefaultJt1078Session extends AbstractXtreamOutbound implements Jt10
     }
 
     @Override
+    public int simLength() {
+        return this.simLength;
+    }
+
+    @Override
     public void invalidate(XtreamSessionEventListener.SessionCloseReason reason) {
         this.attributes().clear();
         this.sessionManager.closeSession(this, reason);
@@ -88,12 +95,12 @@ public class DefaultJt1078Session extends AbstractXtreamOutbound implements Jt10
 
     @Override
     public String rawSim() {
-        return this.terminalId;
+        return this.rawSim;
     }
 
     @Override
     public String convertedSim() {
-        return this.rawTerminalId;
+        return this.convertedSim;
     }
 
     @Override
@@ -128,7 +135,8 @@ public class DefaultJt1078Session extends AbstractXtreamOutbound implements Jt10
         return new StringJoiner(", ", DefaultJt1078Session.class.getSimpleName() + "[", "]")
                 .add("id='" + id + "'")
                 .add("type=" + type)
-                .add("terminalId='" + terminalId + "'")
+                .add("convertedSim='" + convertedSim + "'")
+                .add("rawSim='" + rawSim + "'")
                 .add("channelNumber=" + channelNumber)
                 .add("lastCommunicateTime=" + lastCommunicateTime)
                 .add("creationTime=" + creationTime)

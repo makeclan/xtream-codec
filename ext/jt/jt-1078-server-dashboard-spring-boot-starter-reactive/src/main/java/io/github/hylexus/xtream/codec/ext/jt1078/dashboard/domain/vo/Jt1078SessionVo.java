@@ -32,6 +32,7 @@ import java.time.Instant;
 @Accessors(chain = true)
 public class Jt1078SessionVo {
     private String id;
+    private int simLength;
     private String convertedSim;
     private String rawSim;
     private XtreamRequest.Type protocolType;

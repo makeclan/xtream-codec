@@ -17,7 +17,6 @@
 package io.github.hylexus.xtream.codec.ext.jt1078.codec;
 
 import io.github.hylexus.xtream.codec.common.utils.XtreamByteReader;
-import io.github.hylexus.xtream.codec.ext.jt1078.extensions.handler.Jt1078ServerTcpHandlerAdapter;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.*;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.DefaultJt1078Request;
 import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.DefaultJt1078RequestHeader;
@@ -25,106 +24,91 @@ import io.github.hylexus.xtream.codec.ext.jt1078.spec.impl.DefaultJt1078Session;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamInbound;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.ByteToMessageDecoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import reactor.netty.Connection;
+import io.netty.channel.socket.DatagramPacket;
 import reactor.netty.NettyInbound;
+import reactor.netty.NettyOutbound;
 
 import java.net.InetSocketAddress;
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 
-/**
- * 这个实现来自 <a href="https://gitee.com/hui_hui_zhou/open-source-repository">sky/jt1078</a> 的作者 sky
- *
- * @see <a href="https://gitee.com/hui_hui_zhou/open-source-repository">sky/jt1078</a>
- * @see Jt1078ServerTcpHandlerAdapter
- */
-public class Jt1078ByteToMessageDecoder extends ByteToMessageDecoder {
-
-    private static final Logger log = LoggerFactory.getLogger(Jt1078ByteToMessageDecoder.class);
-
-    private final ByteBufAllocator allocator = ByteBufAllocator.DEFAULT;
-    private final Jt1078SimConverter jt1078SimConverter;
-    private final Connection connection;
+public class Jt1078ByteToMessageDecoderUdp {
+    private final ByteBufAllocator allocator;
     private final Jt1078SessionManager sessionManager;
-    private final InetSocketAddress remoteAddress;
+    private final Jt1078SimConverter jt1078SimConverter;
 
-    private int simLength = 0;
-    private Jt1078Session session;
-
-    public Jt1078ByteToMessageDecoder(Jt1078SimConverter jt1078SimConverter, Connection connection, Jt1078SessionManager sessionManager) {
-        this.jt1078SimConverter = jt1078SimConverter;
-        this.connection = connection;
+    public Jt1078ByteToMessageDecoderUdp(ByteBufAllocator allocator, Jt1078SimConverter jt1078SimConverter, Jt1078SessionManager sessionManager) {
+        this.allocator = allocator;
         this.sessionManager = sessionManager;
-        this.remoteAddress = this.initTcpRemoteAddress(connection.inbound());
+        this.jt1078SimConverter = jt1078SimConverter;
     }
 
-    @Override
-    public void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
-        if (in.readableBytes() <= 0) {
-            in.release();
-            return;
+    public Jt1078Request decode(NettyInbound nettyInbound, NettyOutbound nettyOutbound, DatagramPacket datagramPacket) {
+        final InetSocketAddress remoteAddress = datagramPacket.sender();
+
+        final ByteBuf udpPayload = datagramPacket.content();
+        if (udpPayload.readableBytes() <= 4) {
+            throw new IllegalStateException("Parse JT/T 1078 stream-data error");
+        }
+        // 去掉30316364前缀
+        final ByteBuf byteBuf = udpPayload.slice(4, udpPayload.readableBytes() - 4);
+        return this.doDecode(nettyInbound, nettyOutbound, remoteAddress, byteBuf);
+    }
+
+    private Jt1078Request doDecode(NettyInbound nettyInbound, NettyOutbound nettyOutbound, InetSocketAddress remoteAddress, ByteBuf buffer) {
+        final Jt1078Session session = this.sessionManager.getUdpSession(remoteAddress);
+        if (session != null) {
+            final Jt1078Request request = this.decodeRequest(buffer, session.simLength(), nettyInbound, remoteAddress);
+            this.updateSession(session, request);
+            return request;
         }
 
-        if (this.simLength == 0) {
-            final Jt1078Request requestWithSimLength6 = this.tryDecodeRequest(in, 6);
-            if (requestWithSimLength6 != null) {
-                this.simLength = 6;
-                this.initSession(requestWithSimLength6, this.simLength);
-                this.emitDecodedRequest(out, requestWithSimLength6);
-            } else {
-                final Jt1078Request requestWithSimLength10 = this.tryDecodeRequest(in, 10);
-                if (requestWithSimLength10 != null) {
-                    this.simLength = 10;
-                    this.initSession(requestWithSimLength10, this.simLength);
-                    this.emitDecodedRequest(out, requestWithSimLength10);
-                } else {
-                    throw new IllegalStateException("Parse JT/T 1078 stream-data error");
-                }
-            }
-        } else {
-            final Jt1078Request packageInfo = this.decodeRequest(in, this.simLength);
-            this.emitDecodedRequest(out, packageInfo);
+        final String sessionId = this.sessionManager.sessionIdGenerator().generateUdpSessionId(remoteAddress);
+        final Jt1078Request requestWithSimLength6 = this.tryDecodeRequest(buffer, 6, nettyInbound, remoteAddress);
+        if (requestWithSimLength6 != null) {
+            final DefaultJt1078Session newSession = this.initSession(nettyOutbound, sessionId, requestWithSimLength6, remoteAddress, 6);
+            this.updateSession(newSession, requestWithSimLength6);
+            return requestWithSimLength6;
+        }
+
+        final Jt1078Request requestWithSimLength10 = this.tryDecodeRequest(buffer, 10, nettyInbound, remoteAddress);
+        if (requestWithSimLength10 != null) {
+            final DefaultJt1078Session newSession = this.initSession(nettyOutbound, sessionId, requestWithSimLength10, remoteAddress, 10);
+            this.updateSession(newSession, requestWithSimLength10);
+            return requestWithSimLength10;
+        }
+
+        throw new IllegalStateException("Parse JT/T 1078 stream-data error");
+    }
+
+    private void updateSession(Jt1078Session session, Jt1078Request request) {
+        session.lastCommunicateTime(Instant.now());
+        if (session.audioType() == null && request.header().payloadType().isAudio()) {
+            session.audioType(request.header().payloadType());
+        }
+        if (session.videoType() == null && request.header().payloadType().isVideo()) {
+            session.videoType(request.header().payloadType());
         }
     }
 
-    private void emitDecodedRequest(List<Object> out, Jt1078Request request) {
-        out.add(request);
-        this.session.lastCommunicateTime(Instant.now());
-        if (this.session.audioType() == null && request.header().payloadType().isAudio()) {
-            this.session.audioType(request.header().payloadType());
-        }
-        if (this.session.videoType() == null && request.header().payloadType().isVideo()) {
-            this.session.videoType(request.header().payloadType());
-        }
-    }
-
-    private void initSession(Jt1078Request request, int simLength) {
-        final String sessionId = this.sessionManager.sessionIdGenerator().generateTcpSessionId(this.connection.channel());
+    private DefaultJt1078Session initSession(NettyOutbound nettyOutbound, String sessionId, Jt1078Request request, InetSocketAddress remoteAddress, int simLength) {
         final DefaultJt1078Session jt1078Session = new DefaultJt1078Session(
-                this.allocator, this.connection.outbound(), this.sessionManager, sessionId,
-                XtreamInbound.Type.TCP,
+                this.allocator,
+                nettyOutbound,
+                this.sessionManager,
+                sessionId,
+                XtreamInbound.Type.UDP,
                 simLength,
                 request.header().rawSim(),
                 request.header().convertedSim(),
                 request.header().channelNumber(),
-                this.remoteAddress
+                remoteAddress
         );
-        this.session = jt1078Session;
         this.sessionManager.createSession(jt1078Session);
+        return jt1078Session;
     }
 
-    protected InetSocketAddress initTcpRemoteAddress(NettyInbound nettyInbound) {
-        final InetSocketAddress[] remoteAddress = new InetSocketAddress[1];
-        nettyInbound.withConnection(connection -> remoteAddress[0] = (InetSocketAddress) connection.channel().remoteAddress());
-        return remoteAddress[0];
-    }
-
-    Jt1078Request tryDecodeRequest(ByteBuf in, int simLen) {
+    Jt1078Request tryDecodeRequest(ByteBuf in, int simLen, NettyInbound inbound, InetSocketAddress remoteAddress) {
         // 这里输入的报文没有 30316364 前缀
         // +5 = 1byte(V,P,X,CC) + 1byte(M,PT) + 2byte(sequenceNumber) + 1byte(channelNumber)
         // FIXME 重复代码
@@ -141,12 +125,12 @@ public class Jt1078ByteToMessageDecoder extends ByteToMessageDecoder {
         final short messageBodyLength = in.getShort(lengthFieldOffset);
         final int totalPackageSize = messageBodyLength + lengthFieldOffset + 2;
         if (totalPackageSize == in.readableBytes()) {
-            return this.decodeRequest(in, simLen);
+            return this.decodeRequest(in, simLen, inbound, remoteAddress);
         }
         return null;
     }
 
-    private Jt1078Request decodeRequest(ByteBuf in, int simLen) {
+    private Jt1078Request decodeRequest(ByteBuf in, int simLen, NettyInbound inbound, InetSocketAddress remoteAddress) {
         // FIXME 重复代码
         // noinspection Duplicates 重复代码先不处理
         final XtreamByteReader reader = XtreamByteReader.of(in);
@@ -187,13 +171,13 @@ public class Jt1078ByteToMessageDecoder extends ByteToMessageDecoder {
         // 数据体长度字段
         final int bodyLength = reader.readU16();
         headerBuilder.msgBodyLength(bodyLength);
-        final ByteBuf body = in.readRetainedSlice(bodyLength);
+        final ByteBuf body = in.readSlice(bodyLength);
 
         final String requestId = UUID.randomUUID().toString().replace("-", "");
         return new DefaultJt1078Request(
                 requestId,
                 allocator,
-                this.connection.inbound(),
+                inbound,
                 XtreamInbound.Type.TCP,
                 remoteAddress,
                 headerBuilder,

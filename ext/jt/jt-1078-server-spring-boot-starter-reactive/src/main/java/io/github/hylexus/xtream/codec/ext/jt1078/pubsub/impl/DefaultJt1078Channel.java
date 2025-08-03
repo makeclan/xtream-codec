@@ -70,8 +70,7 @@ public class DefaultJt1078Channel implements Jt1078Channel {
 
     @Override
     public Jt1078Subscriber doSubscribe(Class<? extends Jt1078ChannelCollector> cls, Jt1078SubscriberCreator creator) {
-        creator.rawSim(creator.convertedSim());
-        creator.convertedSim(this.jt1078SimConverter.convert(creator.convertedSim()));
+        creator.convertedSim(this.jt1078SimConverter.convert(creator.rawSim()));
         final Jt1078ChannelCollector channelCollector = this.getOrCreate(cls, creator);
         return channelCollector.doSubscribe(creator);
     }

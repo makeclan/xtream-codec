@@ -16,55 +16,67 @@
 
 package io.github.hylexus.xtream.codec.ext.jt1078.extensions.handler;
 
-import io.github.hylexus.xtream.codec.common.utils.XtreamBytes;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchangeCreator;
-import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamHandler;
-import io.github.hylexus.xtream.codec.server.reactive.spec.impl.udp.DefaultUdpXtreamNettyHandlerAdapter;
-import io.netty.buffer.ByteBuf;
+import io.github.hylexus.xtream.codec.ext.jt1078.codec.Jt1078ByteToMessageDecoderUdp;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078Request;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078RequestHandler;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SessionManager;
+import io.github.hylexus.xtream.codec.ext.jt1078.spec.Jt1078SimConverter;
+import io.github.hylexus.xtream.codec.server.reactive.spec.UdpXtreamNettyHandlerAdapter;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.socket.DatagramPacket;
-import reactor.core.publisher.Flux;
+import org.reactivestreams.Publisher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
 import reactor.netty.NettyInbound;
 import reactor.netty.NettyOutbound;
 
-import java.net.InetSocketAddress;
-import java.util.List;
+public class Jt1078ServerUdpHandlerAdapter implements UdpXtreamNettyHandlerAdapter {
+    private static final Logger log = LoggerFactory.getLogger(Jt1078ServerUdpHandlerAdapter.class);
+    private final Scheduler scheduler;
+    private final Jt1078ByteToMessageDecoderUdp byteToMessageDecoder;
+    private final Jt1078RequestHandler handler;
 
-public class Jt1078ServerUdpHandlerAdapter extends DefaultUdpXtreamNettyHandlerAdapter {
-    public Jt1078ServerUdpHandlerAdapter(ByteBufAllocator allocator, XtreamExchangeCreator xtreamExchangeCreator, XtreamHandler xtreamHandler) {
-        super(allocator, xtreamExchangeCreator, xtreamHandler);
+    public Jt1078ServerUdpHandlerAdapter(ByteBufAllocator allocator, Scheduler scheduler, Jt1078SimConverter simConverter, Jt1078SessionManager sessionManager, Jt1078RequestHandler handler) {
+        this.scheduler = scheduler;
+        this.handler = handler;
+        this.byteToMessageDecoder = new Jt1078ByteToMessageDecoderUdp(
+                allocator,
+                simConverter,
+                sessionManager
+        );
     }
 
-    protected Mono<Void> handleRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, DatagramPacket datagramPacket) {
-        final InetSocketAddress remoteAddress = datagramPacket.sender();
-        // 一个 UDP 包可能包含多个 JT1078 (完整)报文
-        final List<ByteBuf> byteBufList = this.split(datagramPacket.content());
-
-        // 只有一个包(绝大多数场景)
-        if (byteBufList.size() == 1) {
-            return this.handleSingleRequest(nettyInbound, nettyOutbound, byteBufList.getFirst(), remoteAddress);
-        }
-
-        // 每个(完整)包都触发一次处理逻辑
-        return Flux.fromIterable(byteBufList).flatMap(byteBuf -> {
-            // ...
-            return this.handleSingleRequest(nettyInbound, nettyOutbound, byteBuf, remoteAddress);
-        }).then();
-    }
-
-    private List<ByteBuf> split(ByteBuf content) {
-        // todo 自定义分包器
-        return List.of(content);
-    }
-
-    protected Mono<Void> handleSingleRequest(NettyInbound nettyInbound, NettyOutbound nettyOutbound, ByteBuf payload, InetSocketAddress remoteAddress) {
-        final XtreamExchange exchange = this.exchangeCreator.createUdpExchange(allocator, nettyInbound, nettyOutbound, payload, remoteAddress);
-        return this.doUdpExchange(exchange).doFinally(signalType -> {
-            XtreamBytes.releaseBuf(payload);
-            exchange.request().release();
-        });
+    @Override
+    public Publisher<Void> apply(NettyInbound nettyInbound, NettyOutbound nettyOutbound) {
+        return nettyInbound
+                .receiveObject()
+                .map(obj -> {
+                    final DatagramPacket datagramPacket = (DatagramPacket) obj;
+                    datagramPacket.retain();
+                    return datagramPacket;
+                })
+                .publishOn(scheduler)
+                .flatMap(datagramPacket -> {
+                    final Jt1078Request request;
+                    try {
+                        request = this.byteToMessageDecoder.decode(nettyInbound, nettyOutbound, datagramPacket);
+                    } catch (Throwable throwable) {
+                        log.error("Unexpected Error", throwable);
+                        return Mono.error(throwable);
+                    }
+                    // log.info("{}", request);
+                    return this.handler.handleRequest(request)
+                            .doFinally(signalType -> {
+                                // ...
+                                request.release();
+                            })
+                            .onErrorResume(throwable -> {
+                                log.error("Unexpected Error", throwable);
+                                return Mono.empty();
+                            });
+                });
     }
 
 }

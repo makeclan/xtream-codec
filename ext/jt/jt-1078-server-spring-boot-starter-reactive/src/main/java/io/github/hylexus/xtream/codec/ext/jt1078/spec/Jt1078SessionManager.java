@@ -20,6 +20,7 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamExchange;
 import io.github.hylexus.xtream.codec.server.reactive.spec.XtreamSessionManager;
 import reactor.core.publisher.Mono;
 
+import java.net.InetSocketAddress;
 import java.util.Comparator;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -42,6 +43,8 @@ public interface Jt1078SessionManager extends XtreamSessionManager<Jt1078Session
     default Mono<Jt1078Session> getSession(XtreamExchange exchange, boolean createNewIfMissing) {
         return Mono.error(new UnsupportedOperationException());
     }
+
+    Jt1078Session getUdpSession(InetSocketAddress remoteAddress);
 
     @Override
     @Deprecated

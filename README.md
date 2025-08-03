@@ -117,8 +117,13 @@
 ## TODO
 
 - [JT/T 1078 扩展](ext/jt/jt-1078-server-spring-boot-starter-reactive)
-    - [ ] 代码简化
+    - [ ] 代码简化(80%)
     - [ ] 码流断开时未消费的数据未释放的问题
+    - 协议
+        - [x] TCP
+        - [x] UDP
+            - 没有实现一个 UDP 包中包含多个 RTP 包的场景
+            - 没有实现 UDP 包乱序的处理
     - [ ] 音频
         - [x] ADPCMA（以下参考资料排名不分先后）
             - [https://wiki.multimedia.cx/index.php/IMA_ADPCM](https://wiki.multimedia.cx/index.php/IMA_ADPCM)

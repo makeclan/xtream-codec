@@ -94,6 +94,7 @@ public class BuiltinJt1078DashboardSessionController {
     static Jt1078SessionVo convertToVo(Jt1078Session it) {
         return new Jt1078SessionVo()
                 .setId(it.id())
+                .setSimLength(it.simLength())
                 .setConvertedSim(it.convertedSim())
                 .setRawSim(it.rawSim())
                 .setProtocolType(it.type())

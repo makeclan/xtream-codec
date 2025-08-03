@@ -300,7 +300,7 @@ onMounted(async () => {
           <el-form-item label="1078服务器端口(UDP)">
             <el-input v-model="jt1078ServerConfig.jt1078ServerUdpPort">
               <template #suffix>
-                <el-tag type="danger">暂不支持UDP</el-tag>
+                <el-tag type="success">已支持UDP</el-tag>
               </template>
             </el-input>
           </el-form-item>

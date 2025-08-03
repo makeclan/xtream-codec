@@ -24,6 +24,8 @@ public interface Jt1078Session extends XtreamSession {
 
     Jt1078Session lastCommunicateTime(Instant current);
 
+    int simLength();
+
     String rawSim();
 
     String convertedSim();

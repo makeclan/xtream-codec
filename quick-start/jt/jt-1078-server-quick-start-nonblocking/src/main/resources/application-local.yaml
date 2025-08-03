@@ -63,6 +63,8 @@ jt1078-server:
       daemon: true
       prefer-native: true
       colocate: true
+  udp-server:
+    enabled: true
 
 logging:
   level:

@@ -19,8 +19,9 @@ package io.github.hylexus.xtream.codec.ext.jt1078.codec.flv.impl;
 
 import io.github.hylexus.xtream.codec.ext.jt1078.codec.flv.tag.VideoFlvTag;
 
-import java.util.Objects;
 import java.util.Optional;
+
+import static java.util.Objects.requireNonNull;
 
 public class DefaultVideoFlvFlvTagHeader implements VideoFlvTag.VideoFlvTagHeader, VideoFlvTag.VideoFlvTagHeaderBuilder {
     private VideoFlvTag.VideoFrameType frameType;
@@ -29,13 +30,6 @@ public class DefaultVideoFlvFlvTagHeader implements VideoFlvTag.VideoFlvTagHeade
     private Integer compositionTime;
 
     public DefaultVideoFlvFlvTagHeader() {
-    }
-
-    public DefaultVideoFlvFlvTagHeader(VideoFlvTag.VideoFrameType frameType, VideoFlvTag.VideoCodecId codecId, VideoFlvTag.VideoAvcPacketType avcPacketType, Integer compositionTime) {
-        this.frameType = frameType;
-        this.codecId = codecId;
-        this.avcPacketType = avcPacketType;
-        this.compositionTime = compositionTime;
     }
 
     @Override
@@ -84,11 +78,9 @@ public class DefaultVideoFlvFlvTagHeader implements VideoFlvTag.VideoFlvTagHeade
 
     @Override
     public VideoFlvTag.VideoFlvTagHeader build() {
-        return new DefaultVideoFlvFlvTagHeader(
-                Objects.requireNonNull(this.frameType, "frameType is null"),
-                Objects.requireNonNull(this.codecId, "codecId is null"),
-                this.avcPacketType,
-                this.compositionTime
-        );
+        requireNonNull(this.frameType, "frameType is null");
+        requireNonNull(this.codecId, "codecId is null");
+        return this;
     }
+
 }

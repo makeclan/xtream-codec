@@ -25,6 +25,8 @@ import io.github.hylexus.xtream.codec.server.reactive.spec.domain.values.UdpSess
 import io.github.hylexus.xtream.codec.server.reactive.spec.impl.AbstractXtreamSessionManager;
 import reactor.core.publisher.Mono;
 
+import java.net.InetSocketAddress;
+
 public class DefaultJt1078SessionManager
         extends AbstractXtreamSessionManager<Jt1078Session>
         implements Jt1078SessionManager {
@@ -37,6 +39,12 @@ public class DefaultJt1078SessionManager
     @Deprecated
     protected Jt1078Session doCreateSession(String sessionId, XtreamExchange exchange) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Jt1078Session getUdpSession(InetSocketAddress remoteAddress) {
+        final String sessionId = this.sessionIdGenerator.generateUdpSessionId(remoteAddress);
+        return this.sessions.get(sessionId);
     }
 
     @Override

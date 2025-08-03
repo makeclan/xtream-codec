@@ -19,8 +19,7 @@ package io.github.hylexus.xtream.codec.ext.jt1078.codec.flv.impl;
 
 import io.github.hylexus.xtream.codec.ext.jt1078.codec.flv.tag.AudioFlvTag;
 
-import java.util.Objects;
-import java.util.Optional;
+import static java.util.Objects.requireNonNull;
 
 public class DefaultAudioFlvFlvTagHeader implements AudioFlvTag.AudioFlvTagHeader, AudioFlvTag.AudioFlvTagHeaderBuilder {
     private AudioFlvTag.AudioSoundFormat soundFormat;
@@ -31,18 +30,6 @@ public class DefaultAudioFlvFlvTagHeader implements AudioFlvTag.AudioFlvTagHeade
     private byte[] aacSequenceHeader;
 
     public DefaultAudioFlvFlvTagHeader() {
-    }
-
-    public DefaultAudioFlvFlvTagHeader(
-            AudioFlvTag.AudioSoundFormat soundFormat, AudioFlvTag.AudioSoundRate soundRate,
-            AudioFlvTag.AudioSoundSize soundSize, AudioFlvTag.AudioSoundType soundType,
-            AudioFlvTag.AudioAacPacketType aacPacketType, byte[] aacSequenceHeader) {
-        this.soundFormat = soundFormat;
-        this.soundRate = soundRate;
-        this.soundSize = soundSize;
-        this.soundType = soundType;
-        this.aacPacketType = aacPacketType;
-        this.aacSequenceHeader = aacSequenceHeader;
     }
 
     @Override
@@ -113,13 +100,11 @@ public class DefaultAudioFlvFlvTagHeader implements AudioFlvTag.AudioFlvTagHeade
 
     @Override
     public AudioFlvTag.AudioFlvTagHeader build() {
-        return new DefaultAudioFlvFlvTagHeader(
-                Objects.requireNonNull(this.soundFormat, "soundFormat is null"),
-                Objects.requireNonNull(this.soundRate, "soundFormat is null"),
-                Objects.requireNonNull(this.soundSize, "soundSize is null"),
-                Objects.requireNonNull(this.soundType, "soundType is null"),
-                this.aacPacketType,
-                this.aacSequenceHeader
-        );
+        requireNonNull(this.soundFormat, "soundFormat is null");
+        requireNonNull(this.soundRate, "soundFormat is null");
+        requireNonNull(this.soundSize, "soundSize is null");
+        requireNonNull(this.soundType, "soundType is null");
+        return this;
     }
+
 }
