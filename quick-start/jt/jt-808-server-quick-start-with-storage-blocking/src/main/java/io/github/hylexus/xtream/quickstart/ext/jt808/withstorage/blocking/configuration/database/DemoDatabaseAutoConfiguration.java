@@ -20,11 +20,13 @@ import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.config
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.configuration.database.logging.DemoLoggingDatabaseConfiguration;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.configuration.database.mysql.DemoMysqlConfiguration;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.configuration.database.postgres.DemoPostgresConfiguration;
+import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.configuration.database.tdengine.mysql.DemoTDengineConfiguration;
 import org.springframework.context.annotation.Import;
 
 @Import({
         DemoClickhouseConfiguration.class,
         DemoMysqlConfiguration.class,
+        DemoTDengineConfiguration.class,
         DemoPostgresConfiguration.class,
         DemoLoggingDatabaseConfiguration.class,
 })

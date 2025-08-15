@@ -68,6 +68,7 @@ public class QuickStartAppProps {
         private Switchable clickhouse = new Switchable();
         private Switchable mysql = new Switchable();
         private Switchable postgres = new Switchable();
+        private Switchable tdengine = new Switchable();
         private Switchable logging = new Switchable();
     }
 

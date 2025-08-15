@@ -24,8 +24,10 @@ demo-app-with-storage:
       logging:
         enabled: true
       ## 存储到 Clickhouse 中
+      tdengine:
+        enabled: ${FEATURE_CONTROL_DATABASE_TDENGINE_ENABLED:true}
       clickhouse:
-        enabled: ${FEATURE_CONTROL_DATABASE_CLICKHOUSE_ENABLED:true}
+        enabled: ${FEATURE_CONTROL_DATABASE_CLICKHOUSE_ENABLED:false}
       ## 存储到 MySQL 中
       mysql:
         enabled: ${FEATURE_CONTROL_DATABASE_MYSQL_ENABLED:false}
@@ -43,8 +45,8 @@ demo-app-with-storage:
         enabled: ${FEATURE_CONTROL_OSS_MINIO_ENABLED:true}
   minio:
     endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
-    access-key: ${MINIO_ACCESS_KEY:minioadmin}
-    secret-key: ${MINIO_SECRET_KEY:minioadmin}
+    access-key: ${MINIO_ACCESS_KEY:IMesOv1gMCvyQECUUDSo}
+    secret-key: ${MINIO_SECRET_KEY:zI6O2JlRwlqNYpGD9c7NLTjuZnZWK2HNR71PHC4I}
   # 示例性的附件服务器配置
   attachment-server:
     # 附件服务器的IP 应该是一个公网IP(设备能访问的IP)
@@ -74,15 +76,25 @@ spring:
       enabled: true
       order: 1
     jdbc-config-decrypt: false
-    primary: trace-log-mysql
+    primary: trace-log-tdengine
     routing:
       trace-log-mysql:
         name: trace-log-mysql
         type: com.zaxxer.hikari.HikariDataSource
         driver-class-name: com.mysql.cj.jdbc.Driver
-        url: ${MYSQL_JDBC_URL:jdbc:mysql://localhost:3306/jt_808}
+        url: ${MYSQL_JDBC_URL:jdbc:mysql://localhost:3307/jt_808}
         username: ${MYSQL_JDBC_USERNAME:root}
-        password: ${MYSQL_JDBC_PASSWORD:mysql}
+        password: ${MYSQL_JDBC_PASSWORD:ddm@126.com}
+        hikari:
+          minimum-idle: 1
+          maximum-pool-size: 10
+      trace-log-tdengine :
+        name: trace-log-tdengine
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.taosdata.jdbc.rs.RestfulDriver
+        url: ${MYSQL_JDBC_URL:jdbc:TAOS-RS://192.168.4.238:6041/jt_808?timezone=UTC-8&charset=UTF-8&locale=en_US.UTF-8}
+        username: ${MYSQL_JDBC_USERNAME:root}
+        password: ${MYSQL_JDBC_PASSWORD:taosdata}
         hikari:
           minimum-idle: 1
           maximum-pool-size: 10

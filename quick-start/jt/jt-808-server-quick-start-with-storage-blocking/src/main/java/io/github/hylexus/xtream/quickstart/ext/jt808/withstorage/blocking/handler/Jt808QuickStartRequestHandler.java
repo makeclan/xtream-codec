@@ -123,4 +123,14 @@ public class Jt808QuickStartRequestHandler {
         return ServerCommonReplyMessage.success(request);
     }
 
+    /**
+     * 驾驶员身份信息采集上报(V2019)
+     */
+    @Jt808RequestHandlerMapping(messageIds = 0x0702)
+    @Jt808ResponseBody(messageId = 0x8001)
+    public ServerCommonReplyMessage processMessage0702V2019(Jt808Request request, @Jt808RequestBody BuiltinMessage0702V2019 requestBody) {
+        log.info("receive message [0x0702-v2019]: {}", requestBody);
+        return ServerCommonReplyMessage.success(request);
+    }
+
 }

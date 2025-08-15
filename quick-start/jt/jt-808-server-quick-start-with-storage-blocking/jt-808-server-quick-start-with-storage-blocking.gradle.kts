@@ -42,6 +42,7 @@ dependencies {
     api("com.mysql:mysql-connector-j")
     api("org.postgresql:postgresql")
     api("com.clickhouse:clickhouse-jdbc")
+    api("com.taosdata.jdbc:taos-jdbcdriver")
     // endregion jdbc
 
     // 对象存储
