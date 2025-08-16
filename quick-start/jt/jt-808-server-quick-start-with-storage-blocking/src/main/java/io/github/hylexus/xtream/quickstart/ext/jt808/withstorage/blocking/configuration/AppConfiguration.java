@@ -16,6 +16,13 @@
 
 package io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.configuration;
 
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808BytesProcessor;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestCombiner;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.Jt808RequestDecoder;
+import io.github.hylexus.xtream.codec.ext.jt808.codec.impl.DefaultJt808RequestDecoder;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808MessageEncryptionHandler;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808RequestHeader;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.configuration.database.DemoDatabaseAutoConfiguration;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.configuration.oss.DemoOssAutoConfiguration;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.configuration.props.QuickStartAppProps;
@@ -26,6 +33,7 @@ import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.servic
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.service.impl.composite.AttachmentInfoServiceComposite;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.service.impl.composite.ObjectStorageServiceComposite;
 import io.github.hylexus.xtream.quickstart.ext.jt808.withstorage.blocking.service.impl.composite.TraceLogServiceComposite;
+import io.netty.buffer.ByteBuf;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -71,6 +79,23 @@ public class AppConfiguration {
         return args -> {
             // traceLog 订阅
             subscriber.subscribe();
+        };
+    }
+
+    @Bean
+    Jt808RequestDecoder jt808RequestDecoder(Jt808BytesProcessor jt808BytesProcessor, Jt808MessageEncryptionHandler encryptionHandler, Jt808RequestCombiner requestCombiner) {
+        return new DefaultJt808RequestDecoder(jt808BytesProcessor, encryptionHandler, requestCombiner) {
+            @Override
+            protected Jt808ProtocolVersion detectVersion(int messageId, Jt808RequestHeader.Jt808MessageBodyProps messageBodyProps, ByteBuf byteBuf) {
+                final byte version = byteBuf.getByte(4);
+                if (version == Jt808ProtocolVersion.VERSION_2019.versionBit()) {
+                    return Jt808ProtocolVersion.VERSION_2019;
+                }
+                if (messageBodyProps.intValue() > 37) {
+                    return Jt808ProtocolVersion.VERSION_2013;
+                }
+                return Jt808ProtocolVersion.VERSION_2011;
+            }
         };
     }
 
