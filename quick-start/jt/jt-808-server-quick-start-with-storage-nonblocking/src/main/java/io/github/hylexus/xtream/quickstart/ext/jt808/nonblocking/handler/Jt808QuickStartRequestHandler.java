@@ -19,15 +19,14 @@ package io.github.hylexus.xtream.quickstart.ext.jt808.nonblocking.handler;
 import io.github.hylexus.xtream.codec.ext.jt808.boot.condition.ConditionalOnJt808Server;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.request.*;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.BuiltinMessage8100;
+import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.BuiltinMessage8702;
 import io.github.hylexus.xtream.codec.ext.jt808.builtin.messages.response.ServerCommonReplyMessage;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.Jt808CommandSender;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestBody;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestHandler;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808RequestHandlerMapping;
 import io.github.hylexus.xtream.codec.ext.jt808.extensions.handler.Jt808ResponseBody;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808ProtocolVersion;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808Request;
-import io.github.hylexus.xtream.codec.ext.jt808.spec.Jt808SessionManager;
+import io.github.hylexus.xtream.codec.ext.jt808.spec.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -38,7 +37,7 @@ import reactor.core.publisher.Mono;
  */
 @Component
 @Jt808RequestHandler
-@ConditionalOnJt808Server(serverType = ConditionalOnJt808Server.ServerType.INSTRUCTION_SERVER,protocolType = ConditionalOnJt808Server.ProtocolType.ANY)
+@ConditionalOnJt808Server(serverType = ConditionalOnJt808Server.ServerType.INSTRUCTION_SERVER, protocolType = ConditionalOnJt808Server.ProtocolType.ANY)
 public class Jt808QuickStartRequestHandler {
 
     private static final Logger log = LoggerFactory.getLogger(Jt808QuickStartRequestHandler.class);
@@ -96,6 +95,33 @@ public class Jt808QuickStartRequestHandler {
     }
 
     /**
+     * 终端注册(V2011)
+     */
+    @Jt808RequestHandlerMapping(messageIds = 0x0100, versions = Jt808ProtocolVersion.VERSION_2011)
+    @Jt808ResponseBody(messageId = 0x8100, maxPackageSize = 1000)
+    public Mono<BuiltinMessage8100> processMessage0x0100V20112(Jt808Request request, @Jt808RequestBody BuiltinMessage0100V2011 requestBody) {
+        log.info("receive message [0x0100-v2011]: {}", requestBody);
+        final BuiltinMessage8100 builtinMessage8100 = new BuiltinMessage8100()
+                .setClientFlowId(request.header().flowId())
+                .setResult((short) 0)
+                .setAuthCode("auth-code-2011");
+
+        return Mono.just(builtinMessage8100);
+    }
+
+    @Jt808RequestHandlerMapping(messageIds = 0x0100, versions = Jt808ProtocolVersion.VERSION_2011)
+    @Jt808ResponseBody(messageId = 0x8100, maxPackageSize = 1000)
+    public Mono<BuiltinMessage8100> processMessage0x0100V20111(Jt808Request request, @Jt808RequestBody BuiltinMessage0100V2011 requestBody) {
+        log.info("receive message [0x0100-v2011]: {}", requestBody);
+        final BuiltinMessage8100 builtinMessage8100 = new BuiltinMessage8100()
+                .setClientFlowId(request.header().flowId())
+                .setResult((short) 0)
+                .setAuthCode("auth-code-2011");
+
+        return Mono.just(builtinMessage8100);
+    }
+
+    /**
      * 终端注册(V2013)
      */
     @Jt808RequestHandlerMapping(messageIds = 0x0100, versions = Jt808ProtocolVersion.VERSION_2013)
@@ -128,6 +154,18 @@ public class Jt808QuickStartRequestHandler {
     @Jt808ResponseBody(messageId = 0x8001)
     public Mono<ServerCommonReplyMessage> processMessage0102(Jt808Request request, @Jt808RequestBody BuiltinMessage0102V2013 requestBody) {
         log.info("receive message [0x0100-(v2011 or v2013)]: {}", requestBody);
+        final ServerCommonReplyMessage responseBody = ServerCommonReplyMessage.success(request);
+        return Mono.just(responseBody);
+    }
+
+
+    /**
+     * 驾驶员身份信息采集上报(V2019)
+     */
+    @Jt808RequestHandlerMapping(messageIds = 0x0702, versions = Jt808ProtocolVersion.VERSION_2019)
+    @Jt808ResponseBody(messageId = 0x8001)
+    public Mono<ServerCommonReplyMessage> processMessage0702V2019(Jt808Request request, @Jt808RequestBody BuiltinMessage0702V2019 requestBody) {
+        log.info("receive message [0x0100-v2019]: {}", requestBody);
         final ServerCommonReplyMessage responseBody = ServerCommonReplyMessage.success(request);
         return Mono.just(responseBody);
     }
