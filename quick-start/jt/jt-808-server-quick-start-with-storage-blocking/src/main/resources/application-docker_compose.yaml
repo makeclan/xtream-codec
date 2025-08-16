@@ -30,7 +30,7 @@ demo-app-with-storage:
         enabled: ${FEATURE_CONTROL_DATABASE_CLICKHOUSE_ENABLED:false}
       ## 存储到 MySQL 中
       mysql:
-        enabled: ${FEATURE_CONTROL_DATABASE_MYSQL_ENABLED:false}
+        enabled: ${FEATURE_CONTROL_DATABASE_MYSQL_ENABLED:true}
       ## 存储到 Postgres 中
       postgres:
         enabled: ${FEATURE_CONTROL_DATABASE_POSTGRES_ENABLED:false}
