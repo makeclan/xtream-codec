@@ -25,10 +25,10 @@ demo-app-with-storage:
         enabled: true
       ## 存储到 Clickhouse 中
       clickhouse:
-        enabled: ${FEATURE_CONTROL_DATABASE_CLICKHOUSE_ENABLED:true}
+        enabled: ${FEATURE_CONTROL_DATABASE_CLICKHOUSE_ENABLED:false}
       ## 存储到 MySQL 中
       mysql:
-        enabled: ${FEATURE_CONTROL_DATABASE_MYSQL_ENABLED:false}
+        enabled: ${FEATURE_CONTROL_DATABASE_MYSQL_ENABLED:true}
       ## 存储到 Postgres 中
       postgres:
         enabled: ${FEATURE_CONTROL_DATABASE_POSTGRES_ENABLED:false}
@@ -42,13 +42,13 @@ demo-app-with-storage:
       minio:
         enabled: ${FEATURE_CONTROL_OSS_MINIO_ENABLED:true}
   minio:
-    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
-    access-key: ${MINIO_ACCESS_KEY:minioadmin}
-    secret-key: ${MINIO_SECRET_KEY:minioadmin}
+    endpoint: ${MINIO_ENDPOINT:http://192.168.4.238:9000}
+    access-key: ${MINIO_ACCESS_KEY:IMesOv1gMCvyQECUUDSo}
+    secret-key: ${MINIO_SECRET_KEY:zI6O2JlRwlqNYpGD9c7NLTjuZnZWK2HNR71PHC4I}
   # 示例性的附件服务器配置
   attachment-server:
     # 附件服务器的IP 应该是一个公网IP(设备能访问的IP)
-    server-ip: ${ATTACHMENT_SERVER_IP:192.168.71.176}
+    server-ip: ${ATTACHMENT_SERVER_IP:192.168.4.238}
     # 用来存放附件文件的临时路径
     temporary-path: /tmp/jt-808/attachment
     # 将本地文件上传到远程存储后，是否保留本地文件
@@ -77,9 +77,9 @@ spring:
           - name: trace-log-mysql
             as-default: true
             # r2dbc-url: r2dbc:mysql://[username[:password]@]hostname[:port]/[database][?property1=value1&...]
-            r2dbc-url: ${MYSQL_R2DBC_URL:r2dbc:mysql://localhost:3306/jt_808}
+            r2dbc-url: ${MYSQL_R2DBC_URL:r2dbc:mysql://localhost:3307/jt_808}
             username: ${MYSQL_R2DBC_USERNAME:root}
-            password: ${MYSQL_R2DBC_PASSWORD:mysql}
+            password: ${MYSQL_R2DBC_PASSWORD:ddm@126.com}
             pool:
               max-idle-time: PT5M
               validation-query: SELECT 1
